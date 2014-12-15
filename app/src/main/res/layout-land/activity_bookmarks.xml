@@ -1,0 +1,58 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <ListView
+        android:id="@android:id/list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/fakeActionBarListaVijesti"
+        android:cacheColorHint="#00000000" >
+    </ListView>
+
+    <LinearLayout
+        android:id="@+id/fakeActionBarListaVijesti"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/vijest_navbgpropovjedi_land"
+        android:orientation="horizontal" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <ImageView
+                android:id="@+id/btnHomeListaVijesti"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:contentDescription="@string/dummyDesc"
+                android:src="@drawable/vijest_button_home" />
+
+            <ImageView
+                android:id="@+id/btnSearchListaVijesti"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:contentDescription="@string/dummyDesc"
+                android:src="@drawable/vijest_button_search" />
+
+            <ImageView
+                android:id="@+id/btnBackListaVijesti"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="20dp"
+                android:contentDescription="@string/dummyDesc"
+                android:src="@drawable/vijest_button_back" />
+        </RelativeLayout>
+    </LinearLayout>
+
+</RelativeLayout>

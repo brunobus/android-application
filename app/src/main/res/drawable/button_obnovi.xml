@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/btn_over_refresh_izreke"
+          android:state_pressed="true" />
+    <item android:drawable="@drawable/btn_over_refresh_izreke"
+          android:state_focused="true" />
+    <item android:drawable="@drawable/btn_normal_refresh_izreke" />
+</selector>

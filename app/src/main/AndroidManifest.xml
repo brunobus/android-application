@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="hr.bpervan.novaeva.main"
+    android:installLocation="auto"
+    android:versionCode="14"
+    android:versionName="2.1" >
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+<!--
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+-->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+<!--
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+-->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+<!--
+    <permission android:name="hr.bpervan.novaeva.main.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+    <uses-permission android:name="hr.bpervan.novaeva.main.permission.C2D_MESSAGE" />
+-->
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/NovaEva" >
+        <activity
+            android:name="hr.bpervan.novaeva.DashboardActivity"
+            android:label="@string/app_name" />
+        <activity
+            android:name="hr.bpervan.novaeva.MolitvenikActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/title_activity_molitvenik"
+            android:theme="@style/ListaVijesti" />
+        <activity
+            android:name="hr.bpervan.novaeva.IzrekeActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/title_activity_izreke"
+            android:theme="@style/Vijest" />
+        <activity
+            android:name="hr.bpervan.novaeva.MolitvenikDetaljiActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/title_activity_molitvenik_detalji" />
+        <activity
+            android:name="hr.bpervan.novaeva.SplashActivity"
+            android:label="@string/app_name"
+            android:noHistory="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/NovaEvaSplash" >
+            <intent-filter android:label="@string/app_name" >
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="hr.bpervan.novaeva.SearchActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/title_activity_search"
+            android:noHistory="true"
+            android:theme="@style/ListaVijesti" />
+        <activity
+            android:name="hr.bpervan.novaeva.ListaVijestiActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/title_activity_lista_vijesti"
+            android:theme="@style/ListaVijesti" />
+        <activity
+            android:name="hr.bpervan.novaeva.BookmarksActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/title_activity_bookmarks"
+            android:noHistory="true"
+            android:theme="@style/ListaVijesti" />
+        <activity
+            android:name="hr.bpervan.novaeva.v2.BrevijarActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/title_activity_brevijar_predizbor"
+            android:theme="@style/BrevijarMenu" />
+        <activity
+            android:name="hr.bpervan.novaeva.v2.BrevijarDetaljiActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/title_activity_brevijar_detalji"
+            android:theme="@style/Brevijar" />
+        <activity
+            android:name="hr.bpervan.novaeva.v2.VijestActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_vijest"
+            android:theme="@style/Vijest"
+            android:hardwareAccelerated="true"/>
+<!--
+        <receiver android:name="hr.bpervan.novaeva.v2.NewsPullBootStarter" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name="hr.bpervan.novaeva.v2.NewsPullReceiver" />
+-->
+        <activity
+            android:name="hr.bpervan.novaeva.v2.InfoActivity"
+            android:label="@string/title_activity_info" />
+
+    </application>
+
+</manifest>

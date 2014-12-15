@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:id="@+id/LinearLayout01"
+	android:layout_width="fill_parent" xmlns:android="http://schemas.android.com/apk/res/android"
+	android:paddingLeft="10sp" android:paddingRight="10sp"
+	android:layout_height="wrap_content"
+	android:orientation="vertical" android:paddingTop="2sp"
+	android:background="@drawable/molitvenik_button_port">
+
+        
+	    <TextView
+	        android:id="@+id/tvMolitva"
+	        android:layout_width="@dimen/molitvenikWidth"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center_vertical"
+	        android:text="@string/tvNaslov"
+	        android:textSize="20sp"
+	        android:textColor="#4c4c4c" />
+	    
+</LinearLayout>

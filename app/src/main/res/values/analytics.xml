@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="TypographyDahses" >
+  <!--Replace placeholder ID with your tracking ID-->
+  <string name="ga_trackingId">UA-40344870-1</string>
+
+  <!--Enable automatic activity tracking-->
+  <bool name="ga_autoActivityTracking">true</bool>
+  
+  <!-- OVO MAKNUTI OBAVEZNO KAD UĐEMO U PRODUCTION -->
+  <bool name="ga_debug">true</bool>
+
+  <!--Enable automatic exception tracking-->
+  <bool name="ga_reportUncaughtExceptions">true</bool>
+</resources>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Nova Eva</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_molitvenik">Molitvenik</string>
+    <string name="title_activity_bookmarks">Bookmarks</string>
+    <string name="title_activity_evandjelje">Evandjelje</string>
+    <string name="title_activity_izreke">Izreke</string>
+    <string name="title_activity_propovijedi">Propovijedi</string>
+    <string name="title_activity_multimedija">Multimedija</string>
+    <string name="title_activity_komentari">Komentari</string>
+    <string name="title_activity_aktualno">Aktualno</string>
+    <string name="title_activity_papa">Papa</string>
+    <string name="title_activity_poziv">Poziv</string>
+    <string name="title_activity_sm">Salezijanska mladez</string>
+    <string name="tvNaslov">Naslov:</string>
+    <string name="tvNid">NID:</string>
+    <string name="tvDatum">Datum Objave:</string>
+    <string name="title_activity_molitvenik_detalji">Molitvenik</string>
+    <string name="title_activity_splash">SplashActivity</string>
+    <string name="title_activity_dashboard">Početak</string>
+    <string name="title_activity_pretraga">Pretraga</string>
+    <string name="title_share_mail">E-pošta</string>
+    <string name="title_share_fb">Facebook</string>
+    <string name="title_activity_search">SearchActivity</string>
+    <string name="title_activity_list">ListActivity</string>
+    <string name="title_activity_lista_vijesti">ListaVijestiActivity</string>
+    <string name="tvYoutube">Youtube</string>
+    <string name="tvAudio">Audio link</string>
+    <string name="tvPrilozi">Prilozi link</string>
+    <string name="tvUvod">Uvod:</string>
+    <string name="controlPlay">Sviraj</string>
+    <string name="controlStop">Stani</string>
+    <string name="controlPause">Pauziraj</string>
+    <string name="btnRazmisljamOPozivu">Razmišljam o pozivu</string>
+    <string name="imgObnoviDesc">Gumb za osvježavanje izreke</string>
+    <string name="dummyDesc"></string>
+    <string name="NovaEvaTitleLine">Nova Eva</string>
+    <string name="NovaEvaTitleLineLand">N\no\nv\na\n \nE\nv\na</string>
+    <string name="title_activity_propovijed">PropovijedActivity</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_brevijar_predizbor">BrevijarPredizborActivity</string>
+    <string name="title_activity_brevijar_detalji">BrevijarDetaljiActivity</string>
+    <string name="laudatoCopyright">Ovaj časoslov se preuzima sa www.laudato.hr</string>
+    <string name="ksCopyright">Prijevodi: Copyright KS www.ks.hr</string>
+    <string name="title_activity_vijest">Vijest</string>
+    <string name="tvMapaNatpis">MAPA:</string>
+    <string name="title_activity_info">InfoActivity</string>
+
+</resources>
