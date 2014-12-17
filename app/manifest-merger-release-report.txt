@@ -175,11 +175,11 @@ ADDED from AndroidManifest.xml:88:9
 	android:name
 		ADDED from AndroidManifest.xml:89:13
 activity#hr.bpervan.novaeva.v2.InfoActivity
-ADDED from AndroidManifest.xml:102:9
+ADDED from AndroidManifest.xml:103:9
 	android:label
-		ADDED from AndroidManifest.xml:104:13
+		ADDED from AndroidManifest.xml:105:13
 	android:name
-		ADDED from AndroidManifest.xml:103:13
+		ADDED from AndroidManifest.xml:104:13
 uses-sdk
 INJECTED from AndroidManifest.xml:0:0 reason: use-sdk injection requested
 MERGED from com.android.support:support-v4:21.0.0:15:5

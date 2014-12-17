@@ -87,8 +87,7 @@ public class IzrekeActivity extends Activity implements OnClickListener{
 		
 		webView = (WebView) findViewById(R.id.webText);
 		webView.getSettings().setDefaultTextEncodingName("utf-8");
-		//webView.setBackgroundColor(color.background_light);
-		
+
 		tvKategorija.setText("Izreke");
 		
 		btnObnovi = (ImageView)findViewById(R.id.btnObnovi);
@@ -120,7 +119,7 @@ public class IzrekeActivity extends Activity implements OnClickListener{
 		
 		tvNaslov.setText(naslov);
 		webView.loadDataWithBaseURL(null, tekst, "text/html", "UTF-8", "");
-	}
+    }
 	
 
 	@Override
@@ -181,28 +180,6 @@ public class IzrekeActivity extends Activity implements OnClickListener{
 		super.onStop();
 		//EasyTracker.getInstance().activityStop(this);
 	}
-	/*
-	private void showTextSizePopup(){
-		AlertDialog.Builder textSize = new AlertDialog.Builder(this);
-		textSize.setTitle("Odaberite novu veličinu teksta");
-		final SeekBar seekBar = new SeekBar(this);
-		
-		seekBar.setMax(12);
-		seekBar.setProgress(prefs.getInt("hr.bpervan.novaeva.velicinateksta", 14) - 12);
-		textSize.setView(seekBar);
-		
-		textSize.setPositiveButton("Postavi", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				prefs.edit().putInt("hr.bpervan.novaeva.velicinateksta", seekBar.getProgress() + 12).commit();
-				//tvText.setTextSize(TypedValue.COMPLEX_UNIT_SP, prefs.getInt("hr.bpervan.novaeva.velicinateksta", 14));
-			}
-		});
-		textSize.setNegativeButton("Odustani", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int whichButton) {}});
-		textSize.show();
-	}*/
 
 	public boolean onOptionsItemSelected(MenuItem item){
 		return true;
@@ -290,7 +267,8 @@ public class IzrekeActivity extends Activity implements OnClickListener{
 		}
 
 		protected void onPreExecute(){
-	        pDialog.show();
+	        super.onPreExecute();
+            pDialog.show();
 		}
 
 		@Override
@@ -307,7 +285,12 @@ public class IzrekeActivity extends Activity implements OnClickListener{
 				is=httpEntitiy.getContent();
 			} catch(IOException e){
 				//TODO: tu bi moglo bit svšta xD
-				showErrorPopup();
+                IzrekeActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        showErrorPopup();
+                    }
+                });
 				this.cancel(true);
 			}
 			
@@ -349,6 +332,7 @@ public class IzrekeActivity extends Activity implements OnClickListener{
 		
 		@Override
 		protected void onPostExecute(Void params){
+            super.onPostExecute(params);
 			tvNaslov.setText(naslov);
 			webView.loadDataWithBaseURL(null, tekst, "text/html", "UTF-8", "");
 			pDialog.dismiss();

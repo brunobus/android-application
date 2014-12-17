@@ -20,7 +20,6 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
@@ -75,8 +74,8 @@ public class ListaVijestiActivity extends ListActivity implements OnClickListene
 	private Button btnLoadMore;
 	private LinearLayout fakeActionBarListaVijesti;
 	
-	/*private Tracker mGaTracker;
-	private GoogleAnalytics mGaInstance;*/
+	private Tracker mGaTracker;
+	private GoogleAnalytics mGaInstance;
 	
 	private SharedPreferences prefs;
 	
@@ -103,8 +102,8 @@ public class ListaVijestiActivity extends ListActivity implements OnClickListene
 		openSansLight = Typeface.createFromAsset(getAssets(), "opensans-light.ttf");
 		openSansRegular = Typeface.createFromAsset(getAssets(), "opensans-regular.ttf");
 		
-		/*mGaInstance = GoogleAnalytics.getInstance(this);
-		mGaTracker = mGaInstance.getTracker("UA-40344870-1");*/
+		mGaInstance = GoogleAnalytics.getInstance(this);
+		mGaTracker = mGaInstance.getTracker("UA-40344870-1");
 		
 		btnLoadMore = new Button(this);
 		btnLoadMore.setText("Učitaj još");
@@ -116,7 +115,7 @@ public class ListaVijestiActivity extends ListActivity implements OnClickListene
 			colourset = kategorija;
 		}
 		
-		//mGaTracker.sendEvent("Kategorije", "OtvorenaKategorija", kategorija + "", null);
+		mGaTracker.sendEvent("Kategorije", "OtvorenaKategorija", kategorija + "", null);
 		
 		killRedDot(kategorija);
 		resourceHandler = new ResourceHandler(colourset);
@@ -261,12 +260,12 @@ public class ListaVijestiActivity extends ListActivity implements OnClickListene
 	
 	public void onStart(){
 		super.onStart();
-		//EasyTracker.getInstance().activityStart(this);
+		EasyTracker.getInstance().activityStart(this);
 	}
 	
 	public void onStop(){
 		super.onStop();
-		//EasyTracker.getInstance().activityStop(this);
+		EasyTracker.getInstance().activityStop(this);
 	}
 	
 	public void onRestart(){
@@ -382,7 +381,8 @@ public class ListaVijestiActivity extends ListActivity implements OnClickListene
 		
 		@Override
 		protected void onPreExecute(){
-	        pDialog.show();
+	        super.onPreExecute();
+            pDialog.show();
 		}
 
 		@Override
@@ -399,10 +399,11 @@ public class ListaVijestiActivity extends ListActivity implements OnClickListene
                 httpParams.setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
 				HttpClient httpClient = new DefaultHttpClient(httpParams);
 				HttpPost httpPost = new HttpPost(this.URL);
-				
+
 				HttpResponse httpResponse = httpClient.execute(httpPost);
 				HttpEntity httpEntitiy = httpResponse.getEntity();
 				is = httpEntitiy.getContent();
+                Log.d("NetworkDebug", "Promet gotov");
 			}
 			catch(Exception e){
 				pDialog.dismiss();
@@ -414,12 +415,14 @@ public class ListaVijestiActivity extends ListActivity implements OnClickListene
 			}
 				
 			try{
+                Log.d("NetworkDebug", "Počinje parsiranje");
 				BufferedReader reader = new BufferedReader(new InputStreamReader(is,"utf-8"),8);
 				StringBuilder sb = new StringBuilder();
 				String line = null;
 				while((line = reader.readLine()) != null){
 					sb.append(line + "\n");
 				}
+                Log.d("NetworkDebug", "Parsiranje gotovo");
 				is.close();
 				json = sb.toString();
 			} catch (IOException e) {
@@ -444,6 +447,7 @@ public class ListaVijestiActivity extends ListActivity implements OnClickListene
 		
 		@Override
 		protected void onPostExecute(Void param){
+            super.onPostExecute(param);
 			adapter.notifyDataSetChanged();
 			try {
 				if(jObj.has("jos")){

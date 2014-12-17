@@ -59,8 +59,8 @@ import com.google.analytics.tracking.android.Tracker;
 public class DashboardActivity extends Activity implements OnTouchListener, OnClickListener{
 	private final long syncInterval = 30000L;
 	
-	/*private Tracker mGaTracker;
-	private GoogleAnalytics mGaInstance;*/
+	private Tracker mGaTracker;
+	private GoogleAnalytics mGaInstance;
 	
 	private ImageView btnBrevijar, btnMolitvenik, btnIzreke, btnMp3, btnAktualno,
 	btnPoziv, btnOdgovori, btnMultimedia, btnPropovjedi,
@@ -81,8 +81,8 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
 		
 		prefs = getSharedPreferences("hr.bpervan.novaeva", MODE_PRIVATE);
 				
-		/*mGaInstance = GoogleAnalytics.getInstance(this);
-		mGaTracker = mGaInstance.getTracker("UA-40344870-1");*/
+		mGaInstance = GoogleAnalytics.getInstance(this);
+		mGaTracker = mGaInstance.getTracker("UA-40344870-1");
 				
 		btnBrevijar = (ImageView) findViewById(R.id.btnBrevijar);
 		btnMolitvenik = (ImageView) findViewById(R.id.btnMolitvenik);
@@ -134,24 +134,24 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
 	public void onResume(){
 		super.onResume();
 
-		long vrijemeZadnjeSync = prefs.getLong("vrijemeZadnjeSinkronizacije", 0L);
+		/*long vrijemeZadnjeSync = prefs.getLong("vrijemeZadnjeSinkronizacije", 0L);
 		if((System.currentTimeMillis() - vrijemeZadnjeSync) > syncInterval){
 			if(ConnectionChecker.hasConnection(this)){
 				new AsyncHttpPostTask(this).execute();
 			}
-		}
+		}*/
 
 		testAndSetRedDots();
 	}
 	
 	public void onStart(){
 		super.onStart();
-		//EasyTracker.getInstance().activityStart(this);
+		EasyTracker.getInstance().activityStart(this);
 	}
 	
 	public void onStop(){
 		super.onStop();
-		//EasyTracker.getInstance().activityStop(this);
+		EasyTracker.getInstance().activityStop(this);
 	}
 
 	public boolean onOptionsItemSelected(MenuItem item){
@@ -483,7 +483,7 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
 				break;
 			case R.id.btnIzreke:
 				i = new Intent(DashboardActivity.this,IzrekeActivity.class);
-				//mGaTracker.sendEvent("Kategorije", "OtvorenaKategorija", Constants.CAT_IZREKE + "", null);
+				mGaTracker.sendEvent("Kategorije", "OtvorenaKategorija", Constants.CAT_IZREKE + "", null);
 				startActivity(i);
 				break;
 			case R.id.btnMultimedia:

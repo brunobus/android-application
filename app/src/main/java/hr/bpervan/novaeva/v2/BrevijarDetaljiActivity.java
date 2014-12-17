@@ -188,7 +188,10 @@ public class BrevijarDetaljiActivity extends Activity {
 		}
 		
 		@Override
-		protected void onPreExecute(){pDialog.show();}
+		protected void onPreExecute(){
+            super.onPreExecute();
+            pDialog.show();
+        }
 
 		@Override
 		protected Void doInBackground(String... params) {
@@ -238,8 +241,8 @@ public class BrevijarDetaljiActivity extends Activity {
 		}
 		@Override
 		protected void onPostExecute(Void param){
+            super.onPostExecute(param);
 			webView.loadDataWithBaseURL(null, tempHTML, "text/html", "utf-8", "");
-			//webView.loadData(tempHTML, null, null);
 			pDialog.dismiss();
 		}
 	}

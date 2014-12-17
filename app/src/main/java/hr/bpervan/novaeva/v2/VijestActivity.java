@@ -1,39 +1,5 @@
 package hr.bpervan.novaeva.v2;
 
-import hr.bpervan.novaeva.DashboardActivity;
-import hr.bpervan.novaeva.SearchActivity;
-import hr.bpervan.novaeva.customviews.LockableScrollView;
-import hr.bpervan.novaeva.main.R;
-import hr.bpervan.novaeva.utilities.Attachment;
-import hr.bpervan.novaeva.utilities.BookmarkTypes;
-import hr.bpervan.novaeva.utilities.ConnectionChecker;
-import hr.bpervan.novaeva.utilities.Constants;
-import hr.bpervan.novaeva.utilities.Image;
-import hr.bpervan.novaeva.utilities.ImageLoaderConfigurator;
-import hr.bpervan.novaeva.utilities.ListTypes;
-import hr.bpervan.novaeva.utilities.ResourceHandler;
-import hr.bpervan.novaeva.utilities.Vijest;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpVersion;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.CoreProtocolPNames;
-import org.apache.http.params.HttpParams;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -42,7 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -52,9 +17,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
-import android.view.MotionEvent;
 import android.view.View;
-import android.webkit.WebSettings;
 import android.webkit.WebSettings.LayoutAlgorithm;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -69,13 +32,37 @@ import android.widget.Toast;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.GoogleAnalytics;
 import com.google.analytics.tracking.android.Tracker;
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.JsonHttpResponseHandler;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.assist.FailReason;
-import com.nostra13.universalimageloader.core.assist.ImageScaleType;
-import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpVersion;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.CoreProtocolPNames;
+import org.apache.http.params.HttpParams;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+import hr.bpervan.novaeva.DashboardActivity;
+import hr.bpervan.novaeva.SearchActivity;
+import hr.bpervan.novaeva.main.R;
+import hr.bpervan.novaeva.utilities.Attachment;
+import hr.bpervan.novaeva.utilities.BookmarkTypes;
+import hr.bpervan.novaeva.utilities.ConnectionChecker;
+import hr.bpervan.novaeva.utilities.Constants;
+import hr.bpervan.novaeva.utilities.Image;
+import hr.bpervan.novaeva.utilities.ImageLoaderConfigurator;
+import hr.bpervan.novaeva.utilities.ListTypes;
+import hr.bpervan.novaeva.utilities.ResourceHandler;
+import hr.bpervan.novaeva.utilities.Vijest;
 
 public class VijestActivity extends Activity implements 
 		View.OnClickListener, 
@@ -118,8 +105,8 @@ public class VijestActivity extends Activity implements
 	private Vijest ovaVijest;
 	
 	/** Google analytics API*/
-	/*private Tracker mGaTracker;
-	private GoogleAnalytics mGaInstance;*/
+	private Tracker mGaTracker;
+	private GoogleAnalytics mGaInstance;
 	
 	/** Database handler for bookmarks, resource handler for category colours*/
 	private BookmarksDBHandlerV2 dbHandler;
@@ -142,11 +129,11 @@ public class VijestActivity extends Activity implements
 		openSansBold = Typeface.createFromAsset(getAssets(), "opensans-bold.ttf");
 		openSansLight = Typeface.createFromAsset(getAssets(), "opensans-light.ttf");
 		openSansRegular = Typeface.createFromAsset(getAssets(), "opensans-regular.ttf");
-		
-		/*mGaInstance = GoogleAnalytics.getInstance(this);
+
+		mGaInstance = GoogleAnalytics.getInstance(this);
 		mGaTracker = mGaInstance.getTracker("UA-40344870-1");
-		mGaTracker.sendEvent("Vijesti", "OtvorenaVijest", nid + "", null);*/
-		
+		mGaTracker.sendEvent("Vijesti", "OtvorenaVijest", nid + "", null);
+
 		resourceHandler = new ResourceHandler(this.getIntent().getIntExtra("kategorija", Constants.CAT_PROPOVJEDI));
         
 		imageLoaderConfigurator = new ImageLoaderConfigurator(this);
@@ -172,22 +159,24 @@ public class VijestActivity extends Activity implements
 		/** Test and set various attachments*/
 		setAttachments();
 
-		if(this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
-			if(ovaVijest.hasImage()){
-				if(imageLoader.isInited()){
-					imageLoader.displayImage(ovaVijest.getImage().getUrl640(), headerImage, imageLoaderConfigurator.doConfig(false));
-				}
-			} else {
-				String url = prefs.getString("hr.bpervan.novaeva.categoryheader." + ovaVijest.getKategorija(), null);
-				if(url != null){
-					if(imageLoader.isInited()){
-						imageLoader.displayImage(url, headerImage, imageLoaderConfigurator.doConfig(true));
-					}
-				}
-			}
-		}
-        vijestWebView.reload();
-        vijestWebView.loadDataWithBaseURL(null, ovaVijest.getTekst(), "text/html", "UTF-8", null);
+        if(ovaVijest != null){
+            if(this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
+                if(ovaVijest.hasImage()){
+                    if(imageLoader.isInited()){
+                        imageLoader.displayImage(ovaVijest.getImage().getUrl640(), headerImage, imageLoaderConfigurator.doConfig(false));
+                    }
+                } else {
+                    String url = prefs.getString("hr.bpervan.novaeva.categoryheader." + ovaVijest.getKategorija(), null);
+                    if(url != null){
+                        if(imageLoader.isInited()){
+                            imageLoader.displayImage(url, headerImage, imageLoaderConfigurator.doConfig(true));
+                        }
+                    }
+                }
+            }
+            vijestWebView.reload();
+            vijestWebView.loadDataWithBaseURL(null, ovaVijest.getTekst(), "text/html", "utf-8", null);
+        }
     }
 	
 	/**
@@ -207,19 +196,26 @@ public class VijestActivity extends Activity implements
 
 		/** Lets try displaying news using WebView */
 		vijestWebView = (WebView) findViewById(R.id.vijestWebView);
-        //vijestWebView.setFocusable(false);
-        /*vijestWebView.setWebViewClient(new WebViewClient() {
+        vijestWebView.reload();
+        if(ovaVijest != null){
+            vijestWebView.loadDataWithBaseURL(null, ovaVijest.getTekst(), "text/html", "UTF-8", null);
+        }
+
+        vijestWebView.setFocusable(false);
+        vijestWebView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url){
                 view.reload();
                 view.loadDataWithBaseURL(null, ovaVijest.getTekst(), "text/html", "utf-8", null);
                 return false;
             }
-        });*/
+        });
 
 		/** LayoutAlgorithm.SingleNešto is Deprecated */
-        vijestWebView.getSettings().setRenderPriority(WebSettings.RenderPriority.HIGH);
-		//vijestWebView.getSettings().setLayoutAlgorithm(LayoutAlgorithm.NORMAL);
+        //vijestWebView.getSettings().setRenderPriority(WebSettings.RenderPriority.HIGH);
+		vijestWebView.getSettings().setLayoutAlgorithm(LayoutAlgorithm.SINGLE_COLUMN);
+
+        /* Prevent horizontal and vertical scrolling in webview */
         /*vijestWebView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -228,13 +224,13 @@ public class VijestActivity extends Activity implements
         });*/
 
         /* Prevent C/P */
-        /*vijestWebView.setOnLongClickListener(new View.OnLongClickListener() {
+        vijestWebView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 return true;
             }
         });
-        vijestWebView.setLongClickable(false);*/
+        vijestWebView.setLongClickable(false);
 
 		/** Duhovni poziv */
 		btnPoziv = (ImageView) findViewById(R.id.btnPoziv);
@@ -331,11 +327,18 @@ public class VijestActivity extends Activity implements
 		}
 		mPlayer = null;
 	}
+
+
+    @Override
+    public void onStart(){
+        super.onStart();
+        EasyTracker.getInstance().activityStart(this);
+    }
 	
 	@Override
 	protected void onStop(){
 		super.onStop();
-		//EasyTracker.getInstance().activityStop(this);
+		EasyTracker.getInstance().activityStop(this);
 	}
 	
 	@Override
@@ -362,13 +365,6 @@ public class VijestActivity extends Activity implements
 		fakeActionBar.setBackgroundResource(resources[0]);
 		imgNaslovnaTraka.setImageResource(resources[1]);
 	}
-	
-	@Override
-	public void onStart(){
-		super.onStart();
-		//EasyTracker.getInstance().activityStart(this);
-	}
-
 	
 	@Override
 	public void onClick(View v) {
@@ -492,17 +488,19 @@ public class VijestActivity extends Activity implements
 	}
 
 	private void setAttachments(){
-		if(ovaVijest.hasAudio()){
-			imgMp3.setVisibility(View.VISIBLE);
-		}
-		if(ovaVijest.hasLink()){
-			imgLink.setVisibility(View.VISIBLE);
-			imgLink.setOnClickListener(this);
-		}
-		if(ovaVijest.hasAttach()){
-			imgText.setVisibility(View.VISIBLE);
-			imgText.setOnClickListener(this);
-		}
+        if(ovaVijest != null){
+            if(ovaVijest.hasAudio()){
+                imgMp3.setVisibility(View.VISIBLE);
+            }
+            if(ovaVijest.hasLink()){
+                imgLink.setVisibility(View.VISIBLE);
+                imgLink.setOnClickListener(this);
+            }
+            if(ovaVijest.hasAttach()){
+                imgText.setVisibility(View.VISIBLE);
+                imgText.setOnClickListener(this);
+            }
+        }
 	}
 	
 	@Override
@@ -530,23 +528,6 @@ public class VijestActivity extends Activity implements
 		tvElapsed.setText("00:00");
 		mPlayer.seekTo(0);
 	}
-	
-	/*@Override
-	public void onPrepared(MediaPlayer mp) {
-        Log.d(TAG, "onPrepared()");
-        mp3Player.setVisibility(View.VISIBLE);
-        btnPlay.setOnClickListener(VijestActivity.this);
-        btnPause.setOnClickListener(VijestActivity.this);
-
-        int seconds = (int) (mPlayer.getDuration() / 1000) % 60 ;
-        int minutes = (int) ((mPlayer.getDuration() / (1000*60)) % 60);
-
-        tvDuration.setText(String.format("%02d:%02d", minutes, seconds));
-        tvElapsed.setText("00:00");
-
-        seekArc.setMax(mPlayer.getDuration());
-        this.isMediaPlayerLoading = false;
-	}*/
 
 	private Runnable onEverySecond = new Runnable(){
 		@Override
@@ -634,7 +615,10 @@ public class VijestActivity extends Activity implements
         }
 		
 		@Override
-		protected void onPreExecute(){pDialog.show();}
+		protected void onPreExecute(){
+            super.onPreExecute();
+            pDialog.show();
+        }
 
 		@Override
 		protected Void doInBackground(String... params) {
@@ -718,24 +702,20 @@ public class VijestActivity extends Activity implements
 
                 if(ovaVijest.hasAudio()){
                     VijestActivity.this.isMediaPlayerLoading = true;
-                    //mPlayer = MediaPlayer.create(context, Uri.parse(ovaVijest.getAudio()));
                     mPlayer = new MediaPlayer();
                     mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                     mPlayer.setDataSource(ovaVijest.getAudio());
                     mPlayer.prepare();
 
-                    //mPlayer.setOnPreparedListener(VijestActivity.this);
                     mPlayer.setOnCompletionListener(VijestActivity.this);
                 }
-
-                //TODO: Je li ovo dobra praksa?
-                //while(VijestActivity.this.isMediaPlayerLoading);
 			}catch(Exception e){
 			}
 			return null;
 		}
 		@Override
 		protected void onPostExecute(Void param){
+            super.onPostExecute(param);
 			if(ovaVijest.hasAudio()){
 				imgMp3.setVisibility(View.VISIBLE);
                 //TODO: TEST integrity 15.12.2014

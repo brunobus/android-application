@@ -82,15 +82,6 @@ public class BrevijarActivity extends Activity implements OnClickListener{
 		btnSutraVecernja.setOnClickListener(this);
 		btnSutraPovecerje.setOnClickListener(this);
 		
-		/*options = new DisplayImageOptions.Builder()
-	        .resetViewBeforeLoading(false)  // default
-	        .cacheInMemory(true) // default
-	        .cacheOnDisk(true) // default
-	        .considerExifParams(false) // default
-	        .imageScaleType(ImageScaleType.IN_SAMPLE_POWER_OF_2) // default
-	        .bitmapConfig(Bitmap.Config.ARGB_8888) // default
-	        .build();*/
-		
 		imageLoaderConfigurator = new ImageLoaderConfigurator(this);
 		imageLoader = ImageLoader.getInstance();
 		if(!imageLoader.isInited()){
