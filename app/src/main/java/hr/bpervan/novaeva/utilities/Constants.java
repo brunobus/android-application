@@ -88,9 +88,9 @@ public class Constants {
 			return CAT_MULTIMEDIJA_NAZIV;
 		else if(id == CAT_IZREKE)
 			return CAT_IZREKE_NAZIV;
-		else if(id == CAT_SM)
+		else if(id == CAT_DUHOVNOST)
 			return CAT_DUHOVNOST_NAZIV;
-		else if(id == CAT_PAPA)
+		else if(id == CAT_PJESMARICA)
 			return CAT_PJESMARICA_NAZIV;
 		else
 			return "";
@@ -99,11 +99,14 @@ public class Constants {
 		return getCatNameById(Integer.parseInt(id));
 	}
 	
-	public static List<Integer> getIntCategoryList(){
+	public static List<Integer> getIntCategoryList(boolean includeEvandjelje){
 		List<Integer> listaKategorija = new ArrayList<Integer>();
 		
 		listaKategorija.add(Constants.CAT_AKTUALNO);
-		listaKategorija.add(Constants.CAT_EVANDJELJE);
+        if(includeEvandjelje){
+            listaKategorija.add(Constants.CAT_EVANDJELJE);
+        }
+
 		listaKategorija.add(Constants.CAT_ODGOVORI);
 		listaKategorija.add(Constants.CAT_POZIV);
 		listaKategorija.add(Constants.CAT_PROPOVJEDI);

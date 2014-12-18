@@ -25,7 +25,7 @@ public class ResourceHandler {
 		/** OVO JE WORKAROUND I NEMRE OVAK
 		 * 	Treba pri samom činu bookmarkiranja utrpat colourset a ne kategoriju
 		 * */
-		if(!Constants.getIntCategoryList().contains(kategorija)){
+		if(!Constants.getIntCategoryList(true).contains(kategorija)){
 			this.kategorija = Constants.CAT_PROPOVJEDI;
 		}
 	}

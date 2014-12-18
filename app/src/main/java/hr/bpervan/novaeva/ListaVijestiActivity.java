@@ -115,8 +115,7 @@ public class ListaVijestiActivity extends ListActivity implements OnClickListene
 			colourset = kategorija;
 		}
 		
-		mGaTracker.sendEvent("Kategorije", "OtvorenaKategorija", kategorija + "", null);
-		
+		mGaTracker.sendEvent("Kategorije", "OtvorenaKategorija", Constants.getCatNameById(kategorija), null);
 		killRedDot(kategorija);
 		resourceHandler = new ResourceHandler(colourset);
 		

@@ -70,7 +70,7 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
 	private TextView titleLineTitle;
 	private Typeface openSansRegular;
 	
-	List<Integer> listaKategorija = Constants.getIntCategoryList();
+	//List<Integer> listaKategorija = Constants.getIntCategoryList();
 	SharedPreferences prefs;
 	
 
@@ -273,7 +273,7 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
         private HttpParams httpParams;
 		
 		public AsyncHttpPostTask(Context context){
-			URL="http://novaeva.com/json?cid=";
+			URL="http://novaeva.com/json?api=2&items=1&filter=1&cid=";
 			//TODO:Ubaciti url
 			this.newStuffIndicatorUrl = "http://novaeva.com/json?";
 		}
@@ -299,7 +299,7 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
 			json = stringBuilder.toString();
 			jObj = new JSONObject(json);
 			
-			for(int category : Constants.getIntCategoryList()){
+			for(int category : Constants.getIntCategoryList(false)){
 				if(jObj.has(category + "")){
 					int currentCat = jObj.getInt(category + "");
 					int zadnjiNidIzKategorije = prefs.getInt(category + "", 0);
@@ -313,11 +313,12 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
 
 		@Override
 		protected Void doInBackground(Void... params) {
-			/*String zadnjiNid = null;
-            List<Integer> tempLista = new ArrayList<Integer>();
-            tempLista.add(Constants.CAT_AKTUALNO);
+			String zadnjiNid = null;
+            //List<Integer> tempLista = new ArrayList<Integer>();
+            List<Integer> tempLista = Constants.getIntCategoryList(false);
+            /*tempLista.add(Constants.CAT_AKTUALNO);
             tempLista.add(Constants.CAT_PROPOVJEDI);
-            tempLista.add(Constants.CAT_DUHOVNOST);
+            tempLista.add(Constants.CAT_DUHOVNOST);*/
             for(int i = 0; i < tempLista.size(); i++){
 				zadnjiNid = dohvatiNajnovijiNidIzKategorije(tempLista.get(i));
 				//TODO: Testiraj ovo čudo
@@ -329,9 +330,9 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
 						prefs.edit().putInt("vidjenoKategorija" + tempLista.get(i), 0).commit();
 					}
 				}
-			}*/
+			}
             try {
-                getNewStuff();
+                //getNewStuff();
                 fetchBrevijarImage();
             } catch (ClientProtocolException e) {
             } catch (IOException e) {
