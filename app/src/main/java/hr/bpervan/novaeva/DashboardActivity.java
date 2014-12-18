@@ -57,7 +57,7 @@ import com.google.analytics.tracking.android.GoogleAnalytics;
 import com.google.analytics.tracking.android.Tracker;
 
 public class DashboardActivity extends Activity implements OnTouchListener, OnClickListener{
-	private final long syncInterval = 30000L;
+	private final long syncInterval = 90000L;
 	
 	private Tracker mGaTracker;
 	private GoogleAnalytics mGaInstance;
@@ -134,12 +134,12 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
 	public void onResume(){
 		super.onResume();
 
-		/*long vrijemeZadnjeSync = prefs.getLong("vrijemeZadnjeSinkronizacije", 0L);
+		long vrijemeZadnjeSync = prefs.getLong("vrijemeZadnjeSinkronizacije", 0L);
 		if((System.currentTimeMillis() - vrijemeZadnjeSync) > syncInterval){
 			if(ConnectionChecker.hasConnection(this)){
 				new AsyncHttpPostTask(this).execute();
 			}
-		}*/
+		}
 
 		testAndSetRedDots();
 	}
@@ -313,7 +313,7 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
 
 		@Override
 		protected Void doInBackground(Void... params) {
-			String zadnjiNid = null;
+			/*String zadnjiNid = null;
             List<Integer> tempLista = new ArrayList<Integer>();
             tempLista.add(Constants.CAT_AKTUALNO);
             tempLista.add(Constants.CAT_PROPOVJEDI);
@@ -329,8 +329,15 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
 						prefs.edit().putInt("vidjenoKategorija" + tempLista.get(i), 0).commit();
 					}
 				}
-			}
-			
+			}*/
+            try {
+                getNewStuff();
+                fetchBrevijarImage();
+            } catch (ClientProtocolException e) {
+            } catch (IOException e) {
+            } catch (JSONException e) {
+            }
+
 			DashboardActivity.this.runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
@@ -344,13 +351,7 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
 				}
 			});
 
-			try {
-				//getNewStuff();
-				fetchBrevijarImage();
-			} catch (ClientProtocolException e) {
-			} catch (IOException e) {
-			} catch (JSONException e) {
-			}
+
 			
 			return null;
 		}

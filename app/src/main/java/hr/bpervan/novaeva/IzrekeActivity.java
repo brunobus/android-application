@@ -263,6 +263,24 @@ public class IzrekeActivity extends Activity implements OnClickListener{
 	        pDialog.setMessage("Učitavam...");
 	        pDialog.setIndeterminate(true);
 	        pDialog.setCancelable(false);
+            this.pDialog.setCanceledOnTouchOutside(false);
+
+            this.pDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Odustani", new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+
+                }
+            });
+
+            pDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    AsyncHttpPostTask.this.cancel(true);
+                    IzrekeActivity.this.onBackPressed();
+                }
+            });
 			
 		}
 
