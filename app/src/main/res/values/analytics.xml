@@ -8,7 +8,7 @@
   <bool name="ga_autoActivityTracking">true</bool>
   
   <!-- OVO MAKNUTI OBAVEZNO KAD UĐEMO U PRODUCTION -->
-  <bool name="ga_debug">true</bool>
+  <bool name="ga_debug">false</bool>
 
   <!--Enable automatic exception tracking-->
   <bool name="ga_reportUncaughtExceptions">true</bool>
