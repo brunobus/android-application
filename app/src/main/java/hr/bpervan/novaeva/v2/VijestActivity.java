@@ -396,6 +396,7 @@ public class VijestActivity extends Activity implements
 			}
 			break;
 		case R.id.btnPause:
+            //TODO: mPlayer == Null pointer?
 			if(mPlayer.isPlaying()){
 				Log.d(TAG, "btnPlay");
 				mPlayer.pause();
