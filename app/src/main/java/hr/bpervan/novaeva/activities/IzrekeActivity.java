@@ -170,17 +170,6 @@ public class IzrekeActivity extends Activity implements OnClickListener{
 		
 	}
 
-	
-	public void onStart(){
-		super.onStart();
-		//EasyTracker.getInstance().activityStart(this);
-	}
-	
-	public void onStop(){
-		super.onStop();
-		//EasyTracker.getInstance().activityStop(this);
-	}
-
 	public boolean onOptionsItemSelected(MenuItem item){
 		return true;
 		

@@ -1,7 +1,5 @@
 package hr.bpervan.novaeva.activities;
 
-import hr.bpervan.novaeva.DashboardActivity;
-import hr.bpervan.novaeva.SearchActivity;
 import hr.bpervan.novaeva.main.R;
 import android.app.Activity;
 import android.app.AlertDialog;

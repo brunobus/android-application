@@ -1,8 +1,5 @@
 package hr.bpervan.novaeva.activities;
-
-import com.google.analytics.tracking.android.EasyTracker;
-import com.google.analytics.tracking.android.GoogleAnalytics;
-import com.google.analytics.tracking.android.Tracker;
+import com.google.android.gms.analytics.GoogleAnalytics;
 
 import hr.bpervan.novaeva.main.R;
 import android.R.color;
@@ -33,18 +30,16 @@ public class MolitvenikDetaljiActivity extends Activity {
 		initUI();
 		
 	}
-	
-	@Override
-	protected void onStart(){
-		super.onStart();
-		EasyTracker.getInstance().activityStart(this);
-	}
-	
-	@Override
-	protected void onStop(){
-		super.onStop();
-		EasyTracker.getInstance().activityStop(this);
-	}
+
+    public void onStart(){
+        super.onStart();
+        GoogleAnalytics.getInstance(this).reportActivityStart(this);
+    }
+
+    public void onStop(){
+        super.onStop();
+        GoogleAnalytics.getInstance(this).reportActivityStop(this);
+    }
 	
 	protected void initUI(){
 		webView = (WebView) findViewById(R.id.webView);

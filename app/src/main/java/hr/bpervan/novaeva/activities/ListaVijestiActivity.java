@@ -7,7 +7,6 @@ import hr.bpervan.novaeva.utilities.ListElement;
 import hr.bpervan.novaeva.utilities.ListTypes;
 import hr.bpervan.novaeva.utilities.ResourceHandler;
 import hr.bpervan.novaeva.utilities.VijestAdapter;
-import hr.bpervan.novaeva.receivers.VijestActivity;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -57,9 +56,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.analytics.tracking.android.EasyTracker;
-import com.google.analytics.tracking.android.GoogleAnalytics;
-import com.google.analytics.tracking.android.Tracker;
+import com.google.android.gms.analytics.GoogleAnalytics;
 
 public class ListaVijestiActivity extends ListActivity implements OnClickListener{
 	
@@ -256,16 +253,16 @@ public class ListaVijestiActivity extends ListActivity implements OnClickListene
 			fakeActionBarListaVijesti.setBackgroundResource(resourceHandler.getResourceId(Configuration.ORIENTATION_PORTRAIT));
 		}
 	}
-	
-	public void onStart(){
-		super.onStart();
-		EasyTracker.getInstance().activityStart(this);
-	}
-	
-	public void onStop(){
-		super.onStop();
-		EasyTracker.getInstance().activityStop(this);
-	}
+
+    public void onStart(){
+        super.onStart();
+        GoogleAnalytics.getInstance(this).reportActivityStart(this);
+    }
+
+    public void onStop(){
+        super.onStop();
+        GoogleAnalytics.getInstance(this).reportActivityStop(this);
+    }
 	
 	public void onRestart(){
 		super.onRestart();

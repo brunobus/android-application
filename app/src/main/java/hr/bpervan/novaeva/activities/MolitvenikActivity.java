@@ -98,16 +98,6 @@ public class MolitvenikActivity extends ListActivity implements OnClickListener{
 		});
 	}
 	
-	public void onStart(){
-		super.onStart();
-		//EasyTracker.getInstance().activityStart(this);
-	}
-	
-	public void onStop(){
-		super.onStop();
-		//EasyTracker.getInstance().activityStop(this);
-	}
-	
 	@Override
 	public void onConfigurationChanged(Configuration newConfig){
 		super.onConfigurationChanged(newConfig);

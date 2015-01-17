@@ -29,9 +29,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.analytics.tracking.android.EasyTracker;
-import com.google.analytics.tracking.android.GoogleAnalytics;
-import com.google.analytics.tracking.android.Tracker;
+import com.google.android.gms.analytics.GoogleAnalytics;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import org.apache.http.HttpEntity;
@@ -51,11 +49,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import hr.bpervan.novaeva.DashboardActivity;
-import hr.bpervan.novaeva.SearchActivity;
 import hr.bpervan.novaeva.main.R;
 import hr.bpervan.novaeva.utilities.Attachment;
 import hr.bpervan.novaeva.utilities.BookmarkTypes;
+import hr.bpervan.novaeva.utilities.BookmarksDBHandlerV2;
 import hr.bpervan.novaeva.utilities.ConnectionChecker;
 import hr.bpervan.novaeva.utilities.Constants;
 import hr.bpervan.novaeva.utilities.Image;
@@ -329,17 +326,15 @@ public class VijestActivity extends Activity implements
 	}
 
 
-    @Override
     public void onStart(){
         super.onStart();
-        EasyTracker.getInstance().activityStart(this);
+        GoogleAnalytics.getInstance(this).reportActivityStart(this);
     }
-	
-	@Override
-	protected void onStop(){
-		super.onStop();
-		EasyTracker.getInstance().activityStop(this);
-	}
+
+    public void onStop(){
+        super.onStop();
+        GoogleAnalytics.getInstance(this).reportActivityStop(this);
+    }
 	
 	@Override
 	protected void onResume(){

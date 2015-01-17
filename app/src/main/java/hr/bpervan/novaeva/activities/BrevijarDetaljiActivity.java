@@ -25,6 +25,7 @@ import org.json.JSONObject;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.GoogleAnalytics;
 import com.google.analytics.tracking.android.Tracker;
+import com.google.android.gms.analytics.GoogleAnalytics;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -73,18 +74,16 @@ public class BrevijarDetaljiActivity extends Activity {
 			new AsyncHttpPostTask(this).execute(BREV_CAT);
 		}
 	}
-	
-	@Override
-	protected void onStart(){
-		super.onStart();
-		EasyTracker.getInstance().activityStart(this);
-	}
-	
-	@Override
-	protected void onStop(){
-		super.onStop();
-		EasyTracker.getInstance().activityStop(this);
-	}
+
+    public void onStart(){
+        super.onStart();
+        GoogleAnalytics.getInstance(this).reportActivityStart(this);
+    }
+
+    public void onStop(){
+        super.onStop();
+        GoogleAnalytics.getInstance(this).reportActivityStop(this);
+    }
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {return true;}

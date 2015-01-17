@@ -9,6 +9,8 @@ import com.google.android.gms.analytics.Tracker;
 import java.util.HashMap;
 import java.util.Map;
 
+import hr.bpervan.novaeva.main.R;
+
 /**
  * Created by Branimir on 17.1.2015..
  */
@@ -27,7 +29,16 @@ public class NovaEvaApp extends Application{
         if(!mTrackers.containsKey(trackerId)){
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
             analytics.getLogger().setLogLevel(Logger.LogLevel.VERBOSE);
-            Tracker t = (trackerId == TrackerName.APP_TRACKER) ? analytics.newTracker(PROPERTY_ID) : null;
+            Tracker t = null;
+            switch (trackerId){
+                case APP_TRACKER:
+                    analytics.newTracker(PROPERTY_ID);
+                    break;
+                case GLOBAL_TRACKER:
+                    analytics.newTracker(R.xml.global_tracker);
+                    break;
+            }
+
             t.enableAdvertisingIdCollection(false);
             mTrackers.put(trackerId, t);
         }

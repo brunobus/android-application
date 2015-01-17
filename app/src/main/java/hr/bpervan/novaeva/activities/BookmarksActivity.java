@@ -5,16 +5,13 @@ import hr.bpervan.novaeva.utilities.ConnectionChecker;
 import hr.bpervan.novaeva.utilities.Constants;
 import hr.bpervan.novaeva.utilities.ListElement;
 import hr.bpervan.novaeva.utilities.VijestAdapter;
-import hr.bpervan.novaeva.receivers.BookmarksDBHandlerV2;
-import hr.bpervan.novaeva.receivers.VijestActivity;
+import hr.bpervan.novaeva.utilities.BookmarksDBHandlerV2;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.google.analytics.tracking.android.EasyTracker;
-import com.google.analytics.tracking.android.GoogleAnalytics;
-import com.google.analytics.tracking.android.Tracker;
+import com.google.android.gms.analytics.GoogleAnalytics;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
@@ -30,8 +27,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
-
-//import com.google.analytics.tracking.android.EasyTracker;
 
 public class BookmarksActivity extends ListActivity implements View.OnClickListener{
 	
@@ -133,17 +128,17 @@ public class BookmarksActivity extends ListActivity implements View.OnClickListe
 		listaBookmarksa.clear();
 		pokupiVijestiIzBaze();
 	}
-	
-	
-	public void onStart(){
-		super.onStart();
-		EasyTracker.getInstance().activityStart(this);
-	}
-	
-	public void onStop(){
-		super.onStop();
-		EasyTracker.getInstance().activityStop(this);
-	}
+
+
+    public void onStart(){
+        super.onStart();
+        GoogleAnalytics.getInstance(this).reportActivityStart(this);
+    }
+
+    public void onStop(){
+        super.onStop();
+        GoogleAnalytics.getInstance(this).reportActivityStop(this);
+    }
 
 	
 	@Override

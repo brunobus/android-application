@@ -1,11 +1,10 @@
 package hr.bpervan.novaeva.activities;
 
+import hr.bpervan.novaeva.NovaEvaApp;
 import hr.bpervan.novaeva.main.R;
 import hr.bpervan.novaeva.utilities.ConnectionChecker;
 import hr.bpervan.novaeva.utilities.Constants;
 import hr.bpervan.novaeva.utilities.Image;
-import hr.bpervan.novaeva.receivers.BrevijarActivity;
-import hr.bpervan.novaeva.receivers.InfoActivity;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -50,9 +49,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.analytics.tracking.android.EasyTracker;
-import com.google.analytics.tracking.android.GoogleAnalytics;
-import com.google.analytics.tracking.android.Tracker;
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 public class DashboardActivity extends Activity implements OnTouchListener, OnClickListener{
 	private final long syncInterval = 90000L;
@@ -78,9 +77,13 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
 		setContentView(R.layout.activity_dashboard);
 		
 		prefs = getSharedPreferences("hr.bpervan.novaeva", MODE_PRIVATE);
-				
-		mGaInstance = GoogleAnalytics.getInstance(this);
-		mGaTracker = mGaInstance.getTracker("UA-40344870-1");
+
+		/*mGaInstance = GoogleAnalytics.getInstance(this);
+		mGaTracker = mGaInstance.getTracker("UA-40344870-1");*/
+
+        mGaTracker = ((NovaEvaApp) getApplication()).getTracker(NovaEvaApp.TrackerName.APP_TRACKER);
+        mGaTracker.setScreenName("Dashboard");
+        mGaTracker.send(new HitBuilders.AppViewBuilder().build());
 				
 		btnBrevijar = (ImageView) findViewById(R.id.btnBrevijar);
 		btnMolitvenik = (ImageView) findViewById(R.id.btnMolitvenik);
@@ -144,12 +147,12 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
 	
 	public void onStart(){
 		super.onStart();
-		EasyTracker.getInstance().activityStart(this);
+        GoogleAnalytics.getInstance(this).reportActivityStart(this);
 	}
 	
 	public void onStop(){
 		super.onStop();
-		EasyTracker.getInstance().activityStop(this);
+		GoogleAnalytics.getInstance(this).reportActivityStop(this);
 	}
 
 	public boolean onOptionsItemSelected(MenuItem item){

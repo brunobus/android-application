@@ -6,7 +6,6 @@ import hr.bpervan.novaeva.utilities.Constants;
 import hr.bpervan.novaeva.utilities.ListElement;
 import hr.bpervan.novaeva.utilities.ListTypes;
 import hr.bpervan.novaeva.utilities.VijestAdapter;
-import hr.bpervan.novaeva.receivers.VijestActivity;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -27,9 +26,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.google.analytics.tracking.android.EasyTracker;
-import com.google.analytics.tracking.android.GoogleAnalytics;
-import com.google.analytics.tracking.android.Tracker;
+import com.google.android.gms.analytics.GoogleAnalytics;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -91,18 +88,16 @@ public class SearchActivity extends Activity implements OnClickListener{
 			new AsyncHttpPostTask(this).execute(searchString);
 		}
 	}
-	
-	@Override
-	protected void onStart(){
-		super.onStart();
-		EasyTracker.getInstance().activityStart(this);
-	}
-	
-	@Override
-	protected void onStop(){
-		super.onStop();
-		EasyTracker.getInstance().activityStop(this);
-	}
+
+    public void onStart(){
+        super.onStart();
+        GoogleAnalytics.getInstance(this).reportActivityStart(this);
+    }
+
+    public void onStop(){
+        super.onStop();
+        GoogleAnalytics.getInstance(this).reportActivityStop(this);
+    }
 	
 	private void initUI(){
 		mainListView = (ListView) findViewById(R.id.listViewSearch);
