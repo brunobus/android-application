@@ -1,5 +1,6 @@
 package hr.bpervan.novaeva.activities;
 
+import hr.bpervan.novaeva.NovaEvaApp;
 import hr.bpervan.novaeva.main.R;
 import hr.bpervan.novaeva.utilities.ConnectionChecker;
 import hr.bpervan.novaeva.utilities.Constants;
@@ -27,6 +28,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -60,8 +63,7 @@ public class SearchActivity extends Activity implements OnClickListener{
 	private static Typeface openSansBold, openSansItalic, openSansLight, openSansRegular;
 	
 	private Tracker mGaTracker;
-	private GoogleAnalytics mGaInstance;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -71,10 +73,18 @@ public class SearchActivity extends Activity implements OnClickListener{
 		
 		this.setTitle("Pretraga: " + searchString);
 		
-		mGaInstance = GoogleAnalytics.getInstance(this);
-		mGaTracker = mGaInstance.getTracker("UA-40344870-1");
+		/*mGaTracker = mGaInstance.getTracker("UA-40344870-1");
 		
-		mGaTracker.sendEvent("Pretraga", "KljucneRijeci", searchString, null);
+		mGaTracker.sendEvent("Pretraga", "KljucneRijeci", searchString, null);*/
+
+        mGaTracker = ((NovaEvaApp) getApplication()).getTracker(NovaEvaApp.TrackerName.APP_TRACKER);
+        mGaTracker.send(
+                new HitBuilders.EventBuilder()
+                        .setCategory("Pretraga")
+                        .setAction("KljucneRijeci")
+                        .setLabel(searchString)
+                        .build()
+        );
 				
 		openSansBold = Typeface.createFromAsset(getAssets(), "opensans-bold.ttf");
 		openSansItalic = Typeface.createFromAsset(getAssets(), "opensans-italic.ttf");

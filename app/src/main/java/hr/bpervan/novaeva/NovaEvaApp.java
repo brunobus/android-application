@@ -1,6 +1,7 @@
 package hr.bpervan.novaeva;
 
 import android.app.Application;
+import android.util.Log;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Logger;
@@ -32,14 +33,15 @@ public class NovaEvaApp extends Application{
             Tracker t = null;
             switch (trackerId){
                 case APP_TRACKER:
-                    analytics.newTracker(PROPERTY_ID);
+                    t = analytics.newTracker(PROPERTY_ID);
                     break;
                 case GLOBAL_TRACKER:
-                    analytics.newTracker(R.xml.global_tracker);
+                    t = analytics.newTracker(R.xml.global_tracker);
                     break;
             }
 
             t.enableAdvertisingIdCollection(false);
+            Log.d("NULL", (t == null) ? "NULL JE" : "NIJE NULL");
             mTrackers.put(trackerId, t);
         }
         return mTrackers.get(trackerId);

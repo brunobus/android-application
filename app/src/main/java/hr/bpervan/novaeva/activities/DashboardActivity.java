@@ -57,8 +57,7 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
 	private final long syncInterval = 90000L;
 	
 	private Tracker mGaTracker;
-	private GoogleAnalytics mGaInstance;
-	
+
 	private ImageView btnBrevijar, btnMolitvenik, btnIzreke, btnMp3, btnAktualno,
 	btnPoziv, btnOdgovori, btnMultimedia, btnPropovjedi,
 	btnDuhovnost, btnEvandjelje;
@@ -77,6 +76,8 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
 		setContentView(R.layout.activity_dashboard);
 		
 		prefs = getSharedPreferences("hr.bpervan.novaeva", MODE_PRIVATE);
+
+        mGaTracker = ((NovaEvaApp) getApplication()).getTracker(NovaEvaApp.TrackerName.APP_TRACKER);
 
 		/*mGaInstance = GoogleAnalytics.getInstance(this);
 		mGaTracker = mGaInstance.getTracker("UA-40344870-1");*/
@@ -483,7 +484,14 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
 				break;
 			case R.id.btnIzreke:
 				i = new Intent(DashboardActivity.this,IzrekeActivity.class);
-				mGaTracker.sendEvent("Kategorije", "OtvorenaKategorija", Constants.CAT_IZREKE + "", null);
+                mGaTracker.send(
+                        new HitBuilders.EventBuilder()
+                                .setCategory("Kategorije")
+                                .setAction("OtvorenaKategorija")
+                                .setLabel(Constants.CAT_IZREKE + "")
+                                .build()
+                );
+				//mGaTracker.sendEvent("Kategorije", "OtvorenaKategorija", Constants.CAT_IZREKE + "", null);
 				startActivity(i);
 				break;
 			case R.id.btnMultimedia:

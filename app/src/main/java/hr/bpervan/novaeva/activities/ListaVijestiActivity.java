@@ -1,5 +1,6 @@
 package hr.bpervan.novaeva.activities;
 
+import hr.bpervan.novaeva.NovaEvaApp;
 import hr.bpervan.novaeva.main.R;
 import hr.bpervan.novaeva.utilities.ConnectionChecker;
 import hr.bpervan.novaeva.utilities.Constants;
@@ -57,6 +58,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 public class ListaVijestiActivity extends ListActivity implements OnClickListener{
 	
@@ -72,8 +75,7 @@ public class ListaVijestiActivity extends ListActivity implements OnClickListene
 	private LinearLayout fakeActionBarListaVijesti;
 	
 	private Tracker mGaTracker;
-	private GoogleAnalytics mGaInstance;
-	
+
 	private SharedPreferences prefs;
 	
 	private ImageView btnHome, btnSearch, btnBack;
@@ -99,9 +101,16 @@ public class ListaVijestiActivity extends ListActivity implements OnClickListene
 		openSansLight = Typeface.createFromAsset(getAssets(), "opensans-light.ttf");
 		openSansRegular = Typeface.createFromAsset(getAssets(), "opensans-regular.ttf");
 		
-		mGaInstance = GoogleAnalytics.getInstance(this);
-		mGaTracker = mGaInstance.getTracker("UA-40344870-1");
-		
+		//mGaTracker = mGaInstance.getTracker("UA-40344870-1");
+        mGaTracker = ((NovaEvaApp) getApplication()).getTracker(NovaEvaApp.TrackerName.APP_TRACKER);
+        mGaTracker.send(
+                new HitBuilders.EventBuilder()
+                        .setCategory("Kategorije")
+                        .setAction("OtvorenaKategorija")
+                        .setLabel(Constants.getCatNameById(kategorija))
+                        .build()
+        );
+
 		btnLoadMore = new Button(this);
 		btnLoadMore.setText("Učitaj još");
 		listaVijesti = new ArrayList<ListElement>();
@@ -112,7 +121,7 @@ public class ListaVijestiActivity extends ListActivity implements OnClickListene
 			colourset = kategorija;
 		}
 		
-		mGaTracker.sendEvent("Kategorije", "OtvorenaKategorija", Constants.getCatNameById(kategorija), null);
+		//mGaTracker.sendEvent("Kategorije", "OtvorenaKategorija", Constants.getCatNameById(kategorija), null);
 		killRedDot(kategorija);
 		resourceHandler = new ResourceHandler(colourset);
 		

@@ -1,6 +1,6 @@
 package hr.bpervan.novaeva.activities;
 
-import hr.bpervan.novaeva.DashboardActivity;
+import hr.bpervan.novaeva.NovaEvaApp;
 import hr.bpervan.novaeva.main.R;
 import hr.bpervan.novaeva.utilities.ConnectionChecker;
 
@@ -22,10 +22,9 @@ import org.apache.http.params.HttpParams;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.google.analytics.tracking.android.EasyTracker;
-import com.google.analytics.tracking.android.GoogleAnalytics;
-import com.google.analytics.tracking.android.Tracker;
 import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -50,7 +49,6 @@ public class BrevijarDetaljiActivity extends Activity {
 	private String tempHTML;
 	
 	private Tracker mGaTracker;
-	private GoogleAnalytics mGaInstance;
 
 	
 	@Override
@@ -59,11 +57,17 @@ public class BrevijarDetaljiActivity extends Activity {
 		setContentView(R.layout.activity_brevijar_detalji);
 		
 		BREV_CAT = String.valueOf(getIntent().getIntExtra("BREV_CAT", 4));
-		
-		mGaInstance = GoogleAnalytics.getInstance(this);
-		mGaTracker = mGaInstance.getTracker("UA-40344870-1");
-		
-		mGaTracker.sendEvent("Brevijar", "OtvorenaMolitva", BREV_CAT, null);
+
+        mGaTracker = ((NovaEvaApp) getApplication()).getTracker(NovaEvaApp.TrackerName.APP_TRACKER);
+        mGaTracker.send(
+                new HitBuilders.EventBuilder()
+                        .setCategory("Brevijar")
+                        .setAction("OtvorenaMolitva")
+                        .setLabel(BREV_CAT)
+                        .build()
+        );
+
+		//mGaTracker.sendEvent("Brevijar", "OtvorenaMolitva", BREV_CAT, null);
 		
 		initUI();
 

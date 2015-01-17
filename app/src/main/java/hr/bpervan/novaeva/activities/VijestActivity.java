@@ -30,6 +30,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import org.apache.http.HttpEntity;
@@ -49,6 +51,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import hr.bpervan.novaeva.NovaEvaApp;
 import hr.bpervan.novaeva.main.R;
 import hr.bpervan.novaeva.utilities.Attachment;
 import hr.bpervan.novaeva.utilities.BookmarkTypes;
@@ -103,8 +106,7 @@ public class VijestActivity extends Activity implements
 	
 	/** Google analytics API*/
 	private Tracker mGaTracker;
-	private GoogleAnalytics mGaInstance;
-	
+
 	/** Database handler for bookmarks, resource handler for category colours*/
 	private BookmarksDBHandlerV2 dbHandler;
 	private ResourceHandler resourceHandler;
@@ -127,9 +129,17 @@ public class VijestActivity extends Activity implements
 		openSansLight = Typeface.createFromAsset(getAssets(), "opensans-light.ttf");
 		openSansRegular = Typeface.createFromAsset(getAssets(), "opensans-regular.ttf");
 
-		mGaInstance = GoogleAnalytics.getInstance(this);
-		mGaTracker = mGaInstance.getTracker("UA-40344870-1");
-		mGaTracker.sendEvent("Vijesti", "OtvorenaVijest", nid + "", null);
+		/*mGaTracker = mGaInstance.getTracker("UA-40344870-1");
+		mGaTracker.sendEvent("Vijesti", "OtvorenaVijest", nid + "", null);*/
+
+        mGaTracker = ((NovaEvaApp) getApplication()).getTracker(NovaEvaApp.TrackerName.APP_TRACKER);
+        mGaTracker.send(
+                new HitBuilders.EventBuilder()
+                        .setCategory("Vijesti")
+                        .setAction("OtvorenaVijest")
+                        .setLabel(nid + "")
+                        .build()
+        );
 
 		resourceHandler = new ResourceHandler(this.getIntent().getIntExtra("kategorija", Constants.CAT_PROPOVJEDI));
         

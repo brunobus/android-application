@@ -1,5 +1,6 @@
 package hr.bpervan.novaeva.activities;
 
+import hr.bpervan.novaeva.NovaEvaApp;
 import hr.bpervan.novaeva.main.R;
 import hr.bpervan.novaeva.utilities.ConnectionChecker;
 import hr.bpervan.novaeva.utilities.Constants;
@@ -12,6 +13,8 @@ import java.util.Collections;
 import java.util.List;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
@@ -37,8 +40,6 @@ public class BookmarksActivity extends ListActivity implements View.OnClickListe
     private static Typeface openSansBold, openSansItalic, openSansLight, openSansRegular;
     
     private Tracker mGaTracker;
-	private GoogleAnalytics mGaInstance;
-
     
     private ImageView btnHome, btnSearch, btnBack;
 
@@ -52,10 +53,17 @@ public class BookmarksActivity extends ListActivity implements View.OnClickListe
 		openSansLight = Typeface.createFromAsset(getAssets(), "opensans-light.ttf");
 		openSansRegular = Typeface.createFromAsset(getAssets(), "opensans-regular.ttf");
 		listaBookmarksa = new ArrayList<ListElement>();
-		
-		mGaInstance = GoogleAnalytics.getInstance(this);
-		mGaTracker = mGaInstance.getTracker("UA-40344870-1");
-		mGaTracker.sendEvent("Zabiljeske", "OtvoreneZabiljeske", "", null);
+
+        mGaTracker = ((NovaEvaApp) getApplication()).getTracker(NovaEvaApp.TrackerName.APP_TRACKER);
+        mGaTracker.send(
+                new HitBuilders.EventBuilder()
+                        .setCategory("Zabiljeske")
+                        .setAction("OtvoreneZabiljeske")
+                        .setLabel("")
+                        .setValue(0L)
+                        .build()
+        );
+		//mGaTracker.sendEvent("Zabiljeske", "OtvoreneZabiljeske", "", null);
 		//initUI();
 		//pokupiVijestiIzBaze();
 	}

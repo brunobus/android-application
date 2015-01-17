@@ -1,6 +1,9 @@
 package hr.bpervan.novaeva.activities;
 import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
+import hr.bpervan.novaeva.NovaEvaApp;
 import hr.bpervan.novaeva.main.R;
 import android.R.color;
 import android.app.Activity;
@@ -15,17 +18,22 @@ public class MolitvenikDetaljiActivity extends Activity {
 	protected WebView webView;
 	
 	private Tracker mGaTracker;
-	private GoogleAnalytics mGaInstance;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_molitvenik_detalji);
-		
-		mGaInstance = GoogleAnalytics.getInstance(this);
-		mGaTracker = mGaInstance.getTracker("UA-40344870-1");
-		
-		mGaTracker.sendEvent("Molitvenik", "OtvorenaMolitva", getIntent().getStringExtra("id"), null);
+
+        mGaTracker = ((NovaEvaApp) getApplication()).getTracker(NovaEvaApp.TrackerName.APP_TRACKER);
+        mGaTracker.send(
+                new HitBuilders.EventBuilder()
+                        .setCategory("Molitvenik")
+                        .setAction("OtvorenaMolitva")
+                        .setLabel(getIntent().getStringExtra("id"))
+                        .build()
+        );
+
+		//mGaTracker.sendEvent("Molitvenik", "OtvorenaMolitva", getIntent().getStringExtra("id"), null);
 		
 		initUI();
 		
