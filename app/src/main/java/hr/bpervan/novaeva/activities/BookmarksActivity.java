@@ -1,12 +1,12 @@
-package hr.bpervan.novaeva;
+package hr.bpervan.novaeva.activities;
 
 import hr.bpervan.novaeva.main.R;
 import hr.bpervan.novaeva.utilities.ConnectionChecker;
 import hr.bpervan.novaeva.utilities.Constants;
 import hr.bpervan.novaeva.utilities.ListElement;
 import hr.bpervan.novaeva.utilities.VijestAdapter;
-import hr.bpervan.novaeva.v2.BookmarksDBHandlerV2;
-import hr.bpervan.novaeva.v2.VijestActivity;
+import hr.bpervan.novaeva.receivers.BookmarksDBHandlerV2;
+import hr.bpervan.novaeva.receivers.VijestActivity;
 
 import java.util.ArrayList;
 import java.util.Collections;

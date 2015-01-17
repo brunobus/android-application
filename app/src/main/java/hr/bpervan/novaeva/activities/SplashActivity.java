@@ -1,8 +1,8 @@
-package hr.bpervan.novaeva;
+package hr.bpervan.novaeva.activities;
 
 import hr.bpervan.novaeva.main.R;
 import hr.bpervan.novaeva.utilities.ImageLoaderConfigurator;
-import hr.bpervan.novaeva.v2.NewsPullReceiver;
+import hr.bpervan.novaeva.receivers.NewsPullReceiver;
 
 import java.io.File;
 

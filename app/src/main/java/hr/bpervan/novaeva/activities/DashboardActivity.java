@@ -1,17 +1,16 @@
-package hr.bpervan.novaeva;
+package hr.bpervan.novaeva.activities;
 
 import hr.bpervan.novaeva.main.R;
 import hr.bpervan.novaeva.utilities.ConnectionChecker;
 import hr.bpervan.novaeva.utilities.Constants;
 import hr.bpervan.novaeva.utilities.Image;
-import hr.bpervan.novaeva.v2.BrevijarActivity;
-import hr.bpervan.novaeva.v2.InfoActivity;
+import hr.bpervan.novaeva.receivers.BrevijarActivity;
+import hr.bpervan.novaeva.receivers.InfoActivity;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
@@ -38,7 +37,6 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;

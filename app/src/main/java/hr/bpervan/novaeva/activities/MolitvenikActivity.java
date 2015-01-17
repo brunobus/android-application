@@ -1,4 +1,4 @@
-package hr.bpervan.novaeva;
+package hr.bpervan.novaeva.activities;
 
 import hr.bpervan.novaeva.main.R;
 import hr.bpervan.novaeva.utilities.MolitvenikAdapter;

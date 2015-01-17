@@ -1,5 +1,6 @@
-package hr.bpervan.novaeva.v2;
+package hr.bpervan.novaeva.receivers;
 
+import hr.bpervan.novaeva.activities.VijestActivity;
 import hr.bpervan.novaeva.main.R;
 import hr.bpervan.novaeva.utilities.ConnectionChecker;
 import hr.bpervan.novaeva.utilities.Constants;

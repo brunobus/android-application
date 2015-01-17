@@ -1,4 +1,4 @@
-package hr.bpervan.novaeva;
+package hr.bpervan.novaeva.activities;
 
 import hr.bpervan.novaeva.main.R;
 import hr.bpervan.novaeva.utilities.ConnectionChecker;
@@ -6,7 +6,7 @@ import hr.bpervan.novaeva.utilities.Constants;
 import hr.bpervan.novaeva.utilities.ListElement;
 import hr.bpervan.novaeva.utilities.ListTypes;
 import hr.bpervan.novaeva.utilities.VijestAdapter;
-import hr.bpervan.novaeva.v2.VijestActivity;
+import hr.bpervan.novaeva.receivers.VijestActivity;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -19,7 +19,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.CoreProtocolPNames;

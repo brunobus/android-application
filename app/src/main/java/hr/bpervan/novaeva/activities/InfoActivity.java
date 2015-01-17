@@ -1,4 +1,4 @@
-package hr.bpervan.novaeva.v2;
+package hr.bpervan.novaeva.activities;
 
 import hr.bpervan.novaeva.DashboardActivity;
 import hr.bpervan.novaeva.SearchActivity;

@@ -1,4 +1,4 @@
-package hr.bpervan.novaeva.v2;
+package hr.bpervan.novaeva.receivers;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

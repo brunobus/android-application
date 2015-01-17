@@ -1,4 +1,4 @@
-package hr.bpervan.novaeva.v2;
+package hr.bpervan.novaeva.utilities;
 
 import hr.bpervan.novaeva.utilities.BookmarkTypes;
 import hr.bpervan.novaeva.utilities.ListElement;

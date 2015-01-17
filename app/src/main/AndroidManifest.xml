@@ -22,24 +22,24 @@
             android:value="@integer/google_play_services_version"
             />
         <activity
-            android:name="hr.bpervan.novaeva.DashboardActivity"
+            android:name="hr.bpervan.novaeva.activities.DashboardActivity"
             android:label="@string/app_name" />
         <activity
-            android:name="hr.bpervan.novaeva.MolitvenikActivity"
+            android:name="hr.bpervan.novaeva.activities.MolitvenikActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_molitvenik"
             android:theme="@style/ListaVijesti" />
         <activity
-            android:name="hr.bpervan.novaeva.IzrekeActivity"
+            android:name="hr.bpervan.novaeva.activities.IzrekeActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_izreke"
             android:theme="@style/Vijest" />
         <activity
-            android:name="hr.bpervan.novaeva.MolitvenikDetaljiActivity"
+            android:name="hr.bpervan.novaeva.activities.MolitvenikDetaljiActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_molitvenik_detalji" />
         <activity
-            android:name="hr.bpervan.novaeva.SplashActivity"
+            android:name="hr.bpervan.novaeva.activities.SplashActivity"
             android:label="@string/app_name"
             android:noHistory="true"
             android:screenOrientation="portrait"
@@ -51,41 +51,41 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="hr.bpervan.novaeva.SearchActivity"
+            android:name="hr.bpervan.novaeva.activities.SearchActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_search"
             android:noHistory="true"
             android:theme="@style/ListaVijesti" />
         <activity
-            android:name="hr.bpervan.novaeva.ListaVijestiActivity"
+            android:name="hr.bpervan.novaeva.activities.ListaVijestiActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_lista_vijesti"
             android:theme="@style/ListaVijesti" />
         <activity
-            android:name="hr.bpervan.novaeva.BookmarksActivity"
+            android:name="hr.bpervan.novaeva.activities.BookmarksActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_bookmarks"
             android:noHistory="true"
             android:theme="@style/ListaVijesti" />
         <activity
-            android:name="hr.bpervan.novaeva.v2.BrevijarActivity"
+            android:name="hr.bpervan.novaeva.activities.BrevijarActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_brevijar_predizbor"
             android:theme="@style/BrevijarMenu" />
         <activity
-            android:name="hr.bpervan.novaeva.v2.BrevijarDetaljiActivity"
+            android:name="hr.bpervan.novaeva.activities.BrevijarDetaljiActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_brevijar_detalji"
             android:theme="@style/Brevijar" />
         <activity
-            android:name="hr.bpervan.novaeva.v2.VijestActivity"
+            android:name="hr.bpervan.novaeva.activities.VijestActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_vijest"
             android:theme="@style/Vijest"
             android:hardwareAccelerated="true"/>
         <!-- keyboardHidden -->
         <activity
-            android:name="hr.bpervan.novaeva.v2.InfoActivity"
+            android:name="hr.bpervan.novaeva.activities.InfoActivity"
             android:label="@string/title_activity_info" />
 
     </application>

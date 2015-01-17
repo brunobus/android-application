@@ -1,4 +1,4 @@
-package hr.bpervan.novaeva;
+package hr.bpervan.novaeva.activities;
 
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.GoogleAnalytics;

@@ -1,4 +1,4 @@
-package hr.bpervan.novaeva.v2;
+package hr.bpervan.novaeva.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
