@@ -397,6 +397,7 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
 			}
 			
 			try{
+
 				BufferedReader reader=new BufferedReader(new InputStreamReader(is,"utf-8"),8);
 				StringBuilder sb=new StringBuilder();
 				String line=null;

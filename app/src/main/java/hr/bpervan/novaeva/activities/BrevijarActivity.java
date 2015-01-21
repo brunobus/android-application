@@ -87,7 +87,7 @@ public class BrevijarActivity extends Activity implements OnClickListener{
 			imageLoaderConfigurator.doInit();
 		}
 		String headerUrl = prefs.getString("hr.bpervan.novaeva.brevijarheaderimage", null);
-		if((headerUrl != null) && (this.getResources().getConfiguration().orientation) == Configuration.ORIENTATION_PORTRAIT){
+		if((headerUrl != null) && (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)){
 			if(imageLoader.isInited()){
 				imageLoader.displayImage(headerUrl, headerImageBrevijar, imageLoaderConfigurator.doConfig(true));
 			}
