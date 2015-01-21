@@ -43,56 +43,73 @@ public class BrevijarActivity extends Activity implements OnClickListener{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_brevijar);
-		
-		prefs = getSharedPreferences("hr.bpervan.novaeva", MODE_PRIVATE);
-		if(this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
-			headerImageBrevijar = (ImageView) findViewById(R.id.headerImageBrevijar);
-		}
-			
-		txtKs = (TextView) findViewById(R.id.txtKs);
-		txtLaudato = (TextView) findViewById(R.id.txtLaudato);
-		
-		openSansRegular = Typeface.createFromAsset(getAssets(), "opensans-regular.ttf");
-		txtKs.setTypeface(openSansRegular);
-		txtLaudato.setTypeface(openSansRegular);
-		
-		imgDanas = (TextView) findViewById(R.id.imgDanas);
-		SimpleDateFormat datum = new SimpleDateFormat("dd.MM.yyyy");
-		imgDanas.setText(datum.format(new Date()));
-		
-		btnJucerJutarnja = (Button) findViewById(R.id.btnJucerJutarnja);
-		btnJucerVecernja = (Button) findViewById(R.id.btnJucerVecernja);
-		btnJucerPovecerje = (Button) findViewById(R.id.btnJucerPovecerje);
-		btnDanasJutarnja = (Button) findViewById(R.id.btnDanasJutarnja);
-		btnDanasVecernja = (Button) findViewById(R.id.btnDanasVecernja);
-		btnDanasPovecerje = (Button) findViewById(R.id.btnDanasPovecerje);
-		btnSutraJutarnja = (Button) findViewById(R.id.btnSutraJutarnja);
-		btnSutraVecernja = (Button) findViewById(R.id.btnSutraVecernja);
-		btnSutraPovecerje = (Button) findViewById(R.id.btnSutraPovecerje);
-		
-		btnJucerJutarnja.setOnClickListener(this);
-		btnJucerVecernja.setOnClickListener(this);
-		btnJucerPovecerje.setOnClickListener(this);
-		btnDanasJutarnja.setOnClickListener(this);
-		btnDanasVecernja.setOnClickListener(this);
-		btnDanasPovecerje.setOnClickListener(this);
-		btnSutraJutarnja.setOnClickListener(this);
-		btnSutraVecernja.setOnClickListener(this);
-		btnSutraPovecerje.setOnClickListener(this);
-		
-		imageLoaderConfigurator = new ImageLoaderConfigurator(this);
-		imageLoader = ImageLoader.getInstance();
-		if(!imageLoader.isInited()){
-			imageLoaderConfigurator.doInit();
-		}
-		String headerUrl = prefs.getString("hr.bpervan.novaeva.brevijarheaderimage", null);
-		if((headerUrl != null) && (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)){
-			if(imageLoader.isInited()){
-				imageLoader.displayImage(headerUrl, headerImageBrevijar, imageLoaderConfigurator.doConfig(true));
-			}
-		}
+
+        openSansRegular = Typeface.createFromAsset(getAssets(), "opensans-regular.ttf");
+
+        prefs = getSharedPreferences("hr.bpervan.novaeva", MODE_PRIVATE);
+
+        imageLoaderConfigurator = new ImageLoaderConfigurator(this);
+        imageLoader = ImageLoader.getInstance();
+        if(!imageLoader.isInited()){
+            imageLoaderConfigurator.doInit();
+        }
+
+        initUI();
 	}
+
+    private void initUI(){
+        setContentView(R.layout.activity_brevijar);
+
+        txtKs = (TextView) findViewById(R.id.txtKs);
+        txtLaudato = (TextView) findViewById(R.id.txtLaudato);
+
+        txtKs.setTypeface(openSansRegular);
+        txtLaudato.setTypeface(openSansRegular);
+
+        imgDanas = (TextView) findViewById(R.id.imgDanas);
+        SimpleDateFormat datum = new SimpleDateFormat("dd.MM.yyyy");
+        imgDanas.setText(datum.format(new Date()));
+
+        if(this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
+            headerImageBrevijar = (ImageView) findViewById(R.id.headerImageBrevijar);
+        }
+
+        String headerUrl = prefs.getString("hr.bpervan.novaeva.brevijarheaderimage", null);
+        if(this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
+            if(headerUrl != null){
+                if(imageLoader.isInited()){
+                    imageLoader.displayImage(headerUrl, headerImageBrevijar, imageLoaderConfigurator.doConfig(true));
+                }
+            }
+        }
+
+        btnJucerJutarnja = (Button) findViewById(R.id.btnJucerJutarnja);
+        btnJucerVecernja = (Button) findViewById(R.id.btnJucerVecernja);
+        btnJucerPovecerje = (Button) findViewById(R.id.btnJucerPovecerje);
+        btnDanasJutarnja = (Button) findViewById(R.id.btnDanasJutarnja);
+        btnDanasVecernja = (Button) findViewById(R.id.btnDanasVecernja);
+        btnDanasPovecerje = (Button) findViewById(R.id.btnDanasPovecerje);
+        btnSutraJutarnja = (Button) findViewById(R.id.btnSutraJutarnja);
+        btnSutraVecernja = (Button) findViewById(R.id.btnSutraVecernja);
+        btnSutraPovecerje = (Button) findViewById(R.id.btnSutraPovecerje);
+
+        btnJucerJutarnja.setOnClickListener(this);
+        btnJucerVecernja.setOnClickListener(this);
+        btnJucerPovecerje.setOnClickListener(this);
+        btnDanasJutarnja.setOnClickListener(this);
+        btnDanasVecernja.setOnClickListener(this);
+        btnDanasPovecerje.setOnClickListener(this);
+        btnSutraJutarnja.setOnClickListener(this);
+        btnSutraVecernja.setOnClickListener(this);
+        btnSutraPovecerje.setOnClickListener(this);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig){
+        super.onConfigurationChanged(newConfig);
+
+        initUI();
+    }
 
 	@Override
 	public void onClick(View arg0) {
