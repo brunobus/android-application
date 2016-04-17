@@ -75,7 +75,7 @@ public class VijestActivity extends Activity implements
 	private WebView vijestWebView;
 	
 	/** Used for displaying Title and category name */
-	private TextView tvNaslov, tvKategorija;
+	private TextView tvNaslov;
 	
 	private ImageView btnHome, btnFace, btnMail, btnBookmark, btnSearch, btnTextPlus, btnBack;
 		
@@ -126,7 +126,7 @@ public class VijestActivity extends Activity implements
 		
 		prefs = getSharedPreferences("hr.bpervan.novaeva", MODE_PRIVATE);
 		openSansBold = Typeface.createFromAsset(getAssets(), "opensans-bold.ttf");
-		openSansLight = Typeface.createFromAsset(getAssets(), "opensans-light.ttf");
+		//openSansLight = Typeface.createFromAsset(getAssets(), "opensans-light.ttf");
 		openSansRegular = Typeface.createFromAsset(getAssets(), "opensans-regular.ttf");
 
 		/*mGaTracker = mGaInstance.getTracker("UA-40344870-1");
@@ -195,11 +195,8 @@ public class VijestActivity extends Activity implements
 
         /** Basic data */
 		tvNaslov = (TextView) findViewById(R.id.tvNaslov);
-		tvKategorija = (TextView) findViewById(R.id.tvKategorija);
 		if(openSansBold != null)
 			tvNaslov.setTypeface(openSansBold);
-		if(openSansLight != null)
-			tvKategorija.setTypeface(openSansLight);
 
 		/** Lets try displaying news using WebView */
 		vijestWebView = (WebView) findViewById(R.id.vijestWebView);
@@ -287,7 +284,6 @@ public class VijestActivity extends Activity implements
 		imgNaslovnaTraka = (ImageView) findViewById(R.id.imgNaslovnaTraka);
 		
 		/** Set category name and set text size*/
-		tvKategorija.setText("Privitci: ");
 		vijestWebView.getSettings().setDefaultFontSize(prefs.getInt("hr.bpervan.novaeva.velicinateksta", 14));
 
 		this.setCategoryTypeColour();
@@ -496,14 +492,17 @@ public class VijestActivity extends Activity implements
 	private void setAttachments(){
         if(ovaVijest != null){
             if(ovaVijest.hasAudio()){
-                imgMp3.setVisibility(View.VISIBLE);
+                //imgMp3.setVisibility(View.VISIBLE);
+				imgMp3.setImageResource(R.drawable.vijest_ind_mp3_active);
             }
             if(ovaVijest.hasLink()){
-                imgLink.setVisibility(View.VISIBLE);
+                //imgLink.setVisibility(View.VISIBLE);
+				imgLink.setImageResource(R.drawable.vijest_ind_www_active);
                 imgLink.setOnClickListener(this);
             }
             if(ovaVijest.hasAttach()){
-                imgText.setVisibility(View.VISIBLE);
+                //imgText.setVisibility(View.VISIBLE);
+				imgText.setImageResource(R.drawable.vijest_ind_txt_active);
                 imgText.setOnClickListener(this);
             }
         }
@@ -723,7 +722,8 @@ public class VijestActivity extends Activity implements
 		protected void onPostExecute(Void param){
             super.onPostExecute(param);
 			if(ovaVijest.hasAudio()){
-				imgMp3.setVisibility(View.VISIBLE);
+				//imgMp3.setVisibility(View.VISIBLE);
+				imgMp3.setImageResource(R.drawable.vijest_ind_mp3_active);
                 //TODO: TEST integrity 15.12.2014
                 Log.d(TAG, "onPrepared()");
                 mp3Player.setVisibility(View.VISIBLE);
@@ -740,11 +740,13 @@ public class VijestActivity extends Activity implements
                 VijestActivity.this.isMediaPlayerLoading = false;
 			}
 			if(ovaVijest.hasAttach()){
-				imgText.setVisibility(View.VISIBLE);
+				//imgText.setVisibility(View.VISIBLE);
+				imgText.setImageResource(R.drawable.vijest_ind_txt_active);
 				imgText.setOnClickListener(VijestActivity.this);
 			}
 			if(ovaVijest.hasLink()){
-				imgLink.setVisibility(View.VISIBLE);
+				//imgLink.setVisibility(View.VISIBLE);
+				imgLink.setImageResource(R.drawable.vijest_ind_www_active);
 				imgLink.setOnClickListener(VijestActivity.this);
 			}
 
