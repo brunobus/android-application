@@ -3,9 +3,11 @@ package hr.bpervan.novaeva.activities;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
@@ -14,6 +16,11 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
@@ -53,6 +60,7 @@ import java.io.InputStreamReader;
 
 import hr.bpervan.novaeva.NovaEvaApp;
 import hr.bpervan.novaeva.main.R;
+import hr.bpervan.novaeva.services.BackgroundPlayerService;
 import hr.bpervan.novaeva.utilities.Attachment;
 import hr.bpervan.novaeva.utilities.BookmarkTypes;
 import hr.bpervan.novaeva.utilities.BookmarksDBHandlerV2;
@@ -118,12 +126,28 @@ public class VijestActivity extends Activity implements
 	private ImageLoader imageLoader;
 	private ImageLoaderConfigurator imageLoaderConfigurator;
 
+	private Messenger mService = null;
+	private ServiceConnection serviceConnection = new ServiceConnection() {
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			mService = new Messenger(service);
+			Log.d("VijestActivity", "Service connected");
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+			Log.d("VijestActivity", "Service disconnected");
+		}
+	};
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		dbHandler = new BookmarksDBHandlerV2(this);
 		nid = getIntent().getIntExtra("nid",0);
-		
+
+		bindService(new Intent(this, BackgroundPlayerService.class), serviceConnection, Context.BIND_AUTO_CREATE);
+
 		prefs = getSharedPreferences("hr.bpervan.novaeva", MODE_PRIVATE);
 		openSansBold = Typeface.createFromAsset(getAssets(), "opensans-bold.ttf");
 		//openSansLight = Typeface.createFromAsset(getAssets(), "opensans-light.ttf");
@@ -451,8 +475,14 @@ public class VijestActivity extends Activity implements
 			VijestActivity.this.onBackPressed();
 			break;
 		case R.id.imgLink:
-			if(ovaVijest.hasLink()){
+			/*if(ovaVijest.hasLink()){
 				startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse(ovaVijest.getLink())));
+			}*/
+			try {
+				this.mService.send(Message.obtain(null, BackgroundPlayerService.MSG_PLAY));
+				this.mService.send(Message.obtain(null, BackgroundPlayerService.MSG_SET_SOURCE, "String koji saljem"));
+			} catch (RemoteException e) {
+				e.printStackTrace();
 			}
 			break;
 		case R.id.imgText:
@@ -572,7 +602,11 @@ public class VijestActivity extends Activity implements
 			}
 		});
 		error.show();
-	}	
+	}
+
+	private class MessageHandler extends Handler {
+
+	}
 	
 	private class AsyncHttpPostTask extends AsyncTask<String, Void, Void>{
 		private String URL = null;

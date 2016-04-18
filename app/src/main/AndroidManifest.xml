@@ -87,6 +87,6 @@
             android:name="hr.bpervan.novaeva.activities.InfoActivity"
             android:label="@string/title_activity_info" />
 
+        <service android:name="hr.bpervan.novaeva.services.BackgroundPlayerService"></service>
     </application>
-
 </manifest>
