@@ -38,6 +38,7 @@
     
     <style name="Vijest" parent="AppBaseTheme">
     	<item name="android:windowNoTitle">true</item>
+        <item name="android:colorBackground">#ffffff</item>
     </style>
     
     <style name="Brevijar" parent="AppBaseTheme">

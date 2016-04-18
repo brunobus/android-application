@@ -46,16 +46,16 @@ public class BackgroundPlayerService extends Service {
             } catch (IOException e){
                 //banana
             }
-
-            mediaPlayer.prepareAsync();
             mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mp) {
                     mp.start();
                 }
             });
+            mediaPlayer.prepareAsync();
+
         }
-        return START_STICKY;
+        return START_NOT_STICKY;
     }
 
     @Nullable
