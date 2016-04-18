@@ -91,7 +91,6 @@ public class VijestActivity extends Activity implements
 	private ImageView headerImage;
 	private ImageView imgNaslovnaTraka;
 	private RelativeLayout fakeActionBar;
-	//private LockableScrollView scrollView1;
     private ScrollView scrollView1;
 
 	/** Used if category == 8, displays 'Poziv' button */
@@ -120,7 +119,7 @@ public class VijestActivity extends Activity implements
 	private ResourceHandler resourceHandler;
 	
 	/** Custom font resources*/
-	private static Typeface openSansBold, openSansLight, openSansRegular;
+	private static Typeface openSansBold, openSansRegular;
 	
 	/** Image loader*/
 	private ImageLoader imageLoader;
@@ -150,11 +149,7 @@ public class VijestActivity extends Activity implements
 
 		prefs = getSharedPreferences("hr.bpervan.novaeva", MODE_PRIVATE);
 		openSansBold = Typeface.createFromAsset(getAssets(), "opensans-bold.ttf");
-		//openSansLight = Typeface.createFromAsset(getAssets(), "opensans-light.ttf");
 		openSansRegular = Typeface.createFromAsset(getAssets(), "opensans-regular.ttf");
-
-		/*mGaTracker = mGaInstance.getTracker("UA-40344870-1");
-		mGaTracker.sendEvent("Vijesti", "OtvorenaVijest", nid + "", null);*/
 
         mGaTracker = ((NovaEvaApp) getApplication()).getTracker(NovaEvaApp.TrackerName.APP_TRACKER);
         mGaTracker.send(
@@ -239,17 +234,7 @@ public class VijestActivity extends Activity implements
             }
         });
 
-		/** LayoutAlgorithm.SingleNešto is Deprecated */
-        //vijestWebView.getSettings().setRenderPriority(WebSettings.RenderPriority.HIGH);
 		vijestWebView.getSettings().setLayoutAlgorithm(LayoutAlgorithm.SINGLE_COLUMN);
-
-        /* Prevent horizontal and vertical scrolling in webview */
-        /*vijestWebView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return (event.getAction() == MotionEvent.ACTION_MOVE);
-            }
-        });*/
 
         /* Prevent C/P */
         vijestWebView.setOnLongClickListener(new View.OnLongClickListener() {
@@ -475,14 +460,8 @@ public class VijestActivity extends Activity implements
 			VijestActivity.this.onBackPressed();
 			break;
 		case R.id.imgLink:
-			/*if(ovaVijest.hasLink()){
+			if(ovaVijest.hasLink()){
 				startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse(ovaVijest.getLink())));
-			}*/
-			try {
-				this.mService.send(Message.obtain(null, BackgroundPlayerService.MSG_PLAY));
-				this.mService.send(Message.obtain(null, BackgroundPlayerService.MSG_SET_SOURCE, "String koji saljem"));
-			} catch (RemoteException e) {
-				e.printStackTrace();
 			}
 			break;
 		case R.id.imgText:
@@ -522,16 +501,13 @@ public class VijestActivity extends Activity implements
 	private void setAttachments(){
         if(ovaVijest != null){
             if(ovaVijest.hasAudio()){
-                //imgMp3.setVisibility(View.VISIBLE);
 				imgMp3.setImageResource(R.drawable.vijest_ind_mp3_active);
             }
             if(ovaVijest.hasLink()){
-                //imgLink.setVisibility(View.VISIBLE);
 				imgLink.setImageResource(R.drawable.vijest_ind_www_active);
                 imgLink.setOnClickListener(this);
             }
             if(ovaVijest.hasAttach()){
-                //imgText.setVisibility(View.VISIBLE);
 				imgText.setImageResource(R.drawable.vijest_ind_txt_active);
                 imgText.setOnClickListener(this);
             }
@@ -602,10 +578,6 @@ public class VijestActivity extends Activity implements
 			}
 		});
 		error.show();
-	}
-
-	private class MessageHandler extends Handler {
-
 	}
 	
 	private class AsyncHttpPostTask extends AsyncTask<String, Void, Void>{
@@ -700,14 +672,6 @@ public class VijestActivity extends Activity implements
 				this.cancel(true);
 			}
 			try{
-				/*tekst = "<!DOCTYPE html>";
-				tekst += "<head>";
-				tekst += "<style type=\"text/css\"> " + "@font-face {font-family: \"OpenSansRegular\"; src: url('opensans-regular.ttf');}" + 
-						"body {font-family: 'OpenSansRegular', Verdana, sans-serif;} " +
-						"</style>";
-				tekst += "</head>";
-				tekst += "<body>";*/
-				
 				jObj = new JSONObject(json);
 				if(!jObj.getString("prilozi").equals("null")){
 					attachArray = jObj.getJSONArray("prilozi");
@@ -737,7 +701,6 @@ public class VijestActivity extends Activity implements
 					image = new Image(imageField.getString("640"), imageField.getString("720"), imageField.getString("date"), imageField.getString("original"));
 					ovaVijest.setImage(image);
 				}
-				//tekst += "</body></html>";
 
                 if(ovaVijest.hasAudio()){
                     VijestActivity.this.isMediaPlayerLoading = true;
@@ -756,7 +719,6 @@ public class VijestActivity extends Activity implements
 		protected void onPostExecute(Void param){
             super.onPostExecute(param);
 			if(ovaVijest.hasAudio()){
-				//imgMp3.setVisibility(View.VISIBLE);
 				imgMp3.setImageResource(R.drawable.vijest_ind_mp3_active);
                 //TODO: TEST integrity 15.12.2014
                 Log.d(TAG, "onPrepared()");
@@ -774,12 +736,10 @@ public class VijestActivity extends Activity implements
                 VijestActivity.this.isMediaPlayerLoading = false;
 			}
 			if(ovaVijest.hasAttach()){
-				//imgText.setVisibility(View.VISIBLE);
 				imgText.setImageResource(R.drawable.vijest_ind_txt_active);
 				imgText.setOnClickListener(VijestActivity.this);
 			}
 			if(ovaVijest.hasLink()){
-				//imgLink.setVisibility(View.VISIBLE);
 				imgLink.setImageResource(R.drawable.vijest_ind_www_active);
 				imgLink.setOnClickListener(VijestActivity.this);
 			}
