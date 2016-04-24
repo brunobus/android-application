@@ -3,10 +3,12 @@ package hr.bpervan.novaeva.activities;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -21,6 +23,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
@@ -77,8 +80,8 @@ public class VijestActivity extends Activity implements
 		MediaPlayer.OnCompletionListener, 
 		SeekBar.OnSeekBarChangeListener {
 	
-	private static final String TAG = "MediaPlayerDebug";
-	
+	private static final String TAG = "VijestActivity";
+	/** ------------------------------------------FIELDS------------------------------------------*/
 	/** Main display engine */
 	private WebView vijestWebView;
 	
@@ -99,7 +102,7 @@ public class VijestActivity extends Activity implements
 	/** Simple integrated audio streaming player */
 	private RelativeLayout mp3Player;
 	private TextView tvElapsed, tvDuration;
-	private MediaPlayer mPlayer;
+	//private MediaPlayer mPlayer;
 	private SeekBar seekArc;
 	private ImageView btnPlay, btnPause;
     private volatile boolean isMediaPlayerLoading = false;
@@ -125,19 +128,30 @@ public class VijestActivity extends Activity implements
 	private ImageLoader imageLoader;
 	private ImageLoaderConfigurator imageLoaderConfigurator;
 
-	private Messenger mService = null;
+	/** Komunikacija sa servisom u kojemu se nalazi MediaPlayer. Komunikacija prema servisu*/
+	private Messenger outboundServiceMessenger = null;
 	private ServiceConnection serviceConnection = new ServiceConnection() {
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
-			mService = new Messenger(service);
+			outboundServiceMessenger = new Messenger(service);
 			Log.d("VijestActivity", "Service connected");
 		}
-
 		@Override
 		public void onServiceDisconnected(ComponentName name) {
 			Log.d("VijestActivity", "Service disconnected");
 		}
 	};
+
+	/** Komunikacija sa servisom u kojemu se nalazi MediaPlayer. Komunikacija prema activityju*/
+	private BroadcastReceiver serviceMessageReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			Log.d(TAG, "Received message");
+			Log.d(TAG, intent.getIntExtra(BackgroundPlayerService.ELAPSED_TIME_KEY, 1) + "");
+			String message = intent.getStringExtra("directive");
+		}
+	};
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -145,7 +159,7 @@ public class VijestActivity extends Activity implements
 		dbHandler = new BookmarksDBHandlerV2(this);
 		nid = getIntent().getIntExtra("nid",0);
 
-		bindService(new Intent(this, BackgroundPlayerService.class), serviceConnection, Context.BIND_AUTO_CREATE);
+		startService(new Intent(this, BackgroundPlayerService.class));
 
 		prefs = getSharedPreferences("hr.bpervan.novaeva", MODE_PRIVATE);
 		openSansBold = Typeface.createFromAsset(getAssets(), "opensans-bold.ttf");
@@ -296,7 +310,7 @@ public class VijestActivity extends Activity implements
 		vijestWebView.getSettings().setDefaultFontSize(prefs.getInt("hr.bpervan.novaeva.velicinateksta", 14));
 
 		this.setCategoryTypeColour();
-		if(mPlayer != null){
+		/*if(mPlayer != null){
 			mp3Player.setVisibility(View.VISIBLE);
 			btnPlay.setOnClickListener(VijestActivity.this);
 			btnPause.setOnClickListener(VijestActivity.this);
@@ -317,7 +331,7 @@ public class VijestActivity extends Activity implements
             tvElapsed.setText(String.format("%02d:%02d", 
             		(int) (mPlayer.getCurrentPosition() / 1000) % 60, 
             		(int) ((mPlayer.getCurrentPosition() / (1000 * 60)) % 60)));
-		}
+		}*/
 		
 		if(dbHandler.nidExists(nid))
 			btnBookmark.setImageResource(R.drawable.vijest_button_bookmarked);
@@ -326,36 +340,41 @@ public class VijestActivity extends Activity implements
 		}
 		getWindow().getDecorView().setBackgroundColor(this.getResources().getColor(android.R.color.background_light));
     }
+
+	@Override
+	protected void onResume(){
+		LocalBroadcastManager.getInstance(this).registerReceiver(serviceMessageReceiver, new IntentFilter(BackgroundPlayerService.INTENT_CLASS));
+		super.onResume();
+	}
 	
 	@Override
 	protected void onPause(){
+		LocalBroadcastManager.getInstance(this).unregisterReceiver(serviceMessageReceiver);
 		super.onPause();
-		if(mPlayer != null){
+
+		/*if(mPlayer != null){
 			if(mPlayer.isPlaying()){
 				mPlayer.stop();
 			}
 			mPlayer.release();
 			seekArc.removeCallbacks(onEverySecond);
 		}
-		mPlayer = null;
+		mPlayer = null;*/
 	}
 
-
+	@Override
     public void onStart(){
         super.onStart();
         GoogleAnalytics.getInstance(this).reportActivityStart(this);
     }
 
+	@Override
     public void onStop(){
         super.onStop();
         GoogleAnalytics.getInstance(this).reportActivityStop(this);
     }
 	
-	@Override
-	protected void onResume(){
-		super.onResume();
-        Log.d(TAG, "On resume, mplayer je " + ((mPlayer == null) ? "null" : "nijeNULL"));
-	}
+
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -397,23 +416,30 @@ public class VijestActivity extends Activity implements
 			}
 			break;
 		case R.id.btnPlay:
-			if(!mPlayer.isPlaying()){	
+			Log.d(TAG, "btnPlay");
+			Intent startIntent = new Intent(VijestActivity.this, BackgroundPlayerService.class);
+			startIntent.putExtra(BackgroundPlayerService.DIRECTIVE_KEY, BackgroundPlayerService.DIRECTIVE_PLAY);
+			startService(startIntent);
+			/*if(!mPlayer.isPlaying()){
 				Log.d(TAG, "btnPlay");
 				mPlayer.start();
 				seekArc.postDelayed(onEverySecond, 1000);
 				btnPlay.setVisibility(View.INVISIBLE);
 				btnPause.setVisibility(View.VISIBLE);
-			}
+			}*/
 			break;
 		case R.id.btnPause:
-            //TODO: mPlayer == Null pointer?
-			if(mPlayer.isPlaying()){
+			Log.d(TAG, "btnPlay");
+			Intent pauseIntent = new Intent(VijestActivity.this, BackgroundPlayerService.class);
+			pauseIntent.putExtra(BackgroundPlayerService.DIRECTIVE_KEY, BackgroundPlayerService.DIRECTIVE_PAUSE);
+			startService(pauseIntent);
+			/*if(mPlayer.isPlaying()){
 				Log.d(TAG, "btnPlay");
 				mPlayer.pause();
 				seekArc.removeCallbacks(onEverySecond);
 				btnPause.setVisibility(View.INVISIBLE);
 				btnPlay.setVisibility(View.VISIBLE);
-			}
+			}*/
 			break;
 		case R.id.btnHome:
 			startActivity(new Intent(this, DashboardActivity.class));
@@ -517,9 +543,9 @@ public class VijestActivity extends Activity implements
 	@Override
 	public void onProgressChanged(SeekBar seekArc, int progress,
 			boolean fromUser) {
-		if(mPlayer != null && fromUser){
+		/*if(mPlayer != null && fromUser){
 			mPlayer.seekTo(progress);
-		}
+		}*/
 	}
 
 	@Override
@@ -537,22 +563,22 @@ public class VijestActivity extends Activity implements
 		
 		seekArc.setProgress(0);
 		tvElapsed.setText("00:00");
-		mPlayer.seekTo(0);
+		//mPlayer.seekTo(0);
 	}
 
-	private Runnable onEverySecond = new Runnable(){
+	/*private Runnable onEverySecond = new Runnable(){
 		@Override
 		public void run() {
 			if(mPlayer != null){
 	            int seconds = (int) (mPlayer.getCurrentPosition() / 1000) % 60 ;
 	            int minutes = (int) ((mPlayer.getCurrentPosition() / (1000*60)) % 60);
-	            
-	            tvElapsed.setText(String.format("%02d:%02d", minutes, seconds));				
+
+	            tvElapsed.setText(String.format("%02d:%02d", minutes, seconds));
 				seekArc.setProgress(mPlayer.getCurrentPosition());
 	        }
 	        seekArc.postDelayed(this, 1000);
 		}
-	};
+	};*/
 
 	private void showErrorPopup(){
 		AlertDialog.Builder error = new AlertDialog.Builder(this);
@@ -579,7 +605,10 @@ public class VijestActivity extends Activity implements
 		});
 		error.show();
 	}
-	
+
+
+
+	/** Komunikacija s APIjem */
 	private class AsyncHttpPostTask extends AsyncTask<String, Void, Void>{
 		private String URL = null;
 		private ProgressDialog pDialog;
@@ -703,14 +732,22 @@ public class VijestActivity extends Activity implements
 				}
 
                 if(ovaVijest.hasAudio()){
-                    VijestActivity.this.isMediaPlayerLoading = true;
-                    mPlayer = new MediaPlayer();
+                    //VijestActivity.this.isMediaPlayerLoading = true;
+                    /*mPlayer = new MediaPlayer();
                     mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                     mPlayer.setDataSource(ovaVijest.getAudio());
                     mPlayer.prepare();
 
-                    mPlayer.setOnCompletionListener(VijestActivity.this);
-                }
+                    mPlayer.setOnCompletionListener(VijestActivity.this);*/
+                	if(BackgroundPlayerService.isRunning){
+						//outboundServiceMessenger.send(Message.obtain(null, BackgroundPlayerService.MSG_SET_SOURCE_AND_PLAY, ovaVijest.getAudio()));
+						Intent messageIntent = new Intent(VijestActivity.this, BackgroundPlayerService.class);
+						messageIntent.putExtra(BackgroundPlayerService.DIRECTIVE_KEY, BackgroundPlayerService.DIRECTIVE_SET_SOURCE_PLAY);
+						messageIntent.putExtra(BackgroundPlayerService.PATH_KEY, ovaVijest.getAudio());
+						startService(messageIntent);
+						Log.d(TAG, "Sent MSG_SET_SOURCE_AND_PLAY");
+					}
+				}
 			}catch(Exception e){
 			}
 			return null;
@@ -726,13 +763,13 @@ public class VijestActivity extends Activity implements
                 btnPlay.setOnClickListener(VijestActivity.this);
                 btnPause.setOnClickListener(VijestActivity.this);
 
-                int seconds = (int) (mPlayer.getDuration() / 1000) % 60 ;
-                int minutes = (int) ((mPlayer.getDuration() / (1000*60)) % 60);
+                /*int seconds = (int) (mPlayer.getDuration() / 1000) % 60 ;
+                int minutes = (int) ((mPlayer.getDuration() / (1000*60)) % 60);*/
 
-                tvDuration.setText(String.format("%02d:%02d", minutes, seconds));
+                //tvDuration.setText(String.format("%02d:%02d", minutes, seconds));
                 tvElapsed.setText("00:00");
 
-                seekArc.setMax(mPlayer.getDuration());
+                //seekArc.setMax(mPlayer.getDuration());
                 VijestActivity.this.isMediaPlayerLoading = false;
 			}
 			if(ovaVijest.hasAttach()){
