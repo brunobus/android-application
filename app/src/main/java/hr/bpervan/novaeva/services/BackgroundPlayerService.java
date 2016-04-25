@@ -14,16 +14,36 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import hr.bpervan.novaeva.activities.VijestActivity;
 import hr.bpervan.novaeva.main.R;
 
 /**
- * Created by Branimir on 17.4.2016..
+ * Scenariji:
+ * 1. VijestActivity šalje DIRECTIVE_SET_SOURCE_PLAY i locka ekran ili gasi aplikaciju
+ * 2. Korisnik otključava mobitel, activity se otvara
+ * 3. Korisnik je gdje god, pritišće gumb u notification baru
+ * 4. Korisnik je gdje god, otvara opet aplikaciju
+ * 5. Korisnik je gdje god, otvara iz recent appova aplikaciju
+ * 6. Korisnik nakon što je pustio audio, nastavlja zujati po aplikaciji
+ *
+ * Komunikacija nazad:
+ * 1. Event svake sekunde koji broadcasta trenutnu poziciju mediaplayera
+ * 2. Event koji na set source and play broadcasta ukupno trajanje tracka ako je aplikabilno (.mp3 vs radio stream)
+ *
+ * Komunikacija unutra:
+ * 1. set source and play
+ * 2. pause
+ * 3. stop
+ * 4. resume/play
+ * 5. seekto
  */
 public class BackgroundPlayerService extends IntentService {
     public static final String INTENT_CLASS = "novaeva-backgroun-audio-service";
@@ -50,6 +70,8 @@ public class BackgroundPlayerService extends IntentService {
     private final MediaPlayer mediaPlayer = new MediaPlayer();
     private static volatile boolean isMediaPlayerPrepared = false;
 
+    private final Timer timer = new Timer();
+
     public BackgroundPlayerService(){
         this(TAG);
     }
@@ -69,11 +91,11 @@ public class BackgroundPlayerService extends IntentService {
         Intent pauseIntent = new Intent(this, VijestActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, (int)System.currentTimeMillis(), pauseIntent, 0);
         notificationManager = (NotificationManager)this.getSystemService(NOTIFICATION_SERVICE);
-        Notification notification = new Notification.Builder(this)
+        Notification notification = new NotificationCompat.Builder(this)
                 .setContentTitle("Nova Eva")
                 .setContentText("Naziv vijesti iz koje je audio")
                 .setSmallIcon(R.drawable.ic_launcher)
-                .getNotification();
+                .build();
 
         notificationManager.notify(0, notification);
 
@@ -90,26 +112,26 @@ public class BackgroundPlayerService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         int directive = intent.getIntExtra(DIRECTIVE_KEY, DIRECTIVE_ERROR);
-        switch (directive){
+        switch (directive) {
             case DIRECTIVE_ERROR:
                 Log.d(TAG, "DIRECTIVE_ERROR");
                 break;
             case DIRECTIVE_PAUSE:
                 Log.d(TAG, "DIRECTIVE_PAUSE");
-                if(mediaPlayer.isPlaying()){
+                if (mediaPlayer.isPlaying()) {
                     mediaPlayer.pause();
                 }
                 break;
             case DIRECTIVE_PLAY:
                 Log.d(TAG, "DIRECTIVE_PLAY");
-                if(isMediaPlayerPrepared && !mediaPlayer.isPlaying()){
+                if (isMediaPlayerPrepared && !mediaPlayer.isPlaying()) {
                     mediaPlayer.start();
                 }
                 break;
             case DIRECTIVE_SET_SOURCE_PLAY:
                 Log.d(TAG, "DIRECTIVE_SET_SOURCE_PLAY");
                 String audioUrl = intent.getStringExtra(PATH_KEY);
-                if(mediaPlayer.isPlaying()){
+                if (mediaPlayer.isPlaying()) {
                     mediaPlayer.stop();
                 }
                 try {
@@ -119,7 +141,18 @@ public class BackgroundPlayerService extends IntentService {
                         public void onPrepared(MediaPlayer mp) {
                             isMediaPlayerPrepared = true;
                             mp.start();
-                            onEverySecond.run();
+                            //onEverySecond.run();
+                            timer.schedule(new TimerTask() {
+                                @Override
+                                public void run() {
+                                    int seconds = (int) (mediaPlayer.getCurrentPosition() / 1000) % 60 ;
+                                    int minutes = (int) ((mediaPlayer.getCurrentPosition() / (1000*60)) % 60);
+
+                                    Intent broadcastIntent = new Intent(INTENT_CLASS);
+                                    broadcastIntent.putExtra(ELAPSED_TIME_KEY, mediaPlayer.getCurrentPosition());
+                                    LocalBroadcastManager.getInstance(BackgroundPlayerService.this).sendBroadcast(broadcastIntent);
+                                }
+                            }, 0, 1000);
                         }
                     });
                     mediaPlayer.prepareAsync();
@@ -128,37 +161,13 @@ public class BackgroundPlayerService extends IntentService {
                 break;
             case DIRECTIVE_STOP:
                 Log.d(TAG, "DIRECTIVE_STOP");
-                if(mediaPlayer.isPlaying()){
+                if (mediaPlayer.isPlaying()) {
                     mediaPlayer.stop();
                     isMediaPlayerPrepared = false;
                 }
                 break;
         }
     }
-
-    //Okini event svake sekunde. U tom eventu vidi gdje je mediaPlayer pa broadcastaj taj podatak
-    private Runnable onEverySecond = new Runnable(){
-		@Override
-		public void run() {
-            //while(true){
-                int seconds = (int) (mediaPlayer.getCurrentPosition() / 1000) % 60 ;
-                int minutes = (int) ((mediaPlayer.getCurrentPosition() / (1000*60)) % 60);
-                try {
-                    Intent broadcastIntent = new Intent(INTENT_CLASS);
-                    broadcastIntent.putExtra(ELAPSED_TIME_KEY, mediaPlayer.getCurrentPosition());
-                    LocalBroadcastManager.getInstance(BackgroundPlayerService.this).sendBroadcast(broadcastIntent);
-                    Thread.sleep(1000, 0);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-            //}
-            //
-            /*tvElapsed.setText(String.format("%02d:%02d", minutes, seconds));
-            seekArc.setProgress(mPlayer.getCurrentPosition());
-
-	        seekArc.postDelayed(this, 1000);*/
-		}
-	};
 
     @Override
     public void onDestroy(){
