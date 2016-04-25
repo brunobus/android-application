@@ -98,7 +98,7 @@
 				    android:id="@+id/mp3Player"
 				    android:layout_width="match_parent"
 				    android:layout_height="wrap_content"
-				    android:layout_below="@+id/imgText"
+				    android:layout_below="@+id/imgLink"
 			        android:layout_marginTop="5dp"
 				    android:padding="20dp"
 				    android:visibility="gone" >
