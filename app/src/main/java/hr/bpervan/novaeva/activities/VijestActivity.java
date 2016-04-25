@@ -13,16 +13,12 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
 import android.os.Messenger;
-import android.os.RemoteException;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.util.TypedValue;
@@ -128,27 +124,23 @@ public class VijestActivity extends Activity implements
 	private ImageLoader imageLoader;
 	private ImageLoaderConfigurator imageLoaderConfigurator;
 
-	/** Komunikacija sa servisom u kojemu se nalazi MediaPlayer. Komunikacija prema servisu*/
-	private Messenger outboundServiceMessenger = null;
-	private ServiceConnection serviceConnection = new ServiceConnection() {
-		@Override
-		public void onServiceConnected(ComponentName name, IBinder service) {
-			outboundServiceMessenger = new Messenger(service);
-			Log.d("VijestActivity", "Service connected");
-		}
-		@Override
-		public void onServiceDisconnected(ComponentName name) {
-			Log.d("VijestActivity", "Service disconnected");
-		}
-	};
+
 
 	/** Komunikacija sa servisom u kojemu se nalazi MediaPlayer. Komunikacija prema activityju*/
 	private BroadcastReceiver serviceMessageReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			Log.d(TAG, "Received message");
-			Log.d(TAG, intent.getIntExtra(BackgroundPlayerService.ELAPSED_TIME_KEY, 1) + "");
-			String message = intent.getStringExtra("directive");
+			Log.d(TAG, intent.getIntExtra(BackgroundPlayerService.KEY_ELAPSED_TIME, 1) + "");
+			int directive = intent.getIntExtra(BackgroundPlayerService.KEY_DIRECTIVE, BackgroundPlayerService.DIRECTIVE_ERROR);
+			switch (directive){
+				case BackgroundPlayerService.DIRECTIVE_ENABLE_PLAY_BUTTON:
+					btnPlay.setEnabled(true);
+					break;
+				case BackgroundPlayerService.DIRECTIVE_ENABLE_PAUSE_BUTTON:
+					btnPause.setEnabled(true);
+					break;
+			}
 		}
 	};
 
@@ -417,21 +409,22 @@ public class VijestActivity extends Activity implements
 			break;
 		case R.id.btnPlay:
 			Log.d(TAG, "btnPlay");
-			Intent startIntent = new Intent(VijestActivity.this, BackgroundPlayerService.class);
-			startIntent.putExtra(BackgroundPlayerService.DIRECTIVE_KEY, BackgroundPlayerService.DIRECTIVE_PLAY);
-			startService(startIntent);
-			/*if(!mPlayer.isPlaying()){
-				Log.d(TAG, "btnPlay");
-				mPlayer.start();
-				seekArc.postDelayed(onEverySecond, 1000);
+			if(BackgroundPlayerService.isRunning){
+				Intent messageIntent = new Intent(VijestActivity.this, BackgroundPlayerService.class);
+				messageIntent.putExtra(BackgroundPlayerService.KEY_DIRECTIVE, BackgroundPlayerService.DIRECTIVE_SET_SOURCE_PLAY);
+				messageIntent.putExtra(BackgroundPlayerService.KEY_PATH, ovaVijest.getAudio());
+				messageIntent.putExtra(BackgroundPlayerService.KEY_TITLE, ovaVijest.getNaslov());
+				startService(messageIntent);
 				btnPlay.setVisibility(View.INVISIBLE);
 				btnPause.setVisibility(View.VISIBLE);
-			}*/
+				btnPause.setEnabled(false);
+				Log.d(TAG, "Sent MSG_SET_SOURCE_AND_PLAY");
+			}
 			break;
 		case R.id.btnPause:
 			Log.d(TAG, "btnPlay");
 			Intent pauseIntent = new Intent(VijestActivity.this, BackgroundPlayerService.class);
-			pauseIntent.putExtra(BackgroundPlayerService.DIRECTIVE_KEY, BackgroundPlayerService.DIRECTIVE_PAUSE);
+			pauseIntent.putExtra(BackgroundPlayerService.KEY_DIRECTIVE, BackgroundPlayerService.DIRECTIVE_PAUSE);
 			startService(pauseIntent);
 			/*if(mPlayer.isPlaying()){
 				Log.d(TAG, "btnPlay");
@@ -440,6 +433,9 @@ public class VijestActivity extends Activity implements
 				btnPause.setVisibility(View.INVISIBLE);
 				btnPlay.setVisibility(View.VISIBLE);
 			}*/
+			btnPause.setVisibility(View.INVISIBLE);
+			btnPlay.setVisibility(View.VISIBLE);
+			btnPlay.setEnabled(false);
 			break;
 		case R.id.btnHome:
 			startActivity(new Intent(this, DashboardActivity.class));
@@ -739,14 +735,7 @@ public class VijestActivity extends Activity implements
                     mPlayer.prepare();
 
                     mPlayer.setOnCompletionListener(VijestActivity.this);*/
-                	if(BackgroundPlayerService.isRunning){
-						//outboundServiceMessenger.send(Message.obtain(null, BackgroundPlayerService.MSG_SET_SOURCE_AND_PLAY, ovaVijest.getAudio()));
-						Intent messageIntent = new Intent(VijestActivity.this, BackgroundPlayerService.class);
-						messageIntent.putExtra(BackgroundPlayerService.DIRECTIVE_KEY, BackgroundPlayerService.DIRECTIVE_SET_SOURCE_PLAY);
-						messageIntent.putExtra(BackgroundPlayerService.PATH_KEY, ovaVijest.getAudio());
-						startService(messageIntent);
-						Log.d(TAG, "Sent MSG_SET_SOURCE_AND_PLAY");
-					}
+
 				}
 			}catch(Exception e){
 			}

@@ -4,16 +4,9 @@ import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.Service;
 import android.content.Intent;
-import android.graphics.drawable.Icon;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.Message;
-import android.os.Messenger;
-import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -22,7 +15,6 @@ import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import hr.bpervan.novaeva.activities.VijestActivity;
 import hr.bpervan.novaeva.main.R;
 
 /**
@@ -49,10 +41,12 @@ public class BackgroundPlayerService extends IntentService {
     public static final String INTENT_CLASS = "novaeva-backgroun-audio-service";
 
     private static final String TAG = "BackgroundPlayerService";
+    private static final int notificationId = 10000;
 
-    public static final String DIRECTIVE_KEY = "directive";
-    public static final String PATH_KEY = "path";
-    public static final String ELAPSED_TIME_KEY = "elapsedTimeKey";
+    public static final String KEY_DIRECTIVE = "directive";
+    public static final String KEY_PATH = "path";
+    public static final String KEY_TITLE = "title";
+    public static final String KEY_ELAPSED_TIME = "elapsedTimeKey";
 
     public static final int DIRECTIVE_ERROR = -1;
     public static final int DIRECTIVE_SET_SOURCE_PLAY = 0;
@@ -60,15 +54,15 @@ public class BackgroundPlayerService extends IntentService {
     public static final int DIRECTIVE_PAUSE = 2;
     public static final int DIRECTIVE_STOP = 3;
 
-    public static volatile boolean isRunning = false;
-    public static volatile boolean isPlaying = false;
-    public static volatile boolean isPaused = false;
+    public static final int DIRECTIVE_ENABLE_PAUSE_BUTTON = 4;
+    public static final int DIRECTIVE_ENABLE_PLAY_BUTTON = 5;
 
+    public static volatile boolean isRunning = false;
+    private static volatile boolean isMediaPlayerPrepared = false;
 
     private NotificationManager notificationManager;
 
-    private final MediaPlayer mediaPlayer = new MediaPlayer();
-    private static volatile boolean isMediaPlayerPrepared = false;
+    private static final MediaPlayer mediaPlayer = new MediaPlayer();
 
     private final Timer timer = new Timer();
 
@@ -88,16 +82,8 @@ public class BackgroundPlayerService extends IntentService {
     @Override
     public void onCreate(){
         this.mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        Intent pauseIntent = new Intent(this, VijestActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, (int)System.currentTimeMillis(), pauseIntent, 0);
-        notificationManager = (NotificationManager)this.getSystemService(NOTIFICATION_SERVICE);
-        Notification notification = new NotificationCompat.Builder(this)
-                .setContentTitle("Nova Eva")
-                .setContentText("Naziv vijesti iz koje je audio")
-                .setSmallIcon(R.drawable.ic_launcher)
-                .build();
 
-        notificationManager.notify(0, notification);
+        notificationManager = (NotificationManager)this.getSystemService(NOTIFICATION_SERVICE);
 
         isRunning = true;
         super.onCreate();
@@ -111,7 +97,7 @@ public class BackgroundPlayerService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        int directive = intent.getIntExtra(DIRECTIVE_KEY, DIRECTIVE_ERROR);
+        int directive = intent.getIntExtra(KEY_DIRECTIVE, DIRECTIVE_ERROR);
         switch (directive) {
             case DIRECTIVE_ERROR:
                 Log.d(TAG, "DIRECTIVE_ERROR");
@@ -121,6 +107,11 @@ public class BackgroundPlayerService extends IntentService {
                 if (mediaPlayer.isPlaying()) {
                     mediaPlayer.pause();
                 }
+                mediaPlayer.pause();
+                Intent enableStart = new Intent(INTENT_CLASS);
+                enableStart.putExtra(KEY_DIRECTIVE, DIRECTIVE_ENABLE_PLAY_BUTTON);
+                LocalBroadcastManager.getInstance(BackgroundPlayerService.this).sendBroadcast(enableStart);
+                Log.d(TAG, mediaPlayer.isPlaying() + " playing");
                 break;
             case DIRECTIVE_PLAY:
                 Log.d(TAG, "DIRECTIVE_PLAY");
@@ -130,7 +121,7 @@ public class BackgroundPlayerService extends IntentService {
                 break;
             case DIRECTIVE_SET_SOURCE_PLAY:
                 Log.d(TAG, "DIRECTIVE_SET_SOURCE_PLAY");
-                String audioUrl = intent.getStringExtra(PATH_KEY);
+                String audioUrl = intent.getStringExtra(KEY_PATH);
                 if (mediaPlayer.isPlaying()) {
                     mediaPlayer.stop();
                 }
@@ -141,7 +132,6 @@ public class BackgroundPlayerService extends IntentService {
                         public void onPrepared(MediaPlayer mp) {
                             isMediaPlayerPrepared = true;
                             mp.start();
-                            //onEverySecond.run();
                             timer.schedule(new TimerTask() {
                                 @Override
                                 public void run() {
@@ -149,13 +139,29 @@ public class BackgroundPlayerService extends IntentService {
                                     int minutes = (int) ((mediaPlayer.getCurrentPosition() / (1000*60)) % 60);
 
                                     Intent broadcastIntent = new Intent(INTENT_CLASS);
-                                    broadcastIntent.putExtra(ELAPSED_TIME_KEY, mediaPlayer.getCurrentPosition());
+                                    broadcastIntent.putExtra(KEY_ELAPSED_TIME, mediaPlayer.getCurrentPosition());
                                     LocalBroadcastManager.getInstance(BackgroundPlayerService.this).sendBroadcast(broadcastIntent);
                                 }
                             }, 0, 1000);
+                            Intent enablePause = new Intent(INTENT_CLASS);
+                            enablePause.putExtra(KEY_DIRECTIVE, DIRECTIVE_ENABLE_PAUSE_BUTTON);
+                            LocalBroadcastManager.getInstance(BackgroundPlayerService.this).sendBroadcast(enablePause);
                         }
                     });
                     mediaPlayer.prepareAsync();
+
+                    Intent pauseIntent = new Intent(this, BackgroundPlayerService.class);
+                    pauseIntent.putExtra(KEY_DIRECTIVE, DIRECTIVE_PAUSE);
+                    //PendingIntent pendingIntent = PendingIntent.getActivity(this, (int)System.currentTimeMillis(), pauseIntent, 0);
+                    PendingIntent pendingIntent = PendingIntent.getService(this, 0, pauseIntent, 0);
+                    Notification notification = new NotificationCompat.Builder(this)
+                            .setContentTitle("Nova Eva")
+                            .setContentText(intent.getStringExtra(KEY_TITLE))
+                            .setSmallIcon(R.drawable.ic_launcher)
+                            .setOngoing(true)
+                            .addAction(R.drawable.player_btn_pause, "Pause", pendingIntent)
+                            .build();
+                    notificationManager.notify(notificationId, notification);
                 } catch (IOException e) {
                 }
                 break;
@@ -171,9 +177,12 @@ public class BackgroundPlayerService extends IntentService {
 
     @Override
     public void onDestroy(){
+        //notificationManager.cancel(0);
+        //notificationManager.cancel(notificationId);
         if(mediaPlayer.isPlaying()){
             mediaPlayer.stop();
             mediaPlayer.release();
         }
+        super.onDestroy();
     }
 }
