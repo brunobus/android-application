@@ -47,6 +47,7 @@ public class BackgroundPlayerService extends IntentService {
     public static final String KEY_PATH = "path";
     public static final String KEY_TITLE = "title";
     public static final String KEY_ELAPSED_TIME = "elapsedTimeKey";
+    public static final String KEY_TRACK_DURATION = "keyTrackDuration";
 
     public static final int DIRECTIVE_ERROR = -1;
     public static final int DIRECTIVE_SET_SOURCE_PLAY = 0;
@@ -145,6 +146,7 @@ public class BackgroundPlayerService extends IntentService {
                             }, 0, 1000);
                             Intent enablePause = new Intent(INTENT_CLASS);
                             enablePause.putExtra(KEY_DIRECTIVE, DIRECTIVE_ENABLE_PAUSE_BUTTON);
+                            enablePause.putExtra(KEY_TRACK_DURATION, mediaPlayer.getDuration());
                             LocalBroadcastManager.getInstance(BackgroundPlayerService.this).sendBroadcast(enablePause);
                         }
                     });
@@ -158,7 +160,7 @@ public class BackgroundPlayerService extends IntentService {
                             .setContentTitle("Nova Eva")
                             .setContentText(intent.getStringExtra(KEY_TITLE))
                             .setSmallIcon(R.drawable.ic_launcher)
-                            .setOngoing(true)
+                            //.setOngoing(true)
                             .addAction(R.drawable.player_btn_pause, "Pause", pendingIntent)
                             .build();
                     notificationManager.notify(notificationId, notification);

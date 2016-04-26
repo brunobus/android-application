@@ -130,8 +130,23 @@ public class VijestActivity extends Activity implements
 	private BroadcastReceiver serviceMessageReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
+
+
 			Log.d(TAG, "Received message");
-			Log.d(TAG, intent.getIntExtra(BackgroundPlayerService.KEY_ELAPSED_TIME, 1) + "");
+			int trackDuration = intent.getIntExtra(BackgroundPlayerService.KEY_TRACK_DURATION, BackgroundPlayerService.DIRECTIVE_ERROR);
+			if(trackDuration != BackgroundPlayerService.DIRECTIVE_ERROR){
+				seekArc.setMax(trackDuration);
+				int seconds = (int) (trackDuration / 1000) % 60 ;
+				int minutes = (int) ((trackDuration / (1000 * 60)) % 60);
+				tvDuration.setText(String.format("%02d:%02d", minutes, seconds));
+			}
+			int elapsedTime = intent.getIntExtra(BackgroundPlayerService.KEY_ELAPSED_TIME, BackgroundPlayerService.DIRECTIVE_ERROR);
+			if(elapsedTime != BackgroundPlayerService.DIRECTIVE_ERROR){
+				seekArc.setProgress(elapsedTime);
+				tvElapsed.setText(String.format("%02d:%02d",
+						(int) (elapsedTime / 1000) % 60,
+						(int) ((elapsedTime / (1000 * 60)) % 60)));
+			}
 			int directive = intent.getIntExtra(BackgroundPlayerService.KEY_DIRECTIVE, BackgroundPlayerService.DIRECTIVE_ERROR);
 			switch (directive){
 				case BackgroundPlayerService.DIRECTIVE_ENABLE_PLAY_BUTTON:
