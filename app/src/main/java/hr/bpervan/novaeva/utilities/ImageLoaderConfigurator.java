@@ -5,7 +5,7 @@ import java.io.File;
 import android.content.Context;
 import android.graphics.Bitmap;
 
-import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
+import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiskCache;
 import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator;
 import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -34,7 +34,7 @@ public class ImageLoaderConfigurator {
 		.diskCacheExtraOptions(480, 800, null)
 		.denyCacheImageMultipleSizesInMemory()
 		.memoryCache(new LruMemoryCache(2 * 1024 * 1024))
-		.diskCache(new UnlimitedDiscCache(cacheDir)) // default
+		.diskCache(new UnlimitedDiskCache(cacheDir)) // default
 		.diskCacheFileCount(100)
 		.diskCacheFileNameGenerator(new HashCodeFileNameGenerator()) // default
 		.imageDownloader(new BaseImageDownloader(context)) // default

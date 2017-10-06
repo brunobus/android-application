@@ -1,5 +1,6 @@
 package hr.bpervan.novaeva.utilities;
 
+import hr.bpervan.novaeva.model.Article;
 import hr.bpervan.novaeva.utilities.BookmarkTypes;
 import hr.bpervan.novaeva.utilities.ListElement;
 import hr.bpervan.novaeva.utilities.ListTypes;
@@ -13,6 +14,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.text.Html;
 
 /**
  * @author Branimir
@@ -92,6 +94,24 @@ public class BookmarksDBHandlerV2 extends SQLiteOpenHelper {
 		c.close();
 		db.close();
 		return count == 1 ? true : false;
+	}
+
+	public boolean insertArticle(Article article){
+		SQLiteDatabase db = this.getWritableDatabase();
+
+		ContentValues values = new ContentValues();
+		values.put(KEY_NID, article.nid);
+		values.put(KEY_CID, article.cid);
+		values.put(KEY_HAS_AUDIO, article.audio != null ? 1 : 0);
+		values.put(KEY_HAS_ATTACH, article.prilozi != null ? 1 : 0);
+		values.put(KEY_HAS_LINK, article.youtube != null ? 1 : 0);
+		values.put(KEY_NASLOV, article.naslov);
+		values.put(KEY_DATUM, article.time);
+		values.put(KEY_UVOD, Html.fromHtml(article.tekst).toString());
+
+		db.insert(TABLE_BOOKMARKS, null, values);
+		db.close();
+		return true;
 	}
 	
 	public boolean insertVijest(Vijest vijest){

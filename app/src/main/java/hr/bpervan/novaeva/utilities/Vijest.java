@@ -19,7 +19,7 @@ public class Vijest {
 	
 	/** 
 	 * @param nid - Unique 'vijest' identifier
-	 * @param kategoria - Cid
+	 * @param kategorija - Cid
 	 * @param datum - Unix timestamp
 	 * @param naslov - Naslov
 	 * @param uvod - Pocetak teksta

@@ -3,14 +3,16 @@
     package="hr.bpervan.novaeva.main"
     android:installLocation="auto"
     android:versionCode="21"
-    android:versionName="2.3" >
+    android:versionName="2.3">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    >
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+
     <application
         android:name="hr.bpervan.novaeva.NovaEvaApp"
         android:allowBackup="true"
@@ -20,6 +22,7 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
         <activity
             android:name="hr.bpervan.novaeva.activities.DashboardActivity"
             android:label="@string/app_name" />
@@ -42,8 +45,8 @@
             android:label="@string/app_name"
             android:noHistory="true"
             android:screenOrientation="portrait"
-            android:theme="@style/NovaEvaSplash" >
-            <intent-filter android:label="@string/app_name" >
+            android:theme="@style/NovaEvaSplash">
+            <intent-filter android:label="@string/app_name">
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -79,14 +82,16 @@
         <activity
             android:name="hr.bpervan.novaeva.activities.VijestActivity"
             android:configChanges="orientation|screenSize"
+            android:hardwareAccelerated="true"
             android:label="@string/title_activity_vijest"
-            android:theme="@style/Vijest"
-            android:hardwareAccelerated="true"/>
+            android:theme="@style/Vijest" />
         <!-- keyboardHidden -->
         <activity
             android:name="hr.bpervan.novaeva.activities.InfoActivity"
             android:label="@string/title_activity_info" />
 
-        <service android:name="hr.bpervan.novaeva.services.BackgroundPlayerService"></service>
+        <service android:name="hr.bpervan.novaeva.services.BackgroundPlayerService" />
+
     </application>
+
 </manifest>
