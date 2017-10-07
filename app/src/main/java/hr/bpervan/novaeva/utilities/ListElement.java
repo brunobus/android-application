@@ -27,17 +27,7 @@ public class ListElement {
 		this.hasVideo = hasVideo;
 		this.listType = listType;
 	}
-	
-	public Vijest constructVijest(){
-		Vijest vijest = new Vijest();
-		vijest.setDatum(datum);
-		vijest.setUvod(uvod);
-		vijest.setNaslov(naslov);
-		vijest.setVrstaPodatka(ListTypes.VIJEST);
-		vijest.setVrstaZaBookmark(BookmarkTypes.VIJEST);
-		return vijest;
-	}
-	
+
 	public ListTypes getListType(){
 		return this.listType;
 	}

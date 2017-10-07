@@ -3,11 +3,8 @@ package hr.bpervan.novaeva.activities;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
@@ -15,7 +12,6 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
@@ -30,29 +26,20 @@ import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.google.android.exoplayer2.DefaultLoadControl;
-import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.audio.MediaCodecAudioRenderer;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
-import com.google.android.exoplayer2.extractor.Extractor;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.BandwidthMeter;
-import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
-import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
@@ -64,7 +51,6 @@ import butterknife.ButterKnife;
 import hr.bpervan.novaeva.NovaEvaApp;
 import hr.bpervan.novaeva.main.R;
 import hr.bpervan.novaeva.model.Article;
-import hr.bpervan.novaeva.model.Image;
 import hr.bpervan.novaeva.services.BackgroundPlayerService;
 import hr.bpervan.novaeva.services.NovaEvaService;
 import hr.bpervan.novaeva.utilities.BookmarksDBHandlerV2;
@@ -72,12 +58,10 @@ import hr.bpervan.novaeva.utilities.ConnectionChecker;
 import hr.bpervan.novaeva.utilities.Constants;
 import hr.bpervan.novaeva.utilities.ImageLoaderConfigurator;
 import hr.bpervan.novaeva.utilities.ResourceHandler;
-import hr.bpervan.novaeva.utilities.Vijest;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 public class VijestActivity extends Activity implements
         View.OnClickListener,
@@ -187,8 +171,6 @@ public class VijestActivity extends Activity implements
     /**
      * Retrofit
      */
-    private Retrofit retrofit;
-    private NovaEvaService novaEvaService;
     private Article thisArticle;
     private ProgressDialog progressDialog;
 
@@ -222,12 +204,6 @@ public class VijestActivity extends Activity implements
 
         resourceHandler = new ResourceHandler(this.getIntent().getIntExtra("kategorija", Constants.CAT_PROPOVJEDI));
 
-        retrofit = new Retrofit.Builder()
-                .baseUrl("http://novaeva.com/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        novaEvaService = retrofit.create(NovaEvaService.class);
-
         this.progressDialog = new ProgressDialog(this);
         this.progressDialog.setMessage("Učitavam...");
         this.progressDialog.setIndeterminate(true);
@@ -246,56 +222,6 @@ public class VijestActivity extends Activity implements
             }
         });
         progressDialog.show();
-
-        Call<Article> thisArticle = novaEvaService.getArticle(getIntent().getIntExtra("nid", 0));
-        thisArticle.enqueue(new Callback<Article>() {
-            @Override
-            public void onResponse(Call<Article> call, Response<Article> response) {
-                VijestActivity.this.thisArticle = response.body();
-                if (VijestActivity.this.thisArticle.audio != null) {
-                    imgMp3.setImageResource(R.drawable.vijest_ind_mp3_active);
-
-                    VijestActivity.this.createPlayer();
-                    VijestActivity.this.streamAudio(VijestActivity.this.thisArticle.audio);
-                }
-                if (VijestActivity.this.thisArticle.prilozi != null) {
-                    imgText.setImageResource(R.drawable.vijest_ind_txt_active);
-                    imgText.setOnClickListener(VijestActivity.this);
-                }
-                if (VijestActivity.this.thisArticle.youtube != null) {
-                    imgLink.setImageResource(R.drawable.vijest_ind_www_active);
-                    imgLink.setOnClickListener(VijestActivity.this);
-                }
-
-                if (VijestActivity.this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-                    if (VijestActivity.this.thisArticle.image != null) {
-                        if (imageLoader.isInited()) {
-                            imageLoader.displayImage(VijestActivity.this.thisArticle.image.size640, headerImage, imageLoaderConfigurator.doConfig(false));
-                        }
-                    } else {
-                        String url = prefs.getString("hr.bpervan.novaeva.categoryheader." + VijestActivity.this.thisArticle.cid, null);
-                        if (url != null) {
-                            if (imageLoader.isInited()) {
-                                imageLoader.displayImage(url, headerImage, imageLoaderConfigurator.doConfig(true));
-                            }
-                        }
-                    }
-                }
-                if (VijestActivity.this.thisArticle.cid == Constants.CAT_POZIV) {
-                    setQuestionButton();
-                }
-
-                tvNaslov.setText(VijestActivity.this.thisArticle.naslov);
-                vijestWebView.reload();
-                vijestWebView.loadDataWithBaseURL(null, VijestActivity.this.thisArticle.tekst, "text/html", "UTF-8", null);
-                progressDialog.dismiss();
-            }
-
-            @Override
-            public void onFailure(Call<Article> call, Throwable t) {
-
-            }
-        });
 
         imageLoaderConfigurator = new ImageLoaderConfigurator(this);
         imageLoader = ImageLoader.getInstance();
@@ -459,16 +385,73 @@ public class VijestActivity extends Activity implements
         getWindow().getDecorView().setBackgroundColor(this.getResources().getColor(android.R.color.background_light));
     }
 
+    Disposable disposable;
+
     @Override
     protected void onResume() {
         //LocalBroadcastManager.getInstance(this).registerReceiver(serviceMessageReceiver, new IntentFilter(BackgroundPlayerService.INTENT_CLASS));
         super.onResume();
+
+        disposable = NovaEvaService.Companion.getInstance()
+                .getArticle(getIntent().getIntExtra("nid", 0))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<Article>() {
+                    @Override
+                    public void accept(Article article) throws Exception {
+                        VijestActivity.this.thisArticle = article;
+                        if (VijestActivity.this.thisArticle.audio != null) {
+                            imgMp3.setImageResource(R.drawable.vijest_ind_mp3_active);
+
+                            VijestActivity.this.createPlayer();
+                            VijestActivity.this.streamAudio(VijestActivity.this.thisArticle.audio);
+                        }
+                        if (VijestActivity.this.thisArticle.prilozi != null) {
+                            imgText.setImageResource(R.drawable.vijest_ind_txt_active);
+                            imgText.setOnClickListener(VijestActivity.this);
+                        }
+                        if (VijestActivity.this.thisArticle.youtube != null) {
+                            imgLink.setImageResource(R.drawable.vijest_ind_www_active);
+                            imgLink.setOnClickListener(VijestActivity.this);
+                        }
+
+                        if (VijestActivity.this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+                            if (VijestActivity.this.thisArticle.image != null) {
+                                if (imageLoader.isInited()) {
+                                    imageLoader.displayImage(VijestActivity.this.thisArticle.image.size640, headerImage, imageLoaderConfigurator.doConfig(false));
+                                }
+                            } else {
+                                String url = prefs.getString("hr.bpervan.novaeva.categoryheader." + VijestActivity.this.thisArticle.cid, null);
+                                if (url != null) {
+                                    if (imageLoader.isInited()) {
+                                        imageLoader.displayImage(url, headerImage, imageLoaderConfigurator.doConfig(true));
+                                    }
+                                }
+                            }
+                        }
+                        if (VijestActivity.this.thisArticle.cid == Constants.CAT_POZIV) {
+                            setQuestionButton();
+                        }
+
+                        tvNaslov.setText(VijestActivity.this.thisArticle.naslov);
+                        vijestWebView.reload();
+                        vijestWebView.loadDataWithBaseURL(null, VijestActivity.this.thisArticle.tekst, "text/html", "UTF-8", null);
+                        progressDialog.dismiss();
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable t) throws Exception {
+                        Log.e("vijestiError", t.getMessage(), t);
+                    }
+                });
     }
 
     @Override
     protected void onPause() {
         //LocalBroadcastManager.getInstance(this).unregisterReceiver(serviceMessageReceiver);
         super.onPause();
+        disposable.dispose(); //// TODO: 07.10.17.
+
 
 		/*if(mPlayer != null){
 			if(mPlayer.isPlaying()){

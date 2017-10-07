@@ -1,20 +1,16 @@
 package hr.bpervan.novaeva.utilities;
 
-import hr.bpervan.novaeva.model.Article;
-import hr.bpervan.novaeva.utilities.BookmarkTypes;
-import hr.bpervan.novaeva.utilities.ListElement;
-import hr.bpervan.novaeva.utilities.ListTypes;
-import hr.bpervan.novaeva.utilities.Vijest;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.text.Html;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import hr.bpervan.novaeva.model.Article;
 
 /**
  * @author Branimir
@@ -73,9 +69,9 @@ public class BookmarksDBHandlerV2 extends SQLiteOpenHelper {
 		while(!c.isAfterLast()){
 			ListElement listElement = new ListElement(c.getString(c.getColumnIndex(KEY_UVOD)), c.getString(c.getColumnIndex(KEY_NASLOV)), c.getString(c.getColumnIndex(KEY_DATUM)),
 					c.getInt(c.getColumnIndex(KEY_NID)), c.getInt(c.getColumnIndex(KEY_CID)), ListTypes.VIJEST,
-					c.getInt(c.getColumnIndex(KEY_HAS_LINK)) == 1 ? true : false, 
-					c.getInt(c.getColumnIndex(KEY_HAS_ATTACH)) == 1 ? true : false, 
-					c.getInt(c.getColumnIndex(KEY_HAS_AUDIO)) == 1 ? true : false,
+					c.getInt(c.getColumnIndex(KEY_HAS_LINK)) == 1,
+					c.getInt(c.getColumnIndex(KEY_HAS_ATTACH)) == 1,
+					c.getInt(c.getColumnIndex(KEY_HAS_AUDIO)) == 1,
 					false, false);
 
 			listElements.add(listElement);
@@ -93,7 +89,7 @@ public class BookmarksDBHandlerV2 extends SQLiteOpenHelper {
 		int count = c.getCount();
 		c.close();
 		db.close();
-		return count == 1 ? true : false;
+		return count == 1;
 	}
 
 	public boolean insertArticle(Article article){
@@ -112,29 +108,6 @@ public class BookmarksDBHandlerV2 extends SQLiteOpenHelper {
 		db.insert(TABLE_BOOKMARKS, null, values);
 		db.close();
 		return true;
-	}
-	
-	public boolean insertVijest(Vijest vijest){
-		SQLiteDatabase db = this.getWritableDatabase();
-		
-		ContentValues values = new ContentValues();
-		values.put(KEY_NID, vijest.getNid());
-		values.put(KEY_CID, vijest.getKategorija());
-		values.put(KEY_VRSTA, vijest.getVrstaZaBookmark().toString());
-		values.put(KEY_HAS_AUDIO, vijest.hasAudio() ? 1 : 0);
-		values.put(KEY_HAS_ATTACH, vijest.hasAttach() ? 1 : 0);
-		values.put(KEY_HAS_LINK, vijest.hasLink() ? 1 : 0);
-		values.put(KEY_NASLOV, vijest.getNaslov());
-		values.put(KEY_DATUM, vijest.getDatum());
-		values.put(KEY_UVOD, vijest.getUvod());
-				
-		db.insert(TABLE_BOOKMARKS, null, values);
-		db.close();
-		return true;
-	}
-	
-	public boolean deleteVijest(Vijest vijest){
-		return this.deleteVijest(vijest.getNid());
 	}
 	
 	public boolean deleteVijest(int nid){

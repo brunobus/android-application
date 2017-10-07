@@ -9,5 +9,5 @@ package hr.bpervan.novaeva.utilities;
  */
 
 public enum ListTypes {
-	PODKATEGORIJA, VIJEST, MOLITVENIK
+	PODKATEGORIJA, VIJEST
 }
