@@ -1,73 +1,31 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-				xmlns:tools="http://schemas.android.com/tools"
-				android:layout_width="match_parent"
-				android:layout_height="match_parent"
-				xmlns:app="http://schemas.android.com/apk/res-auto"
-				tools:context="hr.bpervan.novaeva.activities.ListaVijestiActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="hr.bpervan.novaeva.activities.ListaVijestiActivity">
 
-	<FrameLayout
-		android:id="@+id/eva_directory_fragment_frame"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:layout_above="@id/fakeActionBarListaVijesti"
-		app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
-    
-    <ImageView 
+    <FrameLayout
+        android:id="@+id/eva_directory_fragment_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/fakeActionBar"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    <ImageView
         android:id="@+id/btnImamPitanjeListaVijesti"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/fakeActionBar"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/button_imam_pitanje"
-        android:contentDescription="@string/dummyDesc"
-        android:layout_above="@+id/fakeActionBarListaVijesti"
-        android:visibility="gone"
+        android:layout_marginBottom="5dp"
         android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp" />
-	
-    <LinearLayout
-	    android:id="@+id/fakeActionBarListaVijesti"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:layout_alignParentBottom="true"
-	    android:orientation="horizontal"
-	    android:background="@drawable/izbornik_navbgpropovjedi" >
+        android:contentDescription="@string/dummyDesc"
+        android:src="@drawable/button_imam_pitanje"
+        android:visibility="gone" />
 
-		<RelativeLayout
-		    android:layout_width="match_parent"
-		    android:layout_height="match_parent"
-		    tools:ignore="UselessParent" >
+    <include
+        android:id="@+id/fakeActionBar"
+        layout="@layout/simple_fake_action_bar" />
 
-		    <ImageView
-		        android:id="@+id/btnSearchListaVijesti"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_centerVertical="true"
-		        android:layout_centerHorizontal="true"
-		        android:contentDescription="@string/dummyDesc"
-		        android:src="@drawable/vijest_button_search" />
-
-
-		    <ImageView
-		        android:id="@+id/btnHomeListaVijesti"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_alignParentRight="true"
-		        android:layout_centerVertical="true"
-		        android:layout_marginRight="@dimen/fakeActionBarParentMargin"
-		        android:contentDescription="@string/dummyDesc"
-		        android:src="@drawable/vijest_button_home" />
-		    
-		    <ImageView
-		        android:id="@+id/btnBackListaVijesti"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_alignParentLeft="true"
-		        android:layout_centerVertical="true"
-		        android:layout_marginLeft="@dimen/fakeActionBarParentMargin"
-		        android:contentDescription="@string/dummyDesc"
-		        android:src="@drawable/vijest_button_back" />
-		</RelativeLayout>
-
-	</LinearLayout>
-    
 </RelativeLayout>

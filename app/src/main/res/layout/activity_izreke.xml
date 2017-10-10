@@ -1,171 +1,116 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
-    
-    <ScrollView android:id="@+id/scrollView1"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:fillViewport="true"
-				android:layout_above="@+id/fakeActionBar"
-				android:layout_alignParentTop="true" >
-				
-		<RelativeLayout android:layout_width="match_parent"
-		    			android:layout_height="match_parent" >
-		    			
-			    <ImageView
-			        android:id="@+id/defaultImg"
-			        android:layout_width="match_parent"
-			        android:layout_height="wrap_content"
-			        android:maxHeight="250dp"
-			        android:scaleType="centerCrop"
-			        android:adjustViewBounds="true"
-			        android:src="@drawable/vijest_testimage"
-			        android:layout_alignParentTop="true"
-			        android:contentDescription="@string/dummyDesc" />
-			    <!-- fitCenter je bio -->
-			    <!-- adjustViewBounds -->
-			
-			    <ImageView
-			        android:id="@+id/imgNaslovnaTraka"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:layout_alignBottom="@+id/defaultImg"
-			        android:layout_alignParentLeft="true"
-			        android:layout_alignParentRight="true"
-			        android:scaleType="fitXY"
-			        android:src="@drawable/vijest_naslovnaizreke"
-			        android:contentDescription="@string/dummyDesc"
-			        android:adjustViewBounds="true" />
-			
-			    <TextView
-			        android:id="@+id/tvNaslov"
-			        android:layout_width="0dip"
-			        android:layout_height="wrap_content"
-			        android:layout_alignParentLeft="true"
-			        android:layout_alignTop="@+id/imgNaslovnaTraka"
-			        android:layout_marginTop="5dp"
-			        android:layout_marginLeft="10dp"
-			        android:layout_alignRight="@+id/imgPodnaslovnaCrta"
-			        android:fontFamily="Arial"
-			        android:textColor="#ffffff"
-			        android:textStyle="bold"
-			        android:ellipsize="end"
-			        android:maxLines="2" />
-			
-			    <TextView
-			        android:id="@+id/tvKategorija"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:layout_alignParentLeft="true"
-			        android:layout_below="@+id/defaultImg"
-			        android:layout_marginLeft="15dp"
-			        android:layout_marginTop="20dp"
-			        android:textAppearance="?android:attr/textAppearanceLarge"
-			        android:textColor="#4c4c4c"
-			        android:fontFamily="Arial" />
-			
-			    <ImageView
-			        android:id="@+id/imgPodnaslovnaCrta"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:layout_alignLeft="@+id/tvKategorija"
-			        android:layout_below="@+id/tvKategorija"
-			        android:layout_marginTop="10dp"
-			        android:src="@drawable/vijest_podnaslovnalinija"
-			        android:contentDescription="@string/dummyDesc" />
+    android:layout_height="match_parent">
 
-			    <WebView
-			        android:id="@+id/webText"
-			        android:layout_width="match_parent"
-			        android:layout_height="wrap_content"
-			        android:layout_alignParentLeft="true"
-			        android:layout_below="@+id/imgPodnaslovnaCrta"
-			        android:layout_marginTop="5dp"
-			        android:textColor="#4c4c4c" />
- 
-			    <ImageView
-			        android:id="@+id/btnObnovi"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:layout_below="@+id/webText"
-			        android:layout_centerHorizontal="true"
-			        android:src="@drawable/button_obnovi"
-			        android:contentDescription="@string/dummyDesc">
-			    </ImageView>
+    <ScrollView
+        android:id="@+id/scrollView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/fakeActionBar"
+        android:layout_alignParentTop="true"
+        android:fillViewport="true">
 
-				 <ImageView
-				     android:id="@+id/btnTextPlus"
-				     android:layout_width="wrap_content"
-				     android:layout_height="wrap_content"
-				     android:layout_alignParentRight="true"
-				     android:layout_alignBottom="@+id/imgNaslovnaTraka"
-				     android:layout_marginBottom="16dp"
-				     android:layout_marginRight="12dp"
-				     android:src="@drawable/vijest_button_textplus"
-				     android:contentDescription="@string/dummyDesc" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-		</RelativeLayout>
-	    
-	</ScrollView>
+            <ImageView
+                android:id="@+id/defaultImg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/dummyDesc"
+                android:maxHeight="250dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/vijest_testimage" />
+            <!-- fitCenter je bio -->
+            <!-- adjustViewBounds -->
 
+            <ImageView
+                android:id="@+id/imgNaslovnaTraka"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/defaultImg"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/dummyDesc"
+                android:scaleType="fitXY"
+                android:src="@drawable/vijest_naslovnaizreke" />
 
-		<RelativeLayout
-		    android:id="@+id/fakeActionBar"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:layout_alignParentBottom="true"
-	    android:orientation="horizontal"
-	    android:background="@drawable/izbornik_navbgizreke"  >
+            <TextView
+                android:id="@+id/tvNaslov"
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignRight="@+id/imgPodnaslovnaCrta"
+                android:layout_alignTop="@+id/imgNaslovnaTraka"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="5dp"
+                android:ellipsize="end"
+                android:fontFamily="Arial"
+                android:maxLines="2"
+                android:textColor="#ffffff"
+                android:textStyle="bold" />
 
-		    <ImageView
-		        android:id="@+id/btnFace"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_centerVertical="true"
-		        android:layout_marginRight="15dp"
-		        android:layout_toLeftOf="@+id/btnMail"
-		        android:contentDescription="@string/dummyDesc"
-		        android:src="@drawable/vijest_button_face" />
+            <TextView
+                android:id="@+id/tvKategorija"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/defaultImg"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="20dp"
+                android:fontFamily="Arial"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="#4c4c4c" />
 
-		    <ImageView
-		        android:id="@+id/btnMail"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_centerVertical="true"
-		        android:layout_centerHorizontal="true"
-		        android:contentDescription="@string/dummyDesc"
-		        android:src="@drawable/vijest_button_mail" />
+            <ImageView
+                android:id="@+id/imgPodnaslovnaCrta"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/tvKategorija"
+                android:layout_below="@+id/tvKategorija"
+                android:layout_marginTop="10dp"
+                android:contentDescription="@string/dummyDesc"
+                android:src="@drawable/vijest_podnaslovnalinija" />
 
-		    <ImageView
-		        android:id="@+id/btnSearch"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_centerVertical="true"
-		        android:layout_marginLeft="15dp"
-		        android:layout_toRightOf="@+id/btnMail"
-		        android:contentDescription="@string/dummyDesc"
-		        android:src="@drawable/vijest_button_search" />
+            <WebView
+                android:id="@+id/webText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/imgPodnaslovnaCrta"
+                android:layout_marginTop="5dp"
+                android:textColor="#4c4c4c" />
 
+            <ImageView
+                android:id="@+id/btnObnovi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/webText"
+                android:layout_centerHorizontal="true"
+                android:contentDescription="@string/dummyDesc"
+                android:src="@drawable/button_obnovi" />
 
-		    <ImageView
-		        android:id="@+id/btnHome"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_alignParentRight="true"
-		        android:layout_centerVertical="true"
-		        android:layout_marginRight="20dp"
-		        android:contentDescription="@string/dummyDesc"
-		        android:src="@drawable/vijest_button_home" />
-		    
-		    <ImageView 
-		        android:id="@+id/btnBack"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_centerVertical="true"
-		        android:layout_alignParentLeft="true"
-		        android:layout_marginLeft="20dp"
-		        android:contentDescription="@string/dummyDesc"
-		        android:src="@drawable/vijest_button_back" />
-		</RelativeLayout>
+            <ImageView
+                android:id="@+id/btnTextPlus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/imgNaslovnaTraka"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="16dp"
+                android:layout_marginRight="12dp"
+                android:contentDescription="@string/dummyDesc"
+                android:src="@drawable/vijest_button_textplus" />
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+    <include
+        android:id="@+id/fakeActionBar"
+        layout="@layout/izreke_fake_action_bar" />
 
 </RelativeLayout>

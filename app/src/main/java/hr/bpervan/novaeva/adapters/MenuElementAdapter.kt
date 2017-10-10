@@ -11,13 +11,18 @@ import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.*
 import hr.bpervan.novaeva.utilities.ListTypes
 import hr.bpervan.novaeva.utilities.ResourceHandler
+import kotlinx.android.synthetic.main.folder_row.view.*
+import kotlinx.android.synthetic.main.izbornik_top.view.*
+import kotlinx.android.synthetic.main.vijest_row.view.*
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * Created by vpriscan on 08.10.17..
  */
-class MenuElementAdapter(val data: List<TreeElementInfo>, val metadata: Metadata) : RecyclerView.Adapter<MenuElementAdapter.BindableViewHolder>() {
+class MenuElementAdapter(val data: List<TreeElementInfo>,
+                         val configData: ConfigData,
+                         val headerData: HeaderData?) : RecyclerView.Adapter<MenuElementAdapter.BindableViewHolder>() {
 
     private val cal = Calendar.getInstance()
 
@@ -29,29 +34,39 @@ class MenuElementAdapter(val data: List<TreeElementInfo>, val metadata: Metadata
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (position == 0) HEADER_VIEW_TYPE
-        else if (position == itemCount - 1) PROGRESS_VIEW_TYPE
-        else if (data[position - 1] is ContentInfo) CONTENT_VIEW_TYPE
-        else SUBDIRECTORY_VIEW_TYPE
+        return if (headerData != null) {
+            when {
+                position == 0 -> HEADER_VIEW_TYPE
+                position == data.size + 1 -> PROGRESS_VIEW_TYPE
+                data[position - 1] is ContentInfo -> CONTENT_VIEW_TYPE
+                else -> SUBDIRECTORY_VIEW_TYPE
+            }
+        } else {
+            when {
+                position == data.size -> PROGRESS_VIEW_TYPE
+                data[position] is ContentInfo -> CONTENT_VIEW_TYPE
+                else -> SUBDIRECTORY_VIEW_TYPE
+            }
+        }
     }
 
-    override fun getItemCount(): Int = data.size + 2 /*(1 for header and 1 for progressbar)*/
+    override fun getItemCount(): Int = data.size + if (headerData != null) 2 else 1
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BindableViewHolder =
             when (viewType) {
                 HEADER_VIEW_TYPE -> {
                     val view = LayoutInflater.from(parent.context).inflate(R.layout.izbornik_top, parent, false)
-                    view.setBackgroundResource(ResourceHandler.getListViewHeader(metadata.colourSet, metadata.deviceOrientation))
+                    view.setBackgroundResource(ResourceHandler.getListViewHeader(configData.colourSet, configData.deviceOrientation))
                     HeaderViewHolder(view)
                 }
                 CONTENT_VIEW_TYPE -> {
                     val view = LayoutInflater.from(parent.context).inflate(R.layout.vijest_row, parent, false)
-                    view.setBackgroundResource(ResourceHandler.getResourceId(metadata.colourSet, ListTypes.VIJEST, metadata.deviceOrientation))
+                    view.setBackgroundResource(ResourceHandler.getResourceId(configData.colourSet, ListTypes.VIJEST, configData.deviceOrientation))
                     ContentInfoViewHolder(view)
                 }
                 SUBDIRECTORY_VIEW_TYPE -> {
                     val view = LayoutInflater.from(parent.context).inflate(R.layout.folder_row, parent, false)
-                    view.setBackgroundResource(ResourceHandler.getResourceId(metadata.colourSet, ListTypes.PODKATEGORIJA, metadata.deviceOrientation))
+                    view.setBackgroundResource(ResourceHandler.getResourceId(configData.colourSet, ListTypes.PODKATEGORIJA, configData.deviceOrientation))
                     DirectoryInfoViewHolder(view)
                 }
                 else -> {
@@ -62,28 +77,35 @@ class MenuElementAdapter(val data: List<TreeElementInfo>, val metadata: Metadata
 
     override fun onBindViewHolder(holder: BindableViewHolder, position: Int) {
         val subject: Any =
-                when {
-                    position == 0 -> metadata
-                    position == itemCount - 1 -> metadata
-                    else -> data[position - 1]
+                if (headerData != null) {
+                    when (position) {
+                        0 -> headerData
+                        data.size + 1 -> Unit
+                        else -> data[position - 1]
+                    }
+                } else {
+                    when (position) {
+                        data.size -> Unit
+                        else -> data[position]
+                    }
                 }
         holder.bindTo(subject)
     }
 
-    class Metadata(val directoryId: Long,
-                   val directoryName: String,
-                   val infoMessage: String,
-                   val deviceOrientation: Int,
-                   val colourSet: Int,
-                   val loading: AtomicBoolean)
+    class HeaderData(val directoryName: String,
+                     val infoMessage: String)
+
+    class ConfigData(val deviceOrientation: Int,
+                     val colourSet: Int,
+                     val loading: AtomicBoolean)
 
     inner abstract class BindableViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         abstract fun bindTo(t: Any)
     }
 
     private inner class HeaderViewHolder(view: View) : BindableViewHolder(view) {
-        private val headerTextView: TextView = view.findViewById(R.id.izbornikTopNazivKategorije)
-        private val headerTextViewNatpis: TextView = view.findViewById(R.id.izbornikTopNatpis)
+        private val headerTextView: TextView = view.izbornikTopNazivKategorije
+        private val headerTextViewNatpis: TextView = view.izbornikTopNatpis
 
         init {
             headerTextView.typeface = NovaEvaApp.openSansBold
@@ -91,24 +113,24 @@ class MenuElementAdapter(val data: List<TreeElementInfo>, val metadata: Metadata
         }
 
         override fun bindTo(t: Any) {
-            val metadata = t as Metadata
-            headerTextViewNatpis.text = metadata.infoMessage
-            headerTextView.text = metadata.directoryName.toUpperCase()
+            val headerData = t as HeaderData
+            headerTextViewNatpis.text = headerData.infoMessage
+            headerTextView.text = headerData.directoryName.toUpperCase()
 
             view.setOnClickListener(null)
         }
     }
 
     private inner class DirectoryInfoViewHolder(view: View) : BindableViewHolder(view) {
-        val tvNaslov: TextView = view.findViewById(R.id.tvNaslov)
-        val tvMapaNatpis: TextView = view.findViewById(R.id.tvMapaNatpis)
+        val tvMapaNaslov: TextView = view.tvMapaNaslov
+        val tvMapaNatpis: TextView = view.tvMapaNatpis
 
         override fun bindTo(t: Any) {
             val directoryInfo = t as DirectoryInfo
 
-            tvNaslov.typeface = NovaEvaApp.openSansBold
+            tvMapaNaslov.typeface = NovaEvaApp.openSansBold
             tvMapaNatpis.typeface = NovaEvaApp.openSansBold
-            tvNaslov.text = directoryInfo.title
+            tvMapaNaslov.text = directoryInfo.title
 
             view.setOnClickListener {
                 NovaEvaApp.bus.directoryOpenRequest.onNext(directoryInfo)
@@ -118,16 +140,16 @@ class MenuElementAdapter(val data: List<TreeElementInfo>, val metadata: Metadata
     }
 
     private inner class ContentInfoViewHolder(view: View) : BindableViewHolder(view) {
-        val tvNaslov: TextView = view.findViewById(R.id.tvNaslov)
-        val tvUvod: TextView = view.findViewById(R.id.tvUvod)
-        val tvDatum: TextView = view.findViewById(R.id.tvDatum)
-        val tvGodinaSatMinuta: TextView = view.findViewById(R.id.tvGodinaSatMinuta)
+        val tvNaslov: TextView = view.tvNaslov
+        val tvUvod: TextView = view.tvUvod
+        val tvDatum: TextView = view.tvDatum
+        val tvGodinaSatMinuta: TextView = view.tvGodinaSatMinuta
 
-        val imgHasLink: ImageView = view.findViewById(R.id.imgViewLink)
-        val imgHasTxt: ImageView = view.findViewById(R.id.imgViewTxt)
-        val imgHasAudio: ImageView = view.findViewById(R.id.imgViewMp3)
+        val imgHasLink: ImageView = view.imgViewLink
+        val imgHasTxt: ImageView = view.imgViewTxt
+        val imgHasAudio: ImageView = view.imgViewMp3
 
-        val tvUvodNatpis: TextView = view.findViewById(R.id.tvUvodNatpis)
+        val tvUvodNatpis: TextView = view.tvUvodNatpis
 
         override fun bindTo(t: Any) {
             val contentInfo = t as ContentInfo
@@ -203,7 +225,7 @@ class MenuElementAdapter(val data: List<TreeElementInfo>, val metadata: Metadata
 
             tvGodinaSatMinuta.text = "$godina, $sat:$minuta"
             tvDatum.text = "$dan.$mjesec."
-            tvUvod.text = contentInfo.summary
+            tvUvod.text = contentInfo.preview
 
             view.setOnClickListener {
                 NovaEvaApp.bus.contentOpenRequest.onNext(contentInfo)
@@ -215,9 +237,7 @@ class MenuElementAdapter(val data: List<TreeElementInfo>, val metadata: Metadata
     private inner class ProgressBarViewHolder(view: View) : BindableViewHolder(view) {
 
         override fun bindTo(t: Any) {
-            val metadata = t as Metadata
-            view.visibility = if (metadata.loading.get()) View.VISIBLE else View.GONE
-            /**/
+            view.visibility = if (configData.loading.get()) View.VISIBLE else View.GONE
         }
     }
 }

@@ -33,8 +33,6 @@ public class MolitvenikActivity extends ListActivity implements OnClickListener{
 	private ListView mainListView;
 	private MolitvenikAdapter molitvenikAdapter;
 	private List<String> mainContentList;
-	
-	private ImageView btnBack, btnHome, btnSearch;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -119,14 +117,11 @@ public class MolitvenikActivity extends ListActivity implements OnClickListener{
 	private void initUI(){
 		mainListView = getListView();
 		mainListView.setClickable(true);
-		
-		btnBack = (ImageView) findViewById(R.id.btnBackListaVijesti);
-		btnSearch = (ImageView) findViewById(R.id.btnSearchListaVijesti);
-		btnHome = (ImageView) findViewById(R.id.btnHomeListaVijesti);
-		
-		btnBack.setOnClickListener(this);
-		btnSearch.setOnClickListener(this);
-		btnHome.setOnClickListener(this);
+
+		View fakeActionBar = findViewById(R.id.fakeActionBar);
+		fakeActionBar.findViewById(R.id.btnBack).setOnClickListener(this);
+		fakeActionBar.findViewById(R.id.btnSearch).setOnClickListener(this);
+		fakeActionBar.findViewById(R.id.btnHome).setOnClickListener(this);
 	}
 	
 	@Override
@@ -139,13 +134,13 @@ public class MolitvenikActivity extends ListActivity implements OnClickListener{
 	@Override
 	public void onClick(View v) {
 		switch(v.getId()){
-		case R.id.btnSearchListaVijesti:
+		case R.id.btnSearch:
 			showSearchPopup();
 			break;
-		case R.id.btnHomeListaVijesti:
+		case R.id.btnHome:
 			startActivity(new Intent(MolitvenikActivity.this,DashboardActivity.class));
 			break;
-		case R.id.btnBackListaVijesti:
+		case R.id.btnBack:
 			MolitvenikActivity.this.onBackPressed();
 			break;
 		}

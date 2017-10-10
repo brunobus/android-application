@@ -41,12 +41,13 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_vijest.*
+import kotlinx.android.synthetic.main.vijest_fake_action_bar.view.*
 
 class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletionListener, SeekBar.OnSeekBarChangeListener {
     /** ------------------------------------------FIELDS------------------------------------------ */
 
 
-    internal var headerImage: ImageView? = null //todo vpriscan
+    private var headerImage: ImageView? = null //todo vpriscan
 
     /**
      * Used to store Font size
@@ -91,7 +92,7 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
         setContentView(R.layout.activity_vijest)
 
         dbHandler = BookmarksDBHandlerV2(this)
-        contentId = intent.getLongExtra("contentId", 0)
+        contentId = intent.getLongExtra("contentId", -1)
         colourSet = intent.getIntExtra("colourSet", Constants.CAT_PROPOVJEDI)
 
         startService(Intent(this, BackgroundPlayerService::class.java))
@@ -107,12 +108,11 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
                         .build()
         )
 
-        if (!ConnectionChecker.hasConnection(this)) {
-            Toast.makeText(this, "Internetska veza nije dostupna", Toast.LENGTH_SHORT).show();
-            startActivity(Intent(this@VijestActivity, DashboardActivity::class.java));
-            return
-        } else {
+        if (ConnectionChecker.hasConnection(this)) {
             getContentData(contentId)
+        } else {
+            Toast.makeText(this, "Internetska veza nije dostupna", Toast.LENGTH_SHORT).show()
+            return
         }
 
         imageLoaderConfigurator = ImageLoaderConfigurator(this)
@@ -223,13 +223,14 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
             tvElapsed.typeface = it
         }
 
-        btnHome.setOnClickListener(this)
-        btnFace.setOnClickListener(this)
-        btnMail.setOnClickListener(this)
-        btnBookmark.setOnClickListener(this)
-        btnSearch.setOnClickListener(this)
         btnTextPlus.setOnClickListener(this)
-        btnBack.setOnClickListener(this)
+
+        fakeActionBar.btnHome.setOnClickListener(this)
+        fakeActionBar.btnFace.setOnClickListener(this)
+        fakeActionBar.btnMail.setOnClickListener(this)
+        fakeActionBar.btnBookmark.setOnClickListener(this)
+        fakeActionBar.btnSearch.setOnClickListener(this)
+        fakeActionBar.btnBack.setOnClickListener(this)
 
         /** Set category name and set text size */
         vijestWebView.settings.defaultFontSize = prefs.getInt("hr.bpervan.novaeva.velicinateksta", 14)
@@ -259,7 +260,7 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
 		}*/
 
         if (dbHandler.nidExists(contentId.toInt())) //todo accept long
-            btnBookmark.setImageResource(R.drawable.vijest_button_bookmarked)
+            fakeActionBar.btnBookmark.setImageResource(R.drawable.vijest_button_bookmarked)
         if (this.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
             headerImage = findViewById<View>(R.id.headerImage) as ImageView
         }
@@ -275,29 +276,29 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
                 .getContentData(contentId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ article ->
-                    if (article.audio != null) {
+                .subscribe({ contentData ->
+                    if (contentData.audio != null) {
                         imgMp3.setImageResource(R.drawable.vijest_ind_mp3_active)
 
                         createPlayer()
-                        streamAudio(article.audio)
+                        streamAudio(contentData.audio)
                     }
-                    if (article.prilozi != null) {
+                    if (contentData.prilozi != null) {
                         imgText.setImageResource(R.drawable.vijest_ind_txt_active)
                         imgText.setOnClickListener(this@VijestActivity)
                     }
-                    if (article.youtube != null) {
+                    if (contentData.youtube != null) {
                         imgLink.setImageResource(R.drawable.vijest_ind_www_active)
                         imgLink.setOnClickListener(this@VijestActivity)
                     }
 
                     if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
-                        if (article.image != null) {
+                        if (contentData.image != null) {
                             if (imageLoader.isInited) {
-                                imageLoader.displayImage(article.image[0].size640, headerImage, imageLoaderConfigurator.doConfig(false))
+                                imageLoader.displayImage(contentData.image[0].size640, headerImage, imageLoaderConfigurator.doConfig(false))
                             }
                         } else {
-                            val url = prefs.getString("hr.bpervan.novaeva.categoryheader." + article.cid, null)
+                            val url = prefs.getString("hr.bpervan.novaeva.categoryheader." + contentData.cid, null)
                             if (url != null) {
                                 if (imageLoader.isInited) {
                                     imageLoader.displayImage(url, headerImage, imageLoaderConfigurator.doConfig(true))
@@ -305,15 +306,15 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
                             }
                         }
                     }
-                    if (article.cid == Constants.CAT_POZIV) {
+                    if (contentData.cid == Constants.CAT_POZIV) {
                         setQuestionButton()
                     }
 
-                    tvNaslov.text = article.naslov
+                    tvNaslov.text = contentData.naslov
                     vijestWebView.reload()
-                    vijestWebView.loadDataWithBaseURL(null, article.tekst, "text/html", "UTF-8", null)
+                    vijestWebView.loadDataWithBaseURL(null, contentData.tekst, "text/html", "UTF-8", null)
 
-                    this@VijestActivity.thisContentData = article
+                    this@VijestActivity.thisContentData = contentData
 
                 }) { t -> Log.e("vijestiError", t.message, t) })
     }
@@ -425,20 +426,20 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
             R.id.btnBookmark ->
                 if (dbHandler.nidExists(contentId.toInt())) { //todo accept long
                     dbHandler.deleteVijest(contentId.toInt()) //todo accept long
-                    btnBookmark.setImageResource(R.drawable.vijest_button_bookmark)
+                    fakeActionBar.btnBookmark.setImageResource(R.drawable.vijest_button_bookmark)
                 } else {
                     dbHandler.insertArticle(thisContentData)
-                    btnBookmark.setImageResource(R.drawable.vijest_button_bookmarked)
+                    fakeActionBar.btnBookmark.setImageResource(R.drawable.vijest_button_bookmarked)
                 }
             R.id.btnFace -> {
-                val temp = "http://novaeva.com/node/" + intent.getIntExtra("contentId", 1025)
+                val temp = "http://novaeva.com/node/" + contentId
                 val faceIntent = Intent(Intent.ACTION_SEND)
                 faceIntent.type = "text/plain"
                 faceIntent.putExtra(Intent.EXTRA_TEXT, temp)
                 startActivity(Intent.createChooser(faceIntent, "Facebook"))
             }
             R.id.btnMail -> {
-                val temp2 = "http://novaeva.com/node/" + intent.getIntExtra("contentId", 1025)
+                val temp2 = "http://novaeva.com/node/" + contentId
                 val mailIntent = Intent(Intent.ACTION_SEND)
                 mailIntent.type = "message/rfc822"
                 mailIntent.putExtra(Intent.EXTRA_SUBJECT, thisContentData!!.naslov)
@@ -552,7 +553,6 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
         error.setView(tv)
 
         error.setPositiveButton("Pokušaj ponovno") { dialog, which ->
-            //new AsyncHttpPostTask(VijestActivity.this).execute(ovaVijest.getNid() + "");
             getContentData(contentId)
         }
         error.setNegativeButton("Povratak") { dialog, whichButton ->

@@ -3,253 +3,186 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:keepScreenOn="true">
-    
+
     <ScrollView
         android:id="@+id/scrollView1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_toLeftOf="@+id/fakeActionBar">
-        
-        <RelativeLayout 
+        android:layout_toLeftOf="@+id/fakeActionBar"
+        android:layout_toStartOf="@+id/fakeActionBar">
+
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            
-			<ImageView
-			    android:id="@+id/imgNaslovnaTraka"
-			    android:layout_width="match_parent"
-			    android:layout_height="wrap_content"
-			    android:contentDescription="@string/dummyDesc"
-			    android:adjustViewBounds="true"
-			    android:scaleType="centerCrop"
-			    android:layout_alignParentTop="true"
-			    android:src="@drawable/vijest_naslovnapropovjedi_land" />
-			
-			<TextView
-		        android:id="@+id/tvNaslov"
-		        android:layout_width="0dip"
-		        android:layout_height="wrap_content"
-		        android:layout_alignParentLeft="true"
-				android:layout_alignParentRight="true"
-		        android:layout_alignTop="@+id/imgNaslovnaTraka"
-		        android:layout_marginLeft="10dp"
-		        android:layout_marginTop="10dp"
-		        android:textColor="#ffffff"
-		        android:maxLines="2"
-		        android:ellipsize="end" />
-			
-			<ImageView
-				android:id="@+id/btnTextPlus"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_alignParentRight="true"
-				android:layout_alignBottom="@+id/imgNaslovnaTraka"
-				android:paddingTop="10dp"
-				android:paddingLeft="10dp"
-				android:paddingRight="15dp"
-				android:paddingBottom="20dp"
-				android:src="@drawable/vijest_button_textplus"
-				android:contentDescription="@string/dummyDesc" />
-			
-			<ImageView
-				android:id="@+id/imgText"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_below="@+id/imgNaslovnaTraka"
-				android:layout_alignParentLeft="true"
-				android:layout_marginTop="20dp"
-				android:layout_marginLeft="50dp"
-				android:src="@drawable/vijest_ind_txt_inactive"
-				android:contentDescription="@string/dummyDesc"
-				android:visibility="visible" />
 
-			<ImageView
-				android:id="@+id/imgLink"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_below="@+id/imgNaslovnaTraka"
-				android:layout_marginTop="20dp"
-				android:layout_centerHorizontal="true"
-				android:src="@drawable/vijest_ind_www_inactive"
-				android:contentDescription="@string/dummyDesc"
-				android:visibility="visible" />
+            <ImageView
+                android:id="@+id/imgNaslovnaTraka"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/dummyDesc"
+                android:scaleType="centerCrop"
+                android:src="@drawable/vijest_naslovnapropovjedi_land" />
 
-			<ImageView
-				android:id="@+id/imgMp3"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_below="@+id/imgNaslovnaTraka"
-				android:layout_marginTop="20dp"
-				android:layout_alignParentRight="true"
-				android:layout_marginRight="50dp"
-				android:src="@drawable/vijest_ind_mp3_inactive"
-				android:contentDescription="@string/dummyDesc"
-				android:visibility="visible" />
+            <TextView
+                android:id="@+id/tvNaslov"
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignTop="@+id/imgNaslovnaTraka"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textColor="#ffffff" />
 
-			<WebView
-		        android:id="@+id/vijestWebView"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_alignParentLeft="true"
-		        android:layout_below="@+id/mp3Player"
-		        android:layout_marginTop="5dp"
-		        android:textColor="#4c4c4c" />
-			
-			<RelativeLayout
-				    android:id="@+id/mp3Player"
-				    android:layout_width="match_parent"
-				    android:layout_height="wrap_content"
-				    android:layout_below="@+id/imgLink"
-			        android:layout_marginTop="5dp"
-				    android:padding="20dp"
-				    android:visibility="gone" >
-					
-				    <ImageView
-				        android:id="@+id/btnPlay"
-				        android:layout_width="wrap_content"
-				        android:layout_height="wrap_content"
-				        android:layout_alignParentTop="true"
-				        android:layout_centerHorizontal="true"
-				        android:contentDescription="@string/dummyDesc"
-				        android:src="@drawable/player_btn_play"
-				        android:visibility="visible" />
-				    
-				    <ImageView 
-				        android:id="@+id/btnPause"
-				        android:layout_width="wrap_content"
-				        android:layout_height="wrap_content"
-				        android:layout_alignParentTop="true"
-				        android:layout_centerHorizontal="true"
-				        android:src="@drawable/player_btn_pause"
-				        android:visibility="gone"
-				        android:contentDescription="@string/dummyDesc" />
-				    
-				    <SeekBar
-					    android:id="@+id/seekArc"
-					    android:layout_width="match_parent"
-					    android:layout_height="wrap_content"
-					    android:layout_below="@+id/btnPlay"
-					    android:layout_marginTop="20dp"
-					    android:padding="30dp" />
+            <ImageView
+                android:id="@+id/btnTextPlus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/imgNaslovnaTraka"
+                android:layout_alignParentRight="true"
+                android:contentDescription="@string/dummyDesc"
+                android:paddingBottom="20dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="15dp"
+                android:paddingTop="10dp"
+                android:src="@drawable/vijest_button_textplus" />
 
-					<RelativeLayout
-					    android:id="@+id/playerTime"
-					    android:layout_height="wrap_content"
-					    android:layout_width="wrap_content"
-					    android:layout_below="@+id/seekArc"
-					    android:layout_centerHorizontal="true" >
-					<TextView 
-					    android:id="@+id/tvElapsed"
-					    android:layout_height="wrap_content"
-					    android:layout_width="wrap_content"
-					    android:text="00:00"
-					    android:textSize="18sp" />
-					<TextView 
-					    android:id="@+id/tvSlash"
-					    android:layout_height="wrap_content"
-					    android:layout_width="wrap_content"
-					    android:layout_toRightOf="@id/tvElapsed"
-					    android:text=" / "
-					    android:textSize="18sp" />
-					
-					<TextView 
-					    android:id="@+id/tvDuration"
-					    android:layout_height="wrap_content"
-					    android:layout_width="wrap_content"
-					    android:layout_toRightOf="@id/tvSlash"
-					    android:textSize="18sp" />
-					</RelativeLayout>
-				    
-				</RelativeLayout>
+            <ImageView
+                android:id="@+id/imgText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/imgNaslovnaTraka"
+                android:layout_marginLeft="50dp"
+                android:layout_marginTop="20dp"
+                android:contentDescription="@string/dummyDesc"
+                android:src="@drawable/vijest_ind_txt_inactive"
+                android:visibility="visible" />
 
-			
-            
+            <ImageView
+                android:id="@+id/imgLink"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/imgNaslovnaTraka"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:contentDescription="@string/dummyDesc"
+                android:src="@drawable/vijest_ind_www_inactive"
+                android:visibility="visible" />
+
+            <ImageView
+                android:id="@+id/imgMp3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/imgNaslovnaTraka"
+                android:layout_marginRight="50dp"
+                android:layout_marginTop="20dp"
+                android:contentDescription="@string/dummyDesc"
+                android:src="@drawable/vijest_ind_mp3_inactive"
+                android:visibility="visible" />
+
+            <WebView
+                android:id="@+id/vijestWebView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/mp3Player"
+                android:layout_marginTop="5dp"
+                android:textColor="#4c4c4c" />
+
+            <RelativeLayout
+                android:id="@+id/mp3Player"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/imgLink"
+                android:layout_marginTop="5dp"
+                android:padding="20dp"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/btnPlay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:contentDescription="@string/dummyDesc"
+                    android:src="@drawable/player_btn_play"
+                    android:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/btnPause"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:contentDescription="@string/dummyDesc"
+                    android:src="@drawable/player_btn_pause"
+                    android:visibility="gone" />
+
+                <SeekBar
+                    android:id="@+id/seekArc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/btnPlay"
+                    android:layout_marginTop="20dp"
+                    android:padding="30dp" />
+
+                <RelativeLayout
+                    android:id="@+id/playerTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/seekArc"
+                    android:layout_centerHorizontal="true">
+
+                    <TextView
+                        android:id="@+id/tvElapsed"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="00:00"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/tvSlash"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@id/tvElapsed"
+                        android:text=" / "
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/tvDuration"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@id/tvSlash"
+                        android:textSize="18sp" />
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+
         </RelativeLayout>
-                
+
     </ScrollView>
-    
-<ImageView 
-				android:id="@+id/btnPoziv"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_alignParentBottom="true"
-				android:layout_marginBottom="5dp"
-				android:layout_marginTop="5dp"
-				android:layout_centerHorizontal="true"
-				android:contentDescription="@string/dummyDesc"
-				android:src="@drawable/button_razmisljam_o_pozivu" 
-				android:visibility="gone"/>
-		<RelativeLayout
-		    android:id="@+id/fakeActionBar"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:layout_alignParentRight="true"
-	    android:orientation="horizontal"
-	    android:background="@drawable/vijest_navbgpropovjedi_land" >
-		
-		    <ImageView
-		        android:id="@+id/btnHome"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_alignParentTop="true"
-		        android:layout_centerHorizontal="true"
-		        android:layout_marginTop="20dp"
-		        android:contentDescription="@string/dummyDesc"
-		        android:src="@drawable/vijest_button_home" />
-		    
-		    <RelativeLayout 
-		        android:layout_width="wrap_content"
-			    android:layout_height="wrap_content"
-			    android:layout_centerVertical="true"
-			    android:layout_centerHorizontal="true">
-		    
-			    <ImageView
-			        android:id="@+id/btnBookmark"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:layout_centerHorizontal="true"
-			        android:layout_alignParentTop="true"
-			        android:contentDescription="@string/dummyDesc"
-			        android:src="@drawable/vijest_button_bookmark" />
-			    
-			    <ImageView
-			        android:id="@+id/btnSearch"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:layout_centerHorizontal="true"
-			        android:layout_marginTop="10dp"
-			        android:layout_below="@+id/btnBookmark"
-			        android:contentDescription="@string/dummyDesc"
-			        android:src="@drawable/vijest_button_search" />
-			    
-			    <ImageView
-			        android:id="@+id/btnMail"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:layout_centerHorizontal="true"
-			        android:layout_marginTop="10dp"
-			        android:layout_below="@+id/btnSearch"
-			        android:contentDescription="@string/dummyDesc"
-			        android:src="@drawable/vijest_button_mail" />
-			    
-			    <ImageView
-			        android:id="@+id/btnFace"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:layout_centerHorizontal="true"
-			        android:layout_marginTop="10dp"
-			        android:layout_below="@+id/btnMail"
-			        android:contentDescription="@string/dummyDesc"
-			        android:src="@drawable/vijest_button_face" />
-		    </RelativeLayout>
-		    <ImageView 
-		        android:id="@+id/btnBack"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_centerHorizontal="true"
-		        android:layout_alignParentBottom="true"
-		        android:paddingBottom="20dp"
-		        android:contentDescription="@string/dummyDesc"
-		        android:src="@drawable/vijest_button_back" />
-		</RelativeLayout>
-	    
+
+    <ImageView
+        android:id="@+id/btnPoziv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:contentDescription="@string/dummyDesc"
+        android:src="@drawable/button_razmisljam_o_pozivu"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/fakeActionBar"
+        layout="@layout/vijest_fake_action_bar" />
+
 </RelativeLayout>

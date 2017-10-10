@@ -24,7 +24,7 @@
     <!-- android:fontFamily="opensans-bold" -->
 
     <TextView
-        android:id="@+id/tvNaslov"
+        android:id="@+id/tvMapaNaslov"
         android:layout_width="@dimen/naslovWidthLand"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"

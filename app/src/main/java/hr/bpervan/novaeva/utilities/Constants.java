@@ -61,11 +61,7 @@ public class Constants {
 	
 	public static final String APP_NAME = "Nova Eva";
 	public static final String APP_NAME_LAND = "N\no\nv\na\n \nE\nv\na";
-	
-	public static final String cidURL = "http://novaeva.com/json?api=2&filter=1&cid=";
-	public static final String nidURL = "http://novaeva.com/json?api=2&nid=";
-	public static final String brevijarURL = "http://novaeva.com/json?api=2&brev=";
-	public static final String randomURL = "http://novaeva.com/json?api=2&cid=1&rand=1";
+
 	public static final String searchURL = "http://novaeva.com/json?api=2&search=";
 	public static final String alertURL = "http://novaeva.com/json?api=2&alert=1";
 	

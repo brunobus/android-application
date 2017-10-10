@@ -38,8 +38,6 @@ public class BookmarksActivity extends ListActivity implements View.OnClickListe
 	List<ListElement> listaBookmarksa;
     
     private Tracker mGaTracker;
-    
-    private ImageView btnHome, btnSearch, btnBack;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -65,13 +63,11 @@ public class BookmarksActivity extends ListActivity implements View.OnClickListe
 	private void initUI(){
 		this.setTitle("Bookmarks");
 		listView = getListView();
-		
-		btnHome = (ImageView) findViewById(R.id.btnHomeListaVijesti);
-		btnSearch = (ImageView) findViewById(R.id.btnSearchListaVijesti);
-		btnBack = (ImageView) findViewById(R.id.btnBackListaVijesti);
-		btnHome.setOnClickListener(this);
-		btnSearch.setOnClickListener(this);
-		btnBack.setOnClickListener(this);
+
+		View fakeActionBar = findViewById(R.id.fakeActionBar);
+		fakeActionBar.findViewById(R.id.btnHome).setOnClickListener(this);
+		fakeActionBar.findViewById(R.id.btnSearch).setOnClickListener(this);
+		fakeActionBar.findViewById(R.id.btnBack).setOnClickListener(this);
 		
 		/*
 		for(ListElement l : listaBookmarksa){
@@ -160,13 +156,13 @@ public class BookmarksActivity extends ListActivity implements View.OnClickListe
 	@Override
 	public void onClick(View v) {
 		switch(v.getId()){
-		case R.id.btnSearchListaVijesti:
+		case R.id.btnSearch:
 			showSearchPopup();
 			break;
-		case R.id.btnHomeListaVijesti:
+		case R.id.btnHome:
 			startActivity(new Intent(BookmarksActivity.this,DashboardActivity.class));
 			break;
-		case R.id.btnBackListaVijesti:
+		case R.id.btnBack:
 			BookmarksActivity.this.onBackPressed();
 			break;
 		}

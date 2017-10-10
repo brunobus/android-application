@@ -2,60 +2,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MolitvenikActivity" >
-    
+    tools:context=".MolitvenikActivity">
+
     <ListView
         android:id="@+id/android:list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:cacheColorHint="#00000000"
+        android:layout_above="@+id/fakeActionBar"
         android:layout_alignParentTop="true"
-        android:layout_above="@+id/fakeActionBarMolitvenik" >
-    </ListView>
-    
-    <LinearLayout
-	    android:id="@+id/fakeActionBarMolitvenik"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:layout_alignParentBottom="true"
-	    android:orientation="horizontal"
-	    android:background="@drawable/izbornik_navbgpropovjedi" >
+        android:cacheColorHint="#00000000" />
 
-		<RelativeLayout
-		    android:layout_width="match_parent"
-		    android:layout_height="match_parent" >
-
-		    <ImageView
-		        android:id="@+id/btnSearchListaVijesti"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_centerVertical="true"
-		        android:layout_centerHorizontal="true"
-		        android:contentDescription="@string/dummyDesc"
-		        android:src="@drawable/vijest_button_search" />
-
-
-		    <ImageView
-		        android:id="@+id/btnHomeListaVijesti"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_alignParentRight="true"
-		        android:layout_centerVertical="true"
-		        android:layout_marginRight="20dp"
-		        android:contentDescription="@string/dummyDesc"
-		        android:src="@drawable/vijest_button_home" />
-		    
-		    <ImageView
-		        android:id="@+id/btnBackListaVijesti"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_alignParentLeft="true"
-		        android:layout_centerVertical="true"
-		        android:layout_marginLeft="20dp"
-		        android:contentDescription="@string/dummyDesc"
-		        android:src="@drawable/vijest_button_back" />
-		</RelativeLayout>
-
-	</LinearLayout>
+    <include
+        android:id="@+id/fakeActionBar"
+        layout="@layout/simple_fake_action_bar" />
 
 </RelativeLayout>

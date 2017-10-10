@@ -2,9 +2,15 @@ package hr.bpervan.novaeva.activities;
 
 import hr.bpervan.novaeva.NovaEvaApp;
 import hr.bpervan.novaeva.main.R;
+import hr.bpervan.novaeva.model.DirectoryContent;
+import hr.bpervan.novaeva.model.Image;
+import hr.bpervan.novaeva.services.NovaEvaService;
 import hr.bpervan.novaeva.utilities.ConnectionChecker;
 import hr.bpervan.novaeva.utilities.Constants;
-import hr.bpervan.novaeva.utilities.Image;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,7 +21,6 @@ import java.util.List;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -77,6 +82,8 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
 		
 		prefs = getSharedPreferences("hr.bpervan.novaeva", MODE_PRIVATE);
 
+		fetchBreviaryImage();
+
         mGaTracker = ((NovaEvaApp) getApplication()).getTracker(NovaEvaApp.TrackerName.APP_TRACKER);
 
 		/*mGaInstance = GoogleAnalytics.getInstance(this);
@@ -103,7 +110,7 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
 		openSansRegular = Typeface.createFromAsset(getAssets(), "opensans-regular.ttf");
 		titleLineTitle = (TextView) findViewById(R.id.titleLineTitle);
 		titleLineTitle.setTypeface(openSansRegular);
-		
+
 		btnBrevijar.setOnTouchListener(this);
 		btnMolitvenik.setOnTouchListener(this);
 		btnIzreke.setOnTouchListener(this);
@@ -156,6 +163,15 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
 		GoogleAnalytics.getInstance(this).reportActivityStop(this);
 	}
 
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+
+		if (fetchBrevijarImageDisposable != null) {
+			fetchBrevijarImageDisposable.dispose();
+		}
+	}
+
 	public boolean onOptionsItemSelected(MenuItem item){
 		switch(item.getItemId()){
 		case R.id.menuSearch:
@@ -175,6 +191,27 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
 	@Override
 	public void onConfigurationChanged(Configuration newConfig){
 		super.onConfigurationChanged(newConfig);
+	}
+
+	private Disposable fetchBrevijarImageDisposable;
+
+	private void fetchBreviaryImage(){
+		if (fetchBrevijarImageDisposable != null) {
+			fetchBrevijarImageDisposable.dispose();
+		}
+		fetchBrevijarImageDisposable = NovaEvaService.Companion.getInstance()
+				.getDirectoryContent(546, null, 0)
+				.subscribeOn(Schedulers.io())
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribe(new Consumer<DirectoryContent>() {
+					@Override
+					public void accept(DirectoryContent directoryContent) throws Exception {
+						Image breviaryImage = directoryContent.getImage();
+						if (breviaryImage != null) {
+							prefs.edit().putString("hr.bpervan.novaeva.brevijarheaderimage", breviaryImage.getSize640()).apply();
+						}
+					}
+				});
 	}
 	
 	private void showSearchPopup(){
@@ -265,7 +302,6 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
 		private InputStream is = null;
 		private JSONObject jObj = null;
 		private String json = null;
-		private Image brevijarHeader = null;
 		
 		/** Communicatiooooooon */
 		private HttpClient httpClient;
@@ -280,7 +316,7 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
 			this.newStuffIndicatorUrl = "http://novaeva.com/json?api=2&indicators=1";
 		}
 		
-		private void getNewStuff() throws ClientProtocolException, IOException, JSONException{
+		private void getNewStuff() throws IOException, JSONException{
             httpParams = new BasicHttpParams();
             httpParams.setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
 
@@ -332,53 +368,21 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
 			}*/
             try {
                 getNewStuff();
-                fetchBrevijarImage();
-            } catch (ClientProtocolException e) {
-            } catch (IOException e) {
-            } catch (JSONException e) {
+            } catch (Exception e) {
+            	Log.e("getNewStuff", e.getMessage(), e);
             }
 
 			DashboardActivity.this.runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
 					testAndSetRedDots();
-					prefs.edit().putLong("vrijemeZadnjeSinkronizacije", System.currentTimeMillis()).commit();
-					if(brevijarHeader != null){
-						if(brevijarHeader.getUrl640() != null){
-							prefs.edit().putString("hr.bpervan.novaeva.brevijarheaderimage", brevijarHeader.getUrl640()).commit();
-						}
-					}
+					prefs.edit().putLong("vrijemeZadnjeSinkronizacije", System.currentTimeMillis()).apply();
 				}
 			});
 
 
 			
 			return null;
-		}
-		
-		private Image fetchBrevijarImage() throws ClientProtocolException, IOException, JSONException{
-			httpClient = new DefaultHttpClient();
-			httpGet = new HttpGet("http://novaeva.com/json?api=2&cid=546");
-
-			httpResponse = httpClient.execute(httpGet);
-			httpEntity = httpResponse.getEntity();
-			is = httpEntity.getContent();
-
-			bufferedReader = new BufferedReader(new InputStreamReader(is,"utf-8"), 8);
-			StringBuilder stringBuilder = new StringBuilder();
-			String line = null;
-			while((line = bufferedReader.readLine()) != null){
-				stringBuilder.append(line + "\n");
-			}
-			is.close();
-			json=stringBuilder.toString();
-
-			jObj = new JSONObject(json);
-			JSONObject image = jObj.getJSONObject("image");
-			brevijarHeader = new Image(image.getString("640"), image.getString("720"), image.getString("date"), image.getString("original"));
-
-			prefs.edit().putString("hr.bpervan.novaeva.brevijarheaderimage", brevijarHeader.getUrl640()).commit();
-			return brevijarHeader;
 		}
 		
 		private String dohvatiNajnovijiNidIzKategorije(int kategorija){
@@ -444,7 +448,7 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
 		if(ConnectionChecker.hasConnection(this)){
 			switch(v.getId()){
 			case R.id.btnBrevijar:
-				i = new Intent(DashboardActivity.this,BrevijarActivity.class);
+				i = new Intent(DashboardActivity.this, BreviaryActivity.class);
 				startActivity(i);
 				break;
 			case R.id.btnEvandjelje:

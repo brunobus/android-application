@@ -23,7 +23,7 @@
         android:ellipsize="end" />
 
     <TextView
-        android:id="@+id/tvNaslov"
+        android:id="@+id/tvMapaNaslov"
         android:layout_width="@dimen/naslovWidth"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"

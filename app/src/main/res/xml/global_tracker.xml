@@ -20,11 +20,11 @@
         Bookmarks
     </screenName>
 
-    <screenName name = "hr.bpervan.novaeva.activities.BrevijarActivity">
+    <screenName name = "hr.bpervan.novaeva.activities.BreviaryActivity">
         Brevijar izbornik
     </screenName>
 
-    <screenName name = "hr.bpervan.novaeva.activities.BrevijarDetaljiActivity">
+    <screenName name = "hr.bpervan.novaeva.activities.BreviaryContentActivity">
         Brevijar molitva
     </screenName>
 

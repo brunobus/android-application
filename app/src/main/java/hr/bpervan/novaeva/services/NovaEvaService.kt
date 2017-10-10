@@ -3,6 +3,7 @@ package hr.bpervan.novaeva.services
 import hr.bpervan.novaeva.model.ContentData
 import hr.bpervan.novaeva.model.Breviary
 import hr.bpervan.novaeva.model.DirectoryContent
+import hr.bpervan.novaeva.model.SearchResult
 import io.reactivex.Single
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -18,13 +19,17 @@ interface NovaEvaService {
 
     @GET("json?api=2")
     fun getDirectoryContent(@Query("cid") directoryId: Long,
-                            @Query("date") date: String? = null): Single<DirectoryContent>
+                            @Query("date") date: String? = null,
+                            @Query("rand") random: Int = 0): Single<DirectoryContent>
 
     @GET("json?api=2")
     fun getContentData(@Query("nid") contentId: Long): Single<ContentData>
 
     @GET("json?api=2")
     fun getBreviary(@Query("brev") breviaryId: String): Single<Breviary>
+
+    @GET("json?api=2")
+    fun searchForContent(@Query("search") searchString: String): Single<SearchResult>
 
     companion object {
 

@@ -30,7 +30,21 @@ data class ContentInfo(val attach: Attachments? = null,
                        @SerializedName("nid") val contentId: Long = -1,
                        @SerializedName("datum") val datetime: String? = null,
                        @SerializedName("naslov") val title: String? = null,
-                       @SerializedName("uvod") val summary: String? = null) : TreeElementInfo {
+                       @SerializedName(value = "tekst", alternate = arrayOf("uvod")) val text: String? = null) : TreeElementInfo {
+
+    val preview: String by lazy {
+        if (text != null) {
+            val stripped = text.replace(Regex("<[^>]+>"), "")
+
+            val trimmed = when {
+                stripped.length > 50 -> stripped.substring(0, 50)
+                else -> stripped
+            }
+            trimmed + "..."
+        } else {
+            "null"
+        }
+    }
 
     data class Attachments(@SerializedName("video") val hasVideo: Boolean = false,
                            @SerializedName("documents") val hasDocuments: Boolean = false,
@@ -44,7 +58,7 @@ data class ContentInfo(val attach: Attachments? = null,
     }
 
     override fun toString(): String {
-        return "ContentInfo{attach=$attach, nid=$contentId, datum='$datetime', naslov='$title', uvod='$summary'}"
+        return "ContentInfo{attach=$attach, nid=$contentId, datum='$datetime', naslov='$title', uvod='$text'}"
     }
 }
 
@@ -92,3 +106,8 @@ data class Image(@SerializedName("640") val size640: String? = null,
 }
 
 data class Breviary(@SerializedName("tekst") val text: String? = null)
+
+data class SearchResult(
+        val APIstatus: Int = 0,
+        val rezultat: Int = 0,
+        @SerializedName("vijesti") val searchResultContentInfoList: List<ContentInfo>? = null)

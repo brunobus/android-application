@@ -17,17 +17,12 @@ import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.activities.DashboardActivity
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.ContentInfo
-import hr.bpervan.novaeva.model.DirectoryInfo
 import hr.bpervan.novaeva.model.TreeElementInfo
 import hr.bpervan.novaeva.adapters.MenuElementAdapter
-import hr.bpervan.novaeva.model.DirectoryContent
 import hr.bpervan.novaeva.services.NovaEvaService
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
-import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
-import org.json.JSONException
-import org.json.JSONObject
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -47,7 +42,7 @@ class MenuRecyclerFragment : Fragment() {
     private lateinit var adapter: MenuElementAdapter
 
     private val elementsList = ArrayList<TreeElementInfo>()
-    private lateinit var metadata: MenuElementAdapter.Metadata
+    private lateinit var configData: MenuElementAdapter.ConfigData
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,11 +53,11 @@ class MenuRecyclerFragment : Fragment() {
             colourSet = it.getInt("colourSet", 7)
         }
 
-        metadata = MenuElementAdapter.Metadata(directoryId, directoryName,
-                if (isSubDirectory) "NALAZITE SE U MAPI" else "NALAZITE SE U KATEGORIJI",
-                resources.configuration.orientation, colourSet, loading)
+        configData = MenuElementAdapter.ConfigData(resources.configuration.orientation, colourSet, loading)
 
-        adapter = MenuElementAdapter(elementsList, metadata)
+        val headerData = MenuElementAdapter.HeaderData(directoryName, if (isSubDirectory) "NALAZITE SE U MAPI" else "NALAZITE SE U KATEGORIJI")
+
+        adapter = MenuElementAdapter(elementsList, configData, headerData)
         adapter.registerAdapterDataObserver(DataChangeLogger())
 
         loadListElements()
@@ -70,15 +65,15 @@ class MenuRecyclerFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        val view = inflater.inflate(R.layout.fragment_evamenu, container, false) as RecyclerView
+        val recyclerView = inflater.inflate(R.layout.eva_recycler_view, container, false) as RecyclerView
 
-        val linearLayoutManager = LinearLayoutManager(view.context)
-        view.layoutManager = linearLayoutManager
-        view.itemAnimator = DefaultItemAnimator()
-        view.adapter = adapter
-        view.addOnScrollListener(EndlessScrollListener(linearLayoutManager))
+        val linearLayoutManager = LinearLayoutManager(recyclerView.context)
+        recyclerView.layoutManager = linearLayoutManager
+        recyclerView.itemAnimator = DefaultItemAnimator()
+        recyclerView.adapter = adapter
+        recyclerView.addOnScrollListener(EndlessScrollListener(linearLayoutManager))
 
-        return view
+        return recyclerView
     }
 
     class DataChangeLogger : RecyclerView.AdapterDataObserver() {

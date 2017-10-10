@@ -2,56 +2,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MolitvenikActivity" >
-    
-	<WebView
-		android:id="@+id/webViewInfo"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:layout_toLeftOf="@+id/fakeActionBarInfo" />
+    tools:context=".MolitvenikActivity">
 
-	<LinearLayout
-	    android:id="@+id/fakeActionBarInfo"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:layout_alignParentRight="true"
-	    android:orientation="horizontal"
-	    android:background="@drawable/vijest_navbgpropovjedi_land" >
-	    
-		<RelativeLayout
-		    android:layout_width="match_parent"
-		    android:layout_height="match_parent" >
-		
-		    <ImageView
-		        android:id="@+id/btnHomeListaVijesti"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_alignParentTop="true"
-		        android:layout_centerHorizontal="true"
-		        android:layout_marginTop="20dp"
-		        android:contentDescription="@string/dummyDesc"
-		        android:src="@drawable/vijest_button_home" />
-		    
-		    <ImageView
-		        android:id="@+id/btnSearchListaVijesti"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_centerHorizontal="true"
-		        android:layout_centerVertical="true"
-		        android:contentDescription="@string/dummyDesc"
-		        android:src="@drawable/vijest_button_search" />
-		    
-		    <ImageView 
-		        android:id="@+id/btnBackListaVijesti"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_centerHorizontal="true"
-		        android:layout_alignParentBottom="true"
-		        android:layout_marginBottom="20dp"
-		        android:contentDescription="@string/dummyDesc"
-		        android:src="@drawable/vijest_button_back" />
-		</RelativeLayout>
-	    
-	</LinearLayout>
+    <WebView
+        android:id="@+id/webViewInfo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toLeftOf="@+id/fakeActionBar"
+        android:layout_toStartOf="@+id/fakeActionBar" />
+
+    <include
+        android:id="@+id/fakeActionBar"
+        layout="@layout/simple_fake_action_bar" />
 
 </RelativeLayout>

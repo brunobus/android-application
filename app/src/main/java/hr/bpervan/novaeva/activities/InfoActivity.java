@@ -16,8 +16,6 @@ public class InfoActivity extends Activity implements OnClickListener{
 	
 	private WebView webView;
 	
-	private ImageView btnBack, btnHome, btnSearch;
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -30,26 +28,23 @@ public class InfoActivity extends Activity implements OnClickListener{
 		webView = (WebView) findViewById(R.id.webViewInfo);
 		
 		webView.loadUrl("file:///android_asset/info.htm");
-		
-		btnBack = (ImageView) findViewById(R.id.btnBackListaVijesti);
-		btnSearch = (ImageView) findViewById(R.id.btnSearchListaVijesti);
-		btnHome = (ImageView) findViewById(R.id.btnHomeListaVijesti);
-		
-		btnBack.setOnClickListener(this);
-		btnSearch.setOnClickListener(this);
-		btnHome.setOnClickListener(this);
+
+		View fakeActionBar = findViewById(R.id.fakeActionBar);
+		fakeActionBar.findViewById(R.id.btnBack).setOnClickListener(this);
+		fakeActionBar.findViewById(R.id.btnSearch).setOnClickListener(this);
+		fakeActionBar.findViewById(R.id.btnHome).setOnClickListener(this);
 	}
 	
 	@Override
 	public void onClick(View v) {
 		switch(v.getId()){
-		case R.id.btnSearchListaVijesti:
+		case R.id.btnSearch:
 			showSearchPopup();
 			break;
-		case R.id.btnHomeListaVijesti:
+		case R.id.btnHome:
 			startActivity(new Intent(InfoActivity.this,DashboardActivity.class));
 			break;
-		case R.id.btnBackListaVijesti:
+		case R.id.btnBack:
 			InfoActivity.this.onBackPressed();
 			break;
 		}

@@ -67,12 +67,12 @@
             android:noHistory="true"
             android:theme="@style/ListaVijesti" />
         <activity
-            android:name="hr.bpervan.novaeva.activities.BrevijarActivity"
+            android:name="hr.bpervan.novaeva.activities.BreviaryActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_brevijar_predizbor"
             android:theme="@style/BrevijarMenu" />
         <activity
-            android:name="hr.bpervan.novaeva.activities.BrevijarDetaljiActivity"
+            android:name="hr.bpervan.novaeva.activities.BreviaryContentActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_brevijar_detalji"
             android:theme="@style/Brevijar" />

@@ -13,6 +13,7 @@ import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
@@ -36,13 +37,12 @@ import io.reactivex.schedulers.Schedulers;
 
 public class ListaVijestiActivity extends AppCompatActivity implements OnClickListener {
 
-    private LinearLayout fakeActionBarListaVijesti;
+    private RelativeLayout fakeActionBar;
 
     private Tracker mGaTracker;
 
     private SharedPreferences prefs;
 
-    private ImageView btnHome, btnSearch, btnBack;
     private ImageView btnImamPitanje;
 
     private long directoryId;
@@ -75,30 +75,24 @@ public class ListaVijestiActivity extends AppCompatActivity implements OnClickLi
         killRedDot(directoryId);
 
         initUI();
-        if (!ConnectionChecker.hasConnection(this)) {
-            Toast.makeText(this, "Internetska veza nije dostupna", Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(ListaVijestiActivity.this, DashboardActivity.class));
-        } else {
+        if (ConnectionChecker.hasConnection(this)) {
             showFragmentForDirectory(directoryId, Constants.getCatNameById(directoryId).toUpperCase(), false);
+        } else {
+            Toast.makeText(this, "Internetska veza nije dostupna", Toast.LENGTH_SHORT).show();
         }
     }
 
     private void initUI() {
-        btnHome = findViewById(R.id.btnHomeListaVijesti);
-        btnSearch = findViewById(R.id.btnSearchListaVijesti);
-        btnBack = findViewById(R.id.btnBackListaVijesti);
-        btnHome.setOnClickListener(this);
-        btnSearch.setOnClickListener(this);
-        btnBack.setOnClickListener(this);
+        fakeActionBar = findViewById(R.id.fakeActionBar);
+        fakeActionBar.findViewById(R.id.btnHome).setOnClickListener(this);
+        fakeActionBar.findViewById(R.id.btnSearch).setOnClickListener(this);
+        fakeActionBar.findViewById(R.id.btnBack).setOnClickListener(this);
 
         if (directoryId == Constants.CAT_ODGOVORI) {
             btnImamPitanje = findViewById(R.id.btnImamPitanjeListaVijesti);
             btnImamPitanje.setOnClickListener(this);
             btnImamPitanje.setVisibility(View.VISIBLE);
         }
-
-
-        fakeActionBarListaVijesti = findViewById(R.id.fakeActionBarListaVijesti);
 
         this.setCategoryTypeColour();
     }
@@ -142,13 +136,13 @@ public class ListaVijestiActivity extends AppCompatActivity implements OnClickLi
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btnSearchListaVijesti:
+            case R.id.btnSearch:
                 showSearchPopup();
                 break;
-            case R.id.btnHomeListaVijesti:
+            case R.id.btnHome:
                 startActivity(new Intent(ListaVijestiActivity.this, DashboardActivity.class));
                 break;
-            case R.id.btnBackListaVijesti:
+            case R.id.btnBack:
                 ListaVijestiActivity.this.onBackPressed();
                 break;
             case R.id.btnImamPitanjeListaVijesti:
@@ -167,9 +161,9 @@ public class ListaVijestiActivity extends AppCompatActivity implements OnClickLi
 
     private void setCategoryTypeColour() {
         if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            fakeActionBarListaVijesti.setBackgroundResource(ResourceHandler.getResourceId(colourSet, Configuration.ORIENTATION_LANDSCAPE));
+            fakeActionBar.setBackgroundResource(ResourceHandler.getResourceId(colourSet, Configuration.ORIENTATION_LANDSCAPE));
         } else {
-            fakeActionBarListaVijesti.setBackgroundResource(ResourceHandler.getResourceId(colourSet, Configuration.ORIENTATION_PORTRAIT));
+            fakeActionBar.setBackgroundResource(ResourceHandler.getResourceId(colourSet, Configuration.ORIENTATION_PORTRAIT));
         }
     }
 
@@ -187,7 +181,6 @@ public class ListaVijestiActivity extends AppCompatActivity implements OnClickLi
         super.onRestart();
         if (!ConnectionChecker.hasConnection(this)) {
             Toast.makeText(this, "Internetska veza nije dostupna", Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(ListaVijestiActivity.this, DashboardActivity.class));
         }
     }
 
@@ -195,7 +188,6 @@ public class ListaVijestiActivity extends AppCompatActivity implements OnClickLi
         super.onResume();
         if (!ConnectionChecker.hasConnection(this)) {
             Toast.makeText(this, "Internetska veza nije dostupna", Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(ListaVijestiActivity.this, DashboardActivity.class));
             return;
         }
 
