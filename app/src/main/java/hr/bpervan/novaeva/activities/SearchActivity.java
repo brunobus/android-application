@@ -60,8 +60,6 @@ public class SearchActivity extends Activity implements OnClickListener{
 		
 	private ImageView btnHome, btnSearch, btnBack;
 	
-	private static Typeface openSansBold, openSansItalic, openSansLight, openSansRegular;
-	
 	private Tracker mGaTracker;
 
 	@Override
@@ -86,11 +84,7 @@ public class SearchActivity extends Activity implements OnClickListener{
                         .build()
         );
 				
-		openSansBold = Typeface.createFromAsset(getAssets(), "opensans-bold.ttf");
-		openSansItalic = Typeface.createFromAsset(getAssets(), "opensans-italic.ttf");
-		openSansLight = Typeface.createFromAsset(getAssets(), "opensans-light.ttf");
-		openSansRegular = Typeface.createFromAsset(getAssets(), "opensans-regular.ttf");
-		
+
 		listaVijesti = new ArrayList<ListElement>();
 		
 		initUI();
@@ -121,7 +115,7 @@ public class SearchActivity extends Activity implements OnClickListener{
 		
 		mainListView.setOnItemClickListener(new ListClickHandler());
 		
-		adapter = new VijestAdapter(this, listaVijesti, openSansBold, openSansItalic, openSansLight, openSansRegular, Constants.CAT_PROPOVJEDI);
+		adapter = new VijestAdapter(this, listaVijesti, Constants.CAT_PROPOVJEDI);
 		mainListView.setAdapter(adapter);
 	}
 	
@@ -154,7 +148,9 @@ public class SearchActivity extends Activity implements OnClickListener{
 		
 		final TextView tv = new TextView(this);
 		tv.setText("Greška pri dohvaćanju podataka sa poslužitelja");
-		tv.setTypeface(openSansRegular);
+		if (NovaEvaApp.Companion.getOpenSansRegular() != null) {
+			tv.setTypeface(NovaEvaApp.Companion.getOpenSansRegular());
+		}
 		tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
 		error.setView(tv);
 				

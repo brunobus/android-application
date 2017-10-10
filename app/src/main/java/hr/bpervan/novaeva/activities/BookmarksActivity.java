@@ -37,7 +37,6 @@ public class BookmarksActivity extends ListActivity implements View.OnClickListe
 	BookmarksDBHandlerV2 db = new BookmarksDBHandlerV2(this);
 	VijestAdapter adapter;
 	List<ListElement> listaBookmarksa;
-    private static Typeface openSansBold, openSansItalic, openSansLight, openSansRegular;
     
     private Tracker mGaTracker;
     
@@ -47,11 +46,7 @@ public class BookmarksActivity extends ListActivity implements View.OnClickListe
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_bookmarks);
-		
-		openSansBold = Typeface.createFromAsset(getAssets(), "opensans-bold.ttf");
-		openSansItalic = Typeface.createFromAsset(getAssets(), "opensans-italic.ttf");
-		openSansLight = Typeface.createFromAsset(getAssets(), "opensans-light.ttf");
-		openSansRegular = Typeface.createFromAsset(getAssets(), "opensans-regular.ttf");
+
 		listaBookmarksa = new ArrayList<ListElement>();
 
         mGaTracker = ((NovaEvaApp) getApplication()).getTracker(NovaEvaApp.TrackerName.APP_TRACKER);
@@ -84,7 +79,7 @@ public class BookmarksActivity extends ListActivity implements View.OnClickListe
 			l.setUvod(makeUvod())
 		}*/
 		
-		adapter = new VijestAdapter(this, listaBookmarksa, openSansBold, openSansItalic, openSansLight, openSansRegular, Constants.CAT_PROPOVJEDI);
+		adapter = new VijestAdapter(this, listaBookmarksa, Constants.CAT_PROPOVJEDI);
 		
 
 

@@ -10,30 +10,6 @@ import android.content.res.Configuration;
  * */
 public class ResourceHandler {
 	
-	private int kategorija;
-	
-	/** 
-	 * @author Branimir
-	 * @params Orientation -> ORIENTATION_LANDSCAPE or ORIENTATION_PORTRAIT or Throws InvalidParamException
-	 * 		   Kategorija -> Constants.KATEGORIJA or Throws InvalidParamException
-	 * 
-	 * @throws InvalidParamException
-	 * */
-	public ResourceHandler(int kategorija){
-		this.kategorija = kategorija;
-		
-		/** OVO JE WORKAROUND I NEMRE OVAK
-		 * 	Treba pri samom činu bookmarkiranja utrpat colourset a ne kategoriju
-		 * */
-		if(!Constants.getIntCategoryList(true).contains(kategorija)){
-			this.kategorija = Constants.CAT_PROPOVJEDI;
-		}
-	}
-	
-	public int getKategorija(){
-		return this.kategorija;
-	}
-	
 	
 	/** 
 	 * Used by VijestActivity object for displaying title bar in appropriate colour. To avoid multiple
@@ -41,10 +17,10 @@ public class ResourceHandler {
 	 * @author Branimir
 	 * @return Array of 2 integers [0] -> FakeActionBar, [1] -> TitleBar
 	 * */
-	public int[] getVijestResource(int orientation){
+	public static int[] getVijestResource(int colourset, int orientation){
 		int resources[] = new int[2];
 		if(orientation == Configuration.ORIENTATION_LANDSCAPE){
-			switch(kategorija){
+			switch(colourset){
 			case Constants.CAT_AKTUALNO:
 				resources[0] = R.drawable.vijest_navbgaktualno_land;
 				resources[1] = R.drawable.vijest_naslovnaaktualno_land;
@@ -85,7 +61,7 @@ public class ResourceHandler {
 				break;
 			}
 		} else {
-			switch(kategorija){
+			switch(colourset){
 			case Constants.CAT_AKTUALNO:
 				resources[0] = R.drawable.izbornik_navbgaktualno;
 				resources[1] = R.drawable.vijest_naslovnaaktualno;
@@ -131,10 +107,10 @@ public class ResourceHandler {
 		return resources;
 	}
 
-    public int getListViewHeader(int orientation){
+    public static int getListViewHeader(int colourset, int orientation){
         int resourceId = R.drawable.izbornik_top_odgovori;
         if(orientation == Configuration.ORIENTATION_LANDSCAPE){
-            switch(kategorija){
+            switch(colourset){
                 case Constants.CAT_AKTUALNO:
                     resourceId = R.drawable.izbornik_top_aktualno_land;
                     break;
@@ -161,7 +137,7 @@ public class ResourceHandler {
                     break;
             }
         } else {
-            switch(kategorija){
+            switch(colourset){
                 case Constants.CAT_AKTUALNO:
                     resourceId = R.drawable.izbornik_top_aktualno;
                     break;
@@ -197,10 +173,10 @@ public class ResourceHandler {
 	 * @author Branimir
 	 * @return Resource id from R.java directly usable in View.setBackgroundDrawable
 	 * */
-	public int getResourceId(int orientation){
+	public static int getResourceId(int colourset, int orientation){
 		int resourceId = R.drawable.izbornik_navbgodgovori;
 		if(orientation == Configuration.ORIENTATION_LANDSCAPE){
-			switch(kategorija){
+			switch(colourset){
 			case Constants.CAT_AKTUALNO:
 				resourceId = R.drawable.vijest_navbgaktualno_land;
 				break;
@@ -232,7 +208,7 @@ public class ResourceHandler {
 				break;
 			}
 		} else {
-			switch(kategorija){
+			switch(colourset){
 			case Constants.CAT_AKTUALNO:
 				resourceId = R.drawable.izbornik_navbgaktualno;
 				break;
@@ -270,14 +246,13 @@ public class ResourceHandler {
 	/** 
 	 * Used by VijestAdapter object
 	 * @author Branimir
-	 * @param ListTypes - 'PODKATEGORIJA' or 'VIJEST'
 	 * @return Concrete resource id from R.java directly usable in View.setBackgroundDrawable
 	 * */
-	public int getResourceId(ListTypes listType, int orientation){
+	public static int getResourceId(int colourset, ListTypes listType, int orientation){
 		int resourceId = R.drawable.izbornik_btn_normal_odgovori;
 		if(listType == ListTypes.PODKATEGORIJA){
 			if(orientation == Configuration.ORIENTATION_LANDSCAPE){
-				switch(kategorija){
+				switch(colourset){
 				case Constants.CAT_AKTUALNO:
 					resourceId = R.drawable.izbornik_btn_normal_aktualno_folder_land;
 					break;
@@ -309,7 +284,7 @@ public class ResourceHandler {
 					break;
 				}
 			}else{
-				switch(kategorija){
+				switch(colourset){
 				case Constants.CAT_AKTUALNO:
 					resourceId = R.drawable.izbornik_btn_normal_aktualno_folder;
 					break;
@@ -343,7 +318,7 @@ public class ResourceHandler {
 			}
 		} else {
 			if(orientation == Configuration.ORIENTATION_LANDSCAPE){
-				switch(kategorija){
+				switch(colourset){
 				case Constants.CAT_AKTUALNO:
 					resourceId = R.drawable.izbornik_btn_normal_aktualno_land;
 					break;
@@ -375,7 +350,7 @@ public class ResourceHandler {
 					break;
 				}
 			}else{
-				switch(kategorija){
+				switch(colourset){
 				case Constants.CAT_AKTUALNO:
 					resourceId = R.drawable.izbornik_btn_normal_aktualno;
 					break;

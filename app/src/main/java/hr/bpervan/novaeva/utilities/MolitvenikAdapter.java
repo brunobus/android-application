@@ -1,5 +1,6 @@
 package hr.bpervan.novaeva.utilities;
 
+import hr.bpervan.novaeva.NovaEvaApp;
 import hr.bpervan.novaeva.main.R;
 
 import java.util.List;
@@ -17,17 +18,10 @@ public class MolitvenikAdapter extends BaseAdapter implements OnClickListener {
 	
     private Context context;
     private List<String> listVijest;
-    private Typeface openSansBold;
     
-    public MolitvenikAdapter(Context context, List<String> listVijest, Typeface openSansBold){
+    public MolitvenikAdapter(Context context, List<String> listVijest){
     	this.context = context;
     	this.listVijest = listVijest;
-    	this.openSansBold = openSansBold;
-    }
-
-    public MolitvenikAdapter(Context context, List<String> listVijest) {
-        this.context = context;
-        this.listVijest = listVijest;
     }
 
     public int getCount() {
@@ -50,7 +44,8 @@ public class MolitvenikAdapter extends BaseAdapter implements OnClickListener {
             convertView = inflater.inflate(R.layout.molitvenik_row, null);
         }
         TextView tvContact = (TextView) convertView.findViewById(R.id.tvMolitva);
-        if(this.openSansBold != null){
+        Typeface openSansBold = NovaEvaApp.Companion.getOpenSansBold();
+        if(openSansBold != null){
         	tvContact.setTypeface(openSansBold);
         }
         tvContact.setText(entry);

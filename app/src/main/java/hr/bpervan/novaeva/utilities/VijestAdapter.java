@@ -1,5 +1,6 @@
 package hr.bpervan.novaeva.utilities;
 
+import hr.bpervan.novaeva.NovaEvaApp;
 import hr.bpervan.novaeva.main.R;
 
 import java.util.Calendar;
@@ -15,6 +16,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+@Deprecated
 public class VijestAdapter extends BaseAdapter implements OnClickListener {
 	
     private Context context;
@@ -24,10 +26,8 @@ public class VijestAdapter extends BaseAdapter implements OnClickListener {
     
     private ImageView imgHasLink, imgHasTxt, imgHasAudio;
     private Calendar cal;
-    
-    private Typeface openSansBold, openSansItalic, openSansLight, openSansRegular;
-    
-    private ResourceHandler resourceHandler;
+
+    private int kategorija;
     
     int duljina = 0;
     
@@ -35,25 +35,12 @@ public class VijestAdapter extends BaseAdapter implements OnClickListener {
      * 
      * @param context Application context
      * @param listVijest List of Vijest objects
-     * @param customFontNaslov Custom font used for field 'Naslov'
-     * @param customFontUvod Custom font used for field 'Uvod'
-     * @param customFontGodina Custom font used for field 'Godina'
-     * @param customFontDatum Custom font used for field 'Datum'
-     * @param customFontSatMinuta Custom font used for field 'Vrijeme'
      */
-    public VijestAdapter(Context context, List<ListElement> listVijest, 
-    		Typeface openSansBold, Typeface openSansItalic, Typeface openSansLight, Typeface openSansRegular,
-    		int kategorija) {
+    public VijestAdapter(Context context, List<ListElement> listVijest, int kategorija) {
         this.context = context;
         this.listVijest = listVijest;
         this.cal = Calendar.getInstance();
-        
-        this.openSansBold = openSansBold;
-        this.openSansItalic = openSansItalic;
-        this.openSansLight = openSansLight;
-        this.openSansRegular = openSansRegular;
-        
-        this.resourceHandler = new ResourceHandler(kategorija);
+        this.kategorija = kategorija;
     }
 /*
     public VijestAdapter(Context context, List<ListElement> listVijest) {
@@ -80,12 +67,12 @@ public class VijestAdapter extends BaseAdapter implements OnClickListener {
     	LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if(entry.getListType() == ListTypes.PODKATEGORIJA){
         	convertView = inflater.inflate(R.layout.folder_row, null);
-        	convertView.setBackgroundResource(resourceHandler.getResourceId(ListTypes.PODKATEGORIJA,
+        	convertView.setBackgroundResource(ResourceHandler.getResourceId(kategorija, ListTypes.PODKATEGORIJA,
         			context.getResources().getConfiguration().orientation));
         }
         else{
         	convertView = inflater.inflate(R.layout.vijest_row, null);
-        	convertView.setBackgroundResource(resourceHandler.getResourceId(ListTypes.VIJEST,
+        	convertView.setBackgroundResource(ResourceHandler.getResourceId(kategorija, ListTypes.VIJEST,
         			context.getResources().getConfiguration().orientation));
         }
         	
@@ -106,25 +93,25 @@ public class VijestAdapter extends BaseAdapter implements OnClickListener {
         tvUvodNatpis = (TextView) convertView.findViewById(R.id.tvUvodNatpis);
         
         if(entry.getListType() == ListTypes.PODKATEGORIJA){
-        	if(openSansBold != null){
-        		tvNaslov.setTypeface(openSansBold);
-        		tvMapaNatpis.setTypeface(openSansBold);
+        	if(NovaEvaApp.Companion.getOpenSansBold() != null){
+        		tvNaslov.setTypeface(NovaEvaApp.Companion.getOpenSansBold());
+        		tvMapaNatpis.setTypeface(NovaEvaApp.Companion.getOpenSansBold());
         	}
         	tvNaslov.setText(entry.getNaslov());   	
         } else {
-            if(openSansBold != null){
-            	tvNaslov.setTypeface(openSansBold);
-            	tvUvodNatpis.setTypeface(openSansBold);//null pointer? xD
+            if(NovaEvaApp.Companion.getOpenSansBold() != null){
+            	tvNaslov.setTypeface(NovaEvaApp.Companion.getOpenSansBold());
+            	tvUvodNatpis.setTypeface(NovaEvaApp.Companion.getOpenSansBold());//null pointer? xD
             	
             }      	
-            if(openSansItalic != null){
-            	tvUvod.setTypeface(openSansItalic);
+            if(NovaEvaApp.Companion.getOpenSansItalic() != null){
+            	tvUvod.setTypeface(NovaEvaApp.Companion.getOpenSansItalic());
             }      	
-            if(openSansLight != null){
-            	tvDatum.setTypeface(openSansLight);
+            if(NovaEvaApp.Companion.getOpenSansLight() != null){
+            	tvDatum.setTypeface(NovaEvaApp.Companion.getOpenSansLight());
             }     	
-            if(openSansRegular != null){
-            	tvGodinaSatMinuta.setTypeface(openSansRegular);
+            if(NovaEvaApp.Companion.getOpenSansRegular() != null){
+            	tvGodinaSatMinuta.setTypeface(NovaEvaApp.Companion.getOpenSansRegular());
             }
             
         	tvNaslov.setText(entry.getNaslov());

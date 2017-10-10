@@ -8,7 +8,6 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.res.Configuration
-import android.graphics.Typeface
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
@@ -44,7 +43,7 @@ import hr.bpervan.novaeva.services.BackgroundPlayerService
 import hr.bpervan.novaeva.services.NovaEvaService
 import hr.bpervan.novaeva.utilities.*
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_vijest.*
 
@@ -62,8 +61,9 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
     /**
      * Pure 'Vijest' data
      */
-    private var nid: Int = 0
-    //private Vijest ovaVijest;
+    private var contentId: Long = 0
+
+    private var colourSet: Int = 0
 
     /**
      * Google analytics API
@@ -74,7 +74,6 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
      * Database handler for bookmarks, resource handler for category colours
      */
     private lateinit var dbHandler: BookmarksDBHandlerV2
-    private lateinit var resourceHandler: ResourceHandler
 
     /**
      * Image loader
@@ -93,31 +92,28 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
      */
     private var exoPlayer: SimpleExoPlayer? = null
 
-    internal var disposable: Disposable? = null
+    private val disposables = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_vijest)
 
         dbHandler = BookmarksDBHandlerV2(this)
-        nid = intent.getIntExtra("nid", 0)
+        contentId = intent.getLongExtra("contentId", 0)
+        colourSet = intent.getIntExtra("colourSet", Constants.CAT_PROPOVJEDI)
 
         startService(Intent(this, BackgroundPlayerService::class.java))
 
         prefs = getSharedPreferences("hr.bpervan.novaeva", Context.MODE_PRIVATE)
-        openSansBold = Typeface.createFromAsset(assets, "opensans-bold.ttf")
-        openSansRegular = Typeface.createFromAsset(assets, "opensans-regular.ttf")
 
         mGaTracker = (application as NovaEvaApp).getTracker(NovaEvaApp.TrackerName.APP_TRACKER)
         mGaTracker.send(
                 HitBuilders.EventBuilder()
                         .setCategory("Vijesti")
                         .setAction("OtvorenaVijest")
-                        .setLabel(nid.toString() + "")
+                        .setLabel(contentId.toString() + "")
                         .build()
         )
-
-        resourceHandler = ResourceHandler(this.intent.getIntExtra("kategorija", Constants.CAT_PROPOVJEDI))
 
         this.progressDialog = ProgressDialog(this)
         this.progressDialog!!.setMessage("Učitavam...")
@@ -140,7 +136,7 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
             Toast.makeText(this, "Internetska veza nije dostupna", Toast.LENGTH_SHORT).show();
 			startActivity(new Intent(VijestActivity.this,DashboardActivity.class));
 		} else {
-			new AsyncHttpPostTask(this).execute(getIntent().getIntExtra("nid",0) + "");
+			new AsyncHttpPostTask(this).execute(getIntent().getIntExtra("contentId",0) + "");
 		}*/
     }
 
@@ -207,8 +203,9 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
     private fun initUI() {
 
         /** Basic data  */
-        if (openSansBold != null)
-            tvNaslov.typeface = openSansBold
+        NovaEvaApp.openSansBold?.let {
+            tvNaslov.typeface = it
+        }
 
         /** Lets try displaying news using WebView  */
         vijestWebView.reload()
@@ -232,13 +229,16 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
         vijestWebView.isLongClickable = false
 
         /** Is this 'Duhovni poziv' or 'Odgovori' category?  */
-        if (intent.getIntExtra("kategorija", Constants.CAT_PROPOVJEDI) == Constants.CAT_POZIV) {
+        if (intent.getLongExtra("directoryId", Constants.CAT_PROPOVJEDI.toLong()) == Constants.CAT_POZIV.toLong()) {
             setQuestionButton()
         }
 
         seekArc.setOnSeekBarChangeListener(this)
-        tvDuration.typeface = openSansRegular
-        tvElapsed.typeface = openSansRegular
+
+        NovaEvaApp.openSansRegular?.let {
+            tvDuration.typeface = it
+            tvElapsed.typeface = it
+        }
 
         btnHome.setOnClickListener(this)
         btnFace.setOnClickListener(this)
@@ -275,7 +275,7 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
             		(int) ((mPlayer.getCurrentPosition() / (1000 * 60)) % 60)));
 		}*/
 
-        if (dbHandler.nidExists(nid))
+        if (dbHandler.nidExists(contentId.toInt())) //todo accept long
             btnBookmark.setImageResource(R.drawable.vijest_button_bookmarked)
         if (this.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
             headerImage = findViewById<View>(R.id.headerImage) as ImageView
@@ -287,9 +287,8 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
         //LocalBroadcastManager.getInstance(this).registerReceiver(serviceMessageReceiver, new IntentFilter(BackgroundPlayerService.INTENT_CLASS));
         super.onResume()
 
-        disposable?.dispose()
-        disposable = NovaEvaService.instance
-                .getArticle(intent.getIntExtra("nid", 0))
+        disposables.add(NovaEvaService.instance
+                .getArticle(intent.getLongExtra("contentId", 0))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ article ->
@@ -333,13 +332,13 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
                     this@VijestActivity.thisArticle = article
                     progressDialog!!.dismiss()
 
-                }) { t -> Log.e("vijestiError", t.message, t) }
+                }) { t -> Log.e("vijestiError", t.message, t) })
     }
 
     override fun onPause() {
         //LocalBroadcastManager.getInstance(this).unregisterReceiver(serviceMessageReceiver);
         super.onPause()
-        disposable?.dispose() //// TODO: 07.10.17.
+        disposables.clear()
 
 
         /*if(mPlayer != null){
@@ -370,8 +369,8 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
     private fun setCategoryTypeColour() {
         var resources = intArrayOf(R.drawable.izbornik_navbgodgovori, R.drawable.vijest_naslovnaodgovori)
         when (this.resources.configuration.orientation) {
-            Configuration.ORIENTATION_LANDSCAPE -> resources = resourceHandler.getVijestResource(Configuration.ORIENTATION_LANDSCAPE)
-            Configuration.ORIENTATION_PORTRAIT -> resources = resourceHandler.getVijestResource(Configuration.ORIENTATION_PORTRAIT)
+            Configuration.ORIENTATION_LANDSCAPE -> resources = ResourceHandler.getVijestResource(colourSet, Configuration.ORIENTATION_LANDSCAPE)
+            Configuration.ORIENTATION_PORTRAIT -> resources = ResourceHandler.getVijestResource(colourSet, Configuration.ORIENTATION_PORTRAIT)
         }
         fakeActionBar.setBackgroundResource(resources[0])
         imgNaslovnaTraka.setImageResource(resources[1])
@@ -431,22 +430,22 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
                 if (ConnectionChecker.hasConnection(this@VijestActivity))
                     showSearchPopup()
             R.id.btnBookmark ->
-                if (dbHandler.nidExists(nid)) {
-                    dbHandler.deleteVijest(nid)
+                if (dbHandler.nidExists(contentId.toInt())) { //todo accept long
+                    dbHandler.deleteVijest(contentId.toInt()) //todo accept long
                     btnBookmark.setImageResource(R.drawable.vijest_button_bookmark)
                 } else {
                     dbHandler.insertArticle(thisArticle)
                     btnBookmark.setImageResource(R.drawable.vijest_button_bookmarked)
                 }
             R.id.btnFace -> {
-                val temp = "http://novaeva.com/node/" + intent.getIntExtra("nid", 1025)
+                val temp = "http://novaeva.com/node/" + intent.getIntExtra("contentId", 1025)
                 val faceIntent = Intent(Intent.ACTION_SEND)
                 faceIntent.type = "text/plain"
                 faceIntent.putExtra(Intent.EXTRA_TEXT, temp)
                 startActivity(Intent.createChooser(faceIntent, "Facebook"))
             }
             R.id.btnMail -> {
-                val temp2 = "http://novaeva.com/node/" + intent.getIntExtra("nid", 1025)
+                val temp2 = "http://novaeva.com/node/" + intent.getIntExtra("contentId", 1025)
                 val mailIntent = Intent(Intent.ACTION_SEND)
                 mailIntent.type = "message/rfc822"
                 mailIntent.putExtra(Intent.EXTRA_SUBJECT, thisArticle!!.naslov)
@@ -552,7 +551,10 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
 
         val tv = TextView(this)
         tv.text = "Greška pri dohvaćanju podataka sa poslužitelja"
-        tv.typeface = openSansRegular
+
+        NovaEvaApp.openSansRegular?.let {
+            tv.typeface = it
+        }
         tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
         error.setView(tv)
 
@@ -567,13 +569,6 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
     }
 
     companion object {
-
         private val TAG = "VijestActivity"
-
-        /**
-         * Custom font resources
-         */
-        private var openSansBold: Typeface? = null
-        private var openSansRegular: Typeface? = null
     }
 }

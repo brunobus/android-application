@@ -30,7 +30,6 @@ import com.google.analytics.tracking.android.Tracker;*/
 public class MolitvenikActivity extends ListActivity implements OnClickListener{
 	/*private Tracker mGaTracker;
 	private GoogleAnalytics mGaInstance;*/
-	private Typeface openSansRegular;
 	
 	private ListView mainListView;
 	private MolitvenikAdapter molitvenikAdapter;
@@ -45,8 +44,6 @@ public class MolitvenikActivity extends ListActivity implements OnClickListener{
 		
 		/*mGaInstance = GoogleAnalytics.getInstance(this);
 		mGaTracker = mGaInstance.getTracker("UA-40344870-1");*/
-		
-		openSansRegular = Typeface.createFromAsset(getAssets(), "opensans-regular.ttf");
 		
 		initUI();
 				
@@ -80,7 +77,7 @@ public class MolitvenikActivity extends ListActivity implements OnClickListener{
 		mainContentList.add("22. Lectio Divina");
 		mainContentList.add("23. Moliti igrajući pred Gospodinom");
 		
-		molitvenikAdapter = new MolitvenikAdapter(this,mainContentList,this.openSansRegular);
+		molitvenikAdapter = new MolitvenikAdapter(this,mainContentList);
 
 		mainListView.setAdapter(molitvenikAdapter);
 		

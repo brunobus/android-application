@@ -1,16 +1,17 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                tools:context="hr.bpervan.novaeva.activities.ListaVijestiActivity">
 
-    <ListView
-        android:id="@android:id/list"
+    <FrameLayout
+        android:id="@+id/eva_directory_fragment_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/fakeActionBarListaVijesti"
-        android:cacheColorHint="#00000000" >
-    </ListView>
+        android:layout_toLeftOf="@id/fakeActionBarListaVijesti"
+        android:layout_toStartOf="@id/fakeActionBarListaVijesti"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
     <ImageView
         android:id="@+id/btnImamPitanjeListaVijesti"

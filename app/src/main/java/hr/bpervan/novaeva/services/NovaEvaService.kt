@@ -2,13 +2,13 @@ package hr.bpervan.novaeva.services
 
 import hr.bpervan.novaeva.model.Article
 import hr.bpervan.novaeva.model.Taxonomy
-import io.reactivex.Observable
-import retrofit2.Call
+import hr.bpervan.novaeva.services.temp.HttpRequestsTemp
+import io.reactivex.Single
+import io.reactivex.SingleEmitter
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
-import retrofit2.http.Path
 import retrofit2.http.Query
 
 /**
@@ -18,10 +18,10 @@ import retrofit2.http.Query
 interface NovaEvaService {
 
     @GET("json?api=2")
-    fun getNewsList(@Query("cid") cid: Int): Observable<Taxonomy>
+    fun getNewsList(@Query("cid") directoryId: Long): Single<Taxonomy>
 
     @GET("json?api=2")
-    fun getArticle(@Query("nid") nid: Int): Observable<Article>
+    fun getArticle(@Query("nid") contentId: Long): Single<Article>
 
     companion object {
 
@@ -36,6 +36,28 @@ interface NovaEvaService {
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .build()
             return retrofit.create(NovaEvaService::class.java)
+        }
+    }
+}
+
+//TODO USE RETROFIT2 AND MOVE INSIDE NovaEvaService
+fun getBreviar(brevCat: String): Single<String> {
+    return Single.create { it: SingleEmitter<String> ->
+        try {
+            it.onSuccess(HttpRequestsTemp.getBreviar(brevCat))
+        } catch (e: Exception) {
+            it.onError(e)
+        }
+    }
+}
+
+//TODO USE RETROFIT2 AND MOVE INSIDE NovaEvaService
+fun getMenuElements(categoryId: String, date: String? = null): Single<String> {
+    return Single.create { it: SingleEmitter<String> ->
+        try {
+            it.onSuccess(HttpRequestsTemp.getMenuElements(categoryId, date))
+        } catch (e: Exception) {
+            it.onError(e);
         }
     }
 }

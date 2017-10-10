@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/relativeLayout1"
 	android:layout_width="match_parent" 
-	android:layout_height="120dp"
+	android:layout_height="wrap_content"
 	android:background="@drawable/izbornik_btn_normal_propovijedi_folder_land" >
 	
     <TextView
@@ -11,8 +11,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
+		android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginLeft="8dp"
+		android:layout_marginStart="8dp"
         android:layout_marginTop="1dp"
         android:text="@string/tvMapaNatpis"
         android:textColor="#4c4c4c"
@@ -26,8 +28,10 @@
         android:layout_width="@dimen/naslovWidthLand"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
+		android:layout_alignParentStart="true"
         android:layout_below="@+id/tvMapaNatpis"
         android:layout_marginLeft="8dp"
+		android:layout_marginStart="8dp"
         android:layout_marginTop="10dp"
         android:text="@string/tvUvod"
         android:textColor="#7d7d7d"

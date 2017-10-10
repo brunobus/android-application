@@ -1,5 +1,6 @@
 package hr.bpervan.novaeva.activities;
 
+import hr.bpervan.novaeva.NovaEvaApp;
 import hr.bpervan.novaeva.main.R;
 import hr.bpervan.novaeva.utilities.ImageLoaderConfigurator;
 
@@ -30,7 +31,6 @@ public class BrevijarActivity extends Activity implements OnClickListener{
 	
 	private ImageView headerImageBrevijar;
 	private TextView txtKs, txtLaudato;
-	private Typeface openSansRegular;
 	
 	private TextView imgDanas;
 	
@@ -43,8 +43,6 @@ public class BrevijarActivity extends Activity implements OnClickListener{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-        openSansRegular = Typeface.createFromAsset(getAssets(), "opensans-regular.ttf");
 
         prefs = getSharedPreferences("hr.bpervan.novaeva", MODE_PRIVATE);
 
@@ -63,9 +61,11 @@ public class BrevijarActivity extends Activity implements OnClickListener{
         txtKs = (TextView) findViewById(R.id.txtKs);
         txtLaudato = (TextView) findViewById(R.id.txtLaudato);
 
-        txtKs.setTypeface(openSansRegular);
-        txtLaudato.setTypeface(openSansRegular);
-
+        Typeface openSansRegular = NovaEvaApp.Companion.getOpenSansRegular();
+        if (openSansRegular != null) {
+            txtKs.setTypeface(openSansRegular);
+            txtLaudato.setTypeface(openSansRegular);
+        }
         imgDanas = (TextView) findViewById(R.id.imgDanas);
         SimpleDateFormat datum = new SimpleDateFormat("dd.MM.yyyy");
         imgDanas.setText(datum.format(new Date()));
