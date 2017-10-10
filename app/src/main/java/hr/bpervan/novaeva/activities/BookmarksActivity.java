@@ -5,7 +5,7 @@ import hr.bpervan.novaeva.main.R;
 import hr.bpervan.novaeva.utilities.ConnectionChecker;
 import hr.bpervan.novaeva.utilities.Constants;
 import hr.bpervan.novaeva.utilities.ListElement;
-import hr.bpervan.novaeva.utilities.VijestAdapter;
+import hr.bpervan.novaeva.adapters.VijestAdapter;
 import hr.bpervan.novaeva.utilities.BookmarksDBHandlerV2;
 
 import java.util.ArrayList;
@@ -21,7 +21,6 @@ import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;

@@ -1,5 +1,6 @@
 package hr.bpervan.novaeva.utilities;
 
+@Deprecated
 public class ListElement {
 	
 	private String uvod, naslov, datum;

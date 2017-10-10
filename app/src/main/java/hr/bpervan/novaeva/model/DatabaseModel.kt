@@ -24,19 +24,19 @@ import io.realm.annotations.PrimaryKey
 //}
 
 //temporary, todo
-open class EvaDirectory(
-        @PrimaryKey
-        var dirId: Long = -1,
-        var name: String = "",
-        var preview: String = "",
-        var contentElements: RealmList<EvaContent> = RealmList(),
-        var childDirectoryElements: RealmList<EvaDirectory> = RealmList()
-) : RealmObject() {
-    companion object {
-        @Ignore
-        val ID_FIELD = "dirId"
-    }
-}
+//open class EvaDirectory(
+//        @PrimaryKey
+//        var dirId: Long = -1,
+//        var name: String = "",
+//        var preview: String = "",
+//        var contentElements: RealmList<EvaContent> = RealmList(),
+//        var childDirectoryElements: RealmList<EvaDirectory> = RealmList()
+//) : RealmObject() {
+//    companion object {
+//        @Ignore
+//        val ID_FIELD = "dirId"
+//    }
+//}
 //
 ////temporary, todo
 //open class EvaContentInfo(
@@ -59,26 +59,26 @@ open class EvaDirectory(
 //}
 
 //temporary, todo
-open class EvaContent(
-        @PrimaryKey
-        var contentId: Int = 0,
-        var menuId: Int = 0,
-        var attachments: RealmList<EvaAttachment> = RealmList(),
-//        var image: Image? = null,
-        var text: String? = null,
-        var title: String? = null,
-        var youtube: String? = null,
-        var audio: String? = null,
-        var datetime: String? = null
-) : RealmObject() {
-    companion object {
-        @Ignore
-        val ID_FIELD = "contentId"
-    }
-}
+//open class EvaContent(
+//        @PrimaryKey
+//        var contentId: Int = 0,
+//        var menuId: Int = 0,
+//        var attachments: RealmList<EvaAttachment> = RealmList(),
+////        var image: Image? = null,
+//        var text: String? = null,
+//        var title: String? = null,
+//        var youtube: String? = null,
+//        var audio: String? = null,
+//        var datetime: String? = null
+//) : RealmObject() {
+//    companion object {
+//        @Ignore
+//        val ID_FIELD = "contentId"
+//    }
+//}
 
 //temporary, todo
-open class EvaAttachment(
-        var name: String? = null,
-        var url: String? = null
-) : RealmObject()
+//open class EvaAttachment(
+//        var name: String? = null,
+//        var url: String? = null
+//) : RealmObject()

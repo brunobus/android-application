@@ -1,23 +1,23 @@
-package hr.bpervan.novaeva.utilities
+package hr.bpervan.novaeva.adapters
 
 import android.support.v7.widget.RecyclerView
-import android.transition.Visibility
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.ProgressBar
 import android.widget.TextView
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.*
+import hr.bpervan.novaeva.utilities.ListTypes
+import hr.bpervan.novaeva.utilities.ResourceHandler
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * Created by vpriscan on 08.10.17..
  */
-class MenuItemAdapter(val data: List<TreeElement>, val metadata: Metadata) : RecyclerView.Adapter<MenuItemAdapter.BindableViewHolder>() {
+class MenuElementAdapter(val data: List<TreeElementInfo>, val metadata: Metadata) : RecyclerView.Adapter<MenuElementAdapter.BindableViewHolder>() {
 
     private val cal = Calendar.getInstance()
 
@@ -31,7 +31,7 @@ class MenuItemAdapter(val data: List<TreeElement>, val metadata: Metadata) : Rec
     override fun getItemViewType(position: Int): Int {
         return if (position == 0) HEADER_VIEW_TYPE
         else if (position == itemCount - 1) PROGRESS_VIEW_TYPE
-        else if (data[position - 1].isLeaf) CONTENT_VIEW_TYPE
+        else if (data[position - 1] is ContentInfo) CONTENT_VIEW_TYPE
         else SUBDIRECTORY_VIEW_TYPE
     }
 
@@ -42,17 +42,17 @@ class MenuItemAdapter(val data: List<TreeElement>, val metadata: Metadata) : Rec
                 HEADER_VIEW_TYPE -> {
                     val view = LayoutInflater.from(parent.context).inflate(R.layout.izbornik_top, parent, false)
                     view.setBackgroundResource(ResourceHandler.getListViewHeader(metadata.colourSet, metadata.deviceOrientation))
-                    EvaHeaderViewHolder(view)
+                    HeaderViewHolder(view)
                 }
                 CONTENT_VIEW_TYPE -> {
                     val view = LayoutInflater.from(parent.context).inflate(R.layout.vijest_row, parent, false)
                     view.setBackgroundResource(ResourceHandler.getResourceId(metadata.colourSet, ListTypes.VIJEST, metadata.deviceOrientation))
-                    EvaContentViewHolder(view)
+                    ContentInfoViewHolder(view)
                 }
                 SUBDIRECTORY_VIEW_TYPE -> {
                     val view = LayoutInflater.from(parent.context).inflate(R.layout.folder_row, parent, false)
                     view.setBackgroundResource(ResourceHandler.getResourceId(metadata.colourSet, ListTypes.PODKATEGORIJA, metadata.deviceOrientation))
-                    EvaDirectoryViewHolder(view)
+                    DirectoryInfoViewHolder(view)
                 }
                 else -> {
                     val view = LayoutInflater.from(parent.context).inflate(R.layout.progress_row, parent, false)
@@ -81,7 +81,7 @@ class MenuItemAdapter(val data: List<TreeElement>, val metadata: Metadata) : Rec
         abstract fun bindTo(t: Any)
     }
 
-    private inner class EvaHeaderViewHolder(view: View) : BindableViewHolder(view) {
+    private inner class HeaderViewHolder(view: View) : BindableViewHolder(view) {
         private val headerTextView: TextView = view.findViewById(R.id.izbornikTopNazivKategorije)
         private val headerTextViewNatpis: TextView = view.findViewById(R.id.izbornikTopNatpis)
 
@@ -99,7 +99,7 @@ class MenuItemAdapter(val data: List<TreeElement>, val metadata: Metadata) : Rec
         }
     }
 
-    private inner class EvaDirectoryViewHolder(view: View) : BindableViewHolder(view) {
+    private inner class DirectoryInfoViewHolder(view: View) : BindableViewHolder(view) {
         val tvNaslov: TextView = view.findViewById(R.id.tvNaslov)
         val tvMapaNatpis: TextView = view.findViewById(R.id.tvMapaNatpis)
 
@@ -117,7 +117,7 @@ class MenuItemAdapter(val data: List<TreeElement>, val metadata: Metadata) : Rec
 
     }
 
-    private inner class EvaContentViewHolder(view: View) : BindableViewHolder(view) {
+    private inner class ContentInfoViewHolder(view: View) : BindableViewHolder(view) {
         val tvNaslov: TextView = view.findViewById(R.id.tvNaslov)
         val tvUvod: TextView = view.findViewById(R.id.tvUvod)
         val tvDatum: TextView = view.findViewById(R.id.tvDatum)
@@ -156,11 +156,10 @@ class MenuItemAdapter(val data: List<TreeElement>, val metadata: Metadata) : Rec
 
             val sat: String
             val minuta: String
-            val godina: String
             val dan: String
             val mjesec: String
+            val godina: String = cal.get(Calendar.YEAR).toString()
 
-            godina = cal.get(Calendar.YEAR).toString()
             //sat = String.valueOf(cal.get(Calendar.HOUR_OF_DAY));
 
             if (cal.get(Calendar.HOUR_OF_DAY) < 10) {
@@ -189,14 +188,17 @@ class MenuItemAdapter(val data: List<TreeElement>, val metadata: Metadata) : Rec
                 mjesec = (cal.get(Calendar.MONTH) + 1).toString()
             }
             /** Pitanje je kako će se u APIu ovo mapirati youtube - video itd. */
-            if (contentInfo.hasVideo) {
-                imgHasLink.visibility = View.VISIBLE
-            }
-            if (contentInfo.hasMusic) {
-                imgHasAudio.visibility = View.VISIBLE
-            }
-            if (contentInfo.hasDocuments) {
-                imgHasTxt.visibility = View.VISIBLE
+
+            if (contentInfo.attach != null) {
+                if (contentInfo.attach.hasVideo) {
+                    imgHasLink.visibility = View.VISIBLE
+                }
+                if (contentInfo.attach.hasMusic) {
+                    imgHasAudio.visibility = View.VISIBLE
+                }
+                if (contentInfo.attach.hasDocuments) {
+                    imgHasTxt.visibility = View.VISIBLE
+                }
             }
 
             tvGodinaSatMinuta.text = "$godina, $sat:$minuta"

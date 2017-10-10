@@ -6,7 +6,7 @@ import hr.bpervan.novaeva.utilities.ConnectionChecker;
 import hr.bpervan.novaeva.utilities.Constants;
 import hr.bpervan.novaeva.utilities.ListElement;
 import hr.bpervan.novaeva.utilities.ListTypes;
-import hr.bpervan.novaeva.utilities.VijestAdapter;
+import hr.bpervan.novaeva.adapters.VijestAdapter;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -38,7 +38,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.TypedValue;

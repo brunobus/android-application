@@ -2,9 +2,7 @@ package hr.bpervan.novaeva.activities
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.app.ProgressDialog
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.res.Configuration
@@ -19,10 +17,7 @@ import android.view.View
 import android.webkit.WebSettings.LayoutAlgorithm
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.SeekBar
-import android.widget.TextView
+import android.widget.*
 import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
@@ -38,12 +33,12 @@ import com.google.android.gms.analytics.Tracker
 import com.nostra13.universalimageloader.core.ImageLoader
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.Article
+import hr.bpervan.novaeva.model.ContentData
 import hr.bpervan.novaeva.services.BackgroundPlayerService
 import hr.bpervan.novaeva.services.NovaEvaService
 import hr.bpervan.novaeva.utilities.*
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_vijest.*
 
@@ -84,15 +79,12 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
     /**
      * Retrofit
      */
-    private var thisArticle: Article? = null
-    private var progressDialog: ProgressDialog? = null
+    private var thisContentData: ContentData? = null
 
     /**
      * Exoplayer
      */
     private var exoPlayer: SimpleExoPlayer? = null
-
-    private val disposables = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -115,15 +107,13 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
                         .build()
         )
 
-        this.progressDialog = ProgressDialog(this)
-        this.progressDialog!!.setMessage("Učitavam...")
-        this.progressDialog!!.isIndeterminate = true
-        this.progressDialog!!.setCancelable(false)
-        this.progressDialog!!.setCanceledOnTouchOutside(false)
-        this.progressDialog!!.setButton(DialogInterface.BUTTON_NEGATIVE, "Odustani") { dialog, which -> dialog.cancel() }
-
-        progressDialog!!.setOnCancelListener { }
-        progressDialog!!.show()
+        if (!ConnectionChecker.hasConnection(this)) {
+            Toast.makeText(this, "Internetska veza nije dostupna", Toast.LENGTH_SHORT).show();
+            startActivity(Intent(this@VijestActivity, DashboardActivity::class.java));
+            return
+        } else {
+            getContentData(contentId)
+        }
 
         imageLoaderConfigurator = ImageLoaderConfigurator(this)
         imageLoader = ImageLoader.getInstance()
@@ -131,13 +121,6 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
             ImageLoaderConfigurator(this).doInit()
         }
         initUI()
-
-        /*if(!ConnectionChecker.hasConnection(this)){
-            Toast.makeText(this, "Internetska veza nije dostupna", Toast.LENGTH_SHORT).show();
-			startActivity(new Intent(VijestActivity.this,DashboardActivity.class));
-		} else {
-			new AsyncHttpPostTask(this).execute(getIntent().getIntExtra("contentId",0) + "");
-		}*/
     }
 
     private fun streamAudio(audioUri: String) {
@@ -176,11 +159,11 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
         /** Test and set various attachments */
         setAttachments()
 
-        thisArticle?.let {
+        thisContentData?.let {
             if (this.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
                 if (it.hasImage()) {
                     if (imageLoader.isInited) {
-                        imageLoader.displayImage(it.image.size640, headerImage, imageLoaderConfigurator.doConfig(false))
+                        imageLoader.displayImage(it.image!![0].size640, headerImage, imageLoaderConfigurator.doConfig(false))
                     }
                 } else {
                     val url = prefs.getString("hr.bpervan.novaeva.categoryheader." + it.cid, null)
@@ -192,7 +175,7 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
                 }
             }
             vijestWebView.reload()
-            vijestWebView.loadDataWithBaseURL(null, thisArticle!!.tekst, "text/html", "utf-8", null)
+            vijestWebView.loadDataWithBaseURL(null, thisContentData!!.tekst, "text/html", "utf-8", null)
         }
     }
 
@@ -209,15 +192,15 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
 
         /** Lets try displaying news using WebView  */
         vijestWebView.reload()
-        if (thisArticle != null) {
-            vijestWebView.loadDataWithBaseURL(null, thisArticle!!.tekst, "text/html", "UTF-8", null)
+        if (thisContentData != null) {
+            vijestWebView.loadDataWithBaseURL(null, thisContentData!!.tekst, "text/html", "UTF-8", null)
         }
 
         vijestWebView.isFocusable = false
         vijestWebView.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
                 view.reload()
-                view.loadDataWithBaseURL(null, thisArticle!!.tekst, "text/html", "utf-8", null)
+                view.loadDataWithBaseURL(null, thisContentData!!.tekst, "text/html", "utf-8", null)
                 return false
             }
         }
@@ -283,12 +266,13 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
         window.decorView.setBackgroundColor(this.resources.getColor(android.R.color.background_light))
     }
 
-    override fun onResume() {
-        //LocalBroadcastManager.getInstance(this).registerReceiver(serviceMessageReceiver, new IntentFilter(BackgroundPlayerService.INTENT_CLASS));
-        super.onResume()
+    var contentDataDisposable: Disposable? = null
 
-        disposables.add(NovaEvaService.instance
-                .getArticle(intent.getLongExtra("contentId", 0))
+    private fun getContentData(contentId: Long) {
+        Log.d("getContentData", "getting content data for contentId: " + contentId)
+        contentDataDisposable?.dispose()
+        contentDataDisposable = (NovaEvaService.instance
+                .getContentData(contentId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ article ->
@@ -310,7 +294,7 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
                     if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
                         if (article.image != null) {
                             if (imageLoader.isInited) {
-                                imageLoader.displayImage(article.image.size640, headerImage, imageLoaderConfigurator.doConfig(false))
+                                imageLoader.displayImage(article.image[0].size640, headerImage, imageLoaderConfigurator.doConfig(false))
                             }
                         } else {
                             val url = prefs.getString("hr.bpervan.novaeva.categoryheader." + article.cid, null)
@@ -329,16 +313,19 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
                     vijestWebView.reload()
                     vijestWebView.loadDataWithBaseURL(null, article.tekst, "text/html", "UTF-8", null)
 
-                    this@VijestActivity.thisArticle = article
-                    progressDialog!!.dismiss()
+                    this@VijestActivity.thisContentData = article
 
                 }) { t -> Log.e("vijestiError", t.message, t) })
+    }
+
+    override fun onResume() {
+        //LocalBroadcastManager.getInstance(this).registerReceiver(serviceMessageReceiver, new IntentFilter(BackgroundPlayerService.INTENT_CLASS));
+        super.onResume()
     }
 
     override fun onPause() {
         //LocalBroadcastManager.getInstance(this).unregisterReceiver(serviceMessageReceiver);
         super.onPause()
-        disposables.clear()
 
 
         /*if(mPlayer != null){
@@ -349,6 +336,12 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
 			seekArc.removeCallbacks(onEverySecond);
 		}
 		mPlayer = null;*/
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        contentDataDisposable?.dispose()
     }
 
     public override fun onStart() {
@@ -400,8 +393,8 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
                 if (BackgroundPlayerService.isRunning) {
                     val messageIntent = Intent(this@VijestActivity, BackgroundPlayerService::class.java)
                     messageIntent.putExtra(BackgroundPlayerService.KEY_DIRECTIVE, BackgroundPlayerService.DIRECTIVE_SET_SOURCE_PLAY)
-                    messageIntent.putExtra(BackgroundPlayerService.KEY_PATH, thisArticle!!.audio)
-                    messageIntent.putExtra(BackgroundPlayerService.KEY_TITLE, thisArticle!!.naslov)
+                    messageIntent.putExtra(BackgroundPlayerService.KEY_PATH, thisContentData!!.audio)
+                    messageIntent.putExtra(BackgroundPlayerService.KEY_TITLE, thisContentData!!.naslov)
                     startService(messageIntent)
                     btnPlay.visibility = View.INVISIBLE
                     btnPause.visibility = View.VISIBLE
@@ -434,7 +427,7 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
                     dbHandler.deleteVijest(contentId.toInt()) //todo accept long
                     btnBookmark.setImageResource(R.drawable.vijest_button_bookmark)
                 } else {
-                    dbHandler.insertArticle(thisArticle)
+                    dbHandler.insertArticle(thisContentData)
                     btnBookmark.setImageResource(R.drawable.vijest_button_bookmarked)
                 }
             R.id.btnFace -> {
@@ -448,7 +441,7 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
                 val temp2 = "http://novaeva.com/node/" + intent.getIntExtra("contentId", 1025)
                 val mailIntent = Intent(Intent.ACTION_SEND)
                 mailIntent.type = "message/rfc822"
-                mailIntent.putExtra(Intent.EXTRA_SUBJECT, thisArticle!!.naslov)
+                mailIntent.putExtra(Intent.EXTRA_SUBJECT, thisContentData!!.naslov)
                 mailIntent.putExtra(Intent.EXTRA_TEXT, temp2)
                 startActivity(Intent.createChooser(mailIntent, "Odaberite aplikaciju"))
             }
@@ -463,12 +456,12 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
                 vijestWebView.settings.defaultFontSize = mCurrentSize
             }
             R.id.btnBack -> this@VijestActivity.onBackPressed()
-            R.id.imgLink -> if (thisArticle!!.youtube != null) {
-                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(thisArticle!!.youtube)))
+            R.id.imgLink -> if (thisContentData!!.youtube != null) {
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(thisContentData!!.youtube)))
             }
-            R.id.imgText -> if (thisArticle!!.prilozi != null) {
-                startActivity(Intent.createChooser(Intent(Intent.ACTION_VIEW, Uri.parse(thisArticle!!.prilozi[0].url)),
-                        "Otvaranje dokumenta " + thisArticle!!.prilozi[0].naziv))
+            R.id.imgText -> if (thisContentData!!.prilozi != null) {
+                startActivity(Intent.createChooser(Intent(Intent.ACTION_VIEW, Uri.parse(thisContentData!!.prilozi!![0].url)),
+                        "Otvaranje dokumenta " + thisContentData!!.prilozi!![0].naziv))
             }
         }
     }
@@ -494,7 +487,7 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
     }
 
     private fun setAttachments() {
-        thisArticle?.let {
+        thisContentData?.let {
             if (it.audio != null) {
                 imgMp3.setImageResource(R.drawable.vijest_ind_mp3_active)
             }
@@ -560,6 +553,7 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
 
         error.setPositiveButton("Pokušaj ponovno") { dialog, which ->
             //new AsyncHttpPostTask(VijestActivity.this).execute(ovaVijest.getNid() + "");
+            getContentData(contentId)
         }
         error.setNegativeButton("Povratak") { dialog, whichButton ->
             startActivity(Intent(this@VijestActivity, DashboardActivity::class.java))

@@ -19,7 +19,8 @@ import com.google.android.gms.analytics.Tracker;
 
 import hr.bpervan.novaeva.NovaEvaApp;
 import hr.bpervan.novaeva.main.R;
-import hr.bpervan.novaeva.services.NovaEvaServiceKt;
+import hr.bpervan.novaeva.model.Breviary;
+import hr.bpervan.novaeva.services.NovaEvaService;
 import hr.bpervan.novaeva.utilities.ConnectionChecker;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -30,15 +31,15 @@ public class BrevijarDetaljiActivity extends Activity {
 
 	private WebView webView;
 	private String BREV_CAT;
-	
+
 	private Tracker mGaTracker;
 
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_brevijar_detalji);
-		
+
 		BREV_CAT = String.valueOf(getIntent().getIntExtra("BREV_CAT", 4));
 
         mGaTracker = ((NovaEvaApp) getApplication()).getTracker(NovaEvaApp.TrackerName.APP_TRACKER);
@@ -51,7 +52,7 @@ public class BrevijarDetaljiActivity extends Activity {
         );
 
 		//mGaTracker.sendEvent("Brevijar", "OtvorenaMolitva", BREV_CAT, null);
-		
+
 		initUI();
 
 		if(!ConnectionChecker.hasConnection(this)){
@@ -74,7 +75,7 @@ public class BrevijarDetaljiActivity extends Activity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {return true;}
-	
+
 	private void initUI(){
 		webView = (WebView) findViewById(R.id.webViewBrevijar);
 		/*webView.getSettings().setSupportZoom(true);
@@ -93,7 +94,7 @@ public class BrevijarDetaljiActivity extends Activity {
 
 		webView.getSettings().setDefaultTextEncodingName("utf-8");
 	}
-	
+
 	private void setTitle(){
 		String activityTitle = "Brevijar - ";
 		switch(getIntent().getIntExtra("BREV_CAT", 4)){
@@ -127,17 +128,17 @@ public class BrevijarDetaljiActivity extends Activity {
 		}
 		this.setTitle(activityTitle);
 	}
-	
+
 	private void showErrorPopup(){
 		AlertDialog.Builder error = new AlertDialog.Builder(this);
 		error.setTitle("Greška");
-		
+
 		final TextView tv = new TextView(this);
 		tv.setText("Greška pri dohvaćanju podataka sa poslužitelja");
 		//tv.setTypeface(openSansRegular);
 		tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
 		error.setView(tv);
-				
+
 		error.setPositiveButton("Pokušaj ponovno", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -162,14 +163,15 @@ public class BrevijarDetaljiActivity extends Activity {
 			disposable.dispose();
 		}
 
-		disposable = NovaEvaServiceKt //// TODO: 07.10.17.
-				.getBreviar(BREV_CAT)
+		Log.d("loadingBreviary", "loading breviary: " + BREV_CAT);
+		disposable = NovaEvaService.Companion.getInstance()
+				.getBreviary(BREV_CAT)
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
-				.subscribe(new Consumer<String>() {
+				.subscribe(new Consumer<Breviary>() {
 					@Override
-					public void accept(String result) throws Exception {
-						webView.loadDataWithBaseURL(null, result, "text/html", "utf-8", "");
+					public void accept(Breviary result) throws Exception {
+						webView.loadDataWithBaseURL(null, result.getText(), "text/html", "utf-8", "");
 					}
 				}, new Consumer<Throwable>() {
 					@Override

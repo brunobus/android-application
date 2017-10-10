@@ -1,7 +1,10 @@
-package hr.bpervan.novaeva.utilities;
+package hr.bpervan.novaeva.adapters;
 
 import hr.bpervan.novaeva.NovaEvaApp;
 import hr.bpervan.novaeva.main.R;
+import hr.bpervan.novaeva.utilities.ListElement;
+import hr.bpervan.novaeva.utilities.ListTypes;
+import hr.bpervan.novaeva.utilities.ResourceHandler;
 
 import java.util.Calendar;
 import java.util.List;

@@ -14,5 +14,5 @@
     android:cacheColorHint="#00000000"
     app:layoutManager="LinearLayoutManager"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="hr.bpervan.novaeva.fragments.EvaMenuRecyclerFragment"
+    tools:context="hr.bpervan.novaeva.fragments.MenuRecyclerFragment"
     tools:listitem="@layout/folder_row"/>

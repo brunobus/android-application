@@ -8,6 +8,7 @@ package hr.bpervan.novaeva.utilities;
  * ListaVijestiActivity
  */
 
+@Deprecated
 public enum ListTypes {
 	PODKATEGORIJA, VIJEST
 }

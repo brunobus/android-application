@@ -1,4 +1,4 @@
-package hr.bpervan.novaeva.utilities;
+package hr.bpervan.novaeva.adapters;
 
 import hr.bpervan.novaeva.NovaEvaApp;
 import hr.bpervan.novaeva.main.R;

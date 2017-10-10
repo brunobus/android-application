@@ -10,7 +10,7 @@ import android.text.Html;
 import java.util.ArrayList;
 import java.util.List;
 
-import hr.bpervan.novaeva.model.Article;
+import hr.bpervan.novaeva.model.ContentData;
 
 /**
  * @author Branimir
@@ -92,18 +92,18 @@ public class BookmarksDBHandlerV2 extends SQLiteOpenHelper {
 		return count == 1;
 	}
 
-	public boolean insertArticle(Article article){
+	public boolean insertArticle(ContentData contentData){
 		SQLiteDatabase db = this.getWritableDatabase();
 
 		ContentValues values = new ContentValues();
-		values.put(KEY_NID, article.nid);
-		values.put(KEY_CID, article.cid);
-		values.put(KEY_HAS_AUDIO, article.audio != null ? 1 : 0);
-		values.put(KEY_HAS_ATTACH, article.prilozi != null ? 1 : 0);
-		values.put(KEY_HAS_LINK, article.youtube != null ? 1 : 0);
-		values.put(KEY_NASLOV, article.naslov);
-		values.put(KEY_DATUM, article.time);
-		values.put(KEY_UVOD, Html.fromHtml(article.tekst).toString());
+		values.put(KEY_NID, contentData.getNid());
+		values.put(KEY_CID, contentData.getCid());
+		values.put(KEY_HAS_AUDIO, contentData.getAudio() != null ? 1 : 0);
+		values.put(KEY_HAS_ATTACH, contentData.getPrilozi() != null ? 1 : 0);
+		values.put(KEY_HAS_LINK, contentData.getYoutube() != null ? 1 : 0);
+		values.put(KEY_NASLOV, contentData.getNaslov());
+		values.put(KEY_DATUM, contentData.getTime());
+		values.put(KEY_UVOD, Html.fromHtml(contentData.getTekst()).toString());
 
 		db.insert(TABLE_BOOKMARKS, null, values);
 		db.close();

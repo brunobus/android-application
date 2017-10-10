@@ -1,7 +1,7 @@
 package hr.bpervan.novaeva.activities;
 
 import hr.bpervan.novaeva.main.R;
-import hr.bpervan.novaeva.utilities.MolitvenikAdapter;
+import hr.bpervan.novaeva.adapters.MolitvenikAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +11,6 @@ import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
