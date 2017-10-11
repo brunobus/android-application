@@ -23,7 +23,6 @@ import com.google.android.gms.analytics.Tracker;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import hr.bpervan.novaeva.NovaEvaApp;
 import hr.bpervan.novaeva.adapters.MenuElementAdapter;
@@ -38,28 +37,29 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+import kotlin.jvm.functions.Function0;
 
-public class SearchActivity extends Activity implements OnClickListener{
+public class SearchActivity extends Activity implements OnClickListener {
 
-	private final CompositeDisposable disposables = new CompositeDisposable();
-	private Disposable searchForContentDisposable;
+    private final CompositeDisposable disposables = new CompositeDisposable();
+    private Disposable searchForContentDisposable;
 
-	private List<ContentInfo> searchResultList = new ArrayList<>();
+    private List<ContentInfo> searchResultList = new ArrayList<>();
 
-	private MenuElementAdapter adapter;
+    private MenuElementAdapter adapter;
 
-	private Tracker mGaTracker;
+    private Tracker mGaTracker;
 
-	private String searchString;
+    private String searchString;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_search);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_search);
 
-		searchString = getIntent().getStringExtra("searchString");
+        searchString = getIntent().getStringExtra("searchString");
 
-		this.setTitle("Pretraga: " + searchString);
+        this.setTitle("Pretraga: " + searchString);
 
 		/*mGaTracker = mGaInstance.getTracker("UA-40344870-1");
 
@@ -74,32 +74,32 @@ public class SearchActivity extends Activity implements OnClickListener{
                         .build()
         );
 
-		initUI();
+        initUI();
 
-		if(ConnectionChecker.hasConnection(this)){
-			searchForContent(searchString);
-		}
-	}
+        if (ConnectionChecker.hasConnection(this)) {
+            searchForContent(searchString);
+        }
+    }
 
-	@Override
-	protected void onResume() {
-		super.onResume();
+    @Override
+    protected void onResume() {
+        super.onResume();
 
-		disposables.add(NovaEvaApp.Companion.getBus().getContentOpenRequest()
-				.throttleFirst(500, TimeUnit.MILLISECONDS)
-				.subscribeOn(Schedulers.io())
-				.observeOn(AndroidSchedulers.mainThread())
-				.subscribe(new Consumer<ContentInfo>() {
-					@Override
-					public void accept(ContentInfo contentInfo) throws Exception {
-						Intent i;
-						i = new Intent(SearchActivity.this, VijestActivity.class);
-						i.putExtra("contentId", contentInfo.getContentId());
+        disposables.add(NovaEvaApp.Companion.getBus().getContentOpenRequest()
+                .throttleFirst(500, TimeUnit.MILLISECONDS)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<ContentInfo>() {
+                    @Override
+                    public void accept(ContentInfo contentInfo) throws Exception {
+                        Intent i;
+                        i = new Intent(SearchActivity.this, VijestActivity.class);
+                        i.putExtra("contentId", contentInfo.getContentId());
 //						i.putExtra("directoryId", directoryId);
-						startActivity(i);
-					}
-				}));
-	}
+                        startActivity(i);
+                    }
+                }));
+    }
 
     @Override
     protected void onPause() {
@@ -108,12 +108,12 @@ public class SearchActivity extends Activity implements OnClickListener{
         disposables.clear();
     }
 
-    public void onStart(){
+    public void onStart() {
         super.onStart();
         GoogleAnalytics.getInstance(this).reportActivityStart(this);
     }
 
-    public void onStop(){
+    public void onStop() {
         super.onStop();
         GoogleAnalytics.getInstance(this).reportActivityStop(this);
     }
@@ -127,139 +127,152 @@ public class SearchActivity extends Activity implements OnClickListener{
         }
     }
 
-	private void initUI(){
+    private void initUI() {
 
-		RecyclerView recyclerView = (RecyclerView) findViewById(R.id.eva_recyclerview);
+        RecyclerView recyclerView = findViewById(R.id.eva_recyclerview);
 
-		View fakeActionBar = findViewById(R.id.fakeActionBar);
+        View fakeActionBar = findViewById(R.id.fakeActionBar);
 
-		fakeActionBar.findViewById(R.id.btnHome).setOnClickListener(this);
-		fakeActionBar.findViewById(R.id.btnSearch).setOnClickListener(this);
-		fakeActionBar.findViewById(R.id.btnBack).setOnClickListener(this);
+        fakeActionBar.findViewById(R.id.btnHome).setOnClickListener(this);
+        fakeActionBar.findViewById(R.id.btnSearch).setOnClickListener(this);
+        fakeActionBar.findViewById(R.id.btnBack).setOnClickListener(this);
 
-		MenuElementAdapter.ConfigData configData = new MenuElementAdapter.ConfigData(
-				getResources().getConfiguration().orientation,
-				Constants.CAT_PROPOVJEDI,
-				new AtomicBoolean(false));
+        MenuElementAdapter.ConfigData configData = new MenuElementAdapter.ConfigData(
+                new Function0<Integer>() {
+                    @Override
+                    public Integer invoke() {
+                        return getResources().getConfiguration().orientation;
+                    }
+                },
+                Constants.CAT_PROPOVJEDI,
+                new Function0<Boolean>() {
+                    @Override
+                    public Boolean invoke() {
+                        return false;
+                    }
+                });
 
-		adapter = new MenuElementAdapter(searchResultList, configData, null);
-		recyclerView.setAdapter(adapter);
-		recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
-		recyclerView.setItemAnimator(new DefaultItemAnimator());
-	}
+        adapter = new MenuElementAdapter(searchResultList, configData, null);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+    }
 
-	private void showSearchPopup(){
-		AlertDialog.Builder search = new AlertDialog.Builder(this);
-		search.setTitle("Pretraga");
+    private void showSearchPopup() {
+        AlertDialog.Builder search = new AlertDialog.Builder(this);
+        search.setTitle("Pretraga");
 
-		final EditText et = new EditText(this);
-		search.setView(et);
+        final EditText et = new EditText(this);
+        search.setView(et);
 
-		search.setPositiveButton("Pretrazi", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				String search = et.getText().toString();
-				searchString = search;
-				searchForContent(searchString);
-			}
-		});
-		search.setNegativeButton("Odustani", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int whichButton) {}
-			});
-		search.show();
-	}
+        search.setPositiveButton("Pretrazi", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String search = et.getText().toString();
+                searchString = search;
+                searchForContent(searchString);
+            }
+        });
+        search.setNegativeButton("Odustani", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int whichButton) {
+            }
+        });
+        search.show();
+    }
 
-	private void searchForContent(String searchString){
-		searchResultList.clear();
-		adapter.notifyDataSetChanged();
+    private void searchForContent(String searchString) {
+        searchResultList.clear();
+        adapter.notifyDataSetChanged();
 
-		if (searchForContentDisposable != null) {
-			searchForContentDisposable.dispose();
-		}
-		searchForContentDisposable = NovaEvaService.Companion.getInstance()
-				.searchForContent(searchString)
-				.subscribeOn(Schedulers.io())
-				.observeOn(AndroidSchedulers.mainThread())
-				.subscribe(new Consumer<SearchResult>() {
-					@Override
-					public void accept(SearchResult searchResult) throws Exception {
-						List<ContentInfo> searchResultContentInfoList = searchResult.getSearchResultContentInfoList();
-						if (searchResultContentInfoList != null && !searchResultContentInfoList.isEmpty()) {
-							searchResultList.addAll(searchResultContentInfoList);
-							adapter.notifyDataSetChanged();
-						} else {
-							SearchActivity.this.showEmptyListInfo();
-						}
-					}
-				}, new Consumer<Throwable>() {
-					@Override
-					public void accept(Throwable t) throws Exception {
-						Log.e("searchForContent", t.getMessage(), t);
-						showErrorPopup();
-					}
-				});
-	}
+        if (searchForContentDisposable != null) {
+            searchForContentDisposable.dispose();
+        }
+        searchForContentDisposable = NovaEvaService.Companion.getInstance()
+                .searchForContent(searchString)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<SearchResult>() {
+                    @Override
+                    public void accept(SearchResult searchResult) throws Exception {
+                        List<ContentInfo> searchResultContentInfoList = searchResult.getSearchResultContentInfoList();
+                        if (searchResultContentInfoList != null && !searchResultContentInfoList.isEmpty()) {
+                            searchResultList.addAll(searchResultContentInfoList);
+                            adapter.notifyDataSetChanged();
+                        } else {
+                            SearchActivity.this.showEmptyListInfo();
+                        }
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable t) throws Exception {
+                        Log.e("searchForContent", t.getMessage(), t);
+                        showErrorPopup();
+                    }
+                });
+    }
 
-	private void showErrorPopup(){
-		AlertDialog.Builder error = new AlertDialog.Builder(this);
-		error.setTitle("Greška");
+    private void showErrorPopup() {
+        AlertDialog.Builder error = new AlertDialog.Builder(this);
+        error.setTitle("Greška");
 
-		final TextView tv = new TextView(this);
-		tv.setText("Greška pri dohvaćanju podataka sa poslužitelja");
-		if (NovaEvaApp.Companion.getOpenSansRegular() != null) {
-			tv.setTypeface(NovaEvaApp.Companion.getOpenSansRegular());
-		}
-		tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
-		error.setView(tv);
+        final TextView tv = new TextView(this);
+        tv.setText("Greška pri dohvaćanju podataka sa poslužitelja");
+        if (NovaEvaApp.Companion.getOpenSansRegular() != null) {
+            tv.setTypeface(NovaEvaApp.Companion.getOpenSansRegular());
+        }
+        tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+        error.setView(tv);
 
-		error.setPositiveButton("Pokušaj ponovno", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				searchForContent(searchString);
-			}
-		});
-		error.setNegativeButton("Povratak", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int whichButton) {
+        error.setPositiveButton("Pokušaj ponovno", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                searchForContent(searchString);
+            }
+        });
+        error.setNegativeButton("Povratak", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int whichButton) {
                 NovaEvaApp.Companion.goHome(SearchActivity.this);
-			}
-			});
-		error.show();
-	}
+            }
+        });
+        error.show();
+    }
 
-	@Override
-	public void onConfigurationChanged(Configuration newConfig){
-		super.onConfigurationChanged(newConfig);
-		setContentView(R.layout.activity_lista_vijesti);
-		initUI();
-	}
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        setContentView(R.layout.activity_lista_vijesti);
+        initUI();
+    }
 
-	@Override
-	public void onClick(View v) {
-		switch(v.getId()){
-		case R.id.btnSearch:
-			showSearchPopup();
-			break;
-		case R.id.btnHome:
-			NovaEvaApp.Companion.goHome(this);
-			break;
-		case R.id.btnBack:
-			onBackPressed();
-			break;
-		}
-	}
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btnSearch:
+                showSearchPopup();
+                break;
+            case R.id.btnHome:
+                NovaEvaApp.Companion.goHome(this);
+                break;
+            case R.id.btnBack:
+                onBackPressed();
+                break;
+        }
+    }
 
-	private void showEmptyListInfo(){
-		AlertDialog.Builder emptyInfo = new AlertDialog.Builder(this);
-		emptyInfo.setTitle("Pretraga");
-		emptyInfo.setMessage("Pretraga nije vratila rezultate");
+    private void showEmptyListInfo() {
+        AlertDialog.Builder emptyInfo = new AlertDialog.Builder(this);
+        emptyInfo.setTitle("Pretraga");
+        emptyInfo.setMessage("Pretraga nije vratila rezultate");
 
-		emptyInfo.setPositiveButton("U redu", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {SearchActivity.this.onBackPressed();}
-		});
+        emptyInfo.setPositiveButton("U redu", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                SearchActivity.this.onBackPressed();
+            }
+        });
 
-		emptyInfo.show();
-	}
+        emptyInfo.show();
+    }
 }

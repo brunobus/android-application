@@ -18,7 +18,7 @@ import hr.bpervan.novaeva.utilities.ConnectionChecker
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_molitvenik_detalji.*
+import kotlinx.android.synthetic.main.activity_brevijar_detalji.*
 
 class BreviaryContentActivity : AppCompatActivity() {
 

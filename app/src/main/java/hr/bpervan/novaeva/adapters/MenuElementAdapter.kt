@@ -15,7 +15,6 @@ import kotlinx.android.synthetic.main.folder_row.view.*
 import kotlinx.android.synthetic.main.izbornik_top.view.*
 import kotlinx.android.synthetic.main.vijest_row.view.*
 import java.util.*
-import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * Created by vpriscan on 08.10.17..
@@ -56,17 +55,17 @@ class MenuElementAdapter(val data: List<TreeElementInfo>,
             when (viewType) {
                 HEADER_VIEW_TYPE -> {
                     val view = LayoutInflater.from(parent.context).inflate(R.layout.izbornik_top, parent, false)
-                    view.setBackgroundResource(ResourceHandler.getListViewHeader(configData.colourSet, configData.deviceOrientation))
+                    view.setBackgroundResource(ResourceHandler.getListViewHeader(configData.colourSet, configData.orientationSupplier()))
                     HeaderViewHolder(view)
                 }
                 CONTENT_VIEW_TYPE -> {
                     val view = LayoutInflater.from(parent.context).inflate(R.layout.vijest_row, parent, false)
-                    view.setBackgroundResource(ResourceHandler.getResourceId(configData.colourSet, ListTypes.VIJEST, configData.deviceOrientation))
+                    view.setBackgroundResource(ResourceHandler.getResourceId(configData.colourSet, ListTypes.VIJEST, configData.orientationSupplier()))
                     ContentInfoViewHolder(view)
                 }
                 SUBDIRECTORY_VIEW_TYPE -> {
                     val view = LayoutInflater.from(parent.context).inflate(R.layout.folder_row, parent, false)
-                    view.setBackgroundResource(ResourceHandler.getResourceId(configData.colourSet, ListTypes.PODKATEGORIJA, configData.deviceOrientation))
+                    view.setBackgroundResource(ResourceHandler.getResourceId(configData.colourSet, ListTypes.PODKATEGORIJA, configData.orientationSupplier()))
                     DirectoryInfoViewHolder(view)
                 }
                 else -> {
@@ -95,9 +94,9 @@ class MenuElementAdapter(val data: List<TreeElementInfo>,
     class HeaderData(val directoryName: String,
                      val infoMessage: String)
 
-    class ConfigData(val deviceOrientation: Int,
+    class ConfigData(val orientationSupplier: () -> Int,
                      val colourSet: Int,
-                     val loading: AtomicBoolean)
+                     val isLoadingSupplier: () -> Boolean)
 
     inner abstract class BindableViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         abstract fun bindTo(t: Any)
@@ -237,7 +236,7 @@ class MenuElementAdapter(val data: List<TreeElementInfo>,
     private inner class ProgressBarViewHolder(view: View) : BindableViewHolder(view) {
 
         override fun bindTo(t: Any) {
-            view.visibility = if (configData.loading.get()) View.VISIBLE else View.GONE
+            view.visibility = if (configData.isLoadingSupplier()) View.VISIBLE else View.GONE
         }
     }
 }
