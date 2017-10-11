@@ -66,18 +66,27 @@ public class ListaVijestiActivity extends AppCompatActivity implements OnClickLi
                         .setLabel(Constants.getCatNameById(directoryId))
                         .build()
         );
-        directoryId = getIntent().getIntExtra("kategorija", 11);
-
-        colourSet = (int) directoryId;
+        if (savedInstanceState != null) {
+            directoryId = savedInstanceState.getInt("kategorija", 11);
+            colourSet = savedInstanceState.getInt("colourSet", (int) directoryId);
+        } else {
+            directoryId = getIntent().getIntExtra("kategorija", 11);
+            colourSet = getIntent().getIntExtra("colourSet", (int) directoryId);
+        }
 
         //mGaTracker.sendEvent("Kategorije", "OtvorenaKategorija", Constants.getCatNameById(kategorija), null);
         killRedDot(directoryId);
 
         initUI();
-        if (ConnectionChecker.hasConnection(this)) {
-            showFragmentForDirectory(directoryId, Constants.getCatNameById(directoryId).toUpperCase(), false);
+
+        if (savedInstanceState == null) {
+            if (ConnectionChecker.hasConnection(this)) {
+                showFragmentForDirectory(directoryId, Constants.getCatNameById(directoryId).toUpperCase(), false);
+            } else {
+                Toast.makeText(this, "Internetska veza nije dostupna", Toast.LENGTH_SHORT).show();
+            }
         } else {
-            Toast.makeText(this, "Internetska veza nije dostupna", Toast.LENGTH_SHORT).show();
+            //fragment backstack already exists, don't create new fragment
         }
     }
 
@@ -94,6 +103,15 @@ public class ListaVijestiActivity extends AppCompatActivity implements OnClickLi
         }
 
         this.setCategoryTypeColour();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+
+        outState.putInt("kategorija", (int) directoryId); //// TODO: 11.10.17. long
+        outState.putInt("colourSet", colourSet);
+
+        super.onSaveInstanceState(outState);
     }
 
     private void showFragmentForDirectory(final Long dirId, final String dirName, final boolean isSubDir) {
@@ -120,14 +138,14 @@ public class ListaVijestiActivity extends AppCompatActivity implements OnClickLi
         }
     }
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        setContentView(R.layout.activity_lista_vijesti);
-        //TODO: kad se promjeni orjentacija, lista ode na početak :)
-        initUI();
-        //mainListView.setAdapter(adapter);
-    }
+    //FIXME: 11.10.17.
+//    @Override
+//    public void onConfigurationChanged(Configuration newConfig) {
+//        super.onConfigurationChanged(newConfig);
+//        setContentView(R.layout.activity_lista_vijesti);
+//        //TODO: kad se promijeni orijentacija, lista ode na početak :)
+//        initUI();
+//    }
 
     @Override
     public void onClick(View v) {

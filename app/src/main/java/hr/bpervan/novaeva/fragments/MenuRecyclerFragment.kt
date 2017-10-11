@@ -75,7 +75,7 @@ class MenuRecyclerFragment : Fragment() {
                          val directoryName: String,
                          val isSubDirectory: Boolean,
                          val colourSet: Int,
-                         val savedScrollPosition: Int = RecyclerView.NO_POSITION)
+                         val savedScrollPosition: Int = RecyclerView.NO_POSITION) //todo not working
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
