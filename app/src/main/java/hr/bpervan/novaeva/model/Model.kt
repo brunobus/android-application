@@ -21,9 +21,7 @@ interface TreeElementInfo
 data class DirectoryInfo(@SerializedName("cid") val directoryId: Long = -1,
                          @SerializedName("name") val title: String? = null) : TreeElementInfo {
 
-    override fun toString(): String {
-        return "DirectoryInfo{cid=$directoryId, name='$title'}"
-    }
+    override fun toString(): String = "DirectoryInfo{cid=$directoryId, name='$title'}"
 }
 
 data class ContentInfo(val attach: Attachments? = null,
@@ -52,14 +50,12 @@ data class ContentInfo(val attach: Attachments? = null,
                            @SerializedName("images") val hasImages: Boolean = false,
                            @SerializedName("text") val hasText: Boolean = false) {
 
-        override fun toString(): String {
-            return "Attachments{video=$hasVideo, documents=$hasDocuments, music=$hasMusic, images=$hasImages, text=$hasText}"
-        }
+        override fun toString(): String =
+                "Attachments{video=$hasVideo, documents=$hasDocuments, music=$hasMusic, images=$hasImages, text=$hasText}"
     }
 
-    override fun toString(): String {
-        return "ContentInfo{attach=$attach, nid=$contentId, datum='$datetime', naslov='$title', uvod='$text'}"
-    }
+    override fun toString(): String =
+            "ContentInfo{attach=$attach, nid=$contentId, datum='$datetime', naslov='$title', uvod='$text'}"
 }
 
 //todo change field names
@@ -100,9 +96,8 @@ data class Image(@SerializedName("640") val size640: String? = null,
                  val date: Int = 0,
                  val original: String? = null) {
 
-    override fun toString(): String {
-        return "Image{size640='$size640', size720='$size720', date=$date, original='$original'}"
-    }
+    override fun toString(): String =
+            "Image{size640='$size640', size720='$size720', date=$date, original='$original'}"
 }
 
 data class Breviary(@SerializedName("tekst") val text: String? = null)
@@ -110,4 +105,5 @@ data class Breviary(@SerializedName("tekst") val text: String? = null)
 data class SearchResult(
         val APIstatus: Int = 0,
         val rezultat: Int = 0,
+        val paket: Int = 0,
         @SerializedName("vijesti") val searchResultContentInfoList: List<ContentInfo>? = null)

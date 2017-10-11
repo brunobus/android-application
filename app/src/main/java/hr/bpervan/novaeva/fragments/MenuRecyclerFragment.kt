@@ -1,7 +1,6 @@
 package hr.bpervan.novaeva.fragments
 
 import android.app.AlertDialog
-import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.DefaultItemAnimator
@@ -14,7 +13,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import hr.bpervan.novaeva.NovaEvaApp
-import hr.bpervan.novaeva.activities.DashboardActivity
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.ContentInfo
 import hr.bpervan.novaeva.model.TreeElementInfo
@@ -29,12 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean
  * Created by vpriscan on 08.10.17..
  */
 class MenuRecyclerFragment : Fragment() {
-
-    private var directoryId: Long = -1
-    private lateinit var directoryName: String
-    private var isSubDirectory: Boolean = false
-    private var colourSet: Int = -1
-    private var loading: AtomicBoolean = AtomicBoolean(true)
+    var config: FragmentConfig? = null
 
     private var hasMore = true
     private var menuElementsDisposable: Disposable? = null
@@ -42,49 +35,86 @@ class MenuRecyclerFragment : Fragment() {
     private lateinit var adapter: MenuElementAdapter
 
     private val elementsList = ArrayList<TreeElementInfo>()
-    private lateinit var configData: MenuElementAdapter.ConfigData
+
+    private lateinit var fragmentConfig: FragmentConfig
+
+    private var mLinearLayoutManager: LinearLayoutManager? = null
+    private val loading = AtomicBoolean(true)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            directoryId = it.getLong("directoryId", -1)
-            directoryName = it.getString("directoryName", "")
-            isSubDirectory = it.getBoolean("isSubDirectory")
-            colourSet = it.getInt("colourSet", 7)
+
+        if (savedInstanceState != null) {
+            config = FragmentConfig(
+                    directoryId = savedInstanceState.getLong("directoryId", -1),
+                    isSubDirectory = savedInstanceState.getBoolean("isSubDirectory"),
+                    directoryName = savedInstanceState.getString("directoryName", ""),
+                    colourSet = savedInstanceState.getInt("colourSet", 7),
+                    savedScrollPosition = savedInstanceState.getInt("savedScrollPosition", RecyclerView.NO_POSITION)
+            )
         }
 
-        configData = MenuElementAdapter.ConfigData(resources.configuration.orientation, colourSet, loading)
+        if (config == null) {
+            throw IllegalStateException("Fragment config data not loaded properly")
+        }
 
-        val headerData = MenuElementAdapter.HeaderData(directoryName, if (isSubDirectory) "NALAZITE SE U MAPI" else "NALAZITE SE U KATEGORIJI")
+        fragmentConfig = config!!
 
-        adapter = MenuElementAdapter(elementsList, configData, headerData)
+        val infoText = if (fragmentConfig.isSubDirectory) "NALAZITE SE U MAPI" else "NALAZITE SE U KATEGORIJI"
+
+        adapter = MenuElementAdapter(elementsList,
+                MenuElementAdapter.ConfigData(resources.configuration.orientation, fragmentConfig.colourSet, loading),
+                MenuElementAdapter.HeaderData(fragmentConfig.directoryName, infoText))
         adapter.registerAdapterDataObserver(DataChangeLogger())
 
-        loadListElements()
+
+        loadData()
     }
+
+    class FragmentConfig(val directoryId: Long,
+                         val directoryName: String,
+                         val isSubDirectory: Boolean,
+                         val colourSet: Int,
+                         val savedScrollPosition: Int = RecyclerView.NO_POSITION)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         val recyclerView = inflater.inflate(R.layout.eva_recycler_view, container, false) as RecyclerView
 
-        val linearLayoutManager = LinearLayoutManager(recyclerView.context)
+        val linearLayoutManager = LinearLayoutManager(context)
         recyclerView.layoutManager = linearLayoutManager
         recyclerView.itemAnimator = DefaultItemAnimator()
         recyclerView.adapter = adapter
         recyclerView.addOnScrollListener(EndlessScrollListener(linearLayoutManager))
 
+        mLinearLayoutManager = linearLayoutManager
+
+        if (fragmentConfig.savedScrollPosition != RecyclerView.NO_POSITION) {
+            recyclerView.scrollToPosition(fragmentConfig.savedScrollPosition)
+        }
+
         return recyclerView
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        menuElementsDisposable?.dispose()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putLong("directoryId", fragmentConfig.directoryId)
+        outState.putBoolean("isSubDirectory", fragmentConfig.isSubDirectory)
+        outState.putString("directoryName", fragmentConfig.directoryName)
+        outState.putInt("colourSet", fragmentConfig.colourSet)
+        outState.putInt("savedScrollPosition", mLinearLayoutManager?.findFirstVisibleItemPosition() ?: RecyclerView.NO_POSITION)
+
+        super.onSaveInstanceState(outState)
     }
 
     class DataChangeLogger : RecyclerView.AdapterDataObserver() {
         override fun onChanged() {
             Log.d("recyclerDataChanged", "RecyclerView data changed")
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        menuElementsDisposable?.dispose()
     }
 
     inner class EndlessScrollListener(private val linearLayoutManager: LinearLayoutManager) : RecyclerView.OnScrollListener() {
@@ -110,7 +140,7 @@ class MenuRecyclerFragment : Fragment() {
                     recyclerView.post {
                         adapter.notifyItemChanged(progressBarIndex)
                     }
-                    loadListElements(zadnjiDatum)
+                    loadData(date = zadnjiDatum)
                 }
             }
         }
@@ -128,19 +158,18 @@ class MenuRecyclerFragment : Fragment() {
             error.setView(tv)
 
             error.setPositiveButton("Pokušaj ponovno") { dialog, which ->
-                loadListElements()
+                loadData()
             }
             error.setNegativeButton("Povratak") { dialog, whichButton ->
-                startActivity(Intent(activity, DashboardActivity::class.java))
-                activity.finish()
+                NovaEvaApp.goHome(context)
             }
             error.show()
         }
     }
 
-    private fun loadListElements(date: String? = null) {
+    private fun loadData(date: String? = null) {
         menuElementsDisposable?.dispose()
-        menuElementsDisposable = NovaEvaService.instance.getDirectoryContent(directoryId, date)
+        menuElementsDisposable = NovaEvaService.instance.getDirectoryContent(fragmentConfig.directoryId, date)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ result ->
@@ -155,19 +184,9 @@ class MenuRecyclerFragment : Fragment() {
                     hasMore = result.more > 0
                     loading.set(false)
                     adapter.notifyDataSetChanged()
-
                 }, { t ->
                     Log.e("listElementError", t.message, t)
                     showErrorPopup()
                 })
-    }
-
-    companion object {
-
-        fun newInstance(args: Bundle): MenuRecyclerFragment {
-            val fragment = MenuRecyclerFragment()
-            fragment.arguments = args
-            return fragment
-        }
     }
 }

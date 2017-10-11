@@ -226,9 +226,7 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				String search=et.getText().toString();
-				Intent i=new Intent(DashboardActivity.this,SearchActivity.class);	
-				i.putExtra("string", search);
-				startActivity(i);
+				NovaEvaApp.Companion.goSearch(search, DashboardActivity.this);
 			}
 		});
 		

@@ -2,6 +2,8 @@ package hr.bpervan.novaeva
 
 import android.app.Activity
 import android.app.Application
+import android.content.Context
+import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
 import android.util.Log
@@ -9,6 +11,8 @@ import android.util.Log
 import com.google.android.gms.analytics.GoogleAnalytics
 import com.google.android.gms.analytics.Logger
 import com.google.android.gms.analytics.Tracker
+import hr.bpervan.novaeva.activities.DashboardActivity
+import hr.bpervan.novaeva.activities.SearchActivity
 
 import java.util.HashMap
 
@@ -108,6 +112,22 @@ class NovaEvaApp : Application() {
         }
         val openSansRegular: Typeface? by lazy {
             loadTypeface("opensans-regular.ttf")
+        }
+
+
+        //temp place for common activity navigation
+
+        fun goHome(context: Context) {
+            val i = Intent(context, DashboardActivity::class.java)
+            i.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            context.startActivity(i)
+        }
+
+        fun goSearch(searchString: String, context: Context) {
+            val i = Intent(context, SearchActivity::class.java)
+            i.putExtra("string", searchString)
+            i.flags = Intent.FLAG_ACTIVITY_NO_HISTORY
+            context.startActivity(i)
         }
     }
 }

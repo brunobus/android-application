@@ -50,6 +50,7 @@ public class SplashActivity extends Activity {
 		}
 		
 		SystemClock.sleep(500);
+		finish();
 		startActivity(new Intent(this,DashboardActivity.class));
 	}
 }

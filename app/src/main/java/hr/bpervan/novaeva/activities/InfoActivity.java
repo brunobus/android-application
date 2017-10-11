@@ -1,16 +1,15 @@
 package hr.bpervan.novaeva.activities;
 
+import hr.bpervan.novaeva.NovaEvaApp;
 import hr.bpervan.novaeva.main.R;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.webkit.WebView;
 import android.widget.EditText;
-import android.widget.ImageView;
 
 public class InfoActivity extends Activity implements OnClickListener{
 	
@@ -37,17 +36,17 @@ public class InfoActivity extends Activity implements OnClickListener{
 	
 	@Override
 	public void onClick(View v) {
-		switch(v.getId()){
-		case R.id.btnSearch:
-			showSearchPopup();
-			break;
-		case R.id.btnHome:
-			startActivity(new Intent(InfoActivity.this,DashboardActivity.class));
-			break;
-		case R.id.btnBack:
-			InfoActivity.this.onBackPressed();
-			break;
-		}
+        int id = v.getId();
+        if (id == R.id.btnSearch) {
+            showSearchPopup();
+
+        } else if (id == R.id.btnHome) {
+			NovaEvaApp.Companion.goHome(this);
+
+        } else if (id == R.id.btnBack) {
+            onBackPressed();
+
+        }
 	}
 	
 	private void showSearchPopup(){
@@ -61,9 +60,7 @@ public class InfoActivity extends Activity implements OnClickListener{
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				String search = et.getText().toString();
-				Intent i = new Intent(InfoActivity.this,SearchActivity.class);	
-				i.putExtra("searchString", search);
-				startActivity(i);
+				NovaEvaApp.Companion.goSearch(search, InfoActivity.this);
 			}
 		});
 		search.setNegativeButton("Odustani", new DialogInterface.OnClickListener() {

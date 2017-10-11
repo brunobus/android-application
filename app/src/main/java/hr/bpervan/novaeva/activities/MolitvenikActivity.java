@@ -1,5 +1,6 @@
 package hr.bpervan.novaeva.activities;
 
+import hr.bpervan.novaeva.NovaEvaApp;
 import hr.bpervan.novaeva.main.R;
 import hr.bpervan.novaeva.adapters.MolitvenikAdapter;
 
@@ -18,7 +19,6 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ListView;
 
 /*import com.google.analytics.tracking.android.EasyTracker;
@@ -138,10 +138,10 @@ public class MolitvenikActivity extends ListActivity implements OnClickListener{
 			showSearchPopup();
 			break;
 		case R.id.btnHome:
-			startActivity(new Intent(MolitvenikActivity.this,DashboardActivity.class));
+			NovaEvaApp.Companion.goHome(this);
 			break;
 		case R.id.btnBack:
-			MolitvenikActivity.this.onBackPressed();
+			onBackPressed();
 			break;
 		}
 	}
@@ -157,9 +157,7 @@ public class MolitvenikActivity extends ListActivity implements OnClickListener{
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				String search = et.getText().toString();
-				Intent i = new Intent(MolitvenikActivity.this,SearchActivity.class);	
-				i.putExtra("searchString", search);
-				startActivity(i);
+                NovaEvaApp.Companion.goSearch(search, MolitvenikActivity.this);
 			}
 		});
 		search.setNegativeButton("Odustani", new DialogInterface.OnClickListener() {

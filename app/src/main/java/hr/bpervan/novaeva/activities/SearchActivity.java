@@ -62,7 +62,7 @@ public class SearchActivity extends Activity implements OnClickListener{
 		this.setTitle("Pretraga: " + searchString);
 
 		/*mGaTracker = mGaInstance.getTracker("UA-40344870-1");
-		
+
 		mGaTracker.sendEvent("Pretraga", "KljucneRijeci", searchString, null);*/
 
         mGaTracker = ((NovaEvaApp) getApplication()).getTracker(NovaEvaApp.TrackerName.APP_TRACKER);
@@ -222,9 +222,7 @@ public class SearchActivity extends Activity implements OnClickListener{
 		error.setNegativeButton("Povratak", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int whichButton) {
-				startActivity(new Intent(SearchActivity.this, DashboardActivity.class));
-				//TODO: Check integrity, 21.2.2014 12:25
-				SearchActivity.this.finish();
+                NovaEvaApp.Companion.goHome(SearchActivity.this);
 			}
 			});
 		error.show();
@@ -244,10 +242,10 @@ public class SearchActivity extends Activity implements OnClickListener{
 			showSearchPopup();
 			break;
 		case R.id.btnHome:
-			startActivity(new Intent(SearchActivity.this,DashboardActivity.class));
+			NovaEvaApp.Companion.goHome(this);
 			break;
 		case R.id.btnBack:
-			SearchActivity.this.onBackPressed();
+			onBackPressed();
 			break;
 		}
 	}

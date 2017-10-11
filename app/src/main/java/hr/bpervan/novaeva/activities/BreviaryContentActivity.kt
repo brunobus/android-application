@@ -1,7 +1,6 @@
 package hr.bpervan.novaeva.activities
 
 import android.app.AlertDialog
-import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
@@ -109,11 +108,9 @@ class BreviaryContentActivity : AppCompatActivity() {
         tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
         error.setView(tv)
 
-        error.setPositiveButton("Pokušaj ponovno") { dialog, which -> loadBreviary() }
-        error.setNegativeButton("Povratak") { dialog, whichButton ->
-            startActivity(Intent(this@BreviaryContentActivity, DashboardActivity::class.java))
-            //TODO: Check integrity, 21.2.2014 12:25
-            this@BreviaryContentActivity.finish()
+        error.setPositiveButton("Pokušaj ponovno") { _, _ -> loadBreviary() }
+        error.setNegativeButton("Povratak") { _, _ ->
+            NovaEvaApp.goHome(this)
         }
         error.show()
     }

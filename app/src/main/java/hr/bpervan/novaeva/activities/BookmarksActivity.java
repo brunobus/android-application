@@ -27,7 +27,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ListView;
 
 public class BookmarksActivity extends ListActivity implements View.OnClickListener{
@@ -155,16 +154,16 @@ public class BookmarksActivity extends ListActivity implements View.OnClickListe
 
 	@Override
 	public void onClick(View v) {
-		switch(v.getId()){
-		case R.id.btnSearch:
+		int vId = v.getId();
+		if (vId == R.id.btnSearch) {
 			showSearchPopup();
-			break;
-		case R.id.btnHome:
-			startActivity(new Intent(BookmarksActivity.this,DashboardActivity.class));
-			break;
-		case R.id.btnBack:
-			BookmarksActivity.this.onBackPressed();
-			break;
+
+		} else if (vId == R.id.btnHome) {
+			NovaEvaApp.Companion.goHome(this);
+
+		} else if (vId == R.id.btnBack) {
+			onBackPressed();
+
 		}
 	}
 
@@ -177,9 +176,7 @@ public class BookmarksActivity extends ListActivity implements View.OnClickListe
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				String search = et.getText().toString();
-				Intent i = new Intent(BookmarksActivity.this,SearchActivity.class);	
-				i.putExtra("string", search);
-				startActivity(i);
+				NovaEvaApp.Companion.goSearch(search, BookmarksActivity.this);
 			}
 		});
 		search.setNegativeButton("Odustani", new DialogInterface.OnClickListener() {

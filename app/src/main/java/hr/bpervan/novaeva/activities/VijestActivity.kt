@@ -419,9 +419,9 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
                 btnPlay.visibility = View.VISIBLE
                 btnPlay.isEnabled = false
             }
-            R.id.btnHome -> startActivity(Intent(this, DashboardActivity::class.java))
+            R.id.btnHome -> NovaEvaApp.goHome(this)
             R.id.btnSearch ->
-                if (ConnectionChecker.hasConnection(this@VijestActivity))
+                if (ConnectionChecker.hasConnection(this))
                     showSearchPopup()
             R.id.btnBookmark ->
                 if (dbHandler.nidExists(contentId.toInt())) { //todo accept long
@@ -474,9 +474,7 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
         search.setView(et)
         search.setPositiveButton("Pretraži") { dialog, which ->
             val search = et.text.toString()
-            val i = Intent(this@VijestActivity, SearchActivity::class.java)
-            i.putExtra("searchString", search)
-            startActivity(i)
+            NovaEvaApp.goSearch(search, this@VijestActivity)
         }
         search.setNegativeButton("Odustani") { dialog, whichButton -> }
         search.show()
@@ -556,8 +554,7 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
             getContentData(contentId)
         }
         error.setNegativeButton("Povratak") { dialog, whichButton ->
-            startActivity(Intent(this@VijestActivity, DashboardActivity::class.java))
-            this@VijestActivity.onBackPressed()
+            NovaEvaApp.goHome(this)
         }
         error.show()
     }

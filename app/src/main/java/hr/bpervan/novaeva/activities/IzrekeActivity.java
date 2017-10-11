@@ -14,12 +14,12 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.webkit.WebView;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
 
+import hr.bpervan.novaeva.NovaEvaApp;
 import hr.bpervan.novaeva.main.R;
 import hr.bpervan.novaeva.model.ContentInfo;
 import hr.bpervan.novaeva.model.DirectoryContent;
@@ -136,48 +136,46 @@ public class IzrekeActivity extends Activity implements OnClickListener{
 
 	@Override
 	public void onClick(View v) {
-		switch(v.getId()){
-		case R.id.btnObnovi:
+		int vId = v.getId();
+		if (vId == R.id.btnObnovi) {
 			loadRandomIzreka();
-			break;
-		case R.id.btnHome:
-			startActivity(new Intent(this, DashboardActivity.class));
-			break;
-		case R.id.btnSearch:
-			if(ConnectionChecker.hasConnection(this))
+
+		} else if (vId == R.id.btnHome) {
+			NovaEvaApp.Companion.goHome(this);
+
+		} else if (vId == R.id.btnSearch) {
+			if (ConnectionChecker.hasConnection(this))
 				showSearchPopup();
-			break;
-		case R.id.btnBookmark:
-			break;
-		case R.id.btnFace:
-			CharSequence temp = "http://novaeva.com/node/" + nid;		
+
+		} else if (vId == R.id.btnBookmark) {
+		} else if (vId == R.id.btnFace) {
+			CharSequence temp = "http://novaeva.com/node/" + nid;
 			Intent faceIntent = new Intent(Intent.ACTION_SEND);
 			faceIntent.setType("text/plain");
-			faceIntent.putExtra(Intent.EXTRA_TEXT,temp);
+			faceIntent.putExtra(Intent.EXTRA_TEXT, temp);
 			startActivity(Intent.createChooser(faceIntent, "Facebook"));
-			break;
-		case R.id.btnMail:
+
+		} else if (vId == R.id.btnMail) {
 			String temp2 = "http://novaeva.com/node/" + nid;
 			Intent mailIntent = new Intent(Intent.ACTION_SEND);
 			mailIntent.setType("message/rfc822"); //ovo ispipati još malo
 			mailIntent.putExtra(Intent.EXTRA_SUBJECT, naslov);
 			mailIntent.putExtra(Intent.EXTRA_TEXT, temp2);
 			startActivity(Intent.createChooser(mailIntent, "Odaberite aplikaciju"));
-			break;
-		case R.id.btnTextPlus:
-			//showTextSizePopup();
+
+		} else if (vId == R.id.btnTextPlus) {//showTextSizePopup();
 			int mCurrentSize = prefs.getInt("hr.bpervan.novaeva.velicinateksta", 14);
 			mCurrentSize += 2;
-			if(mCurrentSize >= 28){
+			if (mCurrentSize >= 28) {
 				mCurrentSize = 12;
 			}
-				
+
 			prefs.edit().putInt("hr.bpervan.novaeva.velicinateksta", mCurrentSize).commit();
 			webView.getSettings().setDefaultFontSize(mCurrentSize);
-			break;
-		case R.id.btnBack:
+
+		} else if (vId == R.id.btnBack) {
 			IzrekeActivity.this.onBackPressed();
-			break;
+
 		}
 		
 	}
@@ -199,9 +197,7 @@ public class IzrekeActivity extends Activity implements OnClickListener{
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				String search=et.getText().toString();
-				Intent i=new Intent(IzrekeActivity.this,SearchActivity.class);	
-				i.putExtra("string", search);
-				startActivity(i);
+				NovaEvaApp.Companion.goSearch(search, IzrekeActivity.this);
 			}
 		});
 		
@@ -236,9 +232,7 @@ public class IzrekeActivity extends Activity implements OnClickListener{
 		error.setNegativeButton("Povratak", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int whichButton) {
-				startActivity(new Intent(IzrekeActivity.this, DashboardActivity.class));
-				//TODO: Check integrity, 21.2.2014 12:25
-				IzrekeActivity.this.finish();
+				NovaEvaApp.Companion.goHome(IzrekeActivity.this);
 			}
 			});
 		error.show();

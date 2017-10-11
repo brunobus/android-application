@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -101,16 +100,13 @@ public class ListaVijestiActivity extends AppCompatActivity implements OnClickLi
 
         this.directoryId = dirId;
 
-        Bundle bundle = new Bundle();
-        bundle.putLong("directoryId", dirId);
-        bundle.putString("directoryName", dirName);
-        bundle.putBoolean("isSubDirectory", isSubDir);
-        bundle.putInt("colourSet", colourSet);
+        MenuRecyclerFragment menuRecyclerFragment = new MenuRecyclerFragment();
+        menuRecyclerFragment.setConfig(new MenuRecyclerFragment.FragmentConfig(dirId, dirName, isSubDir, colourSet, -1));
 
         getSupportFragmentManager()
                 .beginTransaction()
                 .setCustomAnimations(R.anim.move_right_in, R.anim.move_left_out, R.anim.move_left_in, R.anim.move_right_out)
-                .replace(R.id.eva_directory_fragment_frame, MenuRecyclerFragment.Companion.newInstance(bundle))
+                .replace(R.id.eva_directory_fragment_frame, menuRecyclerFragment)
                 .addToBackStack(null)
                 .commit();
     }
@@ -135,27 +131,28 @@ public class ListaVijestiActivity extends AppCompatActivity implements OnClickLi
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btnSearch:
-                showSearchPopup();
-                break;
-            case R.id.btnHome:
-                startActivity(new Intent(ListaVijestiActivity.this, DashboardActivity.class));
-                break;
-            case R.id.btnBack:
-                ListaVijestiActivity.this.onBackPressed();
-                break;
-            case R.id.btnImamPitanjeListaVijesti:
-                String text = "Hvaljen Isus i Marija, javljam Vam se jer imam pitanje.";
-                String mail[] = new String[1];
-                mail[0] = "odgovori.novaeva@gmail.com";
-                Intent i = new Intent(Intent.ACTION_SEND);
-                i.setType("message/rfc822");
-                i.putExtra(Intent.EXTRA_SUBJECT, "Nova Eva pitanje");
-                i.putExtra(Intent.EXTRA_TEXT, text);
-                i.putExtra(Intent.EXTRA_EMAIL, mail);
-                startActivity(Intent.createChooser(i, "Odaberite aplikaciju"));
-                break;
+        int vId = v.getId();
+
+        if (vId == R.id.btnSearch) {
+            showSearchPopup();
+
+        } else if (vId == R.id.btnHome) {
+            NovaEvaApp.Companion.goHome(this);
+
+        } else if (vId == R.id.btnBack) {
+            onBackPressed();
+
+        } else if (vId == R.id.btnImamPitanjeListaVijesti) {
+            String text = "Hvaljen Isus i Marija, javljam Vam se jer imam pitanje.";
+            String mail[] = new String[1];
+            mail[0] = "odgovori.novaeva@gmail.com";
+            Intent i = new Intent(Intent.ACTION_SEND);
+            i.setType("message/rfc822");
+            i.putExtra(Intent.EXTRA_SUBJECT, "Nova Eva pitanje");
+            i.putExtra(Intent.EXTRA_TEXT, text);
+            i.putExtra(Intent.EXTRA_EMAIL, mail);
+            startActivity(Intent.createChooser(i, "Odaberite aplikaciju"));
+
         }
     }
 
@@ -215,6 +212,7 @@ public class ListaVijestiActivity extends AppCompatActivity implements OnClickLi
                         i.putExtra("colourSet", colourSet);
                         i.putExtra("directoryId", directoryId);
                         startActivity(i);
+                        overridePendingTransition(R.anim.move_right_in, R.anim.move_left_out);
                     }
                 }));
     }
@@ -238,9 +236,7 @@ public class ListaVijestiActivity extends AppCompatActivity implements OnClickLi
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String search = et.getText().toString();
-                Intent i = new Intent(ListaVijestiActivity.this, SearchActivity.class);
-                i.putExtra("searchString", search);
-                startActivity(i);
+                NovaEvaApp.Companion.goSearch(search, ListaVijestiActivity.this);
             }
         });
         search.setNegativeButton("Odustani", new DialogInterface.OnClickListener() {
