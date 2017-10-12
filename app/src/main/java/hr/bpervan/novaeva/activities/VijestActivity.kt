@@ -46,9 +46,6 @@ import kotlinx.android.synthetic.main.vijest_fake_action_bar.view.*
 class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletionListener, SeekBar.OnSeekBarChangeListener {
     /** ------------------------------------------FIELDS------------------------------------------ */
 
-
-    private var headerImage: ImageView? = null //todo vpriscan
-
     /**
      * Used to store Font size
      */
@@ -89,7 +86,6 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_vijest)
 
         dbHandler = BookmarksDBHandlerV2(this)
         contentId = intent.getLongExtra("contentId", -1)
@@ -159,23 +155,19 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
         /** Test and set various attachments */
         setAttachments()
 
-        thisContentData?.let {
-            if (this.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
-                if (it.hasImage()) {
-                    if (imageLoader.isInited) {
-                        imageLoader.displayImage(it.image!![0].size640, headerImage, imageLoaderConfigurator.doConfig(false))
-                    }
-                } else {
-                    val url = prefs.getString("hr.bpervan.novaeva.categoryheader." + it.cid, null)
-                    if (url != null) {
-                        if (imageLoader.isInited) {
-                            imageLoader.displayImage(url, headerImage, imageLoaderConfigurator.doConfig(true))
-                        }
-                    }
+        thisContentData?.let { contentData ->
+            if (contentData.hasImage()) {
+                if (imageLoader.isInited && headerImage != null) {
+                    imageLoader.displayImage(contentData.image!![0].size640, headerImage, imageLoaderConfigurator.doConfig(false))
+                }
+            } else {
+                val url = prefs.getString("hr.bpervan.novaeva.categoryheader." + contentData.cid, null)
+                if (url != null && headerImage != null && imageLoader.isInited) {
+                    imageLoader.displayImage(url, headerImage, imageLoaderConfigurator.doConfig(true))
                 }
             }
             vijestWebView.reload()
-            vijestWebView.loadDataWithBaseURL(null, thisContentData!!.tekst, "text/html", "utf-8", null)
+            vijestWebView.loadDataWithBaseURL(null, contentData.tekst, "text/html", "utf-8", null)
         }
     }
 
@@ -184,6 +176,7 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
      * widgets on User interface, sets category specified colour
      */
     private fun initUI() {
+        setContentView(R.layout.activity_vijest)
 
         /** Basic data  */
         NovaEvaApp.openSansBold?.let {
@@ -261,9 +254,7 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
 
         if (dbHandler.nidExists(contentId.toInt())) //todo accept long
             fakeActionBar.btnBookmark.setImageResource(R.drawable.vijest_button_bookmarked)
-        if (this.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            headerImage = findViewById<View>(R.id.headerImage) as ImageView
-        }
+
         window.decorView.setBackgroundColor(this.resources.getColor(android.R.color.background_light))
     }
 
@@ -361,11 +352,8 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
     }
 
     private fun setCategoryTypeColour() {
-        var resources = intArrayOf(R.drawable.izbornik_navbgodgovori, R.drawable.vijest_naslovnaodgovori)
-        when (this.resources.configuration.orientation) {
-            Configuration.ORIENTATION_LANDSCAPE -> resources = ResourceHandler.getVijestResource(colourSet, Configuration.ORIENTATION_LANDSCAPE)
-            Configuration.ORIENTATION_PORTRAIT -> resources = ResourceHandler.getVijestResource(colourSet, Configuration.ORIENTATION_PORTRAIT)
-        }
+        val resources = ResourceHandler.getVijestResource(colourSet, this.resources.configuration.orientation)
+
         fakeActionBar.setBackgroundResource(resources[0])
         imgNaslovnaTraka.setImageResource(resources[1])
     }

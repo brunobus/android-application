@@ -50,12 +50,9 @@ class BreviaryActivity : AppCompatActivity() {
         imgDanas.text = datum.format(Date())
 
         val headerUrl = prefs.getString("hr.bpervan.novaeva.brevijarheaderimage", null)
-        if (this.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            if (headerUrl != null) {
-                if (imageLoader.isInited) {
-                    imageLoader.displayImage(headerUrl, headerImageBrevijar, imageLoaderConfigurator.doConfig(true))
-                }
-            }
+
+        if (headerUrl != null && headerImageBrevijar != null && imageLoader.isInited) {
+            imageLoader.displayImage(headerUrl, headerImageBrevijar, imageLoaderConfigurator.doConfig(true))
         }
 
         btnJucerJutarnja.setOnClickListener(BreviaryClickListener(1))
