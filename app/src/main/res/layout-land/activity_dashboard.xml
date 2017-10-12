@@ -159,7 +159,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_marginRight="190dp"
-        android:src="@drawable/titlelineland"
+        android:src="@drawable/titleline"
         android:contentDescription="@string/dummyDesc" />
 
     <TextView

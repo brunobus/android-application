@@ -176,9 +176,9 @@ public class ListaVijestiActivity extends AppCompatActivity implements OnClickLi
 
     private void setCategoryTypeColour() {
         if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            fakeActionBar.setBackgroundResource(ResourceHandler.getResourceId(colourSet, Configuration.ORIENTATION_LANDSCAPE));
+            fakeActionBar.setBackgroundResource(ResourceHandler.getResourceId(colourSet));
         } else {
-            fakeActionBar.setBackgroundResource(ResourceHandler.getResourceId(colourSet, Configuration.ORIENTATION_PORTRAIT));
+            fakeActionBar.setBackgroundResource(ResourceHandler.getResourceId(colourSet));
         }
     }
 

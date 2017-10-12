@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:layout_alignParentEnd="true"
     android:layout_alignParentRight="true"
-    android:background="@drawable/vijest_navbgpropovjedi_land"
+    android:background="@drawable/vijest_navbgpropovjedi"
     android:orientation="horizontal">
 
     <ImageView

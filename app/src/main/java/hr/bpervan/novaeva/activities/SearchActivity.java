@@ -138,12 +138,6 @@ public class SearchActivity extends Activity implements OnClickListener {
         fakeActionBar.findViewById(R.id.btnBack).setOnClickListener(this);
 
         MenuElementAdapter.ConfigData configData = new MenuElementAdapter.ConfigData(
-                new Function0<Integer>() {
-                    @Override
-                    public Integer invoke() {
-                        return getResources().getConfiguration().orientation;
-                    }
-                },
                 Constants.CAT_PROPOVJEDI,
                 new Function0<Boolean>() {
                     @Override

@@ -55,17 +55,17 @@ class MenuElementAdapter(val data: List<TreeElementInfo>,
             when (viewType) {
                 HEADER_VIEW_TYPE -> {
                     val view = LayoutInflater.from(parent.context).inflate(R.layout.izbornik_top, parent, false)
-                    view.setBackgroundResource(ResourceHandler.getListViewHeader(configData.colourSet, configData.orientationSupplier()))
+                    view.setBackgroundResource(ResourceHandler.getListViewHeader(configData.colourSet))
                     HeaderViewHolder(view)
                 }
                 CONTENT_VIEW_TYPE -> {
                     val view = LayoutInflater.from(parent.context).inflate(R.layout.vijest_row, parent, false)
-                    view.setBackgroundResource(ResourceHandler.getResourceId(configData.colourSet, ListTypes.VIJEST, configData.orientationSupplier()))
+                    view.setBackgroundResource(ResourceHandler.getResourceId(configData.colourSet, ListTypes.VIJEST))
                     ContentInfoViewHolder(view)
                 }
                 SUBDIRECTORY_VIEW_TYPE -> {
                     val view = LayoutInflater.from(parent.context).inflate(R.layout.folder_row, parent, false)
-                    view.setBackgroundResource(ResourceHandler.getResourceId(configData.colourSet, ListTypes.PODKATEGORIJA, configData.orientationSupplier()))
+                    view.setBackgroundResource(ResourceHandler.getResourceId(configData.colourSet, ListTypes.PODKATEGORIJA))
                     DirectoryInfoViewHolder(view)
                 }
                 else -> {
@@ -94,8 +94,7 @@ class MenuElementAdapter(val data: List<TreeElementInfo>,
     class HeaderData(val directoryName: String,
                      val infoMessage: String)
 
-    class ConfigData(val orientationSupplier: () -> Int,
-                     val colourSet: Int,
+    class ConfigData(val colourSet: Int,
                      val isLoadingSupplier: () -> Boolean)
 
     inner abstract class BindableViewHolder(val view: View) : RecyclerView.ViewHolder(view) {

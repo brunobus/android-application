@@ -4,7 +4,7 @@
 	android:paddingLeft="10sp" android:paddingRight="10sp"
 	android:layout_height="wrap_content"
 	android:orientation="vertical" android:paddingTop="2sp"
-	android:background="@drawable/molitvenik_button_land">
+	android:background="@drawable/molitvenik_button">
 
     <TextView
         android:id="@+id/tvMolitva"

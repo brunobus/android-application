@@ -352,7 +352,7 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
     }
 
     private fun setCategoryTypeColour() {
-        val resources = ResourceHandler.getVijestResource(colourSet, this.resources.configuration.orientation)
+        val resources = ResourceHandler.getVijestResource(colourSet)
 
         fakeActionBar.setBackgroundResource(resources[0])
         imgNaslovnaTraka.setImageResource(resources[1])

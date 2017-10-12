@@ -20,7 +20,7 @@
                 android:adjustViewBounds="true"
                 android:contentDescription="@string/dummyDesc"
                 android:scaleType="centerCrop"
-                android:src="@drawable/vijest_naslovnaizreke_land" />
+                android:src="@drawable/vijest_naslovnaizreke" />
 
             <TextView
                 android:id="@+id/tvNaslov"
@@ -57,7 +57,7 @@
                 android:layout_below="@+id/tvKategorija"
                 android:layout_marginTop="10dp"
                 android:contentDescription="@string/dummyDesc"
-                android:src="@drawable/vijest_podnaslovnalinija_land" />
+                android:src="@drawable/vijest_podnaslovnalinija" />
 
             <ImageView
                 android:id="@+id/btnTextPlus"

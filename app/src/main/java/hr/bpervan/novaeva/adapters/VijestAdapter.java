@@ -70,18 +70,13 @@ public class VijestAdapter extends BaseAdapter implements OnClickListener {
     	LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if(entry.getListType() == ListTypes.PODKATEGORIJA){
         	convertView = inflater.inflate(R.layout.folder_row, null);
-        	convertView.setBackgroundResource(ResourceHandler.getResourceId(kategorija, ListTypes.PODKATEGORIJA,
-        			context.getResources().getConfiguration().orientation));
+        	convertView.setBackgroundResource(ResourceHandler.getResourceId(kategorija, ListTypes.PODKATEGORIJA));
         }
         else{
         	convertView = inflater.inflate(R.layout.vijest_row, null);
-        	convertView.setBackgroundResource(ResourceHandler.getResourceId(kategorija, ListTypes.VIJEST,
-        			context.getResources().getConfiguration().orientation));
+        	convertView.setBackgroundResource(ResourceHandler.getResourceId(kategorija, ListTypes.VIJEST));
         }
-        	
-        
-        
-        
+
         //TODO : ovo je trošenje resursa, zašto bi ja radio sva polja ako imam mapu i treba mi samo tvNaslov? :)
         tvNaslov = (TextView) convertView.findViewById(R.id.tvNaslov);
         tvUvod = (TextView) convertView.findViewById(R.id.tvUvod);

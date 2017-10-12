@@ -160,7 +160,7 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_marginRight="130dp"
-        android:background="@drawable/titlelineland"
+        android:background="@drawable/titleline"
         android:gravity="center"
         android:text="@string/NovaEvaTitleLineLand"
         android:textAppearance="?android:attr/textAppearanceMedium"

@@ -165,6 +165,6 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="#FFFFFF"
         android:gravity="center"
-        android:background="@drawable/titlelineland" />
+        android:background="@drawable/titleline" />
 
 </RelativeLayout>

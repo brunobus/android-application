@@ -58,7 +58,7 @@ class MenuRecyclerFragment : Fragment() {
         val infoText = if (fragmentConfig.isSubDirectory) "NALAZITE SE U MAPI" else "NALAZITE SE U KATEGORIJI"
 
         adapter = MenuElementAdapter(elementsList,
-                MenuElementAdapter.ConfigData({ resources.configuration.orientation }, fragmentConfig.colourSet, { loading }),
+                MenuElementAdapter.ConfigData(fragmentConfig.colourSet, { loading }),
                 MenuElementAdapter.HeaderData(fragmentConfig.directoryName, infoText))
         adapter.registerAdapterDataObserver(DataChangeLogger())
 

@@ -1,66 +1,23 @@
 package hr.bpervan.novaeva.utilities;
 
 import hr.bpervan.novaeva.main.R;
-import android.content.res.Configuration;
 
-/** 
+/**
  * Class which handles requiremens for various colour types based on a different categories
  * for ListaVijestiActivity / VijestAdapter or VijestActivity
  * @author Branimir
  * */
 public class ResourceHandler {
-	
-	
-	/** 
+
+
+	/**
 	 * Used by VijestActivity object for displaying title bar in appropriate colour. To avoid multiple
 	 * switch - case blocks, this method may have same code as other methods in this class
 	 * @author Branimir
 	 * @return Array of 2 integers [0] -> FakeActionBar, [1] -> TitleBar
 	 * */
-	public static int[] getVijestResource(int colourset, int orientation){
+	public static int[] getVijestResource(int colourset){
 		int resources[] = new int[2];
-		if(orientation == Configuration.ORIENTATION_LANDSCAPE){
-			switch(colourset){
-			case Constants.CAT_AKTUALNO:
-				resources[0] = R.drawable.vijest_navbgaktualno_land;
-				resources[1] = R.drawable.vijest_naslovnaaktualno_land;
-				break;
-			case Constants.CAT_DUHOVNOST:
-			case Constants.CAT_SM:
-				resources[0] = R.drawable.vijest_navbgduhovnost_land;
-				resources[1] = R.drawable.vijest_naslovnaduhovnost_land;
-				break;
-			case Constants.CAT_EVANDJELJE:
-				resources[0] = R.drawable.vijest_navbgevandjelje_land;
-				resources[1] = R.drawable.vijest_naslovnaevandjelje_land;
-				break;
-			case Constants.CAT_IZREKE:
-				resources[0] = R.drawable.vijest_navbgizreke_land;
-				resources[1] = R.drawable.vijest_naslovnaizreke_land;
-				break;
-			case Constants.CAT_MULTIMEDIJA:
-				resources[0] = R.drawable.vijest_navbgmultimedija_land;
-				resources[1] = R.drawable.vijest_naslovnamultimedija_land;
-				break;
-			case Constants.CAT_ODGOVORI:
-				resources[0] = R.drawable.vijest_navbgodgovori_land;
-				resources[1] = R.drawable.vijest_naslovnaodgovori_land;
-				break;
-			case Constants.CAT_PJESMARICA:
-			case Constants.CAT_PAPA:
-				resources[0] = R.drawable.vijest_navbgmp3_land;
-				resources[1] = R.drawable.vijest_naslovnamp3_land;
-				break;
-			case Constants.CAT_POZIV:
-				resources[0] = R.drawable.vijest_navbgpoziv_land;
-				resources[1] = R.drawable.vijest_naslovnapoziv_land;
-				break;
-			case Constants.CAT_PROPOVJEDI:
-				resources[0] = R.drawable.vijest_navbgpropovjedi_land;
-				resources[1] = R.drawable.vijest_naslovnapropovjedi_land;
-				break;
-			}
-		} else {
 			switch(colourset){
 			case Constants.CAT_AKTUALNO:
 				resources[0] = R.drawable.izbornik_navbgaktualno;
@@ -101,42 +58,11 @@ public class ResourceHandler {
 				resources[1] = R.drawable.vijest_naslovnapropovjedi;
 				break;
 			}
-		}
-		
-		
 		return resources;
 	}
 
-    public static int getListViewHeader(int colourset, int orientation){
+    public static int getListViewHeader(int colourset){
         int resourceId = R.drawable.izbornik_top_odgovori;
-        if(orientation == Configuration.ORIENTATION_LANDSCAPE){
-            switch(colourset){
-                case Constants.CAT_AKTUALNO:
-                    resourceId = R.drawable.izbornik_top_aktualno_land;
-                    break;
-                case Constants.CAT_DUHOVNOST:
-                    resourceId = R.drawable.izbornik_top_duhovnost_land;
-                    break;
-                case Constants.CAT_EVANDJELJE:
-                    resourceId = R.drawable.izbornik_top_evandjelje_land;
-                    break;
-                case Constants.CAT_MULTIMEDIJA:
-                    resourceId = R.drawable.izbornik_top_multimedija_land;
-                    break;
-                case Constants.CAT_ODGOVORI:
-                    resourceId = R.drawable.izbornik_top_odgovori_land;
-                    break;
-                case Constants.CAT_PJESMARICA:
-                    resourceId = R.drawable.izbornik_top_mp3_land;
-                    break;
-                case Constants.CAT_POZIV:
-                    resourceId = R.drawable.izbornik_top_poziv_land;
-                    break;
-                case Constants.CAT_PROPOVJEDI:
-                    resourceId = R.drawable.izbornik_top_propovijedi_land;
-                    break;
-            }
-        } else {
             switch(colourset){
                 case Constants.CAT_AKTUALNO:
                     resourceId = R.drawable.izbornik_top_aktualno;
@@ -163,51 +89,17 @@ public class ResourceHandler {
                     resourceId = R.drawable.izbornik_top_propovjedi;
                     break;
             }
-        }
         return resourceId;
     }
-	
-	/** 
-	 * Used by ListaVijestiActivity object. 
+
+	/**
+	 * Used by ListaVijestiActivity object.
 	 * Returns Id from R class defining background colour for FakeActionBar
 	 * @author Branimir
 	 * @return Resource id from R.java directly usable in View.setBackgroundDrawable
 	 * */
-	public static int getResourceId(int colourset, int orientation){
+	public static int getResourceId(int colourset){
 		int resourceId = R.drawable.izbornik_navbgodgovori;
-		if(orientation == Configuration.ORIENTATION_LANDSCAPE){
-			switch(colourset){
-			case Constants.CAT_AKTUALNO:
-				resourceId = R.drawable.vijest_navbgaktualno_land;
-				break;
-			case Constants.CAT_DUHOVNOST:
-			case Constants.CAT_SM:
-				resourceId = R.drawable.vijest_navbgduhovnost_land;
-				break;
-			case Constants.CAT_EVANDJELJE:
-				resourceId = R.drawable.vijest_navbgevandjelje_land;
-				break;
-			case Constants.CAT_IZREKE:
-				resourceId = R.drawable.vijest_navbgizreke_land;
-				break;
-			case Constants.CAT_MULTIMEDIJA:
-				resourceId = R.drawable.vijest_navbgmultimedija_land;
-				break;
-			case Constants.CAT_ODGOVORI:
-				resourceId = R.drawable.vijest_navbgodgovori_land;
-				break;
-			case Constants.CAT_PJESMARICA:
-			case Constants.CAT_PAPA:
-				resourceId = R.drawable.vijest_navbgmp3_land;
-				break;
-			case Constants.CAT_POZIV:
-				resourceId = R.drawable.vijest_navbgpoziv_land;
-				break;
-			case Constants.CAT_PROPOVJEDI:
-				resourceId = R.drawable.vijest_navbgpropovjedi_land;
-				break;
-			}
-		} else {
 			switch(colourset){
 			case Constants.CAT_AKTUALNO:
 				resourceId = R.drawable.izbornik_navbgaktualno;
@@ -239,51 +131,17 @@ public class ResourceHandler {
 				resourceId = R.drawable.izbornik_navbgpropovjedi;
 				break;
 			}
-		}
 		return resourceId;
 	}
-	
-	/** 
+
+	/**
 	 * Used by VijestAdapter object
 	 * @author Branimir
 	 * @return Concrete resource id from R.java directly usable in View.setBackgroundDrawable
 	 * */
-	public static int getResourceId(int colourset, ListTypes listType, int orientation){
+	public static int getResourceId(int colourset, ListTypes listType){
 		int resourceId = R.drawable.izbornik_btn_normal_odgovori;
 		if(listType == ListTypes.PODKATEGORIJA){
-			if(orientation == Configuration.ORIENTATION_LANDSCAPE){
-				switch(colourset){
-				case Constants.CAT_AKTUALNO:
-					resourceId = R.drawable.izbornik_btn_normal_aktualno_folder_land;
-					break;
-				case Constants.CAT_DUHOVNOST:
-				case Constants.CAT_SM:
-					resourceId = R.drawable.izbornik_btn_normal_duhovnosti_folder_land;
-					break;
-				case Constants.CAT_EVANDJELJE:
-					resourceId = R.drawable.izbornik_btn_normal_evandjelje_folder_land;
-					break;
-				case Constants.CAT_MULTIMEDIJA:
-					resourceId = R.drawable.izbornik_btn_normal_multimedija_folder_land;
-					break;
-				case Constants.CAT_ODGOVORI:
-					resourceId = R.drawable.izbornik_btn_normal_odgovori_folder_land;
-					break;
-				case Constants.CAT_PJESMARICA:
-				case Constants.CAT_PAPA:
-					resourceId = R.drawable.izbornik_btn_normal_mp3_folder_land;
-					break;
-				case Constants.CAT_POZIV:
-					resourceId = R.drawable.izbornik_btn_normal_poziv_folder_land;
-					break;
-				case Constants.CAT_PROPOVJEDI:
-					resourceId = R.drawable.izbornik_btn_normal_propovijedi_folder_land;
-					break;
-				default:
-					resourceId = R.drawable.izbornik_btn_normal_odgovori_folder_land;
-					break;
-				}
-			}else{
 				switch(colourset){
 				case Constants.CAT_AKTUALNO:
 					resourceId = R.drawable.izbornik_btn_normal_aktualno_folder;
@@ -315,41 +173,7 @@ public class ResourceHandler {
 					resourceId = R.drawable.izbornik_btn_normal_odgovori_folder;
 					break;
 				}
-			}
 		} else {
-			if(orientation == Configuration.ORIENTATION_LANDSCAPE){
-				switch(colourset){
-				case Constants.CAT_AKTUALNO:
-					resourceId = R.drawable.izbornik_btn_normal_aktualno_land;
-					break;
-				case Constants.CAT_DUHOVNOST:
-				case Constants.CAT_SM:
-					resourceId = R.drawable.izbornik_btn_normal_duhovnosti_land;
-					break;
-				case Constants.CAT_EVANDJELJE:
-					resourceId = R.drawable.izbornik_btn_normal_evandjelje_land;
-					break;
-				case Constants.CAT_MULTIMEDIJA:
-					resourceId = R.drawable.izbornik_btn_normal_multimedija_land;
-					break;
-				case Constants.CAT_ODGOVORI:
-					resourceId = R.drawable.izbornik_btn_normal_odgovori_land;
-					break;
-				case Constants.CAT_PJESMARICA:
-				case Constants.CAT_PAPA:
-					resourceId = R.drawable.izbornik_btn_normal_mp3_land;
-					break;
-				case Constants.CAT_POZIV:
-					resourceId = R.drawable.izbornik_btn_normal_poziv_land;
-					break;
-				case Constants.CAT_PROPOVJEDI:
-					resourceId = R.drawable.izbornik_btn_normal_propovijedi_land;
-					break;
-				default:
-					resourceId = R.drawable.izbornik_btn_normal_odgovori_land;
-					break;
-				}
-			}else{
 				switch(colourset){
 				case Constants.CAT_AKTUALNO:
 					resourceId = R.drawable.izbornik_btn_normal_aktualno;
@@ -382,7 +206,6 @@ public class ResourceHandler {
 					break;
 				}
 			}
-		}
 		return resourceId;
 	}
 }
