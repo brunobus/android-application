@@ -21,6 +21,7 @@ import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.ContentInfo
 import hr.bpervan.novaeva.model.TreeElementInfo
 import hr.bpervan.novaeva.services.NovaEvaService
+import hr.bpervan.novaeva.utilities.LoadableFromBundle
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
@@ -28,8 +29,7 @@ import io.reactivex.schedulers.Schedulers
 /**
  * Created by vpriscan on 08.10.17..
  */
-class MenuRecyclerFragment : Fragment() {
-    var config: FragmentConfig? = null
+class MenuRecyclerFragment : Fragment(), LoadableFromBundle {
 
     private var hasMore = true
     private var menuElementsDisposable: Disposable? = null
@@ -38,22 +38,16 @@ class MenuRecyclerFragment : Fragment() {
     private lateinit var adapter: MenuElementAdapter
     private var elementsList: MutableList<TreeElementInfo> = ArrayList()
 
-    private var mLinearLayoutManager: LinearLayoutManager? = null
     private var loading = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         if (savedInstanceState != null) {
-            config = savedInstanceState.getParcelable("fragmentConfig")
+            loadStateFromBundle(savedInstanceState)
+        } else {
+            loadStateFromBundle(arguments)
         }
-        //config can also be set before onCreate is called
-
-        if (config == null) {
-            throw IllegalStateException("Fragment config data not loaded")
-        }
-
-        fragmentConfig = config!!  //use non null reference from now on
 
         val infoText = if (fragmentConfig.isSubDirectory) "NALAZITE SE U MAPI" else "NALAZITE SE U KATEGORIJI"
 
@@ -69,14 +63,12 @@ class MenuRecyclerFragment : Fragment() {
     class FragmentConfig(val directoryId: Long,
                          val directoryName: String,
                          val isSubDirectory: Boolean,
-                         val colourSet: Int,
-                         val savedScrollPosition: Int = RecyclerView.NO_POSITION) : Parcelable {
+                         val colourSet: Int) : Parcelable {
 
         constructor(parcel: Parcel) : this(
                 parcel.readLong(),
                 parcel.readString(),
                 parcel.readByte() != 0.toByte(),
-                parcel.readInt(),
                 parcel.readInt())
 
         override fun writeToParcel(dest: Parcel, flags: Int) {
@@ -84,7 +76,6 @@ class MenuRecyclerFragment : Fragment() {
             dest.writeString(directoryName)
             dest.writeByte(if (isSubDirectory) 1.toByte() else 0.toByte())
             dest.writeInt(colourSet)
-            dest.writeInt(savedScrollPosition)
         }
 
         override fun describeContents(): Int = 0
@@ -95,13 +86,16 @@ class MenuRecyclerFragment : Fragment() {
         }
     }
 
+    override fun loadStateFromBundle(bundle: Bundle) {
+        fragmentConfig = bundle.getParcelable("fragmentConfig")
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putParcelable("fragmentConfig", FragmentConfig(
                 fragmentConfig.directoryId,
                 fragmentConfig.directoryName,
                 fragmentConfig.isSubDirectory,
-                fragmentConfig.colourSet,
-                mLinearLayoutManager?.findFirstVisibleItemPosition() ?: RecyclerView.NO_POSITION
+                fragmentConfig.colourSet
         ))
 
         super.onSaveInstanceState(outState)
@@ -117,20 +111,14 @@ class MenuRecyclerFragment : Fragment() {
         recyclerView.adapter = adapter
         recyclerView.addOnScrollListener(EndlessScrollListener(linearLayoutManager))
 
-        mLinearLayoutManager = linearLayoutManager
-
-        if (fragmentConfig.savedScrollPosition != RecyclerView.NO_POSITION) {
-            recyclerView.scrollToPosition(fragmentConfig.savedScrollPosition)
-        }
-
         return recyclerView
     }
 
     override fun onConfigurationChanged(newConfig: Configuration?) {
         //A HACK TO DISPLAY CORRECT FRAGMENT VIEWS WHEN SWITCHING BETWEEN PORTRAIT AND LANDSCAPE
-        activity.supportFragmentManager.beginTransaction().detach(this).commit()
+        activity.supportFragmentManager.beginTransaction().detach(this).commitAllowingStateLoss()
         super.onConfigurationChanged(newConfig)
-        activity.supportFragmentManager.beginTransaction().attach(this).commit()
+        activity.supportFragmentManager.beginTransaction().attach(this).commitAllowingStateLoss()
     }
 
     override fun onDestroy() {

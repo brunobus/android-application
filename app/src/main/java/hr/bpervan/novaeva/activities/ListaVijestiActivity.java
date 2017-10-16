@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.View;
@@ -28,13 +29,14 @@ import hr.bpervan.novaeva.model.ContentInfo;
 import hr.bpervan.novaeva.model.DirectoryInfo;
 import hr.bpervan.novaeva.utilities.ConnectionChecker;
 import hr.bpervan.novaeva.utilities.Constants;
+import hr.bpervan.novaeva.utilities.LoadableFromBundle;
 import hr.bpervan.novaeva.utilities.ResourceHandler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
-public class ListaVijestiActivity extends AppCompatActivity implements OnClickListener {
+public class ListaVijestiActivity extends AppCompatActivity implements OnClickListener, LoadableFromBundle {
 
     private RelativeLayout fakeActionBar;
 
@@ -42,11 +44,9 @@ public class ListaVijestiActivity extends AppCompatActivity implements OnClickLi
 
     private SharedPreferences prefs;
 
-    private ImageView btnImamPitanje;
+    private int category = -1;
 
-    private long directoryId;
-
-    private int colourSet = 0;
+    private int colourSet = -1;
 
     private CompositeDisposable disposables = new CompositeDisposable();
 
@@ -57,69 +57,75 @@ public class ListaVijestiActivity extends AppCompatActivity implements OnClickLi
 
         prefs = getSharedPreferences("hr.bpervan.novaeva", MODE_PRIVATE);
 
+        if (savedInstanceState != null) {
+            loadStateFromBundle(savedInstanceState);
+        } else {
+            loadStateFromBundle(getIntent().getExtras());
+        }
+
         //mGaTracker = mGaInstance.getTracker("UA-40344870-1");
         mGaTracker = ((NovaEvaApp) getApplication()).getTracker(NovaEvaApp.TrackerName.APP_TRACKER);
         mGaTracker.send(
                 new HitBuilders.EventBuilder()
                         .setCategory("Kategorije")
                         .setAction("OtvorenaKategorija")
-                        .setLabel(Constants.getCatNameById(directoryId))
+                        .setLabel(Constants.getCatNameById(category))
                         .build()
         );
-        if (savedInstanceState != null) {
-            directoryId = savedInstanceState.getInt("kategorija", 11);
-            colourSet = savedInstanceState.getInt("colourSet", (int) directoryId);
-        } else {
-            directoryId = getIntent().getIntExtra("kategorija", 11);
-            colourSet = getIntent().getIntExtra("colourSet", (int) directoryId);
-        }
 
         //mGaTracker.sendEvent("Kategorije", "OtvorenaKategorija", Constants.getCatNameById(kategorija), null);
-        killRedDot(directoryId);
+        killRedDot(category);
 
         initUI();
 
         if (savedInstanceState == null) {
             if (ConnectionChecker.hasConnection(this)) {
-                showFragmentForDirectory(directoryId, Constants.getCatNameById(directoryId).toUpperCase(), false);
+                showFragmentForDirectory((long) category, Constants.getCatNameById(category).toUpperCase(), false);
             } else {
                 Toast.makeText(this, "Internetska veza nije dostupna", Toast.LENGTH_SHORT).show();
             }
         } else {
-            //fragment backstack already exists, don't create new fragment
+            /*fragment backstack already exists and fragments will be restored*/
         }
     }
 
-    private void initUI() {
-        fakeActionBar = findViewById(R.id.fakeActionBar);
-        fakeActionBar.findViewById(R.id.btnHome).setOnClickListener(this);
-        fakeActionBar.findViewById(R.id.btnSearch).setOnClickListener(this);
-        fakeActionBar.findViewById(R.id.btnBack).setOnClickListener(this);
-
-        if (directoryId == Constants.CAT_ODGOVORI) {
-            btnImamPitanje = findViewById(R.id.btnImamPitanjeListaVijesti);
-            btnImamPitanje.setOnClickListener(this);
-            btnImamPitanje.setVisibility(View.VISIBLE);
-        }
-
-        this.setCategoryTypeColour();
+    @Override
+    public void loadStateFromBundle(@NonNull Bundle bundle) {
+        category = bundle.getInt("category", 11);
+        colourSet = bundle.getInt("colourSet", category);
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
 
-        outState.putInt("kategorija", (int) directoryId); //// TODO: 11.10.17. long
+        outState.putInt("category", category);
         outState.putInt("colourSet", colourSet);
 
         super.onSaveInstanceState(outState);
     }
 
+    private void initUI() {
+
+        fakeActionBar = findViewById(R.id.fakeActionBar);
+        fakeActionBar.findViewById(R.id.btnHome).setOnClickListener(this);
+        fakeActionBar.findViewById(R.id.btnSearch).setOnClickListener(this);
+        fakeActionBar.findViewById(R.id.btnBack).setOnClickListener(this);
+
+        if (category == Constants.CAT_ODGOVORI) {
+            ImageView btnImamPitanje = findViewById(R.id.btnImamPitanjeListaVijesti);
+            btnImamPitanje.setOnClickListener(this);
+            btnImamPitanje.setVisibility(View.VISIBLE);
+        }
+
+        setCategoryTypeColour();
+    }
+
     private void showFragmentForDirectory(final Long dirId, final String dirName, final boolean isSubDir) {
 
-        this.directoryId = dirId;
-
         MenuRecyclerFragment menuRecyclerFragment = new MenuRecyclerFragment();
-        menuRecyclerFragment.setConfig(new MenuRecyclerFragment.FragmentConfig(dirId, dirName, isSubDir, colourSet, -1));
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("fragmentConfig", new MenuRecyclerFragment.FragmentConfig(dirId, dirName, isSubDir, colourSet));
+        menuRecyclerFragment.setArguments(bundle);
 
         getSupportFragmentManager()
                 .beginTransaction()
@@ -138,14 +144,12 @@ public class ListaVijestiActivity extends AppCompatActivity implements OnClickLi
         }
     }
 
-    //FIXME: 11.10.17.
-//    @Override
-//    public void onConfigurationChanged(Configuration newConfig) {
-//        super.onConfigurationChanged(newConfig);
-//        setContentView(R.layout.activity_lista_vijesti);
-//        //TODO: kad se promijeni orijentacija, lista ode na početak :)
-//        initUI();
-//    }
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        setContentView(R.layout.activity_lista_vijesti);
+        initUI();
+    }
 
     @Override
     public void onClick(View v) {
@@ -228,7 +232,7 @@ public class ListaVijestiActivity extends AppCompatActivity implements OnClickLi
                         i = new Intent(ListaVijestiActivity.this, VijestActivity.class);
                         i.putExtra("contentId", contentInfo.getContentId());
                         i.putExtra("colourSet", colourSet);
-                        i.putExtra("directoryId", directoryId);
+                        i.putExtra("category", category);
                         startActivity(i);
                         overridePendingTransition(R.anim.move_right_in, R.anim.move_left_out);
                     }
@@ -270,7 +274,7 @@ public class ListaVijestiActivity extends AppCompatActivity implements OnClickLi
         return true;
     }
 
-    private void killRedDot(long kategorija) {
-        prefs.edit().putInt("vidjenoKategorija" + kategorija, 1).apply();
+    private void killRedDot(int category) {
+        prefs.edit().putInt("vidjenoKategorija" + category, 1).apply();
     }
 }

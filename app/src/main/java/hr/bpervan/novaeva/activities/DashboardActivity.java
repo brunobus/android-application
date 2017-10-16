@@ -57,7 +57,7 @@ import android.widget.Toast;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
-
+//// TODO: 13.10.17. refactor me
 public class DashboardActivity extends Activity implements OnTouchListener, OnClickListener{
 	private final long syncInterval = 90000L;
 	
@@ -187,11 +187,6 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
 		}
 
 	}
-	
-	@Override
-	public void onConfigurationChanged(Configuration newConfig){
-		super.onConfigurationChanged(newConfig);
-	}
 
 	private Disposable fetchBrevijarImageDisposable;
 
@@ -210,6 +205,11 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
 						if (breviaryImage != null) {
 							prefs.edit().putString("hr.bpervan.novaeva.brevijarheaderimage", breviaryImage.getSize640()).apply();
 						}
+					}
+				}, new Consumer<Throwable>() {
+					@Override
+					public void accept(Throwable throwable) throws Exception {
+						Toast.makeText(DashboardActivity.this, "Failed to connect", Toast.LENGTH_SHORT).show();
 					}
 				});
 	}
@@ -382,12 +382,12 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
 			
 			return null;
 		}
-		
+
 		private String dohvatiNajnovijiNidIzKategorije(int kategorija){
 			String url2 = URL + kategorija;
 			Log.d("URL", url2);
 			try{
-				
+
 				DefaultHttpClient httpClient=new DefaultHttpClient();
 				HttpPost httpPost=new HttpPost(url2);
 				HttpResponse httpResponse = httpClient.execute(httpPost);
@@ -397,7 +397,7 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
 				this.cancel(true);
 				return null;
 			}
-			
+
 			try{
 
 				BufferedReader reader=new BufferedReader(new InputStreamReader(is,"utf-8"),8);
@@ -412,14 +412,14 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
 				this.cancel(true);
 				return null;
 			}
-			
+
 			try{
 				jObj=new JSONObject(json);
 			}catch(JSONException e){
 				this.cancel(true);
 				return null;
 			}
-			
+
 			try {
 				JSONArray sveVijesti = jObj.getJSONArray("vijesti");
 				JSONObject najnovijaVijest = sveVijesti.getJSONObject(0);
@@ -451,37 +451,37 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
 				break;
 			case R.id.btnEvandjelje:
 				i = new Intent(DashboardActivity.this,ListaVijestiActivity.class);
-				i.putExtra("kategorija", Constants.CAT_EVANDJELJE);
+				i.putExtra("category", Constants.CAT_EVANDJELJE);
 				i.putExtra("nazivKategorije", "Evanđelje");
 				startActivity(i);
 				break;
 			case R.id.btnMp3:
 				i = new Intent(DashboardActivity.this,ListaVijestiActivity.class);
-				i.putExtra("kategorija", Constants.CAT_PJESMARICA);
+				i.putExtra("category", Constants.CAT_PJESMARICA);
 				i.putExtra("nazivKategorije", "Pjesmarica");
 				startActivity(i);
 				break;
 			case R.id.btnPropovjedi:
 				i = new Intent(DashboardActivity.this,ListaVijestiActivity.class);
-				i.putExtra("kategorija", Constants.CAT_PROPOVJEDI);
+				i.putExtra("category", Constants.CAT_PROPOVJEDI);
 				i.putExtra("nazivKategorije", "Propovijedi");
 				startActivity(i);
 				break;
 			case R.id.btnOdgovori:
 				i = new Intent(DashboardActivity.this,ListaVijestiActivity.class);
-				i.putExtra("kategorija", Constants.CAT_ODGOVORI);
+				i.putExtra("category", Constants.CAT_ODGOVORI);
 				i.putExtra("nazivKategorije", "Odgovori");
 				startActivity(i);
 				break;
 			case R.id.btnPoziv:
 				i = new Intent(DashboardActivity.this,ListaVijestiActivity.class);
-				i.putExtra("kategorija", Constants.CAT_POZIV);
+				i.putExtra("category", Constants.CAT_POZIV);
 				i.putExtra("nazivKategorije", "Poziv");
 				startActivity(i);
 				break;
 			case R.id.btnDuhovnost:
 				i = new Intent(DashboardActivity.this,ListaVijestiActivity.class);
-				i.putExtra("kategorija", Constants.CAT_DUHOVNOST);
+				i.putExtra("category", Constants.CAT_DUHOVNOST);
 				i.putExtra("nazivKategorije", "Duhovnost");
 				startActivity(i);
 				break;
@@ -499,13 +499,13 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
 				break;
 			case R.id.btnMultimedia:
 				i = new Intent(DashboardActivity.this,ListaVijestiActivity.class);
-				i.putExtra("kategorija", Constants.CAT_MULTIMEDIJA);
+				i.putExtra("category", Constants.CAT_MULTIMEDIJA);
 				i.putExtra("nazivKategorije", "Multimedija");
 				startActivity(i);
 				break;
 			case R.id.btnAktualno:
 				i = new Intent(DashboardActivity.this,ListaVijestiActivity.class);
-				i.putExtra("kategorija", Constants.CAT_AKTUALNO);
+				i.putExtra("category", Constants.CAT_AKTUALNO);
 				i.putExtra("nazivKategorije", "Aktualno");
 				startActivity(i);
 				break;

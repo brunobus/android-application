@@ -25,17 +25,15 @@
             android:label="@string/app_name" />
         <activity
             android:name="hr.bpervan.novaeva.activities.MolitvenikActivity"
-            android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_molitvenik"
             android:theme="@style/ListaVijesti" />
         <activity
             android:name="hr.bpervan.novaeva.activities.IzrekeActivity"
-            android:configChanges="orientation|screenSize"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="@string/title_activity_izreke"
             android:theme="@style/Vijest" />
         <activity
             android:name="hr.bpervan.novaeva.activities.MolitvenikDetaljiActivity"
-            android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_molitvenik_detalji" />
         <activity
             android:name="hr.bpervan.novaeva.activities.SplashActivity"
@@ -51,34 +49,32 @@
         </activity>
         <activity
             android:name="hr.bpervan.novaeva.activities.SearchActivity"
-            android:configChanges="orientation|screenSize"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="@string/title_activity_search"
             android:noHistory="true"
             android:theme="@style/ListaVijesti" />
         <activity
             android:name="hr.bpervan.novaeva.activities.ListaVijestiActivity"
-            android:configChanges="orientation|screenSize"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="@string/title_activity_lista_vijesti"
             android:theme="@style/ListaVijesti" />
         <activity
             android:name="hr.bpervan.novaeva.activities.BookmarksActivity"
-            android:configChanges="orientation|screenSize"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="@string/title_activity_bookmarks"
             android:noHistory="true"
             android:theme="@style/ListaVijesti" />
         <activity
             android:name="hr.bpervan.novaeva.activities.BreviaryActivity"
-            android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_brevijar_predizbor"
             android:theme="@style/BrevijarMenu" />
         <activity
             android:name="hr.bpervan.novaeva.activities.BreviaryContentActivity"
-            android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_brevijar_detalji"
             android:theme="@style/Brevijar" />
         <activity
             android:name="hr.bpervan.novaeva.activities.VijestActivity"
-            android:configChanges="orientation|screenSize"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:hardwareAccelerated="true"
             android:label="@string/title_activity_vijest"
             android:theme="@style/Vijest" />

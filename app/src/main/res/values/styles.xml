@@ -12,7 +12,7 @@
 
     <style name="NovaEva" parent="AppTheme">
         <item name="android:windowNoTitle">true</item>
-        <item name="android:windowBackground">@drawable/back</item>
+        <item name="android:windowBackground">@drawable/background</item>
     </style>
     
     <style name="NovaEvaSplash" parent="AppTheme">

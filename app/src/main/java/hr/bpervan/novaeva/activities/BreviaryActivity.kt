@@ -3,7 +3,6 @@ package hr.bpervan.novaeva.activities
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.content.res.Configuration
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
@@ -26,33 +25,31 @@ class BreviaryActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_brevijar)
 
         prefs = getSharedPreferences("hr.bpervan.novaeva", Context.MODE_PRIVATE)
 
-        imageLoaderConfigurator = ImageLoaderConfigurator(this)
+        imageLoaderConfigurator = ImageLoaderConfigurator()
         imageLoader = ImageLoader.getInstance()
-        if (!imageLoader.isInited) {
-            imageLoaderConfigurator.doInit()
-        }
 
         initUI()
     }
 
     private fun initUI() {
-        setContentView(R.layout.activity_brevijar)
 
         val openSansRegular = NovaEvaApp.openSansRegular
         if (openSansRegular != null) {
             txtKs.typeface = openSansRegular
             txtLaudato.typeface = openSansRegular
         }
-        val datum = SimpleDateFormat("dd.MM.yyyy")
-        imgDanas.text = datum.format(Date())
+
+        val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale("hr", "HR"))
+        imgDanas.text = dateFormat.format(Date())
 
         val headerUrl = prefs.getString("hr.bpervan.novaeva.brevijarheaderimage", null)
 
-        if (headerUrl != null && headerImageBrevijar != null && imageLoader.isInited) {
-            imageLoader.displayImage(headerUrl, headerImageBrevijar, imageLoaderConfigurator.doConfig(true))
+        if (headerUrl != null && headerImageBrevijar != null) {
+            imageLoader.displayImage(headerUrl, headerImageBrevijar, imageLoaderConfigurator.createDefaultDisplayImageOptions(true))
         }
 
         btnJucerJutarnja.setOnClickListener(BreviaryClickListener(1))
@@ -66,12 +63,6 @@ class BreviaryActivity : AppCompatActivity() {
         btnSutraJutarnja.setOnClickListener(BreviaryClickListener(7))
         btnSutraVecernja.setOnClickListener(BreviaryClickListener(8))
         btnSutraPovecerje.setOnClickListener(BreviaryClickListener(9))
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-
-        initUI()
     }
 
     inner class BreviaryClickListener(private val breviaryId: Int) : OnClickListener {

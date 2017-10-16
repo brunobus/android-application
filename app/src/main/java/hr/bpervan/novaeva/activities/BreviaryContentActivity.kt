@@ -45,6 +45,7 @@ class BreviaryContentActivity : AppCompatActivity() {
         )
 
         //mGaTracker.sendEvent("Brevijar", "OtvorenaMolitva", breviaryId, null);
+        initUI()
 
         if (ConnectionChecker.hasConnection(this)) {
             loadBreviary()
@@ -52,7 +53,6 @@ class BreviaryContentActivity : AppCompatActivity() {
             Toast.makeText(this, "Internetska veza nije dostupna", Toast.LENGTH_SHORT).show()
         }
 
-        initUI()
     }
 
     public override fun onStart() {
@@ -70,6 +70,7 @@ class BreviaryContentActivity : AppCompatActivity() {
     }
 
     private fun initUI() {
+
         /*webView.getSettings().setSupportZoom(true);
 		webView.getSettings().setBuiltInZoomControls(true);
 		webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
@@ -125,10 +126,10 @@ class BreviaryContentActivity : AppCompatActivity() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ breviary ->
                     webView.loadDataWithBaseURL(null, breviary.text, "text/html", "utf-8", "")
-                }) { t ->
+                }, { t ->
                     Log.e("breviaryError", t.message, t)
                     showErrorPopup()
-                }
+                })
     }
 
     override fun onDestroy() {

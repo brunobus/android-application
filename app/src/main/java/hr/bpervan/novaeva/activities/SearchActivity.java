@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -32,6 +33,7 @@ import hr.bpervan.novaeva.model.SearchResult;
 import hr.bpervan.novaeva.services.NovaEvaService;
 import hr.bpervan.novaeva.utilities.ConnectionChecker;
 import hr.bpervan.novaeva.utilities.Constants;
+import hr.bpervan.novaeva.utilities.LoadableFromBundle;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -39,7 +41,7 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import kotlin.jvm.functions.Function0;
 
-public class SearchActivity extends Activity implements OnClickListener {
+public class SearchActivity extends Activity implements OnClickListener, LoadableFromBundle {
 
     private final CompositeDisposable disposables = new CompositeDisposable();
     private Disposable searchForContentDisposable;
@@ -55,9 +57,12 @@ public class SearchActivity extends Activity implements OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search);
 
-        searchString = getIntent().getStringExtra("searchString");
+        if (savedInstanceState != null) {
+            loadStateFromBundle(savedInstanceState);
+        } else {
+            loadStateFromBundle(getIntent().getExtras());
+        }
 
         this.setTitle("Pretraga: " + searchString);
 
@@ -82,6 +87,19 @@ public class SearchActivity extends Activity implements OnClickListener {
     }
 
     @Override
+    public void loadStateFromBundle(@NonNull Bundle bundle) {
+        searchString = bundle.getString("searchString");
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString("searchString", searchString);
+//        outState.putParcelableArrayList("searchResultList", searchResultList); //// TODO: 13.10.17.
+
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
 
@@ -95,7 +113,6 @@ public class SearchActivity extends Activity implements OnClickListener {
                         Intent i;
                         i = new Intent(SearchActivity.this, VijestActivity.class);
                         i.putExtra("contentId", contentInfo.getContentId());
-//						i.putExtra("directoryId", directoryId);
                         startActivity(i);
                     }
                 }));
@@ -128,6 +145,7 @@ public class SearchActivity extends Activity implements OnClickListener {
     }
 
     private void initUI() {
+        setContentView(R.layout.activity_search);
 
         RecyclerView recyclerView = findViewById(R.id.eva_recyclerview);
 
@@ -163,8 +181,7 @@ public class SearchActivity extends Activity implements OnClickListener {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String search = et.getText().toString();
-                searchString = search;
-                searchForContent(searchString);
+                searchForContent(search);
             }
         });
         search.setNegativeButton("Odustani", new DialogInterface.OnClickListener() {
@@ -176,6 +193,8 @@ public class SearchActivity extends Activity implements OnClickListener {
     }
 
     private void searchForContent(String searchString) {
+        this.searchString = searchString;
+
         searchResultList.clear();
         adapter.notifyDataSetChanged();
 
@@ -236,7 +255,7 @@ public class SearchActivity extends Activity implements OnClickListener {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        setContentView(R.layout.activity_lista_vijesti);
+
         initUI();
     }
 

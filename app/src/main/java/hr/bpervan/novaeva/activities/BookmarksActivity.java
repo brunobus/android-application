@@ -41,9 +41,8 @@ public class BookmarksActivity extends ListActivity implements View.OnClickListe
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_bookmarks);
 
-		listaBookmarksa = new ArrayList<ListElement>();
+		listaBookmarksa = new ArrayList<>();
 
         mGaTracker = ((NovaEvaApp) getApplication()).getTracker(NovaEvaApp.TrackerName.APP_TRACKER);
         mGaTracker.send(
@@ -60,6 +59,8 @@ public class BookmarksActivity extends ListActivity implements View.OnClickListe
 	}
 	
 	private void initUI(){
+		setContentView(R.layout.activity_bookmarks);
+
 		this.setTitle("Bookmarks");
 		listView = getListView();
 
@@ -146,10 +147,8 @@ public class BookmarksActivity extends ListActivity implements View.OnClickListe
 	@Override
 	public void onConfigurationChanged(Configuration newConfig){
 		super.onConfigurationChanged(newConfig);
-		setContentView(R.layout.activity_bookmarks);
-		//TODO: kad se promjeni orjentacija, lista ode na po�etak :)
+
 		initUI();
-		//mainListView.setAdapter(adapter);
 	}
 
 	@Override

@@ -18,6 +18,8 @@ import java.util.HashMap
 
 import hr.bpervan.novaeva.main.BuildConfig
 import hr.bpervan.novaeva.main.R
+import hr.bpervan.novaeva.utilities.ImageLoaderConfigurator
+import hr.bpervan.novaeva.utilities.LifecycleLogger
 
 /**
  * Created by Branimir on 17.1.2015..
@@ -53,36 +55,10 @@ class NovaEvaApp : Application() {
         instance = this
 
         if (BuildConfig.DEBUG) {
-            registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
-                override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-                    Log.d("activityLifecycle", "Activity created:" + activity)
-                }
-
-                override fun onActivityStarted(activity: Activity) {
-                    Log.d("activityLifecycle", "Activity started:" + activity)
-                }
-
-                override fun onActivityResumed(activity: Activity) {
-                    Log.d("activityLifecycle", "Activity resumed:" + activity)
-                }
-
-                override fun onActivityPaused(activity: Activity) {
-                    Log.d("activityLifecycle", "Activity paused:" + activity)
-                }
-
-                override fun onActivityStopped(activity: Activity) {
-                    Log.d("activityLifecycle", "Activity stopped:" + activity)
-                }
-
-                override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle?) {
-                    Log.d("activityLifecycle", "Activity saved instance state:" + activity)
-                }
-
-                override fun onActivityDestroyed(activity: Activity) {
-                    Log.d("activityLifecycle", "Activity destroyed:" + activity)
-                }
-            })
+            registerActivityLifecycleCallbacks(LifecycleLogger())
         }
+
+        ImageLoaderConfigurator().doInit(this)
     }
 
     companion object {

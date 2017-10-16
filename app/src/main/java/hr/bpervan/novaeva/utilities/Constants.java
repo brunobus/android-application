@@ -65,7 +65,7 @@ public class Constants {
 	public static final String searchURL = "http://novaeva.com/json?api=2&search=";
 	public static final String alertURL = "http://novaeva.com/json?api=2&alert=1";
 	
-	public static String getCatNameById(long id){
+	public static String getCatNameById(int id){
 		if(id == CAT_AKTUALNO)
 			return CAT_AKTUALNO_NAZIV;
 		else if(id == CAT_EVANDJELJE)

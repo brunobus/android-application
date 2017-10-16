@@ -8,8 +8,6 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.TypedValue;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.webkit.WebView;
@@ -35,22 +33,21 @@ import io.reactivex.schedulers.Schedulers;
 public class IzrekeActivity extends Activity implements OnClickListener{
 	@SuppressWarnings("unused")
 	private TextView tvNaslov, tvKategorija, tvText;
-	
+
 	/** Test test test */
 	private WebView webView;
 
 	private String naslov,tekst;
 	private long nid = -1;
 	private SharedPreferences prefs;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_izreke);
-		
+
 		prefs = getSharedPreferences("hr.bpervan.novaeva", MODE_PRIVATE);
 		prefs.edit().putInt("vidjenoKategorija1", 1).apply();
-		
+
 		initUI();
 
 		loadRandomIzreka();
@@ -83,16 +80,23 @@ public class IzrekeActivity extends Activity implements OnClickListener{
 								webView.loadDataWithBaseURL(null, tekst, "text/html", "UTF-8", "");
 							}
 						}
+					}, new Consumer<Throwable>() {
+						@Override
+						public void accept(Throwable throwable) throws Exception {
+							Toast.makeText(IzrekeActivity.this, "Failed to connect", Toast.LENGTH_SHORT).show();
+						}
 					});
 		} else {
 			Toast.makeText(this, "Internetska veza nije dostupna", Toast.LENGTH_SHORT).show();
 		}
 	}
-	
+
 	private void initUI(){
+		setContentView(R.layout.activity_izreke);
+
 		tvNaslov = (TextView)findViewById(R.id.tvNaslov);
 		tvKategorija = (TextView)findViewById(R.id.tvKategorija);
-		
+
 		webView = (WebView) findViewById(R.id.webText);
 		webView.getSettings().setDefaultTextEncodingName("utf-8");
 
@@ -104,23 +108,22 @@ public class IzrekeActivity extends Activity implements OnClickListener{
 		findViewById(R.id.btnObnovi).setOnClickListener(this);
 
 		fakeActionBar.findViewById(R.id.btnHome).setOnClickListener(this);
-		fakeActionBar.findViewById(R.id.btnFace).setOnClickListener(this);
+		fakeActionBar.findViewById(R.id.btnShare).setOnClickListener(this);
 		fakeActionBar.findViewById(R.id.btnMail).setOnClickListener(this);
 		fakeActionBar.findViewById(R.id.btnSearch).setOnClickListener(this);
 		fakeActionBar.findViewById(R.id.btnBack).setOnClickListener(this);
-		
+
 		webView.getSettings().setDefaultFontSize(prefs.getInt("hr.bpervan.novaeva.velicinateksta", 14));
 
         getWindow().getDecorView().setBackgroundColor(this.getResources().getColor(android.R.color.background_light));
 	}
-	
+
 	@Override
 	public void onConfigurationChanged(Configuration newConfig){
 		super.onConfigurationChanged(newConfig);
-		setContentView(R.layout.activity_izreke);
-		
+
 		initUI();
-		
+
 		tvNaslov.setText(naslov);
 		webView.loadDataWithBaseURL(null, tekst, "text/html", "UTF-8", "");
     }
@@ -148,7 +151,7 @@ public class IzrekeActivity extends Activity implements OnClickListener{
 				showSearchPopup();
 
 		} else if (vId == R.id.btnBookmark) {
-		} else if (vId == R.id.btnFace) {
+		} else if (vId == R.id.btnShare) {
 			CharSequence temp = "http://novaeva.com/node/" + nid;
 			Intent faceIntent = new Intent(Intent.ACTION_SEND);
 			faceIntent.setType("text/plain");
@@ -177,52 +180,41 @@ public class IzrekeActivity extends Activity implements OnClickListener{
 			IzrekeActivity.this.onBackPressed();
 
 		}
-		
-	}
 
-	public boolean onOptionsItemSelected(MenuItem item){
-		return true;
-		
 	}
 
 	private void showSearchPopup(){
 		AlertDialog.Builder search = new AlertDialog.Builder(this);
 		search.setTitle("Pretraga");
-		
+
 		final EditText et = new EditText(this);
 		search.setView(et);
-				
+
 		search.setPositiveButton("Pretrazi", new DialogInterface.OnClickListener() {
-			
+
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				String search=et.getText().toString();
 				NovaEvaApp.Companion.goSearch(search, IzrekeActivity.this);
 			}
 		});
-		
+
 		search.setNegativeButton("Odustani", new DialogInterface.OnClickListener() {
 			  public void onClick(DialogInterface dialog, int whichButton) {}
 			});
 		search.show();
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.activity_izreke, menu);
-		return true;
-	}
-	
 	private void showErrorPopup(){
 		AlertDialog.Builder error = new AlertDialog.Builder(this);
 		error.setTitle("Greška");
-		
+
 		final TextView tv = new TextView(this);
 		tv.setText("Greška pri dohvaćanju podataka sa poslužitelja");
 		//tv.setTypeface(openSansRegular);
 		tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
 		error.setView(tv);
-				
+
 		error.setPositiveButton("Pokušaj ponovno", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {

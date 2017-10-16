@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:layout_alignParentRight="true"
     android:layout_alignParentEnd="true"
-    android:background="@drawable/vijest_navbgizreke"
+    android:background="@drawable/toolbar_izreke"
     android:orientation="horizontal">
 
     <ImageView
@@ -16,7 +16,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
         android:contentDescription="@string/dummyDesc"
-        android:src="@drawable/vijest_button_home" />
+        android:src="@drawable/action_button_home" />
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -31,7 +31,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="10dp"
             android:contentDescription="@string/dummyDesc"
-            android:src="@drawable/vijest_button_search" />
+            android:src="@drawable/action_button_search" />
 
         <ImageView
             android:id="@+id/btnMail"
@@ -41,17 +41,17 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="10dp"
             android:contentDescription="@string/dummyDesc"
-            android:src="@drawable/vijest_button_mail" />
+            android:src="@drawable/action_button_mail" />
 
         <ImageView
-            android:id="@+id/btnFace"
+            android:id="@+id/btnShare"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/btnMail"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="10dp"
             android:contentDescription="@string/dummyDesc"
-            android:src="@drawable/vijest_button_face" />
+            android:src="@drawable/action_button_share" />
     </RelativeLayout>
 
     <ImageView
@@ -62,5 +62,5 @@
         android:layout_centerHorizontal="true"
         android:contentDescription="@string/dummyDesc"
         android:paddingBottom="20dp"
-        android:src="@drawable/vijest_button_back" />
+        android:src="@drawable/action_button_back" />
 </RelativeLayout>

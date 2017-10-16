@@ -20,41 +20,41 @@ public class ResourceHandler {
 		int resources[] = new int[2];
 			switch(colourset){
 			case Constants.CAT_AKTUALNO:
-				resources[0] = R.drawable.izbornik_navbgaktualno;
+				resources[0] = R.drawable.toolbar_aktualno;
 				resources[1] = R.drawable.vijest_naslovnaaktualno;
 				break;
 			case Constants.CAT_DUHOVNOST:
 			case Constants.CAT_SM:
-				resources[0] = R.drawable.izbornik_navbgduhovnost;
+				resources[0] = R.drawable.toolbar_duhovnost;
 				resources[1] = R.drawable.vijest_naslovnaduhovnost;
 				break;
 			case Constants.CAT_EVANDJELJE:
-				resources[0] = R.drawable.izbornik_navbgevandjelje;
+				resources[0] = R.drawable.toolbar_evandjelje;
 				resources[1] = R.drawable.vijest_naslovnaevandjelje;
 				break;
 			case Constants.CAT_IZREKE:
-				resources[0] = R.drawable.izbornik_navbgizreke;
+				resources[0] = R.drawable.toolbar_izreke;
 				resources[1] = R.drawable.vijest_naslovnaizreke;
 				break;
 			case Constants.CAT_MULTIMEDIJA:
-				resources[0] = R.drawable.izbornik_navbgmultimedija;
+				resources[0] = R.drawable.toolbar_multimedija;
 				resources[1] = R.drawable.vijest_naslovnamultimedija;
 				break;
 			case Constants.CAT_ODGOVORI:
-				resources[0] = R.drawable.izbornik_navbgodgovori;
+				resources[0] = R.drawable.toolbar_odgovori;
 				resources[1] = R.drawable.vijest_naslovnaodgovori;
 				break;
 			case Constants.CAT_PJESMARICA:
 			case Constants.CAT_PAPA:
-				resources[0] = R.drawable.izbornik_navbgmp3;
+				resources[0] = R.drawable.toolbar_piesmarica;
 				resources[1] = R.drawable.vijest_naslovnamp3;
 				break;
 			case Constants.CAT_POZIV:
-				resources[0] = R.drawable.izbornik_navbgpoziv;
+				resources[0] = R.drawable.toolbar_poziv;
 				resources[1] = R.drawable.vijest_naslovnapoziv;
 				break;
 			case Constants.CAT_PROPOVJEDI:
-				resources[0] = R.drawable.izbornik_navbgpropovjedi;
+				resources[0] = R.drawable.toolbar_propoviedi;
 				resources[1] = R.drawable.vijest_naslovnapropovjedi;
 				break;
 			}
@@ -99,36 +99,36 @@ public class ResourceHandler {
 	 * @return Resource id from R.java directly usable in View.setBackgroundDrawable
 	 * */
 	public static int getResourceId(int colourset){
-		int resourceId = R.drawable.izbornik_navbgodgovori;
+		int resourceId = R.drawable.toolbar_odgovori;
 			switch(colourset){
 			case Constants.CAT_AKTUALNO:
-				resourceId = R.drawable.izbornik_navbgaktualno;
+				resourceId = R.drawable.toolbar_aktualno;
 				break;
 			case Constants.CAT_DUHOVNOST:
 			case Constants.CAT_SM:
-				resourceId = R.drawable.izbornik_navbgduhovnost;
+				resourceId = R.drawable.toolbar_duhovnost;
 				break;
 			case Constants.CAT_EVANDJELJE:
-				resourceId = R.drawable.izbornik_navbgevandjelje;
+				resourceId = R.drawable.toolbar_evandjelje;
 				break;
 			case Constants.CAT_IZREKE:
-				resourceId = R.drawable.izbornik_navbgizreke;
+				resourceId = R.drawable.toolbar_izreke;
 				break;
 			case Constants.CAT_MULTIMEDIJA:
-				resourceId = R.drawable.izbornik_navbgmultimedija;
+				resourceId = R.drawable.toolbar_multimedija;
 				break;
 			case Constants.CAT_ODGOVORI:
-				resourceId = R.drawable.izbornik_navbgodgovori;
+				resourceId = R.drawable.toolbar_odgovori;
 				break;
 			case Constants.CAT_PJESMARICA:
 			case Constants.CAT_PAPA:
-				resourceId = R.drawable.izbornik_navbgmp3;
+				resourceId = R.drawable.toolbar_piesmarica;
 				break;
 			case Constants.CAT_POZIV:
-				resourceId = R.drawable.izbornik_navbgpoziv;
+				resourceId = R.drawable.toolbar_poziv;
 				break;
 			case Constants.CAT_PROPOVJEDI:
-				resourceId = R.drawable.izbornik_navbgpropovjedi;
+				resourceId = R.drawable.toolbar_propoviedi;
 				break;
 			}
 		return resourceId;

@@ -1,3 +1,0 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:id="@+id/menuHome" android:title="@string/title_activity_dashboard" android:titleCondensed="@string/title_activity_dashboard" android:icon="@drawable/izbornik_btn_over_home"></item>
-</menu>

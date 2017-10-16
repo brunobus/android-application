@@ -43,7 +43,7 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_vijest.*
 import kotlinx.android.synthetic.main.vijest_fake_action_bar.view.*
 
-class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletionListener, SeekBar.OnSeekBarChangeListener {
+class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletionListener, SeekBar.OnSeekBarChangeListener, LoadableFromBundle {
     /** ------------------------------------------FIELDS------------------------------------------ */
 
     /**
@@ -88,10 +88,14 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
         super.onCreate(savedInstanceState)
 
         dbHandler = BookmarksDBHandlerV2(this)
-        contentId = intent.getLongExtra("contentId", -1)
-        colourSet = intent.getIntExtra("colourSet", Constants.CAT_PROPOVJEDI)
 
-        startService(Intent(this, BackgroundPlayerService::class.java))
+        if (savedInstanceState != null) {
+            loadStateFromBundle(savedInstanceState)
+        } else {
+            loadStateFromBundle(intent.extras)
+        }
+
+        startService(Intent(this, BackgroundPlayerService::class.java)) //todo
 
         prefs = getSharedPreferences("hr.bpervan.novaeva", Context.MODE_PRIVATE)
 
@@ -104,19 +108,30 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
                         .build()
         )
 
+        imageLoaderConfigurator = ImageLoaderConfigurator()
+        imageLoader = ImageLoader.getInstance()
+
+        initUI()
+
         if (ConnectionChecker.hasConnection(this)) {
             getContentData(contentId)
         } else {
             Toast.makeText(this, "Internetska veza nije dostupna", Toast.LENGTH_SHORT).show()
             return
         }
+    }
 
-        imageLoaderConfigurator = ImageLoaderConfigurator(this)
-        imageLoader = ImageLoader.getInstance()
-        if (!imageLoader.isInited) {
-            ImageLoaderConfigurator(this).doInit()
-        }
-        initUI()
+    override fun loadStateFromBundle(bundle: Bundle) {
+        contentId = bundle.getLong("contentId", -1)
+        colourSet = bundle.getInt("colourSet", Constants.CAT_PROPOVJEDI)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+//        outState.putParcelable("contentData", thisContentData!!)
+        outState.putLong("contentId", contentId)
+        outState.putInt("colourSet", colourSet)
+
+        super.onSaveInstanceState(outState)
     }
 
     private fun streamAudio(audioUri: String) {
@@ -151,24 +166,6 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         initUI()
-
-        /** Test and set various attachments */
-        setAttachments()
-
-        thisContentData?.let { contentData ->
-            if (contentData.hasImage()) {
-                if (imageLoader.isInited && headerImage != null) {
-                    imageLoader.displayImage(contentData.image!![0].size640, headerImage, imageLoaderConfigurator.doConfig(false))
-                }
-            } else {
-                val url = prefs.getString("hr.bpervan.novaeva.categoryheader." + contentData.cid, null)
-                if (url != null && headerImage != null && imageLoader.isInited) {
-                    imageLoader.displayImage(url, headerImage, imageLoaderConfigurator.doConfig(true))
-                }
-            }
-            vijestWebView.reload()
-            vijestWebView.loadDataWithBaseURL(null, contentData.tekst, "text/html", "utf-8", null)
-        }
     }
 
     /**
@@ -184,9 +181,33 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
         }
 
         /** Lets try displaying news using WebView  */
-        vijestWebView.reload()
-        if (thisContentData != null) {
-            vijestWebView.loadDataWithBaseURL(null, thisContentData!!.tekst, "text/html", "UTF-8", null)
+
+        thisContentData?.let { contentData ->
+            //if not null
+            if (contentData.hasImage()) {
+                if (headerImage != null) {
+                    imageLoader.displayImage(contentData.image!![0].size640, headerImage, imageLoaderConfigurator.createDefaultDisplayImageOptions(false))
+                }
+            } else {
+                val url = prefs.getString("hr.bpervan.novaeva.categoryheader." + contentData.cid, null)
+                if (url != null && headerImage != null) {
+                    imageLoader.displayImage(url, headerImage, imageLoaderConfigurator.createDefaultDisplayImageOptions(true))
+                }
+            }
+            vijestWebView.reload()
+            vijestWebView.loadDataWithBaseURL(null, contentData.tekst, "text/html", "utf-8", null)
+
+            if (contentData.audio != null) {
+                imgMp3.setImageResource(R.drawable.vijest_ind_mp3_active)
+            }
+            if (contentData.youtube != null) {
+                imgLink.setImageResource(R.drawable.vijest_ind_www_active)
+                imgLink.setOnClickListener(this)
+            }
+            if (contentData.prilozi != null) {
+                imgText.setImageResource(R.drawable.vijest_ind_txt_active)
+                imgText.setOnClickListener(this)
+            }
         }
 
         vijestWebView.isFocusable = false
@@ -205,7 +226,7 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
         vijestWebView.isLongClickable = false
 
         /** Is this 'Duhovni poziv' or 'Odgovori' category?  */
-        if (intent.getLongExtra("directoryId", Constants.CAT_PROPOVJEDI.toLong()) == Constants.CAT_POZIV.toLong()) {
+        if (intent.getLongExtra("category", Constants.CAT_PROPOVJEDI.toLong()) == Constants.CAT_POZIV.toLong()) {
             setQuestionButton()
         }
 
@@ -219,7 +240,7 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
         btnTextPlus.setOnClickListener(this)
 
         fakeActionBar.btnHome.setOnClickListener(this)
-        fakeActionBar.btnFace.setOnClickListener(this)
+        fakeActionBar.btnShare.setOnClickListener(this)
         fakeActionBar.btnMail.setOnClickListener(this)
         fakeActionBar.btnBookmark.setOnClickListener(this)
         fakeActionBar.btnSearch.setOnClickListener(this)
@@ -253,12 +274,12 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
 		}*/
 
         if (dbHandler.nidExists(contentId.toInt())) //todo accept long
-            fakeActionBar.btnBookmark.setImageResource(R.drawable.vijest_button_bookmarked)
+            fakeActionBar.btnBookmark.setImageResource(R.drawable.action_button_bookmarked)
 
         window.decorView.setBackgroundColor(this.resources.getColor(android.R.color.background_light))
     }
 
-    var contentDataDisposable: Disposable? = null
+    private var contentDataDisposable: Disposable? = null
 
     private fun getContentData(contentId: Long) {
         Log.d("getContentData", "getting content data for contentId: " + contentId)
@@ -283,18 +304,14 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
                         imgLink.setOnClickListener(this@VijestActivity)
                     }
 
-                    if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
-                        if (contentData.image != null) {
-                            if (imageLoader.isInited) {
-                                imageLoader.displayImage(contentData.image[0].size640, headerImage, imageLoaderConfigurator.doConfig(false))
-                            }
-                        } else {
-                            val url = prefs.getString("hr.bpervan.novaeva.categoryheader." + contentData.cid, null)
-                            if (url != null) {
-                                if (imageLoader.isInited) {
-                                    imageLoader.displayImage(url, headerImage, imageLoaderConfigurator.doConfig(true))
-                                }
-                            }
+                    if (contentData.hasImage()) {
+                        if (headerImage != null) {
+                            imageLoader.displayImage(contentData.image!![0].size640, headerImage, imageLoaderConfigurator.createDefaultDisplayImageOptions(false))
+                        }
+                    } else {
+                        val url = prefs.getString("hr.bpervan.novaeva.categoryheader." + contentData.cid, null)
+                        if (url != null && headerImage != null) {
+                            imageLoader.displayImage(url, headerImage, imageLoaderConfigurator.createDefaultDisplayImageOptions(true))
                         }
                     }
                     if (contentData.cid == Constants.CAT_POZIV) {
@@ -305,7 +322,7 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
                     vijestWebView.reload()
                     vijestWebView.loadDataWithBaseURL(null, contentData.tekst, "text/html", "UTF-8", null)
 
-                    this@VijestActivity.thisContentData = contentData
+                    thisContentData = contentData
 
                 }) { t -> Log.e("vijestiError", t.message, t) })
     }
@@ -414,24 +431,22 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
             R.id.btnBookmark ->
                 if (dbHandler.nidExists(contentId.toInt())) { //todo accept long
                     dbHandler.deleteVijest(contentId.toInt()) //todo accept long
-                    fakeActionBar.btnBookmark.setImageResource(R.drawable.vijest_button_bookmark)
+                    fakeActionBar.btnBookmark.setImageResource(R.drawable.action_button_bookmark)
                 } else {
                     dbHandler.insertArticle(thisContentData)
-                    fakeActionBar.btnBookmark.setImageResource(R.drawable.vijest_button_bookmarked)
+                    fakeActionBar.btnBookmark.setImageResource(R.drawable.action_button_bookmarked)
                 }
-            R.id.btnFace -> {
-                val temp = "http://novaeva.com/node/" + contentId
+            R.id.btnShare -> {
                 val faceIntent = Intent(Intent.ACTION_SEND)
                 faceIntent.type = "text/plain"
-                faceIntent.putExtra(Intent.EXTRA_TEXT, temp)
-                startActivity(Intent.createChooser(faceIntent, "Facebook"))
+                faceIntent.putExtra(Intent.EXTRA_TEXT, "http://novaeva.com/node/$contentId")
+                startActivity(Intent.createChooser(faceIntent, "Share"))
             }
             R.id.btnMail -> {
-                val temp2 = "http://novaeva.com/node/" + contentId
                 val mailIntent = Intent(Intent.ACTION_SEND)
                 mailIntent.type = "message/rfc822"
                 mailIntent.putExtra(Intent.EXTRA_SUBJECT, thisContentData!!.naslov)
-                mailIntent.putExtra(Intent.EXTRA_TEXT, temp2)
+                mailIntent.putExtra(Intent.EXTRA_TEXT, "http://novaeva.com/node/$contentId")
                 startActivity(Intent.createChooser(mailIntent, "Odaberite aplikaciju"))
             }
             R.id.btnTextPlus -> {
@@ -471,22 +486,6 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
     private fun setQuestionButton() {
         btnPoziv.visibility = View.VISIBLE
         btnPoziv.setOnClickListener(this@VijestActivity)
-    }
-
-    private fun setAttachments() {
-        thisContentData?.let {
-            if (it.audio != null) {
-                imgMp3.setImageResource(R.drawable.vijest_ind_mp3_active)
-            }
-            if (it.youtube != null) {
-                imgLink.setImageResource(R.drawable.vijest_ind_www_active)
-                imgLink.setOnClickListener(this)
-            }
-            if (it.prilozi != null) {
-                imgText.setImageResource(R.drawable.vijest_ind_txt_active)
-                imgText.setOnClickListener(this)
-            }
-        }
     }
 
     override fun onProgressChanged(seekArc: SeekBar, progress: Int,

@@ -45,10 +45,6 @@ public class SplashActivity extends Activity {
 		//Ajmo osigurati da nam notif uvijek dolazi
 		//prefs.edit().putInt("hr.bpervan.novaeva.zadnjinid", 0).commit();
 		
-		if(!ImageLoader.getInstance().isInited()){
-			new ImageLoaderConfigurator(this).doInit();
-		}
-		
 		SystemClock.sleep(500);
 		finish();
 		startActivity(new Intent(this,DashboardActivity.class));

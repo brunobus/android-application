@@ -2,9 +2,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/fakeActionBar"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="50dp"
     android:layout_alignParentBottom="true"
-    android:background="@drawable/izbornik_navbgpropovjedi"
+    android:background="@drawable/toolbar_propoviedi"
     android:orientation="horizontal">
 
     <ImageView
@@ -14,7 +14,7 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:contentDescription="@string/dummyDesc"
-        android:src="@drawable/vijest_button_search" />
+        android:src="@drawable/action_button_search" />
 
 
     <ImageView
@@ -27,7 +27,7 @@
         android:layout_marginEnd="@dimen/fakeActionBarParentMargin"
         android:layout_marginRight="@dimen/fakeActionBarParentMargin"
         android:contentDescription="@string/dummyDesc"
-        android:src="@drawable/vijest_button_home" />
+        android:src="@drawable/action_button_home" />
 
     <ImageView
         android:id="@+id/btnBack"
@@ -39,6 +39,6 @@
         android:layout_marginLeft="@dimen/fakeActionBarParentMargin"
         android:layout_marginStart="@dimen/fakeActionBarParentMargin"
         android:contentDescription="@string/dummyDesc"
-        android:src="@drawable/vijest_button_back" />
+        android:src="@drawable/action_button_back" />
 
 </RelativeLayout>
