@@ -8,8 +8,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.*
-import hr.bpervan.novaeva.utilities.ListTypes
+import hr.bpervan.novaeva.model.ContentInfo
+import hr.bpervan.novaeva.model.DirectoryInfo
+import hr.bpervan.novaeva.model.TreeElementInfo
 import hr.bpervan.novaeva.utilities.ResourceHandler
 import kotlinx.android.synthetic.main.folder_row.view.*
 import kotlinx.android.synthetic.main.izbornik_top.view.*
@@ -60,12 +61,12 @@ class MenuElementAdapter(val data: List<TreeElementInfo>,
                 }
                 CONTENT_VIEW_TYPE -> {
                     val view = LayoutInflater.from(parent.context).inflate(R.layout.vijest_row, parent, false)
-                    view.setBackgroundResource(ResourceHandler.getResourceId(configData.colourSet, ListTypes.VIJEST))
+                    view.setBackgroundResource(ResourceHandler.getContentListItemResourceId(configData.colourSet))
                     ContentInfoViewHolder(view)
                 }
                 SUBDIRECTORY_VIEW_TYPE -> {
                     val view = LayoutInflater.from(parent.context).inflate(R.layout.folder_row, parent, false)
-                    view.setBackgroundResource(ResourceHandler.getResourceId(configData.colourSet, ListTypes.PODKATEGORIJA))
+                    view.setBackgroundResource(ResourceHandler.getDirectoryListItemResourceId(configData.colourSet))
                     DirectoryInfoViewHolder(view)
                 }
                 else -> {

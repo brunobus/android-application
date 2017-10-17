@@ -1,10 +1,8 @@
 package hr.bpervan.novaeva.activities;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.TypedValue;
@@ -15,6 +13,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
 import java.util.List;
 
 import hr.bpervan.novaeva.NovaEvaApp;
@@ -23,30 +24,41 @@ import hr.bpervan.novaeva.model.ContentInfo;
 import hr.bpervan.novaeva.model.DirectoryContent;
 import hr.bpervan.novaeva.services.NovaEvaService;
 import hr.bpervan.novaeva.utilities.ConnectionChecker;
+import hr.bpervan.novaeva.utilities.EvaCategory;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
 
 //import com.google.analytics.tracking.android.EasyTracker;
 
-public class IzrekeActivity extends Activity implements OnClickListener{
-	@SuppressWarnings("unused")
-	private TextView tvNaslov, tvKategorija, tvText;
+public class IzrekeActivity extends EvaBaseActivity implements OnClickListener{
+
+	private TextView tvNaslov, tvKategorija;
 
 	/** Test test test */
 	private WebView webView;
 
 	private String naslov,tekst;
 	private long nid = -1;
-	private SharedPreferences prefs;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		prefs = getSharedPreferences("hr.bpervan.novaeva", MODE_PRIVATE);
-		prefs.edit().putInt("vidjenoKategorija1", 1).apply();
+		getPrefs().edit().putInt("vidjenoKategorija1", 1).apply();
+
+		Tracker mGaTracker = ((NovaEvaApp) getApplication()).getTracker(NovaEvaApp.TrackerName.APP_TRACKER);
+
+		mGaTracker.send(
+				new HitBuilders.EventBuilder()
+						.setCategory("Kategorije")
+						.setAction("OtvorenaKategorija")
+						.setLabel(EvaCategory.IZREKE.getRawName())
+						.build()
+		);
 
 		initUI();
 
@@ -62,7 +74,7 @@ public class IzrekeActivity extends Activity implements OnClickListener{
 		if(ConnectionChecker.hasConnection(this)) {
 
 			randomIzrekaDisposable = NovaEvaService.Companion.getInstance()
-					.getDirectoryContent(1, null, 1)
+					.getRandomDirectoryContent(1)
 					.subscribeOn(Schedulers.io())
 					.observeOn(AndroidSchedulers.mainThread())
 					.subscribe(new Consumer<DirectoryContent>() {
@@ -82,8 +94,14 @@ public class IzrekeActivity extends Activity implements OnClickListener{
 						}
 					}, new Consumer<Throwable>() {
 						@Override
-						public void accept(Throwable throwable) throws Exception {
-							Toast.makeText(IzrekeActivity.this, "Failed to connect", Toast.LENGTH_SHORT).show();
+						public void accept(Throwable t) throws Exception {
+							showErrorPopup(t, new Function0<Unit>() {
+								@Override
+								public Unit invoke() {
+									loadRandomIzreka();
+									return null;
+								}
+							});
 						}
 					});
 		} else {
@@ -113,7 +131,7 @@ public class IzrekeActivity extends Activity implements OnClickListener{
 		fakeActionBar.findViewById(R.id.btnSearch).setOnClickListener(this);
 		fakeActionBar.findViewById(R.id.btnBack).setOnClickListener(this);
 
-		webView.getSettings().setDefaultFontSize(prefs.getInt("hr.bpervan.novaeva.velicinateksta", 14));
+		webView.getSettings().setDefaultFontSize(getPrefs().getInt("hr.bpervan.novaeva.velicinateksta", 14));
 
         getWindow().getDecorView().setBackgroundColor(this.getResources().getColor(android.R.color.background_light));
 	}
@@ -167,13 +185,13 @@ public class IzrekeActivity extends Activity implements OnClickListener{
 			startActivity(Intent.createChooser(mailIntent, "Odaberite aplikaciju"));
 
 		} else if (vId == R.id.btnTextPlus) {//showTextSizePopup();
-			int mCurrentSize = prefs.getInt("hr.bpervan.novaeva.velicinateksta", 14);
+			int mCurrentSize = getPrefs().getInt("hr.bpervan.novaeva.velicinateksta", 14);
 			mCurrentSize += 2;
 			if (mCurrentSize >= 28) {
 				mCurrentSize = 12;
 			}
 
-			prefs.edit().putInt("hr.bpervan.novaeva.velicinateksta", mCurrentSize).commit();
+			getPrefs().edit().putInt("hr.bpervan.novaeva.velicinateksta", mCurrentSize).apply();
 			webView.getSettings().setDefaultFontSize(mCurrentSize);
 
 		} else if (vId == R.id.btnBack) {
@@ -203,30 +221,5 @@ public class IzrekeActivity extends Activity implements OnClickListener{
 			  public void onClick(DialogInterface dialog, int whichButton) {}
 			});
 		search.show();
-	}
-
-	private void showErrorPopup(){
-		AlertDialog.Builder error = new AlertDialog.Builder(this);
-		error.setTitle("Greška");
-
-		final TextView tv = new TextView(this);
-		tv.setText("Greška pri dohvaćanju podataka sa poslužitelja");
-		//tv.setTypeface(openSansRegular);
-		tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
-		error.setView(tv);
-
-		error.setPositiveButton("Pokušaj ponovno", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				loadRandomIzreka();
-			}
-		});
-		error.setNegativeButton("Povratak", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int whichButton) {
-				NovaEvaApp.Companion.goHome(IzrekeActivity.this);
-			}
-			});
-		error.show();
 	}
 }

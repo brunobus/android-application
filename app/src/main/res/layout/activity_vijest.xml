@@ -133,12 +133,26 @@
 
             </RelativeLayout>
 
+            <ProgressBar
+                android:id="@+id/loadingCircle"
+                style="?android:progressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="30dp"
+                android:layout_centerInParent="true"
+                android:layout_below="@+id/player_view"
+                android:indeterminate="true"
+                android:visibility="visible"
+                android:indeterminateOnly="true"
+                />
+
             <WebView
                 android:id="@+id/vijestWebView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
-                android:layout_below="@+id/player_view"
+                android:layout_below="@+id/loadingCircle"
                 android:layout_marginTop="5dp"
                 android:textColor="#4c4c4c" />
 

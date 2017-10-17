@@ -1,13 +1,9 @@
 package hr.bpervan.novaeva.activities
 
-import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.View.OnClickListener
-import com.nostra13.universalimageloader.core.ImageLoader
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.utilities.ImageLoaderConfigurator
@@ -15,22 +11,13 @@ import kotlinx.android.synthetic.main.activity_brevijar.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-class BreviaryActivity : AppCompatActivity() {
-
-    private lateinit var prefs: SharedPreferences
+class BreviaryActivity : EvaBaseActivity() {
 
     //private DisplayImageOptions options;
-    private lateinit var imageLoader: ImageLoader
-    private lateinit var imageLoaderConfigurator: ImageLoaderConfigurator
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_brevijar)
-
-        prefs = getSharedPreferences("hr.bpervan.novaeva", Context.MODE_PRIVATE)
-
-        imageLoaderConfigurator = ImageLoaderConfigurator()
-        imageLoader = ImageLoader.getInstance()
 
         initUI()
     }
@@ -49,7 +36,7 @@ class BreviaryActivity : AppCompatActivity() {
         val headerUrl = prefs.getString("hr.bpervan.novaeva.brevijarheaderimage", null)
 
         if (headerUrl != null && headerImageBrevijar != null) {
-            imageLoader.displayImage(headerUrl, headerImageBrevijar, imageLoaderConfigurator.createDefaultDisplayImageOptions(true))
+            imageLoader.displayImage(headerUrl, headerImageBrevijar, ImageLoaderConfigurator.createDefaultDisplayImageOptions(true))
         }
 
         btnJucerJutarnja.setOnClickListener(BreviaryClickListener(1))

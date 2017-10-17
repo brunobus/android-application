@@ -1,21 +1,5 @@
 package hr.bpervan.novaeva.activities;
 
-import hr.bpervan.novaeva.NovaEvaApp;
-import hr.bpervan.novaeva.main.R;
-import hr.bpervan.novaeva.utilities.ConnectionChecker;
-import hr.bpervan.novaeva.utilities.Constants;
-import hr.bpervan.novaeva.utilities.ListElement;
-import hr.bpervan.novaeva.adapters.VijestAdapter;
-import hr.bpervan.novaeva.utilities.BookmarksDBHandlerV2;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import com.google.android.gms.analytics.GoogleAnalytics;
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
-
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
@@ -29,14 +13,28 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import hr.bpervan.novaeva.NovaEvaApp;
+import hr.bpervan.novaeva.adapters.VijestAdapter;
+import hr.bpervan.novaeva.main.R;
+import hr.bpervan.novaeva.utilities.BookmarksDBHandlerV2;
+import hr.bpervan.novaeva.utilities.ConnectionChecker;
+import hr.bpervan.novaeva.utilities.EvaCategory;
+import hr.bpervan.novaeva.utilities.ListElement;
+
 public class BookmarksActivity extends ListActivity implements View.OnClickListener{
 	
 	ListView listView;
 	BookmarksDBHandlerV2 db = new BookmarksDBHandlerV2(this);
 	VijestAdapter adapter;
 	List<ListElement> listaBookmarksa;
-    
-    private Tracker mGaTracker;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +42,7 @@ public class BookmarksActivity extends ListActivity implements View.OnClickListe
 
 		listaBookmarksa = new ArrayList<>();
 
-        mGaTracker = ((NovaEvaApp) getApplication()).getTracker(NovaEvaApp.TrackerName.APP_TRACKER);
+		Tracker mGaTracker = ((NovaEvaApp) getApplication()).getTracker(NovaEvaApp.TrackerName.APP_TRACKER);
         mGaTracker.send(
                 new HitBuilders.EventBuilder()
                         .setCategory("Zabiljeske")
@@ -74,8 +72,7 @@ public class BookmarksActivity extends ListActivity implements View.OnClickListe
 			l.setUvod(makeUvod())
 		}*/
 		
-		adapter = new VijestAdapter(this, listaBookmarksa, Constants.CAT_PROPOVJEDI);
-		
+		adapter = new VijestAdapter(this, listaBookmarksa, EvaCategory.PROPOVIJEDI.getId());
 
 
 		listView.setOnItemClickListener(new OnItemClickListener(){

@@ -1,6 +1,5 @@
 package hr.bpervan.novaeva.activities;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -32,16 +31,17 @@ import hr.bpervan.novaeva.model.ContentInfo;
 import hr.bpervan.novaeva.model.SearchResult;
 import hr.bpervan.novaeva.services.NovaEvaService;
 import hr.bpervan.novaeva.utilities.ConnectionChecker;
-import hr.bpervan.novaeva.utilities.Constants;
+import hr.bpervan.novaeva.utilities.EvaCategory;
 import hr.bpervan.novaeva.utilities.LoadableFromBundle;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 
-public class SearchActivity extends Activity implements OnClickListener, LoadableFromBundle {
+public class SearchActivity extends EvaBaseActivity implements OnClickListener, LoadableFromBundle {
 
     private final CompositeDisposable disposables = new CompositeDisposable();
     private Disposable searchForContentDisposable;
@@ -49,8 +49,6 @@ public class SearchActivity extends Activity implements OnClickListener, Loadabl
     private List<ContentInfo> searchResultList = new ArrayList<>();
 
     private MenuElementAdapter adapter;
-
-    private Tracker mGaTracker;
 
     private String searchString;
 
@@ -70,7 +68,7 @@ public class SearchActivity extends Activity implements OnClickListener, Loadabl
 
 		mGaTracker.sendEvent("Pretraga", "KljucneRijeci", searchString, null);*/
 
-        mGaTracker = ((NovaEvaApp) getApplication()).getTracker(NovaEvaApp.TrackerName.APP_TRACKER);
+        Tracker mGaTracker = ((NovaEvaApp) getApplication()).getTracker(NovaEvaApp.TrackerName.APP_TRACKER);
         mGaTracker.send(
                 new HitBuilders.EventBuilder()
                         .setCategory("Pretraga")
@@ -94,7 +92,6 @@ public class SearchActivity extends Activity implements OnClickListener, Loadabl
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putString("searchString", searchString);
-//        outState.putParcelableArrayList("searchResultList", searchResultList); //// TODO: 13.10.17.
 
         super.onSaveInstanceState(outState);
     }
@@ -156,7 +153,7 @@ public class SearchActivity extends Activity implements OnClickListener, Loadabl
         fakeActionBar.findViewById(R.id.btnBack).setOnClickListener(this);
 
         MenuElementAdapter.ConfigData configData = new MenuElementAdapter.ConfigData(
-                Constants.CAT_PROPOVJEDI,
+                EvaCategory.PROPOVIJEDI.getId(),
                 new Function0<Boolean>() {
                     @Override
                     public Boolean invoke() {
@@ -192,7 +189,7 @@ public class SearchActivity extends Activity implements OnClickListener, Loadabl
         search.show();
     }
 
-    private void searchForContent(String searchString) {
+    private void searchForContent(final String searchString) {
         this.searchString = searchString;
 
         searchResultList.clear();
@@ -219,37 +216,15 @@ public class SearchActivity extends Activity implements OnClickListener, Loadabl
                 }, new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable t) throws Exception {
-                        Log.e("searchForContent", t.getMessage(), t);
-                        showErrorPopup();
+                        showErrorPopup(t, new Function0<Unit>() {
+                            @Override
+                            public Unit invoke() {
+                                searchForContent(searchString);
+                                return null;
+                            }
+                        });
                     }
                 });
-    }
-
-    private void showErrorPopup() {
-        AlertDialog.Builder error = new AlertDialog.Builder(this);
-        error.setTitle("Greška");
-
-        final TextView tv = new TextView(this);
-        tv.setText("Greška pri dohvaćanju podataka sa poslužitelja");
-        if (NovaEvaApp.Companion.getOpenSansRegular() != null) {
-            tv.setTypeface(NovaEvaApp.Companion.getOpenSansRegular());
-        }
-        tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
-        error.setView(tv);
-
-        error.setPositiveButton("Pokušaj ponovno", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                searchForContent(searchString);
-            }
-        });
-        error.setNegativeButton("Povratak", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int whichButton) {
-                NovaEvaApp.Companion.goHome(SearchActivity.this);
-            }
-        });
-        error.show();
     }
 
     @Override

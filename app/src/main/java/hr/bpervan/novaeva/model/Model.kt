@@ -107,3 +107,15 @@ data class SearchResult(
         val rezultat: Int = 0,
         val paket: Int = 0,
         @SerializedName("vijesti") val searchResultContentInfoList: List<ContentInfo>? = null)
+
+data class Indicators(
+        @SerializedName("354") val duhovnost: Int? = null,
+        @SerializedName("9") val aktualno: Int? = null,
+        @SerializedName("1") val izreke: Int? = null,
+        @SerializedName("10") val multimedija: Int? = null,
+        @SerializedName("4") val evandjelje: Int? = null,
+        @SerializedName("7") val propovijedi: Int? = null,
+        @SerializedName("8") val poziv: Int? = null,
+        @SerializedName("11") val odgovori: Int? = null,
+        @SerializedName("355") val pjesmarica: Int? = null
+)

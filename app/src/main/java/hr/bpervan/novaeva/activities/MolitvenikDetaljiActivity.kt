@@ -1,27 +1,23 @@
 package hr.bpervan.novaeva.activities
 
 import android.R.color
-import android.app.Activity
 import android.os.Bundle
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.google.android.gms.analytics.GoogleAnalytics
 import com.google.android.gms.analytics.HitBuilders
-import com.google.android.gms.analytics.Tracker
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
 import kotlinx.android.synthetic.main.activity_molitvenik_detalji.*
 
-class MolitvenikDetaljiActivity : Activity() {
-
-    private var mGaTracker: Tracker? = null
+class MolitvenikDetaljiActivity : EvaBaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_molitvenik_detalji)
 
-        mGaTracker = (application as NovaEvaApp).getTracker(NovaEvaApp.TrackerName.APP_TRACKER)
-        mGaTracker!!.send(
+        val mGaTracker = (application as NovaEvaApp).getTracker(NovaEvaApp.TrackerName.APP_TRACKER)
+        mGaTracker.send(
                 HitBuilders.EventBuilder()
                         .setCategory("Molitvenik")
                         .setAction("OtvorenaMolitva")
@@ -67,7 +63,7 @@ class MolitvenikDetaljiActivity : Activity() {
 
         var url = getUrl(Integer.parseInt(intent.getStringExtra("id")))
 
-        url = "file:///android_asset/" + url!!
+        url = "file:///android_asset/" + url
         webView.loadUrl(url)
     }
 

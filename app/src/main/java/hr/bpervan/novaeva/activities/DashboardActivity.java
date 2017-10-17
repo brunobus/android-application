@@ -1,48 +1,12 @@
 package hr.bpervan.novaeva.activities;
 
-import hr.bpervan.novaeva.NovaEvaApp;
-import hr.bpervan.novaeva.main.R;
-import hr.bpervan.novaeva.model.DirectoryContent;
-import hr.bpervan.novaeva.model.Image;
-import hr.bpervan.novaeva.services.NovaEvaService;
-import hr.bpervan.novaeva.utilities.ConnectionChecker;
-import hr.bpervan.novaeva.utilities.Constants;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.List;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpVersion;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.CoreProtocolPNames;
-import org.apache.http.params.HttpParams;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.annotation.Nullable;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -57,34 +21,43 @@ import android.widget.Toast;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+
+import hr.bpervan.novaeva.NovaEvaApp;
+import hr.bpervan.novaeva.main.R;
+import hr.bpervan.novaeva.model.DirectoryContent;
+import hr.bpervan.novaeva.model.Image;
+import hr.bpervan.novaeva.model.Indicators;
+import hr.bpervan.novaeva.services.NovaEvaService;
+import hr.bpervan.novaeva.utilities.ConnectionChecker;
+import hr.bpervan.novaeva.utilities.EvaCategory;
+import hr.bpervan.novaeva.utilities.LocalCategory;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
+
 //// TODO: 13.10.17. refactor me
-public class DashboardActivity extends Activity implements OnTouchListener, OnClickListener{
+public class DashboardActivity extends EvaBaseActivity implements OnTouchListener, OnClickListener{
 	private final long syncInterval = 90000L;
-	
+
 	private Tracker mGaTracker;
 
 	private ImageView btnBrevijar, btnMolitvenik, btnIzreke, btnMp3, btnAktualno,
 	btnPoziv, btnOdgovori, btnMultimedia, btnPropovjedi,
 	btnDuhovnost, btnEvandjelje;
-	
+
 	private ImageView btnInfo, btnBookmarks;
 	private TextView titleLineTitle;
 	private Typeface openSansRegular;
-	
+
 	//List<Integer> listaKategorija = Constants.getIntCategoryList();
-	SharedPreferences prefs;
-	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_dashboard);
-		
-		prefs = getSharedPreferences("hr.bpervan.novaeva", MODE_PRIVATE);
 
 		fetchBreviaryImage();
-
-        mGaTracker = ((NovaEvaApp) getApplication()).getTracker(NovaEvaApp.TrackerName.APP_TRACKER);
 
 		/*mGaInstance = GoogleAnalytics.getInstance(this);
 		mGaTracker = mGaInstance.getTracker("UA-40344870-1");*/
@@ -92,7 +65,7 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
         mGaTracker = ((NovaEvaApp) getApplication()).getTracker(NovaEvaApp.TrackerName.APP_TRACKER);
         mGaTracker.setScreenName("Dashboard");
         mGaTracker.send(new HitBuilders.AppViewBuilder().build());
-				
+
 		btnBrevijar = (ImageView) findViewById(R.id.btnBrevijar);
 		btnMolitvenik = (ImageView) findViewById(R.id.btnMolitvenik);
 		btnIzreke = (ImageView) findViewById(R.id.btnIzreke);
@@ -106,7 +79,7 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
 		btnEvandjelje = (ImageView) findViewById(R.id.btnEvandjelje);
 		btnInfo = (ImageView) findViewById(R.id.btnInfo);
 		btnBookmarks = (ImageView) findViewById(R.id.btnBookmarks);
-		
+
 		openSansRegular = Typeface.createFromAsset(getAssets(), "opensans-regular.ttf");
 		titleLineTitle = (TextView) findViewById(R.id.titleLineTitle);
 		titleLineTitle.setTypeface(openSansRegular);
@@ -124,7 +97,7 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
 		btnEvandjelje.setOnTouchListener(this);
 		btnInfo.setOnTouchListener(this);
 		btnBookmarks.setOnTouchListener(this);
-		
+
 		btnBrevijar.setOnClickListener(this);
 		btnMolitvenik.setOnClickListener(this);
 		btnIzreke.setOnClickListener(this);
@@ -139,25 +112,61 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
 		btnInfo.setOnClickListener(this);
 		btnBookmarks.setOnClickListener(this);
 	}
-	
+
 	public void onResume(){
 		super.onResume();
 
-		long vrijemeZadnjeSync = prefs.getLong("vrijemeZadnjeSinkronizacije", 0L);
+		long vrijemeZadnjeSync = getPrefs().getLong("vrijemeZadnjeSinkronizacije", 0L);
 		if((System.currentTimeMillis() - vrijemeZadnjeSync) > syncInterval){
 			if(ConnectionChecker.hasConnection(this)){
-				new AsyncHttpPostTask(this).execute();
+				NovaEvaService.Companion.getInstance().getNewStuff()
+						.subscribeOn(Schedulers.io())
+						.observeOn(AndroidSchedulers.mainThread())
+						.subscribe(new Consumer<Indicators>() {
+							@Override
+							public void accept(Indicators indicators) throws Exception {
+
+                                checkZadnjiNid(EvaCategory.DUHOVNOST, indicators.getDuhovnost());
+                                checkZadnjiNid(EvaCategory.AKTUALNO, indicators.getAktualno());
+                                checkZadnjiNid(EvaCategory.IZREKE, indicators.getIzreke());
+                                checkZadnjiNid(EvaCategory.MULTIMEDIJA, indicators.getMultimedija());
+                                checkZadnjiNid(EvaCategory.EVANDJELJE, indicators.getEvandjelje());
+                                checkZadnjiNid(EvaCategory.PROPOVIJEDI, indicators.getPropovijedi());
+                                checkZadnjiNid(EvaCategory.POZIV, indicators.getPoziv());
+                                checkZadnjiNid(EvaCategory.ODGOVORI, indicators.getOdgovori());
+                                checkZadnjiNid(EvaCategory.PJESMARICA, indicators.getPjesmarica());
+
+                                testAndSetRedDots();
+                                getPrefs().edit().putLong("vrijemeZadnjeSinkronizacije", System.currentTimeMillis()).apply();
+							}
+						}, new Consumer<Throwable>() {
+							@Override
+							public void accept(Throwable throwable) throws Exception {
+								//error
+							}
+						});
 			}
 		}
 
 		testAndSetRedDots();
 	}
-	
+
+	private void checkZadnjiNid(EvaCategory kategorija, @Nullable Integer dobiveniZadnjiNid){
+        if(dobiveniZadnjiNid==null) return;
+
+        String kategorijaStr = String.valueOf(kategorija.getId());
+        int spremljeniZadnjiNid = getPrefs().getInt(kategorijaStr, 0);
+        if (spremljeniZadnjiNid != dobiveniZadnjiNid) {
+            getPrefs().edit().putInt(kategorijaStr, dobiveniZadnjiNid).apply();
+            getPrefs().edit().putInt("vidjenoKategorija" + kategorijaStr, 0).apply();
+        }
+    }
+
 	public void onStart(){
 		super.onStart();
         GoogleAnalytics.getInstance(this).reportActivityStart(this);
 	}
-	
+
 	public void onStop(){
 		super.onStop();
 		GoogleAnalytics.getInstance(this).reportActivityStop(this);
@@ -181,7 +190,7 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
 				Toast.makeText(DashboardActivity.this, "Internetska veza nije dostupna", Toast.LENGTH_SHORT).show();
 			return true;
 
-		
+
 		default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -195,7 +204,7 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
 			fetchBrevijarImageDisposable.dispose();
 		}
 		fetchBrevijarImageDisposable = NovaEvaService.Companion.getInstance()
-				.getDirectoryContent(546, null, 0)
+				.getDirectoryContent(546, null)
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(new Consumer<DirectoryContent>() {
@@ -203,7 +212,7 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
 					public void accept(DirectoryContent directoryContent) throws Exception {
 						Image breviaryImage = directoryContent.getImage();
 						if (breviaryImage != null) {
-							prefs.edit().putString("hr.bpervan.novaeva.brevijarheaderimage", breviaryImage.getSize640()).apply();
+							getPrefs().edit().putString("hr.bpervan.novaeva.brevijarheaderimage", breviaryImage.getSize640()).apply();
 						}
 					}
 				}, new Consumer<Throwable>() {
@@ -213,23 +222,23 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
 					}
 				});
 	}
-	
+
 	private void showSearchPopup(){
 		AlertDialog.Builder search = new AlertDialog.Builder(this);
 		search.setTitle("Pretraga");
-		
+
 		final EditText et = new EditText(this);
 		search.setView(et);
-				
+
 		search.setPositiveButton("Pretrazi", new DialogInterface.OnClickListener() {
-			
+
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				String search=et.getText().toString();
 				NovaEvaApp.Companion.goSearch(search, DashboardActivity.this);
 			}
 		});
-		
+
 		search.setNegativeButton("Odustani", new DialogInterface.OnClickListener() {
 			  public void onClick(DialogInterface dialog, int whichButton) {}
 			});
@@ -237,52 +246,52 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
 	}
 	//TODO: sredi ovo pod hitno
 	private void testAndSetRedDots(){
-		if(prefs.getInt("vidjenoKategorija1", 0) == 0){
+		if(getPrefs().getInt("vidjenoKategorija1", 0) == 0){
 			btnIzreke.setBackgroundResource(R.drawable.button_izreke_news);
 		} else {
 			btnIzreke.setBackgroundResource(R.drawable.button_izreke);
 		}
-		if(prefs.getInt("vidjenoKategorija4", 0) == 0){
+		if(getPrefs().getInt("vidjenoKategorija4", 0) == 0){
 			btnEvandjelje.setBackgroundResource(R.drawable.button_evandjelje_news);
 		} else {
 			btnEvandjelje.setBackgroundResource(R.drawable.button_evandjelje);
 		}
-		if(prefs.getInt("vidjenoKategorija7", 0) == 0){
+		if(getPrefs().getInt("vidjenoKategorija7", 0) == 0){
 			btnPropovjedi.setBackgroundResource(R.drawable.button_propovjedi_news);
 		} else {
 			btnPropovjedi.setBackgroundResource(R.drawable.button_propovjedi);
 		}
-		if(prefs.getInt("vidjenoKategorija10", 0) == 0){
+		if(getPrefs().getInt("vidjenoKategorija10", 0) == 0){
 			btnMultimedia.setBackgroundResource(R.drawable.button_multimedia_news);
 		} else {
 			btnMultimedia.setBackgroundResource(R.drawable.button_multimedia);
 		}
-		if(prefs.getInt("vidjenoKategorija11", 0) == 0){
+		if(getPrefs().getInt("vidjenoKategorija11", 0) == 0){
 			btnOdgovori.setBackgroundResource(R.drawable.button_odgovori_news);
 		} else {
 			btnOdgovori.setBackgroundResource(R.drawable.button_odgovori);
 		}
-		if(prefs.getInt("vidjenoKategorija9", 0) == 0){
+		if(getPrefs().getInt("vidjenoKategorija9", 0) == 0){
 			btnAktualno.setBackgroundResource(R.drawable.button_aktualno_news);
 		} else {
 			btnAktualno.setBackgroundResource(R.drawable.button_aktualno);
 		}
-		if(prefs.getInt("vidjenoKategorija355", 0) == 0){
+		if(getPrefs().getInt("vidjenoKategorija355", 0) == 0){
 			btnMp3.setBackgroundResource(R.drawable.button_mp3_news);
 		} else {
 			btnMp3.setBackgroundResource(R.drawable.button_mp3);
 		}
-		if(prefs.getInt("vidjenoKategorija8", 0) == 0){
+		if(getPrefs().getInt("vidjenoKategorija8", 0) == 0){
 			btnPoziv.setBackgroundResource(R.drawable.button_poziv_news);
 		} else {
 			btnPoziv.setBackgroundResource(R.drawable.button_poziv);
 		}
-		if(prefs.getInt("vidjenoKategorija354", 0) == 0){
+		if(getPrefs().getInt("vidjenoKategorija354", 0) == 0){
 			btnDuhovnost.setBackgroundResource(R.drawable.button_duhovnost_news);
 		} else {
 			btnDuhovnost.setBackgroundResource(R.drawable.button_duhovnost);
 		}
-		
+
 	}
 
 	@Override
@@ -292,149 +301,10 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
 		return true;
 	}
 
-	private class AsyncHttpPostTask extends AsyncTask<Void, Void, Void>{
-		private String URL=null;
-		private String newStuffIndicatorUrl;
-		
-		private BufferedReader bufferedReader = null;
-		private InputStream is = null;
-		private JSONObject jObj = null;
-		private String json = null;
-		
-		/** Communicatiooooooon */
-		private HttpClient httpClient;
-		private HttpGet httpGet;
-		private HttpResponse httpResponse;
-		private HttpEntity httpEntity;
-        private HttpParams httpParams;
-		
-		public AsyncHttpPostTask(Context context){
-			URL="http://novaeva.com/json?api=2&items=1&filter=1&cid=";
-			//TODO:Ubaciti url
-			this.newStuffIndicatorUrl = "http://novaeva.com/json?api=2&indicators=1";
-		}
-		
-		private void getNewStuff() throws IOException, JSONException{
-            httpParams = new BasicHttpParams();
-            httpParams.setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
-
-			httpClient = new DefaultHttpClient(httpParams);
-			httpGet = new HttpGet(this.newStuffIndicatorUrl);
-			httpResponse = httpClient.execute(httpGet);
-			httpEntity = httpResponse.getEntity();
-			
-			is = httpEntity.getContent();
-			bufferedReader = new BufferedReader(new InputStreamReader(is,"utf-8"),8);
-			
-			StringBuilder stringBuilder = new StringBuilder();
-			String line = null;
-			while((line = bufferedReader.readLine()) != null){
-				stringBuilder.append(line + "\n");
-			}
-			is.close();
-			json = stringBuilder.toString();
-			jObj = new JSONObject(json);
-			Log.d("CAT", json);
-			for(int category : Constants.getIntCategoryList(true)){
-				if(jObj.has(category + "")){
-					int currentCat = jObj.getInt(category + "");
-					int zadnjiNidIzKategorije = prefs.getInt(category + "", 0);
-					if(zadnjiNidIzKategorije != currentCat){
-						prefs.edit().putInt(category + "", currentCat).commit();
-						prefs.edit().putInt("vidjenoKategorija" + category, 0).commit();
-					}
-				}
-			}
-		}
-
-		@Override
-		protected Void doInBackground(Void... params) {
-			String zadnjiNid = null;
-            List<Integer> tempLista = Constants.getIntCategoryList(false);
-/*
-            for(int i = 0; i < tempLista.size(); i++){
-				zadnjiNid = dohvatiNajnovijiNidIzKategorije(tempLista.get(i));
-				//TODO: Testiraj ovo čudo
-				//Vratilo nullPointerException na neku foru jednom
-				if(!zadnjiNid.equals(null)){
-					int zadnjiNidIzKategorije = prefs.getInt(String.valueOf(tempLista.get(i)), 0);
-					if(zadnjiNidIzKategorije != Integer.parseInt(zadnjiNid)){
-						prefs.edit().putInt(String.valueOf(tempLista.get(i)), Integer.parseInt(zadnjiNid)).commit();
-						prefs.edit().putInt("vidjenoKategorija" + tempLista.get(i), 0).commit();
-					}
-				}
-			}*/
-            try {
-                getNewStuff();
-            } catch (Exception e) {
-            	Log.e("getNewStuff", e.getMessage(), e);
-            }
-
-			DashboardActivity.this.runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					testAndSetRedDots();
-					prefs.edit().putLong("vrijemeZadnjeSinkronizacije", System.currentTimeMillis()).apply();
-				}
-			});
-
-
-			
-			return null;
-		}
-
-		private String dohvatiNajnovijiNidIzKategorije(int kategorija){
-			String url2 = URL + kategorija;
-			Log.d("URL", url2);
-			try{
-
-				DefaultHttpClient httpClient=new DefaultHttpClient();
-				HttpPost httpPost=new HttpPost(url2);
-				HttpResponse httpResponse = httpClient.execute(httpPost);
-				HttpEntity httpEntitiy=httpResponse.getEntity();
-				is=httpEntitiy.getContent();
-			}catch(Exception e){
-				this.cancel(true);
-				return null;
-			}
-
-			try{
-
-				BufferedReader reader=new BufferedReader(new InputStreamReader(is,"utf-8"),8);
-				StringBuilder sb=new StringBuilder();
-				String line=null;
-				while((line=reader.readLine())!=null){
-					sb.append(line+"\n");
-				}
-				is.close();
-				json=sb.toString();
-			}catch(Exception e){
-				this.cancel(true);
-				return null;
-			}
-
-			try{
-				jObj=new JSONObject(json);
-			}catch(JSONException e){
-				this.cancel(true);
-				return null;
-			}
-
-			try {
-				JSONArray sveVijesti = jObj.getJSONArray("vijesti");
-				JSONObject najnovijaVijest = sveVijesti.getJSONObject(0);
-				return najnovijaVijest.getString("nid");
-			} catch (JSONException e) {
-				this.cancel(true);
-				return null;
-			}
-		}
-	}
-
 	@Override
 	public void onClick(View v) {
 		Intent i = null;
-		
+
 		if(v.getId() == R.id.btnMolitvenik){
 			startActivity(new Intent(DashboardActivity.this,MolitvenikActivity.class));
 		} else if(v.getId() == R.id.btnInfo){
@@ -451,62 +321,54 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
 				break;
 			case R.id.btnEvandjelje:
 				i = new Intent(DashboardActivity.this,ListaVijestiActivity.class);
-				i.putExtra("category", Constants.CAT_EVANDJELJE);
-				i.putExtra("nazivKategorije", "Evanđelje");
+				i.putExtra("categoryId", EvaCategory.EVANDJELJE.getId());
+				i.putExtra("categoryName", EvaCategory.EVANDJELJE.getRawName());
 				startActivity(i);
 				break;
 			case R.id.btnMp3:
 				i = new Intent(DashboardActivity.this,ListaVijestiActivity.class);
-				i.putExtra("category", Constants.CAT_PJESMARICA);
-				i.putExtra("nazivKategorije", "Pjesmarica");
+				i.putExtra("categoryId", EvaCategory.PJESMARICA.getId());
+				i.putExtra("categoryName", EvaCategory.PJESMARICA.getRawName());
 				startActivity(i);
 				break;
 			case R.id.btnPropovjedi:
 				i = new Intent(DashboardActivity.this,ListaVijestiActivity.class);
-				i.putExtra("category", Constants.CAT_PROPOVJEDI);
-				i.putExtra("nazivKategorije", "Propovijedi");
+				i.putExtra("categoryId", EvaCategory.PROPOVIJEDI.getId());
+				i.putExtra("categoryName", EvaCategory.PROPOVIJEDI.getRawName());
 				startActivity(i);
 				break;
 			case R.id.btnOdgovori:
 				i = new Intent(DashboardActivity.this,ListaVijestiActivity.class);
-				i.putExtra("category", Constants.CAT_ODGOVORI);
-				i.putExtra("nazivKategorije", "Odgovori");
+				i.putExtra("categoryId", EvaCategory.ODGOVORI.getId());
+				i.putExtra("categoryName", EvaCategory.ODGOVORI.getRawName());
 				startActivity(i);
 				break;
 			case R.id.btnPoziv:
 				i = new Intent(DashboardActivity.this,ListaVijestiActivity.class);
-				i.putExtra("category", Constants.CAT_POZIV);
-				i.putExtra("nazivKategorije", "Poziv");
+				i.putExtra("categoryId", EvaCategory.POZIV.getId());
+				i.putExtra("categoryName", EvaCategory.POZIV.getRawName());
 				startActivity(i);
 				break;
 			case R.id.btnDuhovnost:
 				i = new Intent(DashboardActivity.this,ListaVijestiActivity.class);
-				i.putExtra("category", Constants.CAT_DUHOVNOST);
-				i.putExtra("nazivKategorije", "Duhovnost");
+				i.putExtra("categoryId", EvaCategory.DUHOVNOST.getId());
+				i.putExtra("categoryName", EvaCategory.DUHOVNOST.getRawName());
 				startActivity(i);
 				break;
 			case R.id.btnIzreke:
 				i = new Intent(DashboardActivity.this,IzrekeActivity.class);
-                mGaTracker.send(
-                        new HitBuilders.EventBuilder()
-                                .setCategory("Kategorije")
-                                .setAction("OtvorenaKategorija")
-                                .setLabel(Constants.CAT_IZREKE + "")
-                                .build()
-                );
-				//mGaTracker.sendEvent("Kategorije", "OtvorenaKategorija", Constants.CAT_IZREKE + "", null);
 				startActivity(i);
 				break;
 			case R.id.btnMultimedia:
 				i = new Intent(DashboardActivity.this,ListaVijestiActivity.class);
-				i.putExtra("category", Constants.CAT_MULTIMEDIJA);
-				i.putExtra("nazivKategorije", "Multimedija");
+				i.putExtra("categoryId", EvaCategory.MULTIMEDIJA.getId());
+				i.putExtra("categoryName", EvaCategory.MULTIMEDIJA.getRawName());
 				startActivity(i);
 				break;
 			case R.id.btnAktualno:
 				i = new Intent(DashboardActivity.this,ListaVijestiActivity.class);
-				i.putExtra("category", Constants.CAT_AKTUALNO);
-				i.putExtra("nazivKategorije", "Aktualno");
+				i.putExtra("categoryId", EvaCategory.AKTUALNO.getId());
+				i.putExtra("categoryName", EvaCategory.AKTUALNO.getRawName());
 				startActivity(i);
 				break;
 			}
@@ -519,102 +381,102 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
 	public boolean onTouch(View v, MotionEvent event) {
 		String text = null;
 		if(this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
-			text = Constants.APP_NAME;
+			text = getString(R.string.app_name);
 		} else {
-			text = Constants.APP_NAME_LAND;
+			text = getString(R.string.app_name_vertical);
 		}
 		switch(event.getAction()){
 		case MotionEvent.ACTION_DOWN:
 			switch(v.getId()){
 			case R.id.btnBrevijar:
 				if(this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
-					text = Constants.CAT_BREVIJAR_NAZIV_PORT;
+					text = LocalCategory.BREVIJAR.getRawName();
 				else{
-					text = Constants.CAT_BREVIJAR_NAZIV_LAND;
+					text = LocalCategory.BREVIJAR.getRawNameVertical();
 				}
 				break;
 			case R.id.btnMolitvenik:
 				if(this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
-					text = Constants.CAT_MOLITVENIK_NAZIV_PORT;
+					text = LocalCategory.MOLITVENIK.getRawName();
 				else{
-					text = Constants.CAT_MOLITVENIK_NAZIV_LAND;
+					text = LocalCategory.MOLITVENIK.getRawNameVertical();
 				}
 				break;
 			case R.id.btnEvandjelje:
 				if(this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
-					text = Constants.CAT_EVANDJELJE_NAZIV_PORT;
+					text = EvaCategory.EVANDJELJE.getRawName();
 				else{
-					text = Constants.CAT_EVANDJELJE_NAZIV_LAND;
+					text = EvaCategory.EVANDJELJE.getRawNameVertical();
 				}
 				break;
 			case R.id.btnMp3:
 				if(this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
-					text = Constants.CAT_PJESMARICA_NAZIV_PORT;
+					text = EvaCategory.PJESMARICA.getRawName();
 				else{
-					text = Constants.CAT_PJESMARICA_NAZIV_LAND;
+					text = EvaCategory.PJESMARICA.getRawNameVertical();
 				}
 				break;
 			case R.id.btnPropovjedi:
 				if(this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
-					text = Constants.CAT_PROPOVJEDI_NAZIV_PORT;
+					text = EvaCategory.PROPOVIJEDI.getRawName();
 				else{
-					text = Constants.CAT_PROPOVJEDI_NAZIV_LAND;
+					text = EvaCategory.PROPOVIJEDI.getRawNameVertical();
 				}
 				break;
 			case R.id.btnOdgovori:
 				if(this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
-					text = Constants.CAT_ODGOVORI_NAZIV_PORT;
+					text = EvaCategory.ODGOVORI.getRawName();
 				else{
-					text = Constants.CAT_ODGOVORI_NAZIV_LAND;
+					text = EvaCategory.ODGOVORI.getRawNameVertical();
 				}
 				break;
 			case R.id.btnPoziv:
 				if(this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
-					text = Constants.CAT_POZIV_NAZIV_PORT;
+					text = EvaCategory.POZIV.getRawName();
 				else{
-					text = Constants.CAT_POZIV_NAZIV_LAND;
+					text = EvaCategory.POZIV.getRawNameVertical();
 				}
 				break;
 			case R.id.btnDuhovnost:
 				if(this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
-					text = Constants.CAT_DUHOVNOST_NAZIV_PORT;
+					text = EvaCategory.DUHOVNOST.getRawName();
 				else{
-					text = Constants.CAT_DUHOVNOST_NAZIV_LAND;
+					text = EvaCategory.DUHOVNOST.getRawNameVertical();
 				}
 				break;
 			case R.id.btnIzreke:
 				if(this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
-					text = Constants.CAT_IZREKE_NAZIV_PORT;
+					text = EvaCategory.IZREKE.getRawName();
 				else{
-					text = Constants.CAT_IZREKE_NAZIV_LAND;
+					text = EvaCategory.IZREKE.getRawNameVertical();
 				}
 				break;
 			case R.id.btnMultimedia:
 				if(this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
-					text = Constants.CAT_MULTIMEDIJA_NAZIV_PORT;
+					text = EvaCategory.MULTIMEDIJA.getRawName();
 				else{
-					text = Constants.CAT_MULTIMEDIJA_NAZIV_LAND;
+					text = EvaCategory.MULTIMEDIJA.getRawNameVertical();
 				}
 				break;
 			case R.id.btnAktualno:
 				if(this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
-					text = Constants.CAT_AKTUALNO_NAZIV_PORT;
+					text = EvaCategory.AKTUALNO.getRawName();
 				else{
-					text = Constants.CAT_AKTUALNO_NAZIV_LAND;
+					text = EvaCategory.AKTUALNO.getRawNameVertical();
 				}
 				break;
 			case R.id.btnInfo:
 				if(this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
-					text = Constants.CAT_INFO_NAZIV_PORT;
+					text = LocalCategory.INFO.getRawName();
 				else{
-					text = Constants.CAT_INFO_NAZIV_LAND;
+					text = LocalCategory.INFO.getRawNameVertical();
 				}
 				break;
 			case R.id.btnBookmarks:
 				if(this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
-					text = Constants.CAT_BOOKMARKS_NAZIV_PORT;
+					text = LocalCategory.BOOKMARKS.getRawName();
 				else{
-					text = Constants.CAT_BOOKMARKS_NAZIV_LAND;
+					text = LocalCategory.BOOKMARKS.getRawNameVertical();
 				}
 				break;
 			}
@@ -624,7 +486,7 @@ public class DashboardActivity extends Activity implements OnTouchListener, OnCl
 			titleLineTitle.setText(text);
 			//return true;
 		}
-		
+
 		return false;
 		}
 }

@@ -2,7 +2,6 @@ package hr.bpervan.novaeva.activities
 
 import android.app.AlertDialog
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.util.TypedValue
 import android.view.Menu
@@ -20,7 +19,7 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_brevijar_detalji.*
 
-class BreviaryContentActivity : AppCompatActivity() {
+class BreviaryContentActivity : EvaBaseActivity() {
 
     private var breviaryId: Int = -1
 
@@ -99,23 +98,6 @@ class BreviaryContentActivity : AppCompatActivity() {
         this.title = activityTitle
     }
 
-    private fun showErrorPopup() {
-        val error = AlertDialog.Builder(this)
-        error.setTitle("Greška")
-
-        val tv = TextView(this)
-        tv.text = "Greška pri dohvaćanju podataka sa poslužitelja"
-        //tv.setTypeface(openSansRegular);
-        tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
-        error.setView(tv)
-
-        error.setPositiveButton("Pokušaj ponovno") { _, _ -> loadBreviary() }
-        error.setNegativeButton("Povratak") { _, _ ->
-            NovaEvaApp.goHome(this)
-        }
-        error.show()
-    }
-
     private fun loadBreviary() {
         Log.d("loadingBreviary", "loading breviary: " + breviaryId)
 
@@ -127,8 +109,9 @@ class BreviaryContentActivity : AppCompatActivity() {
                 .subscribe({ breviary ->
                     webView.loadDataWithBaseURL(null, breviary.text, "text/html", "utf-8", "")
                 }, { t ->
-                    Log.e("breviaryError", t.message, t)
-                    showErrorPopup()
+                    showErrorPopup(t) {
+                        loadBreviary()
+                    }
                 })
     }
 

@@ -58,7 +58,7 @@ class NovaEvaApp : Application() {
             registerActivityLifecycleCallbacks(LifecycleLogger())
         }
 
-        ImageLoaderConfigurator().doInit(this)
+        ImageLoaderConfigurator.doInit(this)
     }
 
     companion object {

@@ -5,8 +5,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 public class ConnectionChecker {
-	
-	/** 
+
+	/**
 	 * @author Branimir
 	 * @param context - Calling activity context
 	 * @return True if there is a way of reaching internet, no matter how, false otherwise

@@ -10,4 +10,6 @@ import io.reactivex.subjects.PublishSubject
 class RxEventBus {
     val directoryOpenRequest = PublishSubject.create<DirectoryInfo>()
     val contentOpenRequest = PublishSubject.create<ContentInfo>()
+
+
 }

@@ -14,7 +14,7 @@ import com.nostra13.universalimageloader.core.decode.BaseImageDecoder
 import com.nostra13.universalimageloader.core.download.BaseImageDownloader
 import com.nostra13.universalimageloader.utils.StorageUtils
 
-class ImageLoaderConfigurator {
+object ImageLoaderConfigurator {
 
     fun doInit(context: Context) {
         val cacheDir = StorageUtils.getCacheDirectory(context)

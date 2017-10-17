@@ -1,24 +1,17 @@
 package hr.bpervan.novaeva.activities
 
-import hr.bpervan.novaeva.NovaEvaApp
-import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.adapters.MolitvenikAdapter
-
-import java.util.ArrayList
-
 import android.app.AlertDialog
 import android.app.ListActivity
-import android.content.DialogInterface
 import android.content.Intent
-import android.content.res.Configuration
 import android.os.Bundle
-import android.view.Menu
 import android.view.View
 import android.view.View.OnClickListener
-import android.widget.AdapterView
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.EditText
 import android.widget.ListView
+import hr.bpervan.novaeva.NovaEvaApp
+import hr.bpervan.novaeva.adapters.MolitvenikAdapter
+import hr.bpervan.novaeva.main.R
 import kotlinx.android.synthetic.main.activity_molitvenik.*
 import kotlinx.android.synthetic.main.simple_fake_action_bar.view.*
 
@@ -26,7 +19,6 @@ import kotlinx.android.synthetic.main.simple_fake_action_bar.view.*
 import com.google.analytics.tracking.android.GoogleAnalytics;
 import com.google.analytics.tracking.android.Tracker;*/
 
-@Deprecated("Will be replaced with normal ListaVijestiActivity (which itself will be renamed)")
 class MolitvenikActivity : ListActivity(), OnClickListener {
     /*private Tracker mGaTracker;
 	private GoogleAnalytics mGaInstance;*/

@@ -1,10 +1,7 @@
 package hr.bpervan.novaeva.activities
 
-import android.app.Activity
 import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.media.MediaPlayer
 import android.net.Uri
@@ -12,12 +9,14 @@ import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import android.util.TypedValue
-import android.view.Menu
 import android.view.View
 import android.webkit.WebSettings.LayoutAlgorithm
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import android.widget.*
+import android.widget.EditText
+import android.widget.SeekBar
+import android.widget.TextView
+import android.widget.Toast
 import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
@@ -30,7 +29,6 @@ import com.google.android.exoplayer2.util.Util
 import com.google.android.gms.analytics.GoogleAnalytics
 import com.google.android.gms.analytics.HitBuilders
 import com.google.android.gms.analytics.Tracker
-import com.nostra13.universalimageloader.core.ImageLoader
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.ContentData
@@ -40,16 +38,13 @@ import hr.bpervan.novaeva.utilities.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.*
 import kotlinx.android.synthetic.main.activity_vijest.*
 import kotlinx.android.synthetic.main.vijest_fake_action_bar.view.*
 
-class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletionListener, SeekBar.OnSeekBarChangeListener, LoadableFromBundle {
+class VijestActivity : EvaBaseActivity(), View.OnClickListener,
+        MediaPlayer.OnCompletionListener, SeekBar.OnSeekBarChangeListener, LoadableFromBundle {
     /** ------------------------------------------FIELDS------------------------------------------ */
-
-    /**
-     * Used to store Font size
-     */
-    private lateinit var prefs: SharedPreferences
 
     /**
      * Pure 'Vijest' data
@@ -67,12 +62,6 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
      * Database handler for bookmarks, resource handler for category colours
      */
     private lateinit var dbHandler: BookmarksDBHandlerV2
-
-    /**
-     * Image loader
-     */
-    private lateinit var imageLoader: ImageLoader
-    private lateinit var imageLoaderConfigurator: ImageLoaderConfigurator
 
     /**
      * Retrofit
@@ -97,8 +86,6 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
 
         startService(Intent(this, BackgroundPlayerService::class.java)) //todo
 
-        prefs = getSharedPreferences("hr.bpervan.novaeva", Context.MODE_PRIVATE)
-
         mGaTracker = (application as NovaEvaApp).getTracker(NovaEvaApp.TrackerName.APP_TRACKER)
         mGaTracker.send(
                 HitBuilders.EventBuilder()
@@ -107,9 +94,6 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
                         .setLabel(contentId.toString() + "")
                         .build()
         )
-
-        imageLoaderConfigurator = ImageLoaderConfigurator()
-        imageLoader = ImageLoader.getInstance()
 
         initUI()
 
@@ -123,11 +107,10 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
 
     override fun loadStateFromBundle(bundle: Bundle) {
         contentId = bundle.getLong("contentId", -1)
-        colourSet = bundle.getInt("colourSet", Constants.CAT_PROPOVJEDI)
+        colourSet = bundle.getInt("colourSet", EvaCategory.PROPOVIJEDI.id)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-//        outState.putParcelable("contentData", thisContentData!!)
         outState.putLong("contentId", contentId)
         outState.putInt("colourSet", colourSet)
 
@@ -164,6 +147,7 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
+        this?.clearFindViewByIdCache() //because of a bug in library, you must use "this?." otherwise npe is thrown !!!
         super.onConfigurationChanged(newConfig)
         initUI()
     }
@@ -180,18 +164,24 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
             tvNaslov.typeface = it
         }
 
+        if (thisContentData == null) {
+            loadingCircle.visibility = View.VISIBLE
+        } else {
+            loadingCircle.visibility = View.GONE
+        }
+
         /** Lets try displaying news using WebView  */
 
         thisContentData?.let { contentData ->
             //if not null
             if (contentData.hasImage()) {
                 if (headerImage != null) {
-                    imageLoader.displayImage(contentData.image!![0].size640, headerImage, imageLoaderConfigurator.createDefaultDisplayImageOptions(false))
+                    imageLoader.displayImage(contentData.image!![0].size640, headerImage, ImageLoaderConfigurator.createDefaultDisplayImageOptions(false))
                 }
             } else {
                 val url = prefs.getString("hr.bpervan.novaeva.categoryheader." + contentData.cid, null)
                 if (url != null && headerImage != null) {
-                    imageLoader.displayImage(url, headerImage, imageLoaderConfigurator.createDefaultDisplayImageOptions(true))
+                    imageLoader.displayImage(url, headerImage, ImageLoaderConfigurator.createDefaultDisplayImageOptions(true))
                 }
             }
             vijestWebView.reload()
@@ -226,7 +216,7 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
         vijestWebView.isLongClickable = false
 
         /** Is this 'Duhovni poziv' or 'Odgovori' category?  */
-        if (intent.getLongExtra("category", Constants.CAT_PROPOVJEDI.toLong()) == Constants.CAT_POZIV.toLong()) {
+        if (intent.getIntExtra("categoryId", EvaCategory.PROPOVIJEDI.id) == EvaCategory.POZIV.id) {
             setQuestionButton()
         }
 
@@ -276,13 +266,16 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
         if (dbHandler.nidExists(contentId.toInt())) //todo accept long
             fakeActionBar.btnBookmark.setImageResource(R.drawable.action_button_bookmarked)
 
-        window.decorView.setBackgroundColor(this.resources.getColor(android.R.color.background_light))
+        window.decorView.setBackgroundResource(android.R.color.background_light)
     }
 
     private var contentDataDisposable: Disposable? = null
 
     private fun getContentData(contentId: Long) {
         Log.d("getContentData", "getting content data for contentId: " + contentId)
+
+        loadingCircle.visibility = View.VISIBLE
+
         contentDataDisposable?.dispose()
         contentDataDisposable = (NovaEvaService.instance
                 .getContentData(contentId)
@@ -306,25 +299,30 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
 
                     if (contentData.hasImage()) {
                         if (headerImage != null) {
-                            imageLoader.displayImage(contentData.image!![0].size640, headerImage, imageLoaderConfigurator.createDefaultDisplayImageOptions(false))
+                            imageLoader.displayImage(contentData.image!![0].size640, headerImage, ImageLoaderConfigurator.createDefaultDisplayImageOptions(false))
                         }
                     } else {
                         val url = prefs.getString("hr.bpervan.novaeva.categoryheader." + contentData.cid, null)
                         if (url != null && headerImage != null) {
-                            imageLoader.displayImage(url, headerImage, imageLoaderConfigurator.createDefaultDisplayImageOptions(true))
+                            imageLoader.displayImage(url, headerImage, ImageLoaderConfigurator.createDefaultDisplayImageOptions(true))
                         }
                     }
-                    if (contentData.cid == Constants.CAT_POZIV) {
+                    if (contentData.cid == EvaCategory.POZIV.id) {
                         setQuestionButton()
                     }
 
                     tvNaslov.text = contentData.naslov
+                    loadingCircle.visibility = View.GONE
                     vijestWebView.reload()
                     vijestWebView.loadDataWithBaseURL(null, contentData.tekst, "text/html", "UTF-8", null)
 
                     thisContentData = contentData
 
-                }) { t -> Log.e("vijestiError", t.message, t) })
+                }) { t ->
+                    showErrorPopup(t) {
+                        getContentData(contentId)
+                    }
+                })
     }
 
     override fun onResume() {
@@ -363,16 +361,9 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
         GoogleAnalytics.getInstance(this).reportActivityStop(this)
     }
 
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        return true
-    }
-
     private fun setCategoryTypeColour() {
-        val resources = ResourceHandler.getVijestResource(colourSet)
-
-        fakeActionBar.setBackgroundResource(resources[0])
-        imgNaslovnaTraka.setImageResource(resources[1])
+        fakeActionBar.setBackgroundResource(ResourceHandler.getFakeActionBarResourceId(colourSet))
+        imgNaslovnaTraka.setImageResource(ResourceHandler.getContentTitleBarResourceId(colourSet))
     }
 
     override fun onClick(v: View) {
@@ -382,7 +373,7 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
                 val mail = arrayOfNulls<String>(1)
                 val i: Intent
                 when (intent.getIntExtra("kategorija", 11)) {
-                    Constants.CAT_POZIV -> {
+                    EvaCategory.POZIV.id -> {
                         text = "Hvaljen Isus i Marija, javljam Vam se jer razmišljam o duhovnom pozivu."
                         mail[0] = "duhovnipoziv@gmail.com"
                         i = Intent(Intent.ACTION_SEND)
@@ -470,6 +461,11 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
         }
     }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+        overridePendingTransition(R.anim.move_left_in, R.anim.move_right_out)
+    }
+
     private fun showSearchPopup() {
         val search = AlertDialog.Builder(this)
         search.setTitle("Pretraga")
@@ -523,28 +519,6 @@ class VijestActivity : Activity(), View.OnClickListener, MediaPlayer.OnCompletio
 	        seekArc.postDelayed(this, 1000);
 		}
 	};*/
-
-    private fun showErrorPopup() {
-        val error = AlertDialog.Builder(this)
-        error.setTitle("Greška")
-
-        val tv = TextView(this)
-        tv.text = "Greška pri dohvaćanju podataka sa poslužitelja"
-
-        NovaEvaApp.openSansRegular?.let {
-            tv.typeface = it
-        }
-        tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
-        error.setView(tv)
-
-        error.setPositiveButton("Pokušaj ponovno") { dialog, which ->
-            getContentData(contentId)
-        }
-        error.setNegativeButton("Povratak") { dialog, whichButton ->
-            NovaEvaApp.goHome(this)
-        }
-        error.show()
-    }
 
     companion object {
         private val TAG = "VijestActivity"
