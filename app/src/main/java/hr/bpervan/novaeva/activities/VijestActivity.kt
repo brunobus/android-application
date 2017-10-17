@@ -43,7 +43,7 @@ import kotlinx.android.synthetic.main.activity_vijest.*
 import kotlinx.android.synthetic.main.vijest_fake_action_bar.view.*
 
 class VijestActivity : EvaBaseActivity(), View.OnClickListener,
-        MediaPlayer.OnCompletionListener, SeekBar.OnSeekBarChangeListener, LoadableFromBundle {
+        SeekBar.OnSeekBarChangeListener, LoadableFromBundle {
     /** ------------------------------------------FIELDS------------------------------------------ */
 
     /**
@@ -240,7 +240,7 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener,
 
         /** Set category name and set text size */
         vijestWebView.settings.defaultFontSize = prefs.getInt("hr.bpervan.novaeva.velicinateksta", 14)
-
+        
         this.setCategoryTypeColour()
         /*if(mPlayer != null){
 			mp3Player.setVisibility(View.VISIBLE);
@@ -496,17 +496,6 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener,
     override fun onStartTrackingTouch(seekArc: SeekBar) {}
 
     override fun onStopTrackingTouch(seekArc: SeekBar) {}
-
-
-    override fun onCompletion(mp: MediaPlayer) {
-        Log.d(TAG, "onCompletion")
-        btnPlay.visibility = View.VISIBLE
-        btnPause.visibility = View.INVISIBLE
-
-        seekArc.progress = 0
-        tvElapsed.text = "00:00"
-        //mPlayer.seekTo(0);
-    }
 
     /*private Runnable onEverySecond = new Runnable(){
 		@Override
