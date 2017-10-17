@@ -124,11 +124,14 @@ class MenuElementAdapter(val data: List<TreeElementInfo>,
         val tvMapaNaslov: TextView = view.tvMapaNaslov
         val tvMapaNatpis: TextView = view.tvMapaNatpis
 
+        init {
+            tvMapaNaslov.typeface = NovaEvaApp.openSansBold
+            tvMapaNatpis.typeface = NovaEvaApp.openSansBold
+        }
+
         override fun bindTo(t: Any) {
             val directoryInfo = t as DirectoryInfo
 
-            tvMapaNaslov.typeface = NovaEvaApp.openSansBold
-            tvMapaNatpis.typeface = NovaEvaApp.openSansBold
             tvMapaNaslov.text = directoryInfo.title
 
             view.setOnClickListener {
@@ -150,9 +153,7 @@ class MenuElementAdapter(val data: List<TreeElementInfo>,
 
         val tvUvodNatpis: TextView = view.tvUvodNatpis
 
-        override fun bindTo(t: Any) {
-            val contentInfo = t as ContentInfo
-
+        init {
             NovaEvaApp.openSansBold?.let {
                 tvNaslov.typeface = it
                 tvUvodNatpis.typeface = it
@@ -169,6 +170,10 @@ class MenuElementAdapter(val data: List<TreeElementInfo>,
             NovaEvaApp.openSansRegular?.let {
                 tvGodinaSatMinuta.typeface = it
             }
+        }
+
+        override fun bindTo(t: Any) {
+            val contentInfo = t as ContentInfo
 
             //todo refactor and simplify this old code
 

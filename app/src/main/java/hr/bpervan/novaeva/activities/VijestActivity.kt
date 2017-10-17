@@ -173,6 +173,8 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener,
         /** Lets try displaying news using WebView  */
 
         thisContentData?.let { contentData ->
+            tvNaslov.text = contentData.naslov
+
             //if not null
             if (contentData.hasImage()) {
                 if (headerImage != null) {
