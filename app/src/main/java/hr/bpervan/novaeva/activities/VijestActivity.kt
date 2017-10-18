@@ -3,19 +3,16 @@ package hr.bpervan.novaeva.activities
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.res.Configuration
-import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
-import android.util.TypedValue
 import android.view.View
 import android.webkit.WebSettings.LayoutAlgorithm
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.EditText
 import android.widget.SeekBar
-import android.widget.TextView
 import android.widget.Toast
 import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.SimpleExoPlayer
@@ -32,6 +29,7 @@ import com.google.android.gms.analytics.Tracker
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.ContentData
+import hr.bpervan.novaeva.model.EvaCategory
 import hr.bpervan.novaeva.services.BackgroundPlayerService
 import hr.bpervan.novaeva.services.NovaEvaService
 import hr.bpervan.novaeva.utilities.*

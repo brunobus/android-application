@@ -21,8 +21,8 @@ import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.services.NovaEvaService
 import hr.bpervan.novaeva.utilities.ConnectionChecker
-import hr.bpervan.novaeva.utilities.EvaCategory
-import hr.bpervan.novaeva.utilities.LocalCategory
+import hr.bpervan.novaeva.model.EvaCategory
+import hr.bpervan.novaeva.model.LocalCategory
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers

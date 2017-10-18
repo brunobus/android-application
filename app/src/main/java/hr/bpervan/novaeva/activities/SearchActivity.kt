@@ -6,7 +6,6 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.View.OnClickListener
 import android.widget.EditText
@@ -23,7 +22,7 @@ import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.ContentInfo
 import hr.bpervan.novaeva.services.NovaEvaService
 import hr.bpervan.novaeva.utilities.ConnectionChecker
-import hr.bpervan.novaeva.utilities.EvaCategory
+import hr.bpervan.novaeva.model.EvaCategory
 import hr.bpervan.novaeva.utilities.LoadableFromBundle
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable

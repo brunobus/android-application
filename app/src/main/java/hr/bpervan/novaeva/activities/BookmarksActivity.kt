@@ -15,7 +15,7 @@ import hr.bpervan.novaeva.adapters.MenuElementAdapter
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.ContentInfo
 import hr.bpervan.novaeva.utilities.BookmarksDBHandlerV2
-import hr.bpervan.novaeva.utilities.EvaCategory
+import hr.bpervan.novaeva.model.EvaCategory
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers

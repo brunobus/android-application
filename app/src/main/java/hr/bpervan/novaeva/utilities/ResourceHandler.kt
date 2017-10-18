@@ -1,6 +1,7 @@
 package hr.bpervan.novaeva.utilities
 
 import hr.bpervan.novaeva.main.R
+import hr.bpervan.novaeva.model.EvaCategory
 
 /**
  * Class which handles requiremens for various colour types

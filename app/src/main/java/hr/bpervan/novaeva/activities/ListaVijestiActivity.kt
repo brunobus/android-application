@@ -14,7 +14,7 @@ import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.fragments.MenuRecyclerFragment
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.utilities.ConnectionChecker
-import hr.bpervan.novaeva.utilities.EvaCategory
+import hr.bpervan.novaeva.model.EvaCategory
 import hr.bpervan.novaeva.utilities.LoadableFromBundle
 import hr.bpervan.novaeva.utilities.ResourceHandler
 import io.reactivex.android.schedulers.AndroidSchedulers

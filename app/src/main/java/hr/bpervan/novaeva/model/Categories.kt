@@ -1,4 +1,4 @@
-package hr.bpervan.novaeva.utilities
+package hr.bpervan.novaeva.model
 
 enum class EvaCategory(val id: Int, val rawName: String) {
     DUHOVNOST(354, "Duhovnost"),
