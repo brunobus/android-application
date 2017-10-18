@@ -50,6 +50,10 @@ class BookmarksActivity : EvaBaseActivity(), View.OnClickListener {
         //initUI();
         //pokupiVijestiIzBaze();
 
+        val configData = MenuElementAdapter.ConfigData(EvaCategory.PROPOVIJEDI.id, { false })
+
+        adapter = MenuElementAdapter(bookmarksList, configData, null)
+
         initUI()
     }
 
@@ -66,12 +70,6 @@ class BookmarksActivity : EvaBaseActivity(), View.OnClickListener {
 		for(ListElement l : listaBookmarksa){
 			l.setUvod(makeUvod())
 		}*/
-
-        val configData = MenuElementAdapter.ConfigData(
-                EvaCategory.PROPOVIJEDI.id
-        ) { false }
-
-        adapter = MenuElementAdapter(bookmarksList, configData, null)
 
         //todo make this nicer
         evaRecyclerView.evaRecyclerView.adapter = adapter
