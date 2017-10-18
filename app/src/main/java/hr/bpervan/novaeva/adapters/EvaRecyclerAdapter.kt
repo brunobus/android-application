@@ -20,9 +20,10 @@ import java.util.*
 /**
  * Created by vpriscan on 08.10.17..
  */
-class MenuElementAdapter(val data: List<TreeElementInfo>,
-                         val configData: ConfigData,
-                         val headerData: HeaderData?) : RecyclerView.Adapter<MenuElementAdapter.BindableViewHolder>() {
+class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
+                         private val configData: ConfigData,
+                         private val headerData: HeaderData?
+) : RecyclerView.Adapter<EvaRecyclerAdapter.BindableViewHolder>() {
 
     private val cal = Calendar.getInstance()
 
@@ -96,7 +97,7 @@ class MenuElementAdapter(val data: List<TreeElementInfo>,
                      val infoMessage: String)
 
     class ConfigData(val colourSet: Int,
-                     val isLoadingSupplier: () -> Boolean)
+                     val isLoadingSupplier: () -> Boolean = { false })
 
     inner abstract class BindableViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         abstract fun bindTo(t: Any)
@@ -115,8 +116,6 @@ class MenuElementAdapter(val data: List<TreeElementInfo>,
             val headerData = t as HeaderData
             headerTextViewNatpis.text = headerData.infoMessage
             headerTextView.text = headerData.directoryName.toUpperCase()
-
-            view.setOnClickListener(null)
         }
     }
 

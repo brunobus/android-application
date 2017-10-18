@@ -11,7 +11,7 @@ import android.widget.EditText
 import com.google.android.gms.analytics.GoogleAnalytics
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.NovaEvaApp
-import hr.bpervan.novaeva.adapters.MenuElementAdapter
+import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.ContentInfo
 import hr.bpervan.novaeva.utilities.BookmarksDBHandlerV2
@@ -31,7 +31,7 @@ class BookmarksActivity : EvaBaseActivity(), View.OnClickListener {
     private val lifecycleBoundDisposables = CompositeDisposable()
 
     private var db = BookmarksDBHandlerV2(this)
-    private lateinit var adapter: MenuElementAdapter
+    private lateinit var adapter: EvaRecyclerAdapter
     private var bookmarksList: MutableList<ContentInfo> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,9 +50,9 @@ class BookmarksActivity : EvaBaseActivity(), View.OnClickListener {
         //initUI();
         //pokupiVijestiIzBaze();
 
-        val configData = MenuElementAdapter.ConfigData(EvaCategory.PROPOVIJEDI.id, { false })
+        val configData = EvaRecyclerAdapter.ConfigData(EvaCategory.PROPOVIJEDI.id)
 
-        adapter = MenuElementAdapter(bookmarksList, configData, null)
+        adapter = EvaRecyclerAdapter(bookmarksList, configData, null)
 
         initUI()
     }

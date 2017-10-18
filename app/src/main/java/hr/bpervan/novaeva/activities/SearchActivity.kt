@@ -17,7 +17,7 @@ import java.util.ArrayList
 import java.util.concurrent.TimeUnit
 
 import hr.bpervan.novaeva.NovaEvaApp
-import hr.bpervan.novaeva.adapters.MenuElementAdapter
+import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.ContentInfo
 import hr.bpervan.novaeva.services.NovaEvaService
@@ -40,7 +40,7 @@ class SearchActivity : EvaBaseActivity(), OnClickListener, LoadableFromBundle {
 
     private val searchResultList = ArrayList<ContentInfo>()
 
-    private lateinit var adapter: MenuElementAdapter
+    private lateinit var adapter: EvaRecyclerAdapter
     private lateinit var searchString: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,9 +67,9 @@ class SearchActivity : EvaBaseActivity(), OnClickListener, LoadableFromBundle {
                         .build()
         )
 
-        val configData = MenuElementAdapter.ConfigData(EvaCategory.PROPOVIJEDI.id, { false })
+        val configData = EvaRecyclerAdapter.ConfigData(EvaCategory.PROPOVIJEDI.id)
 
-        adapter = MenuElementAdapter(searchResultList, configData, null)
+        adapter = EvaRecyclerAdapter(searchResultList, configData, null)
 
         initUI()
 

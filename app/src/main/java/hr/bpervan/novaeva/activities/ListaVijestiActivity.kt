@@ -11,7 +11,7 @@ import android.widget.Toast
 import com.google.android.gms.analytics.GoogleAnalytics
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.NovaEvaApp
-import hr.bpervan.novaeva.fragments.MenuRecyclerFragment
+import hr.bpervan.novaeva.fragments.EvaRecyclerFragment
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.utilities.ConnectionChecker
 import hr.bpervan.novaeva.model.EvaCategory
@@ -100,15 +100,15 @@ class ListaVijestiActivity : EvaBaseActivity(), OnClickListener, LoadableFromBun
 
     private fun showFragmentForDirectory(dirId: Long, dirName: String, isSubDir: Boolean) {
 
-        val menuRecyclerFragment = MenuRecyclerFragment()
+        val evaRecyclerFragment = EvaRecyclerFragment()
         val bundle = Bundle()
-        bundle.putParcelable("fragmentConfig", MenuRecyclerFragment.FragmentConfig(dirId, dirName, isSubDir, colourSet))
-        menuRecyclerFragment.arguments = bundle
+        bundle.putParcelable("fragmentConfig", EvaRecyclerFragment.FragmentConfig(dirId, dirName, isSubDir, colourSet))
+        evaRecyclerFragment.arguments = bundle
 
         supportFragmentManager
                 .beginTransaction()
                 .setCustomAnimations(R.anim.move_right_in, R.anim.move_left_out, R.anim.move_left_in, R.anim.move_right_out)
-                .replace(R.id.eva_directory_fragment_frame, menuRecyclerFragment)
+                .replace(R.id.eva_directory_fragment_frame, evaRecyclerFragment)
                 .addToBackStack(null)
                 .commit()
     }

@@ -16,7 +16,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import hr.bpervan.novaeva.NovaEvaApp
-import hr.bpervan.novaeva.adapters.MenuElementAdapter
+import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.ContentInfo
 import hr.bpervan.novaeva.model.TreeElementInfo
@@ -29,13 +29,13 @@ import io.reactivex.schedulers.Schedulers
 /**
  * Created by vpriscan on 08.10.17..
  */
-class MenuRecyclerFragment : Fragment(), LoadableFromBundle {
+class EvaRecyclerFragment : Fragment(), LoadableFromBundle {
 
     private var hasMore = true
     private var menuElementsDisposable: Disposable? = null
 
     private lateinit var fragmentConfig: FragmentConfig
-    private lateinit var adapter: MenuElementAdapter
+    private lateinit var adapter: EvaRecyclerAdapter
     private var elementsList: MutableList<TreeElementInfo> = ArrayList()
 
     private var loading = true
@@ -51,9 +51,9 @@ class MenuRecyclerFragment : Fragment(), LoadableFromBundle {
 
         val infoText = if (fragmentConfig.isSubDirectory) "NALAZITE SE U MAPI" else "NALAZITE SE U KATEGORIJI"
 
-        adapter = MenuElementAdapter(elementsList,
-                MenuElementAdapter.ConfigData(fragmentConfig.colourSet, { loading }),
-                MenuElementAdapter.HeaderData(fragmentConfig.directoryName, infoText))
+        adapter = EvaRecyclerAdapter(elementsList,
+                EvaRecyclerAdapter.ConfigData(fragmentConfig.colourSet, { loading }),
+                EvaRecyclerAdapter.HeaderData(fragmentConfig.directoryName, infoText))
         adapter.registerAdapterDataObserver(DataChangeLogger())
 
 

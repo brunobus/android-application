@@ -24,9 +24,7 @@ object ConnectionChecker {
         }
 
         val activeNetwork = cm.activeNetworkInfo
-        return if (activeNetwork != null && activeNetwork.isConnected) {
-            true
-        } else false
+        return activeNetwork != null && activeNetwork.isConnected
 
     }
 }
