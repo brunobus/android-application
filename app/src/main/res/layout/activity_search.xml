@@ -9,11 +9,10 @@
         layout="@layout/eva_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/fakeActionBar" />
+        android:layout_above="@+id/fakeActionBar" />
 
     <include
         android:id="@+id/fakeActionBar"
         layout="@layout/simple_fake_action_bar" />
-
 
 </RelativeLayout>

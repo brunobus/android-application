@@ -17,6 +17,7 @@ import hr.bpervan.novaeva.model.ContentData;
  * @version 2.0
  *
  */
+@Deprecated
 public class BookmarksDBHandlerV2 extends SQLiteOpenHelper {
 	
 	private static final int DB_VERSION = 1;

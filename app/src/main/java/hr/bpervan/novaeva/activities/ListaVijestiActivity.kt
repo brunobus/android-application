@@ -32,7 +32,7 @@ class ListaVijestiActivity : EvaBaseActivity(), OnClickListener, LoadableFromBun
 
     private var colourSet = -1
 
-    private val disposables = CompositeDisposable()
+    private val lifecycleBoundDisposables = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -186,7 +186,7 @@ class ListaVijestiActivity : EvaBaseActivity(), OnClickListener, LoadableFromBun
             return
         }
 
-        disposables.add(NovaEvaApp.bus.directoryOpenRequest
+        lifecycleBoundDisposables.add(NovaEvaApp.bus.directoryOpenRequest
                 .throttleFirst(500, TimeUnit.MILLISECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -194,7 +194,7 @@ class ListaVijestiActivity : EvaBaseActivity(), OnClickListener, LoadableFromBun
                     showFragmentForDirectory(directoryId, title ?: "", true)
                 })
 
-        disposables.add(NovaEvaApp.bus.contentOpenRequest
+        lifecycleBoundDisposables.add(NovaEvaApp.bus.contentOpenRequest
                 .throttleFirst(500, TimeUnit.MILLISECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -211,7 +211,7 @@ class ListaVijestiActivity : EvaBaseActivity(), OnClickListener, LoadableFromBun
     override fun onPause() {
         super.onPause()
 
-        disposables.clear() //clears and disposes
+        lifecycleBoundDisposables.clear() //clears and disposes
     }
 
     // Napraviti Builder za search i errorokvir

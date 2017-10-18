@@ -240,7 +240,7 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener,
 
         /** Set category name and set text size */
         vijestWebView.settings.defaultFontSize = prefs.getInt("hr.bpervan.novaeva.velicinateksta", 14)
-        
+
         this.setCategoryTypeColour()
         /*if(mPlayer != null){
 			mp3Player.setVisibility(View.VISIBLE);
@@ -426,8 +426,10 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener,
                     dbHandler.deleteVijest(contentId.toInt()) //todo accept long
                     fakeActionBar.btnBookmark.setImageResource(R.drawable.action_button_bookmark)
                 } else {
-                    dbHandler.insertArticle(thisContentData)
-                    fakeActionBar.btnBookmark.setImageResource(R.drawable.action_button_bookmarked)
+                    if (thisContentData != null) {
+                        dbHandler.insertArticle(thisContentData)
+                        fakeActionBar.btnBookmark.setImageResource(R.drawable.action_button_bookmarked)
+                    }
                 }
             R.id.btnShare -> {
                 val faceIntent = Intent(Intent.ACTION_SEND)

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/ic_action_bookmarked_dark"
+    <item android:drawable="@drawable/ic_action_unbookmark_dark"
           android:state_pressed="true" />
-    <item android:drawable="@drawable/ic_action_bookmarked_dark"
+    <item android:drawable="@drawable/ic_action_unbookmark_dark"
           android:state_focused="true" />
-    <item android:drawable="@drawable/action_button_bookmarked" />
+    <item android:drawable="@drawable/ic_action_unbookmark" />
 </selector>

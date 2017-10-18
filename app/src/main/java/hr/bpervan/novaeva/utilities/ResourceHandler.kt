@@ -3,8 +3,7 @@ package hr.bpervan.novaeva.utilities
 import hr.bpervan.novaeva.main.R
 
 /**
- * Class which handles requiremens for various colour types based on a different categories
- * for ListaVijestiActivity / VijestAdapter or VijestActivity
+ * Class which handles requiremens for various colour types
  * @author Branimir
  */
 object ResourceHandler {

@@ -1,17 +1,15 @@
 package hr.bpervan.novaeva.activities;
 
 import android.app.AlertDialog;
-import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.view.Menu;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
-import android.widget.ListView;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
@@ -20,27 +18,32 @@ import com.google.android.gms.analytics.Tracker;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import hr.bpervan.novaeva.NovaEvaApp;
-import hr.bpervan.novaeva.adapters.VijestAdapter;
+import hr.bpervan.novaeva.adapters.MenuElementAdapter;
 import hr.bpervan.novaeva.main.R;
+import hr.bpervan.novaeva.model.ContentInfo;
 import hr.bpervan.novaeva.utilities.BookmarksDBHandlerV2;
-import hr.bpervan.novaeva.utilities.ConnectionChecker;
 import hr.bpervan.novaeva.utilities.EvaCategory;
 import hr.bpervan.novaeva.utilities.ListElement;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
+import kotlin.jvm.functions.Function0;
 
-public class BookmarksActivity extends ListActivity implements View.OnClickListener{
-	
-	ListView listView;
+public class BookmarksActivity extends EvaBaseActivity implements View.OnClickListener{
+
+	private final CompositeDisposable lifecycleBoundDisposables = new CompositeDisposable();
+
 	BookmarksDBHandlerV2 db = new BookmarksDBHandlerV2(this);
-	VijestAdapter adapter;
-	List<ListElement> listaBookmarksa;
+	MenuElementAdapter adapter;
+	List<ContentInfo> bookmarksList = new ArrayList<>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		listaBookmarksa = new ArrayList<>();
 
 		Tracker mGaTracker = ((NovaEvaApp) getApplication()).getTracker(NovaEvaApp.TrackerName.APP_TRACKER);
         mGaTracker.send(
@@ -54,78 +57,99 @@ public class BookmarksActivity extends ListActivity implements View.OnClickListe
 		//mGaTracker.sendEvent("Zabiljeske", "OtvoreneZabiljeske", "", null);
 		//initUI();
 		//pokupiVijestiIzBaze();
+
+        initUI();
 	}
-	
+
 	private void initUI(){
 		setContentView(R.layout.activity_bookmarks);
 
 		this.setTitle("Bookmarks");
-		listView = getListView();
+
+		RecyclerView recyclerView = findViewById(R.id.eva_recyclerview);
 
 		View fakeActionBar = findViewById(R.id.fakeActionBar);
 		fakeActionBar.findViewById(R.id.btnHome).setOnClickListener(this);
 		fakeActionBar.findViewById(R.id.btnSearch).setOnClickListener(this);
 		fakeActionBar.findViewById(R.id.btnBack).setOnClickListener(this);
-		
+
 		/*
 		for(ListElement l : listaBookmarksa){
 			l.setUvod(makeUvod())
 		}*/
-		
-		adapter = new VijestAdapter(this, listaBookmarksa, EvaCategory.PROPOVIJEDI.getId());
 
-
-		listView.setOnItemClickListener(new OnItemClickListener(){
+		MenuElementAdapter.ConfigData configData = new MenuElementAdapter.ConfigData(
+				EvaCategory.PROPOVIJEDI.getId(),
+				new Function0<Boolean>() {
 			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {				
-				Intent i = new Intent(BookmarksActivity.this,VijestActivity.class);
-				i.putExtra("nid", listaBookmarksa.get(arg2).getNid());
-				i.putExtra("kategorija", listaBookmarksa.get(arg2).getKategorija());
-				
-				if(ConnectionChecker.hasConnection(BookmarksActivity.this))
-					startActivity(i);
+			public Boolean invoke() {
+				return false;
 			}
-			
 		});
 
-		listView.setAdapter(adapter);
+		adapter = new MenuElementAdapter(bookmarksList, configData, null);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
 	}
-	
-	
+
+	//TODO DONT USE ListElement ANYMORE
 	private void pokupiVijestiIzBaze(){
-		List<ListElement> bookmarkList = db.getAllVijest();
-		
-		if(bookmarkList.isEmpty()){
+		List<ListElement> bookmarkList_legacy = db.getAllVijest();
+
+		if(bookmarkList_legacy.isEmpty()){
 			showEmptyListInfo();
 		}
-		
-		Collections.reverse(bookmarkList);
-		listaBookmarksa.addAll(bookmarkList);
+
+		Collections.reverse(bookmarkList_legacy);
+
+        for (ListElement listElement : bookmarkList_legacy) {
+            bookmarksList.add(new ContentInfo(null, listElement.getNid(), listElement.getUnixDatum(), listElement.getNaslov(), listElement.getUvod()));
+        }
 		adapter.notifyDataSetChanged();
 	}
-	
+
 	private void showEmptyListInfo(){
 		AlertDialog.Builder emptyInfo = new AlertDialog.Builder(this);
 		emptyInfo.setTitle("Zabilješke");
 		emptyInfo.setMessage("Trenutno nemate zabilješki");
-		
+
 		emptyInfo.setPositiveButton("U redu", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {BookmarksActivity.this.onBackPressed();}
 		});
-		
+
 		emptyInfo.show();
 	}
-	
+
 	protected void onResume(){
 		super.onResume();
-		initUI();
-		listaBookmarksa.clear();
+		bookmarksList.clear();
 		pokupiVijestiIzBaze();
+
+		lifecycleBoundDisposables.add(NovaEvaApp.Companion.getBus().getContentOpenRequest()
+				.throttleFirst(500, TimeUnit.MILLISECONDS)
+				.subscribeOn(Schedulers.io())
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribe(new Consumer<ContentInfo>() {
+					@Override
+					public void accept(ContentInfo contentInfo) throws Exception {
+						Intent i;
+						i = new Intent(BookmarksActivity.this, VijestActivity.class);
+						i.putExtra("contentId", contentInfo.getContentId());
+						startActivity(i);
+					}
+				}));
 	}
 
+	@Override
+	protected void onPause() {
+		super.onPause();
 
-    public void onStart(){
+		lifecycleBoundDisposables.clear();
+	}
+
+	public void onStart(){
         super.onStart();
         GoogleAnalytics.getInstance(this).reportActivityStart(this);
     }
@@ -135,12 +159,6 @@ public class BookmarksActivity extends ListActivity implements View.OnClickListe
         GoogleAnalytics.getInstance(this).reportActivityStop(this);
     }
 
-	
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		return true;
-	}
-	
 	@Override
 	public void onConfigurationChanged(Configuration newConfig){
 		super.onConfigurationChanged(newConfig);

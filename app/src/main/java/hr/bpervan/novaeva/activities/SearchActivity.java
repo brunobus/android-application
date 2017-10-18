@@ -9,12 +9,9 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
@@ -43,7 +40,7 @@ import kotlin.jvm.functions.Function0;
 
 public class SearchActivity extends EvaBaseActivity implements OnClickListener, LoadableFromBundle {
 
-    private final CompositeDisposable disposables = new CompositeDisposable();
+    private final CompositeDisposable lifecycleBoundDisposables = new CompositeDisposable();
     private Disposable searchForContentDisposable;
 
     private List<ContentInfo> searchResultList = new ArrayList<>();
@@ -100,7 +97,7 @@ public class SearchActivity extends EvaBaseActivity implements OnClickListener, 
     protected void onResume() {
         super.onResume();
 
-        disposables.add(NovaEvaApp.Companion.getBus().getContentOpenRequest()
+        lifecycleBoundDisposables.add(NovaEvaApp.Companion.getBus().getContentOpenRequest()
                 .throttleFirst(500, TimeUnit.MILLISECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -119,7 +116,7 @@ public class SearchActivity extends EvaBaseActivity implements OnClickListener, 
     protected void onPause() {
         super.onPause();
 
-        disposables.clear();
+        lifecycleBoundDisposables.clear();
     }
 
     public void onStart() {
