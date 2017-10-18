@@ -101,7 +101,7 @@ class NovaEvaApp : Application() {
 
         fun goSearch(searchString: String, context: Context) {
             val i = Intent(context, SearchActivity::class.java)
-            i.putExtra("string", searchString)
+            i.putExtra("searchString", searchString)
             i.flags = Intent.FLAG_ACTIVITY_NO_HISTORY
             context.startActivity(i)
         }
