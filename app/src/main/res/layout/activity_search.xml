@@ -5,7 +5,7 @@
     tools:context="hr.bpervan.novaeva.activities.ListaVijestiActivity">
 
     <include
-        android:id="@+id/eva_recyclerview"
+        android:id="@+id/evaRecyclerView"
         layout="@layout/eva_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

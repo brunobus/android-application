@@ -14,7 +14,7 @@
 	    android:layout_alignParentLeft="true"
 	    android:layout_marginTop="8dp"
 	    android:layout_marginLeft="8dp"
-	    android:text="@string/tvNaslov"
+	    android:text="@string/title_default"
 	    android:textColor="#4c4c4c"
 	    android:textSize="16sp"
 	    android:maxLines="1"
@@ -41,7 +41,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginTop="4dp"
         android:layout_below="@+id/tvNaslov"
-        android:text="@string/tvUvod"
+        android:text="@string/introduction_identifier"
         android:textColor="#7d7d7d"
         android:textSize="13sp" />
 	

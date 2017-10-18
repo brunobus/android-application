@@ -1,18 +1,17 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="hr.bpervan.novaeva.activities.ListaVijestiActivity">
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
     <include
-        android:id="@+id/eva_recyclerview"
+        android:id="@+id/evaRecyclerView"
         layout="@layout/eva_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/fakeActionBar" />
+        android:layout_above="@+id/fakeActionBar"/>
 
     <include
         android:id="@+id/fakeActionBar"
-        layout="@layout/simple_fake_action_bar" />
+        layout="@layout/simple_fake_action_bar"/>
 
 </RelativeLayout>

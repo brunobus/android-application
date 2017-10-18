@@ -6,6 +6,7 @@ package hr.bpervan.novaeva.utilities;
  * @version 1.0
  * Enum sadržava dva različita tipa koja se mogu pojaviti bookmarkirati
  */
+@Deprecated
 public enum BookmarkTypes {
 	VIJEST, MOLITVENIK
 }

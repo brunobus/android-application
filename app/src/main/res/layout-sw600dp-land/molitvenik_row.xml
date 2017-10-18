@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="8dp"
-        android:text="@string/tvNaslov"
+        android:text="@string/title_default"
         android:textColor="#4c4c4c"
         android:textSize="25sp" />
 

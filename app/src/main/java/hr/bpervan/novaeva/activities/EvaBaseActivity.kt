@@ -10,6 +10,7 @@ import android.util.TypedValue
 import android.widget.TextView
 import com.nostra13.universalimageloader.core.ImageLoader
 import hr.bpervan.novaeva.NovaEvaApp
+import hr.bpervan.novaeva.main.R
 
 /**
  * Created by vpriscan on 17.10.17..
@@ -33,20 +34,18 @@ abstract class EvaBaseActivity : AppCompatActivity() {
         Log.e("evaError", throwable.message, throwable)
 
         val error = AlertDialog.Builder(this)
-        error.setTitle("Greška")
+        error.setTitle(getString(R.string.error))
 
         val tv = TextView(this)
-        tv.text = "Greška pri dohvaćanju podataka sa poslužitelja"
+        tv.text = getString(R.string.error_fetching_data)
         NovaEvaApp.openSansRegular?.let {
             tv.typeface = it
         }
         tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
         error.setView(tv)
 
-        error.setPositiveButton("Pokušaj ponovno") { _, _ -> onTryAgain() }
-        error.setNegativeButton("Povratak") { _, _ ->
-            NovaEvaApp.goHome(this)
-        }
+        error.setPositiveButton(getString(R.string.try_again)) { _, _ -> onTryAgain() }
+        error.setNegativeButton(getString(R.string.go_back)) { _, _ -> NovaEvaApp.goHome(this) }
         error.show()
     }
 }

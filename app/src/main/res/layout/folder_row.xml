@@ -16,7 +16,7 @@
 	    android:layout_marginTop="1dp"
 	    android:layout_marginLeft="8dp"
 		android:layout_marginStart="8dp"
-	    android:text="@string/tvMapaNatpis"
+	    android:text="@string/directory_identifier"
 	    android:textColor="#4c4c4c"
 	    android:textSize="16sp"
 	    android:maxLines="1"
@@ -34,7 +34,7 @@
         android:layout_marginTop="10dp"
         android:ellipsize="end"
         android:maxLines="2"
-        android:text="@string/tvUvod"
+        android:text="@string/introduction_identifier"
         android:textColor="#7d7d7d"
         android:textSize="13sp" />
     

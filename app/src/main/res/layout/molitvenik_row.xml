@@ -12,7 +12,7 @@
 	        android:layout_width="@dimen/molitvenikWidth"
 	        android:layout_height="wrap_content"
 	        android:layout_gravity="center_vertical"
-	        android:text="@string/tvNaslov"
+	        android:text="@string/title_default"
 	        android:textSize="20sp"
 	        android:textColor="#4c4c4c" />
 	    
