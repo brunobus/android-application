@@ -13,7 +13,7 @@ import io.realm.Sort
 object EvaBookmarkDbAdapter {
     fun loadEvaBookmarksAsync(realm: Realm, bookmarksConsumer: (RealmResults<EvaContentInfo>) -> Unit) {
         realm.where(EvaContentInfo::class.java)
-                .findAllSortedAsync(CONTENT_ID_FIELD, Sort.ASCENDING)
+                .findAllSortedAsync(CONTENT_ID_FIELD, Sort.DESCENDING) //todo use date for sorting
                 .onLoaded { bookmarksConsumer(it) }
     }
 
