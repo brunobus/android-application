@@ -57,7 +57,7 @@ class MolitvenikDetaljiActivity : EvaBaseActivity() {
             }
         }
 
-        this.title = intent.getStringExtra("naslov")
+        this.title = intent.getStringExtra("title")
 
         webView.settings.defaultTextEncodingName = "utf-8"
 

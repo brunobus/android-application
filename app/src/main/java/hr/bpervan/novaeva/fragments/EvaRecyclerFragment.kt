@@ -18,10 +18,11 @@ import android.widget.TextView
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.ContentInfo
+import hr.bpervan.novaeva.model.EvaContentInfo
+import hr.bpervan.novaeva.model.EvaContentInfoDTO
 import hr.bpervan.novaeva.model.TreeElementInfo
+import hr.bpervan.novaeva.model.asDatabaseModel
 import hr.bpervan.novaeva.services.NovaEvaService
-import hr.bpervan.novaeva.utilities.LoadableFromBundle
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
@@ -29,7 +30,7 @@ import io.reactivex.schedulers.Schedulers
 /**
  * Created by vpriscan on 08.10.17..
  */
-class EvaRecyclerFragment : Fragment(), LoadableFromBundle {
+class EvaRecyclerFragment : Fragment() {
 
     private var hasMore = true
     private var menuElementsDisposable: Disposable? = null
@@ -43,11 +44,8 @@ class EvaRecyclerFragment : Fragment(), LoadableFromBundle {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (savedInstanceState != null) {
-            loadStateFromBundle(savedInstanceState)
-        } else {
-            loadStateFromBundle(arguments)
-        }
+        val inState: Bundle = savedInstanceState ?: arguments
+        fragmentConfig = inState.getParcelable("fragmentConfig")
 
         val infoText = if (fragmentConfig.isSubDirectory) "NALAZITE SE U MAPI" else "NALAZITE SE U KATEGORIJI"
 
@@ -84,10 +82,6 @@ class EvaRecyclerFragment : Fragment(), LoadableFromBundle {
             override fun createFromParcel(parcel: Parcel): FragmentConfig = FragmentConfig(parcel)
             override fun newArray(size: Int): Array<FragmentConfig?> = arrayOfNulls(size)
         }
-    }
-
-    override fun loadStateFromBundle(bundle: Bundle) {
-        fragmentConfig = bundle.getParcelable("fragmentConfig")
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -145,8 +139,8 @@ class EvaRecyclerFragment : Fragment(), LoadableFromBundle {
 
                     /** Ako je zadnji u listi podkategorija, onda on nema UnixDatum, pa tražimo zadnji koji ima */
                     val zadnjiDatum = elementsList
-                            .filter { it is ContentInfo }
-                            .map { it as ContentInfo }
+                            .filter { it is EvaContentInfo }
+                            .map { it as EvaContentInfo }
                             .lastOrNull()
                             ?.datetime
 
@@ -190,10 +184,10 @@ class EvaRecyclerFragment : Fragment(), LoadableFromBundle {
                 .subscribe({ result ->
 
                     if (result.contentInfoList != null) {
-                        elementsList.addAll(result.contentInfoList)
+                        elementsList.addAll(result.contentInfoList.map { it.asDatabaseModel() })
                     }
                     if (result.subDirectoryInfoList != null) {
-                        elementsList.addAll(result.subDirectoryInfoList)
+                        elementsList.addAll(result.subDirectoryInfoList.map { it.asDatabaseModel() })
                     }
 
                     hasMore = result.more > 0

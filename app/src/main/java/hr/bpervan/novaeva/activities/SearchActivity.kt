@@ -9,21 +9,17 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.view.View.OnClickListener
 import android.widget.EditText
-
 import com.google.android.gms.analytics.GoogleAnalytics
 import com.google.android.gms.analytics.HitBuilders
-
-import java.util.ArrayList
-import java.util.concurrent.TimeUnit
-
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.ContentInfo
+import hr.bpervan.novaeva.model.EvaContentInfoDTO
+import hr.bpervan.novaeva.model.EvaCategory
+import hr.bpervan.novaeva.model.EvaContentInfo
+import hr.bpervan.novaeva.model.asDatabaseModel
 import hr.bpervan.novaeva.services.NovaEvaService
 import hr.bpervan.novaeva.utilities.ConnectionChecker
-import hr.bpervan.novaeva.model.EvaCategory
-import hr.bpervan.novaeva.utilities.LoadableFromBundle
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
@@ -32,13 +28,15 @@ import kotlinx.android.synthetic.*
 import kotlinx.android.synthetic.main.activity_search.*
 import kotlinx.android.synthetic.main.eva_recycler_view.view.*
 import kotlinx.android.synthetic.main.simple_fake_action_bar.view.*
+import java.util.*
+import java.util.concurrent.TimeUnit
 
-class SearchActivity : EvaBaseActivity(), OnClickListener, LoadableFromBundle {
+class SearchActivity : EvaBaseActivity(), OnClickListener {
 
     private val lifecycleBoundDisposables = CompositeDisposable()
     private var searchForContentDisposable: Disposable? = null
 
-    private val searchResultList = ArrayList<ContentInfo>()
+    private val searchResultList = ArrayList<EvaContentInfo>()
 
     private lateinit var adapter: EvaRecyclerAdapter
     private lateinit var searchString: String
@@ -46,11 +44,8 @@ class SearchActivity : EvaBaseActivity(), OnClickListener, LoadableFromBundle {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (savedInstanceState != null) {
-            loadStateFromBundle(savedInstanceState)
-        } else {
-            loadStateFromBundle(intent.extras)
-        }
+        val inState: Bundle = savedInstanceState ?: intent.extras
+        searchString = inState.getString("searchString")
 
         this.title = "Pretraga: " + searchString
 
@@ -76,10 +71,6 @@ class SearchActivity : EvaBaseActivity(), OnClickListener, LoadableFromBundle {
         if (ConnectionChecker.hasConnection(this)) {
             searchForContent(searchString)
         }
-    }
-
-    override fun loadStateFromBundle(bundle: Bundle) {
-        searchString = bundle.getString("searchString")
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -171,8 +162,12 @@ class SearchActivity : EvaBaseActivity(), OnClickListener, LoadableFromBundle {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ searchResult ->
-                    if (searchResult.searchResultContentInfoList != null && !searchResult.searchResultContentInfoList.isEmpty()) {
-                        searchResultList.addAll(searchResult.searchResultContentInfoList)
+                    if (searchResult.searchResultContentInfoList != null
+                            && !searchResult.searchResultContentInfoList.isEmpty()) {
+
+                        searchResultList.addAll(
+                                searchResult.searchResultContentInfoList.map { it.asDatabaseModel() })
+
                         adapter.notifyDataSetChanged()
                     } else {
                         showEmptyListInfo()

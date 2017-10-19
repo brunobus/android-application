@@ -62,13 +62,13 @@ class IzrekeActivity : EvaBaseActivity(), OnClickListener {
                     .getRandomDirectoryContent(1)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({ (_, _, _, _, _, _, contentInfoList) ->
-                        if (contentInfoList != null && !contentInfoList.isEmpty()) {
-                            val (_, contentId, _, title, text) = contentInfoList[0]
+                    .subscribe({ directoryContent ->
+                        if (directoryContent.contentInfoList != null && !directoryContent.contentInfoList.isEmpty()) {
+                            val contentInfo = directoryContent.contentInfoList[0]
 
-                            this.contentTitle = title
-                            contentData = text
-                            this.contentId = contentId
+                            this.contentTitle = contentInfo.title
+                            this.contentData = contentInfo.text
+                            this.contentId = contentInfo.contentId
 
                             tvNaslov.text = title
                             webText.loadDataWithBaseURL(null, contentData, "text/html", "UTF-8", "")

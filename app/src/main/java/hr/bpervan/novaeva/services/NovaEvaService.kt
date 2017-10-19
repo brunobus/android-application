@@ -13,28 +13,26 @@ import retrofit2.http.Query
  */
 
 interface NovaEvaService {
-
     @GET("json?api=2")
     fun getDirectoryContent(@Query("cid") directoryId: Long,
-                            @Query("date") date: String? = null): Single<DirectoryContent>
+                            @Query("date") date: String? = null): Single<EvaDirectoryContentListDTO>
 
     @GET("json?api=2&rand=1")
-    fun getRandomDirectoryContent(@Query("cid") directoryId: Long): Single<DirectoryContent>
+    fun getRandomDirectoryContent(@Query("cid") directoryId: Long): Single<EvaDirectoryContentListDTO>
 
     @GET("json?api=2")
-    fun getContentData(@Query("nid") contentId: Long): Single<ContentData>
+    fun getContentData(@Query("nid") contentId: Long): Single<EvaContentDataDTO>
 
     @GET("json?api=2")
-    fun getBreviary(@Query("brev") breviaryId: String): Single<Breviary>
+    fun getBreviary(@Query("brev") breviaryId: String): Single<EvaBreviaryDTO>
 
     @GET("json?api=2")
-    fun searchForContent(@Query("search") searchString: String): Single<SearchResult>
+    fun searchForContent(@Query("search") searchString: String): Single<EvaSearchResultDTO>
 
     @GET("json?api=2&indicators=1")
-    fun getNewStuff(): Single<Indicators>
+    fun getNewStuff(): Single<EvaIndicatorsDTO>
 
     companion object {
-
         val instance by lazy {
             create()
         }

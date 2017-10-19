@@ -13,9 +13,8 @@ import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.fragments.EvaRecyclerFragment
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.utilities.ConnectionChecker
 import hr.bpervan.novaeva.model.EvaCategory
-import hr.bpervan.novaeva.utilities.LoadableFromBundle
+import hr.bpervan.novaeva.utilities.ConnectionChecker
 import hr.bpervan.novaeva.utilities.ResourceHandler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -25,7 +24,7 @@ import kotlinx.android.synthetic.main.activity_lista_vijesti.*
 import kotlinx.android.synthetic.main.simple_fake_action_bar.view.*
 import java.util.concurrent.TimeUnit
 
-class ListaVijestiActivity : EvaBaseActivity(), OnClickListener, LoadableFromBundle {
+class ListaVijestiActivity : EvaBaseActivity(), OnClickListener{
 
     private var categoryId = -1
     private lateinit var categoryName: String
@@ -38,11 +37,10 @@ class ListaVijestiActivity : EvaBaseActivity(), OnClickListener, LoadableFromBun
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lista_vijesti)
 
-        if (savedInstanceState != null) {
-            loadStateFromBundle(savedInstanceState)
-        } else {
-            loadStateFromBundle(intent.extras)
-        }
+        val inState: Bundle = savedInstanceState ?: intent.extras
+        categoryName = inState.getString("categoryName", "")
+        categoryId = inState.getInt("categoryId", 11)
+        colourSet = inState.getInt("colourSet", categoryId)
 
         //mGaTracker = mGaInstance.getTracker("UA-40344870-1");
         val mGaTracker = (application as NovaEvaApp).getTracker(NovaEvaApp.TrackerName.APP_TRACKER)
@@ -68,12 +66,6 @@ class ListaVijestiActivity : EvaBaseActivity(), OnClickListener, LoadableFromBun
         } else {
             /*fragment backstack already exists and fragments will be restored*/
         }
-    }
-
-    override fun loadStateFromBundle(bundle: Bundle) {
-        categoryName = bundle.getString("categoryName", "")
-        categoryId = bundle.getInt("categoryId", 11)
-        colourSet = bundle.getInt("colourSet", categoryId)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -190,17 +182,17 @@ class ListaVijestiActivity : EvaBaseActivity(), OnClickListener, LoadableFromBun
                 .throttleFirst(500, TimeUnit.MILLISECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { (directoryId, title) ->
-                    showFragmentForDirectory(directoryId, title ?: "", true)
+                .subscribe { directoryInfo ->
+                    showFragmentForDirectory(directoryInfo.directoryId, directoryInfo.title ?: "", true)
                 })
 
         lifecycleBoundDisposables.add(NovaEvaApp.bus.contentOpenRequest
                 .throttleFirst(500, TimeUnit.MILLISECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { (_, contentId) ->
+                .subscribe { contentInfo ->
                     val i: Intent = Intent(this@ListaVijestiActivity, VijestActivity::class.java)
-                    i.putExtra("contentId", contentId)
+                    i.putExtra("contentId", contentInfo.contentId)
                     i.putExtra("colourSet", colourSet)
                     i.putExtra("categoryId", categoryId)
                     startActivity(i)

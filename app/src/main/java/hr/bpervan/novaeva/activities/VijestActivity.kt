@@ -28,20 +28,23 @@ import com.google.android.gms.analytics.HitBuilders
 import com.google.android.gms.analytics.Tracker
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.ContentData
+import hr.bpervan.novaeva.model.EvaContentDataDTO
 import hr.bpervan.novaeva.model.EvaCategory
+import hr.bpervan.novaeva.model.EvaContentInfo
 import hr.bpervan.novaeva.services.BackgroundPlayerService
 import hr.bpervan.novaeva.services.NovaEvaService
+import hr.bpervan.novaeva.storage.EvaBookmarkDbAdapter
+import hr.bpervan.novaeva.storage.RealmConfigProvider
 import hr.bpervan.novaeva.utilities.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import io.realm.Realm
 import kotlinx.android.synthetic.*
 import kotlinx.android.synthetic.main.activity_vijest.*
 import kotlinx.android.synthetic.main.vijest_fake_action_bar.view.*
 
-class VijestActivity : EvaBaseActivity(), View.OnClickListener,
-        SeekBar.OnSeekBarChangeListener, LoadableFromBundle {
+class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBarChangeListener {
     /** ------------------------------------------FIELDS------------------------------------------ */
 
     /**
@@ -57,14 +60,9 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener,
     private lateinit var mGaTracker: Tracker
 
     /**
-     * Database handler for bookmarks, resource handler for category colours
-     */
-    private lateinit var dbHandler: BookmarksDBHandlerV2
-
-    /**
      * Retrofit
      */
-    private var thisContentData: ContentData? = null
+    private var thisContentData: EvaContentDataDTO? = null
 
     /**
      * Exoplayer
@@ -74,13 +72,9 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener,
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        dbHandler = BookmarksDBHandlerV2(this)
-
-        if (savedInstanceState != null) {
-            loadStateFromBundle(savedInstanceState)
-        } else {
-            loadStateFromBundle(intent.extras)
-        }
+        val inState = savedInstanceState ?: intent.extras
+        contentId = inState.getLong("contentId", -1)
+        colourSet = inState.getInt("colourSet", EvaCategory.PROPOVIJEDI.id)
 
         startService(Intent(this, BackgroundPlayerService::class.java)) //todo
 
@@ -101,11 +95,6 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener,
             Toast.makeText(this, "Internetska veza nije dostupna", Toast.LENGTH_SHORT).show()
             return
         }
-    }
-
-    override fun loadStateFromBundle(bundle: Bundle) {
-        contentId = bundle.getLong("contentId", -1)
-        colourSet = bundle.getInt("colourSet", EvaCategory.PROPOVIJEDI.id)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -171,21 +160,21 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener,
         /** Lets try displaying news using WebView  */
 
         thisContentData?.let { contentData ->
-            tvNaslov.text = contentData.naslov
+            tvNaslov.text = contentData.title
 
             //if not null
             if (contentData.hasImage()) {
                 if (headerImage != null) {
-                    imageLoader.displayImage(contentData.image!![0].size640, headerImage, ImageLoaderConfigurator.createDefaultDisplayImageOptions(false))
+                    imageLoader.displayImage(contentData.images!![0].size640, headerImage, ImageLoaderConfigurator.createDefaultDisplayImageOptions(false))
                 }
             } else {
-                val url = prefs.getString("hr.bpervan.novaeva.categoryheader." + contentData.cid, null)
+                val url = prefs.getString("hr.bpervan.novaeva.categoryheader." + contentData.directoryId, null)
                 if (url != null && headerImage != null) {
                     imageLoader.displayImage(url, headerImage, ImageLoaderConfigurator.createDefaultDisplayImageOptions(true))
                 }
             }
             vijestWebView.reload()
-            vijestWebView.loadDataWithBaseURL(null, contentData.tekst, "text/html", "utf-8", null)
+            vijestWebView.loadDataWithBaseURL(null, contentData.text, "text/html", "utf-8", null)
 
             if (contentData.audio != null) {
                 imgMp3.setImageResource(R.drawable.vijest_ind_mp3_active)
@@ -194,7 +183,7 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener,
                 imgLink.setImageResource(R.drawable.vijest_ind_www_active)
                 imgLink.setOnClickListener(this)
             }
-            if (contentData.prilozi != null) {
+            if (contentData.attachments != null) {
                 imgText.setImageResource(R.drawable.vijest_ind_txt_active)
                 imgText.setOnClickListener(this)
             }
@@ -204,7 +193,7 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener,
         vijestWebView.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
                 view.reload()
-                view.loadDataWithBaseURL(null, thisContentData!!.tekst, "text/html", "utf-8", null)
+                view.loadDataWithBaseURL(null, thisContentData!!.text, "text/html", "utf-8", null)
                 return false
             }
         }
@@ -262,10 +251,7 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener,
             		(int) (mPlayer.getCurrentPosition() / 1000) % 60,
             		(int) ((mPlayer.getCurrentPosition() / (1000 * 60)) % 60)));
 		}*/
-
-        if (dbHandler.nidExists(contentId.toInt())) //todo accept long
-            fakeActionBar.btnBookmark.setImageResource(R.drawable.action_button_bookmarked)
-
+        fakeActionBar.btnBookmark.setImageResource(R.drawable.action_button_bookmark)
         window.decorView.setBackgroundResource(android.R.color.background_light)
     }
 
@@ -288,7 +274,7 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener,
                         createPlayer()
                         streamAudio(contentData.audio)
                     }
-                    if (contentData.prilozi != null) {
+                    if (contentData.attachments != null) {
                         imgText.setImageResource(R.drawable.vijest_ind_txt_active)
                         imgText.setOnClickListener(this@VijestActivity)
                     }
@@ -299,22 +285,22 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener,
 
                     if (contentData.hasImage()) {
                         if (headerImage != null) {
-                            imageLoader.displayImage(contentData.image!![0].size640, headerImage, ImageLoaderConfigurator.createDefaultDisplayImageOptions(false))
+                            imageLoader.displayImage(contentData.images!![0].size640, headerImage, ImageLoaderConfigurator.createDefaultDisplayImageOptions(false))
                         }
                     } else {
-                        val url = prefs.getString("hr.bpervan.novaeva.categoryheader." + contentData.cid, null)
+                        val url = prefs.getString("hr.bpervan.novaeva.categoryheader." + contentData.directoryId, null)
                         if (url != null && headerImage != null) {
                             imageLoader.displayImage(url, headerImage, ImageLoaderConfigurator.createDefaultDisplayImageOptions(true))
                         }
                     }
-                    if (contentData.cid == EvaCategory.POZIV.id) {
+                    if (contentData.directoryId == EvaCategory.POZIV.id.toLong()) {
                         setQuestionButton()
                     }
 
-                    tvNaslov.text = contentData.naslov
+                    tvNaslov.text = contentData.title
                     loadingCircle.visibility = View.GONE
                     vijestWebView.reload()
-                    vijestWebView.loadDataWithBaseURL(null, contentData.tekst, "text/html", "UTF-8", null)
+                    vijestWebView.loadDataWithBaseURL(null, contentData.text, "text/html", "UTF-8", null)
 
                     thisContentData = contentData
 
@@ -391,7 +377,7 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener,
                     val messageIntent = Intent(this@VijestActivity, BackgroundPlayerService::class.java)
                     messageIntent.putExtra(BackgroundPlayerService.KEY_DIRECTIVE, BackgroundPlayerService.DIRECTIVE_SET_SOURCE_PLAY)
                     messageIntent.putExtra(BackgroundPlayerService.KEY_PATH, thisContentData!!.audio)
-                    messageIntent.putExtra(BackgroundPlayerService.KEY_TITLE, thisContentData!!.naslov)
+                    messageIntent.putExtra(BackgroundPlayerService.KEY_TITLE, thisContentData!!.title)
                     startService(messageIntent)
                     btnPlay.visibility = View.INVISIBLE
                     btnPause.visibility = View.VISIBLE
@@ -420,14 +406,22 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener,
                 if (ConnectionChecker.hasConnection(this))
                     showSearchPopup()
             R.id.btnBookmark ->
-                if (dbHandler.nidExists(contentId.toInt())) { //todo accept long
-                    dbHandler.deleteVijest(contentId.toInt()) //todo accept long
-                    fakeActionBar.btnBookmark.setImageResource(R.drawable.action_button_bookmark)
-                } else {
-                    if (thisContentData != null) {
-                        dbHandler.insertArticle(thisContentData)
-                        fakeActionBar.btnBookmark.setImageResource(R.drawable.action_button_bookmarked)
+                if (thisContentData != null) {
+                    val contentData = thisContentData!!
+
+                    Realm.getInstance(RealmConfigProvider.bookmarksConfig).use { realm ->
+
+                        //todo use db to fetch contentInfo
+                        val evaContentInfo = EvaContentInfo(
+                                contentId = contentData.contentId,
+                                datetime = contentData.datetime,
+                                title = contentData.title,
+                                preview = "")
+                        EvaBookmarkDbAdapter.storeBookmarkAsync(realm, evaContentInfo)
                     }
+                    fakeActionBar.btnBookmark.setImageResource(R.drawable.action_button_bookmarked)
+                } else {
+                    //todo
                 }
             R.id.btnShare -> {
                 val faceIntent = Intent(Intent.ACTION_SEND)
@@ -438,7 +432,7 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener,
             R.id.btnMail -> {
                 val mailIntent = Intent(Intent.ACTION_SEND)
                 mailIntent.type = "message/rfc822"
-                mailIntent.putExtra(Intent.EXTRA_SUBJECT, thisContentData!!.naslov)
+                mailIntent.putExtra(Intent.EXTRA_SUBJECT, thisContentData!!.title)
                 mailIntent.putExtra(Intent.EXTRA_TEXT, "http://novaeva.com/node/$contentId")
                 startActivity(Intent.createChooser(mailIntent, "Odaberite aplikaciju"))
             }
@@ -456,9 +450,9 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener,
             R.id.imgLink -> if (thisContentData!!.youtube != null) {
                 startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(thisContentData!!.youtube)))
             }
-            R.id.imgText -> if (thisContentData!!.prilozi != null) {
-                startActivity(Intent.createChooser(Intent(Intent.ACTION_VIEW, Uri.parse(thisContentData!!.prilozi!![0].url)),
-                        "Otvaranje dokumenta " + thisContentData!!.prilozi!![0].naziv))
+            R.id.imgText -> if (thisContentData!!.attachments != null) {
+                startActivity(Intent.createChooser(Intent(Intent.ACTION_VIEW, Uri.parse(thisContentData!!.attachments!![0].url)),
+                        "Otvaranje dokumenta " + thisContentData!!.attachments!![0].naziv))
             }
         }
     }

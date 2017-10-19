@@ -13,12 +13,14 @@ import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.ContentInfo
-import hr.bpervan.novaeva.utilities.BookmarksDBHandlerV2
+import hr.bpervan.novaeva.model.EvaContentInfo
 import hr.bpervan.novaeva.model.EvaCategory
+import hr.bpervan.novaeva.storage.RealmConfigProvider
+import hr.bpervan.novaeva.storage.EvaBookmarkDbAdapter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import io.realm.Realm
 import kotlinx.android.synthetic.*
 import kotlinx.android.synthetic.main.activity_bookmarks.*
 import kotlinx.android.synthetic.main.eva_recycler_view.view.*
@@ -30,9 +32,9 @@ class BookmarksActivity : EvaBaseActivity(), View.OnClickListener {
 
     private val lifecycleBoundDisposables = CompositeDisposable()
 
-    private var db = BookmarksDBHandlerV2(this)
+    private lateinit var bookmarksRealm: Realm
     private lateinit var adapter: EvaRecyclerAdapter
-    private var bookmarksList: MutableList<ContentInfo> = ArrayList()
+    private var bookmarksList: MutableList<EvaContentInfo> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,13 +50,19 @@ class BookmarksActivity : EvaBaseActivity(), View.OnClickListener {
         )
         //mGaTracker.sendEvent("Zabiljeske", "OtvoreneZabiljeske", "", null);
         //initUI();
-        //pokupiVijestiIzBaze();
+        //reloadBookmarksFromDb();
 
         val configData = EvaRecyclerAdapter.ConfigData(EvaCategory.PROPOVIJEDI.id)
 
+        bookmarksRealm = Realm.getInstance(RealmConfigProvider.bookmarksConfig)
         adapter = EvaRecyclerAdapter(bookmarksList, configData, null)
 
         initUI()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        bookmarksRealm.close()
     }
 
     private fun initUI() {
@@ -77,20 +85,13 @@ class BookmarksActivity : EvaBaseActivity(), View.OnClickListener {
         evaRecyclerView.evaRecyclerView.itemAnimator = DefaultItemAnimator()
     }
 
-    //TODO DONT USE ListElement ANYMORE
-    private fun pokupiVijestiIzBaze() {
-        val bookmarkList_legacy = db.allVijest
-
-        if (bookmarkList_legacy.isEmpty()) {
-            showEmptyListInfo()
+    private fun reloadBookmarksFromDb() {
+        bookmarksList.clear()
+        EvaBookmarkDbAdapter.loadEvaBookmarksAsync(bookmarksRealm) {
+            bookmarksList.clear()
+            bookmarksList.addAll(it)
+            adapter.notifyDataSetChanged()
         }
-
-        Collections.reverse(bookmarkList_legacy)
-
-        for (listElement in bookmarkList_legacy) {
-            bookmarksList.add(ContentInfo(null, listElement.nid.toLong(), listElement.unixDatum, listElement.naslov, listElement.uvod))
-        }
-        adapter.notifyDataSetChanged()
     }
 
     private fun showEmptyListInfo() {
@@ -106,16 +107,15 @@ class BookmarksActivity : EvaBaseActivity(), View.OnClickListener {
     override fun onResume() {
         super.onResume()
         bookmarksList.clear()
-        pokupiVijestiIzBaze()
+        reloadBookmarksFromDb()
 
         lifecycleBoundDisposables.add(NovaEvaApp.bus.contentOpenRequest
                 .throttleFirst(500, TimeUnit.MILLISECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { (_, contentId) ->
-                    val i: Intent
-                    i = Intent(this@BookmarksActivity, VijestActivity::class.java)
-                    i.putExtra("contentId", contentId)
+                .subscribe { contentInfo ->
+                    val i = Intent(this@BookmarksActivity, VijestActivity::class.java)
+                    i.putExtra("contentId", contentInfo.contentId)
                     startActivity(i)
                 })
     }

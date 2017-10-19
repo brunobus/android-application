@@ -1,11 +1,9 @@
 package hr.bpervan.novaeva
 
-import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.graphics.Typeface
-import android.os.Bundle
 import android.util.Log
 
 import com.google.android.gms.analytics.GoogleAnalytics
@@ -20,16 +18,17 @@ import hr.bpervan.novaeva.main.BuildConfig
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.utilities.ImageLoaderConfigurator
 import hr.bpervan.novaeva.utilities.LifecycleLogger
+import io.realm.Realm
 
 /**
  * Created by Branimir on 17.1.2015..
  */
 class NovaEvaApp : Application() {
-    private var mTrackers: MutableMap<TrackerName, Tracker> = HashMap()
+    private var trackers: MutableMap<TrackerName, Tracker> = HashMap()
 
     @Synchronized
     fun getTracker(trackerId: TrackerName): Tracker {
-        if (!mTrackers.containsKey(trackerId)) {
+        if (!trackers.containsKey(trackerId)) {
             val analytics = GoogleAnalytics.getInstance(this)
             analytics.logger.logLevel = Logger.LogLevel.VERBOSE
 
@@ -39,9 +38,9 @@ class NovaEvaApp : Application() {
             }
 
             t.enableAdvertisingIdCollection(false)
-            mTrackers.put(trackerId, t)
+            trackers.put(trackerId, t)
         }
-        return mTrackers[trackerId]!!
+        return trackers[trackerId]!!
     }
 
     enum class TrackerName {
@@ -54,10 +53,12 @@ class NovaEvaApp : Application() {
 
         instance = this
 
+
         if (BuildConfig.DEBUG) {
             registerActivityLifecycleCallbacks(LifecycleLogger())
         }
 
+        Realm.init(this)
         ImageLoaderConfigurator.doInit(this)
     }
 

@@ -69,7 +69,7 @@ class MolitvenikActivity : ListActivity(), OnClickListener {
             //mGaTracker.sendEvent("Molitvenik", "OtvorenaMolitva", String.valueOf(position), null);
             val intent = Intent(this@MolitvenikActivity, MolitvenikDetaljiActivity::class.java)
             intent.putExtra("id", position.toString())
-            intent.putExtra("naslov", mainContentList[position])
+            intent.putExtra("title", mainContentList[position])
             startActivity(intent)
         }
     }
