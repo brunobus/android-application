@@ -14,7 +14,6 @@ import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.EvaContentInfoDTO
 import hr.bpervan.novaeva.model.EvaCategory
 import hr.bpervan.novaeva.model.EvaContentInfo
 import hr.bpervan.novaeva.model.asDatabaseModel
@@ -162,11 +161,11 @@ class SearchActivity : EvaBaseActivity(), OnClickListener {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ searchResult ->
-                    if (searchResult.searchResultContentInfoList != null
-                            && !searchResult.searchResultContentInfoList.isEmpty()) {
+                    if (searchResult.searchResultContentMetadataList != null
+                            && !searchResult.searchResultContentMetadataList.isEmpty()) {
 
                         searchResultList.addAll(
-                                searchResult.searchResultContentInfoList.map { it.asDatabaseModel() })
+                                searchResult.searchResultContentMetadataList.map { it.asDatabaseModel() })
 
                         adapter.notifyDataSetChanged()
                     } else {

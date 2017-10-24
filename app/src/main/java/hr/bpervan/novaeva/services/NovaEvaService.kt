@@ -21,7 +21,7 @@ interface NovaEvaService {
     fun getRandomDirectoryContent(@Query("cid") directoryId: Long): Single<EvaDirectoryContentListDTO>
 
     @GET("json?api=2")
-    fun getContentData(@Query("nid") contentId: Long): Single<EvaContentDataDTO>
+    fun getContentData(@Query("nid") contentId: Long): Single<EvaContentDTO>
 
     @GET("json?api=2")
     fun getBreviary(@Query("brev") breviaryId: String): Single<EvaBreviaryDTO>

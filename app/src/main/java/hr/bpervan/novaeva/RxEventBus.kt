@@ -1,9 +1,7 @@
 package hr.bpervan.novaeva
 
 import hr.bpervan.novaeva.model.EvaContentInfo
-import hr.bpervan.novaeva.model.EvaContentInfoDTO
 import hr.bpervan.novaeva.model.EvaDirectoryInfo
-import hr.bpervan.novaeva.model.EvaDirectoryInfoDTO
 import io.reactivex.subjects.PublishSubject
 
 /**

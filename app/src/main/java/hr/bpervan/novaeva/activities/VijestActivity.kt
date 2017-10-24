@@ -28,7 +28,7 @@ import com.google.android.gms.analytics.HitBuilders
 import com.google.android.gms.analytics.Tracker
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.EvaContentDataDTO
+import hr.bpervan.novaeva.model.EvaContentDTO
 import hr.bpervan.novaeva.model.EvaCategory
 import hr.bpervan.novaeva.model.EvaContentInfo
 import hr.bpervan.novaeva.services.BackgroundPlayerService
@@ -62,7 +62,7 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
     /**
      * Retrofit
      */
-    private var thisContentData: EvaContentDataDTO? = null
+    private var thisContent: EvaContentDTO? = null
 
     /**
      * Exoplayer
@@ -151,7 +151,7 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
             tvNaslov.typeface = it
         }
 
-        if (thisContentData == null) {
+        if (thisContent == null) {
             loadingCircle.visibility = View.VISIBLE
         } else {
             loadingCircle.visibility = View.GONE
@@ -159,7 +159,7 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
 
         /** Lets try displaying news using WebView  */
 
-        thisContentData?.let { contentData ->
+        thisContent?.let { contentData ->
             tvNaslov.text = contentData.title
 
             //if not null
@@ -193,7 +193,7 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
         vijestWebView.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
                 view.reload()
-                view.loadDataWithBaseURL(null, thisContentData!!.text, "text/html", "utf-8", null)
+                view.loadDataWithBaseURL(null, thisContent!!.text, "text/html", "utf-8", null)
                 return false
             }
         }
@@ -302,7 +302,7 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
                     vijestWebView.reload()
                     vijestWebView.loadDataWithBaseURL(null, contentData.text, "text/html", "UTF-8", null)
 
-                    thisContentData = contentData
+                    thisContent = contentData
 
                 }) { t ->
                     showErrorPopup(t) {
@@ -376,8 +376,8 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
                 if (BackgroundPlayerService.isRunning) {
                     val messageIntent = Intent(this@VijestActivity, BackgroundPlayerService::class.java)
                     messageIntent.putExtra(BackgroundPlayerService.KEY_DIRECTIVE, BackgroundPlayerService.DIRECTIVE_SET_SOURCE_PLAY)
-                    messageIntent.putExtra(BackgroundPlayerService.KEY_PATH, thisContentData!!.audio)
-                    messageIntent.putExtra(BackgroundPlayerService.KEY_TITLE, thisContentData!!.title)
+                    messageIntent.putExtra(BackgroundPlayerService.KEY_PATH, thisContent!!.audio)
+                    messageIntent.putExtra(BackgroundPlayerService.KEY_TITLE, thisContent!!.title)
                     startService(messageIntent)
                     btnPlay.visibility = View.INVISIBLE
                     btnPause.visibility = View.VISIBLE
@@ -406,8 +406,8 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
                 if (ConnectionChecker.hasConnection(this))
                     showSearchPopup()
             R.id.btnBookmark ->
-                if (thisContentData != null) {
-                    val contentData = thisContentData!!
+                if (thisContent != null) {
+                    val contentData = thisContent!!
 
                     Realm.getInstance(RealmConfigProvider.bookmarksConfig).use { realm ->
 
@@ -432,7 +432,7 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
             R.id.btnMail -> {
                 val mailIntent = Intent(Intent.ACTION_SEND)
                 mailIntent.type = "message/rfc822"
-                mailIntent.putExtra(Intent.EXTRA_SUBJECT, thisContentData!!.title)
+                mailIntent.putExtra(Intent.EXTRA_SUBJECT, thisContent!!.title)
                 mailIntent.putExtra(Intent.EXTRA_TEXT, "http://novaeva.com/node/$contentId")
                 startActivity(Intent.createChooser(mailIntent, "Odaberite aplikaciju"))
             }
@@ -447,12 +447,12 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
                 vijestWebView.settings.defaultFontSize = mCurrentSize
             }
             R.id.btnBack -> this@VijestActivity.onBackPressed()
-            R.id.imgLink -> if (thisContentData!!.youtube != null) {
-                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(thisContentData!!.youtube)))
+            R.id.imgLink -> if (thisContent!!.youtube != null) {
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(thisContent!!.youtube)))
             }
-            R.id.imgText -> if (thisContentData!!.attachments != null) {
-                startActivity(Intent.createChooser(Intent(Intent.ACTION_VIEW, Uri.parse(thisContentData!!.attachments!![0].url)),
-                        "Otvaranje dokumenta " + thisContentData!!.attachments!![0].naziv))
+            R.id.imgText -> if (thisContent!!.attachments != null) {
+                startActivity(Intent.createChooser(Intent(Intent.ACTION_VIEW, Uri.parse(thisContent!!.attachments!![0].url)),
+                        "Otvaranje dokumenta " + thisContent!!.attachments!![0].naziv))
             }
         }
     }

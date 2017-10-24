@@ -63,8 +63,8 @@ class IzrekeActivity : EvaBaseActivity(), OnClickListener {
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({ directoryContent ->
-                        if (directoryContent.contentInfoList != null && !directoryContent.contentInfoList.isEmpty()) {
-                            val contentInfo = directoryContent.contentInfoList[0]
+                        if (directoryContent.contentMetadataList != null && !directoryContent.contentMetadataList.isEmpty()) {
+                            val contentInfo = directoryContent.contentMetadataList[0]
 
                             this.contentTitle = contentInfo.title
                             this.contentData = contentInfo.text

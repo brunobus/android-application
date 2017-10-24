@@ -19,7 +19,6 @@ import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaContentInfo
-import hr.bpervan.novaeva.model.EvaContentInfoDTO
 import hr.bpervan.novaeva.model.TreeElementInfo
 import hr.bpervan.novaeva.model.asDatabaseModel
 import hr.bpervan.novaeva.services.NovaEvaService
@@ -183,11 +182,11 @@ class EvaRecyclerFragment : Fragment() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ result ->
 
-                    if (result.contentInfoList != null) {
-                        elementsList.addAll(result.contentInfoList.map { it.asDatabaseModel() })
+                    if (result.contentMetadataList != null) {
+                        elementsList.addAll(result.contentMetadataList.map { it.asDatabaseModel() })
                     }
-                    if (result.subDirectoryInfoList != null) {
-                        elementsList.addAll(result.subDirectoryInfoList.map { it.asDatabaseModel() })
+                    if (result.subDirectoryMetadataList != null) {
+                        elementsList.addAll(result.subDirectoryMetadataList.map { it.asDatabaseModel() })
                     }
 
                     hasMore = result.more > 0
