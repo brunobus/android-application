@@ -30,7 +30,7 @@ import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaContentDTO
 import hr.bpervan.novaeva.model.EvaCategory
-import hr.bpervan.novaeva.model.EvaContentInfo
+import hr.bpervan.novaeva.model.EvaContentMetadata
 import hr.bpervan.novaeva.services.BackgroundPlayerService
 import hr.bpervan.novaeva.services.NovaEvaService
 import hr.bpervan.novaeva.storage.EvaBookmarkDbAdapter
@@ -412,10 +412,10 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
                     Realm.getInstance(RealmConfigProvider.bookmarksConfig).use { realm ->
 
                         //todo use db to fetch contentInfo
-                        val evaContentInfo = EvaContentInfo(
+                        val evaContentInfo = EvaContentMetadata(
                                 contentId = contentData.contentId,
-                                datetime = contentData.datetime,
-                                title = contentData.title,
+                                datetime = contentData.datetime ?: "",
+                                title = contentData.title ?: "",
                                 preview = "")
                         EvaBookmarkDbAdapter.storeBookmarkAsync(realm, evaContentInfo)
                     }

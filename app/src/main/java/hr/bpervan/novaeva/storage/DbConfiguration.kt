@@ -1,7 +1,7 @@
 package hr.bpervan.novaeva.storage
 
 import hr.bpervan.novaeva.model.EvaAttachmentsIndicator
-import hr.bpervan.novaeva.model.EvaContentInfo
+import hr.bpervan.novaeva.model.EvaContentMetadata
 import io.realm.RealmConfiguration
 import io.realm.annotations.RealmModule
 
@@ -9,7 +9,7 @@ import io.realm.annotations.RealmModule
  * Created by vpriscan on 19.10.17..
  */
 
-@RealmModule(classes = arrayOf(EvaContentInfo::class, EvaAttachmentsIndicator::class))
+@RealmModule(classes = arrayOf(EvaContentMetadata::class, EvaAttachmentsIndicator::class))
 class EvaBookmarksModule
 
 object RealmConfigProvider {

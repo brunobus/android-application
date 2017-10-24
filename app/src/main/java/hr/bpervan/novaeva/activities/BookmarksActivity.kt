@@ -13,7 +13,7 @@ import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.EvaContentInfo
+import hr.bpervan.novaeva.model.EvaContentMetadata
 import hr.bpervan.novaeva.model.EvaCategory
 import hr.bpervan.novaeva.storage.RealmConfigProvider
 import hr.bpervan.novaeva.storage.EvaBookmarkDbAdapter
@@ -34,7 +34,7 @@ class BookmarksActivity : EvaBaseActivity(), View.OnClickListener {
 
     private lateinit var bookmarksRealm: Realm
     private lateinit var adapter: EvaRecyclerAdapter
-    private var bookmarksList: MutableList<EvaContentInfo> = ArrayList()
+    private var bookmarksList: MutableList<EvaContentMetadata> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

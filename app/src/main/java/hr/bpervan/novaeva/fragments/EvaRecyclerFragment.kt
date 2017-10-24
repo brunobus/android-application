@@ -18,7 +18,7 @@ import android.widget.TextView
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.EvaContentInfo
+import hr.bpervan.novaeva.model.EvaContentMetadata
 import hr.bpervan.novaeva.model.TreeElementInfo
 import hr.bpervan.novaeva.model.asDatabaseModel
 import hr.bpervan.novaeva.services.NovaEvaService
@@ -138,8 +138,8 @@ class EvaRecyclerFragment : Fragment() {
 
                     /** Ako je zadnji u listi podkategorija, onda on nema UnixDatum, pa tražimo zadnji koji ima */
                     val zadnjiDatum = elementsList
-                            .filter { it is EvaContentInfo }
-                            .map { it as EvaContentInfo }
+                            .filter { it is EvaContentMetadata }
+                            .map { it as EvaContentMetadata }
                             .lastOrNull()
                             ?.datetime
 

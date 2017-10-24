@@ -15,7 +15,7 @@ import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaCategory
-import hr.bpervan.novaeva.model.EvaContentInfo
+import hr.bpervan.novaeva.model.EvaContentMetadata
 import hr.bpervan.novaeva.model.asDatabaseModel
 import hr.bpervan.novaeva.services.NovaEvaService
 import hr.bpervan.novaeva.utilities.ConnectionChecker
@@ -35,7 +35,7 @@ class SearchActivity : EvaBaseActivity(), OnClickListener {
     private val lifecycleBoundDisposables = CompositeDisposable()
     private var searchForContentDisposable: Disposable? = null
 
-    private val searchResultList = ArrayList<EvaContentInfo>()
+    private val searchResultList = ArrayList<EvaContentMetadata>()
 
     private lateinit var adapter: EvaRecyclerAdapter
     private lateinit var searchString: String

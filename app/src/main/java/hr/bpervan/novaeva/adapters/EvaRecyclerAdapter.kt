@@ -8,8 +8,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.EvaContentInfo
-import hr.bpervan.novaeva.model.EvaDirectoryInfo
+import hr.bpervan.novaeva.model.EvaContentMetadata
+import hr.bpervan.novaeva.model.EvaDirectoryMetadata
 import hr.bpervan.novaeva.model.TreeElementInfo
 import hr.bpervan.novaeva.utilities.ResourceHandler
 import kotlinx.android.synthetic.main.folder_row.view.*
@@ -39,13 +39,13 @@ class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
             when {
                 position == 0 -> HEADER_VIEW_TYPE
                 position == data.size + 1 -> PROGRESS_VIEW_TYPE
-                data[position - 1] is EvaContentInfo -> CONTENT_VIEW_TYPE
+                data[position - 1] is EvaContentMetadata -> CONTENT_VIEW_TYPE
                 else -> SUBDIRECTORY_VIEW_TYPE
             }
         } else {
             when {
                 position == data.size -> PROGRESS_VIEW_TYPE
-                data[position] is EvaContentInfo -> CONTENT_VIEW_TYPE
+                data[position] is EvaContentMetadata -> CONTENT_VIEW_TYPE
                 else -> SUBDIRECTORY_VIEW_TYPE
             }
         }
@@ -129,7 +129,7 @@ class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
         }
 
         override fun bindTo(t: Any) {
-            val directoryInfo = t as EvaDirectoryInfo
+            val directoryInfo = t as EvaDirectoryMetadata
 
             tvMapaNaslov.text = directoryInfo.title
 
@@ -172,7 +172,7 @@ class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
         }
 
         override fun bindTo(t: Any) {
-            val contentInfo = t as EvaContentInfo
+            val contentInfo = t as EvaContentMetadata
 
             //todo refactor and simplify this old code
 
