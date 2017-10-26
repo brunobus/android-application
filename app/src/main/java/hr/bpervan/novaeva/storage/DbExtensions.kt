@@ -14,9 +14,15 @@ fun handleError(throwable: Throwable) {
     Log.e("error", throwable.message, throwable)
 }
 
-fun <T : RealmObject> loadNullableOnceAsync(realm: Realm, tClazz: Class<T>, idField: String, id: Long, consumer: (T?) -> Unit) {
+fun <T : RealmObject> loadOne(realm: Realm, tClazz: Class<T>, field: String, value: Long): T? {
+    return realm.where(tClazz)
+            .equalTo(field, value)
+            .findFirst()
+}
+
+fun <T : RealmObject> loadOneAsync(realm: Realm, tClazz: Class<T>, field: String, value: Long, consumer: (T?) -> Unit) {
     realm.where(tClazz)
-            .equalTo(idField, id)
+            .equalTo(field, value)
             .findFirstAsync()
             .asFlowable<T>()
             .filter { it.isLoaded }
@@ -25,13 +31,9 @@ fun <T : RealmObject> loadNullableOnceAsync(realm: Realm, tClazz: Class<T>, idFi
             .subscribe({ if (it.isValid) consumer(it) else consumer(null) }, ::handleError)
 }
 
-fun <T : RealmObject> loadOnceAsync(realm: Realm, tClazz: Class<T>, idField: String, id: Long, consumer: (T) -> Unit) {
-    loadNullableOnceAsync(realm, tClazz, idField, id, { if (it != null) consumer(it) })
-}
-
-fun <T : RealmObject> subscribeToChangesAsync(realm: Realm, tClazz: Class<T>, idField: String, id: Long, consumer: (T) -> Unit): Disposable {
+fun <T : RealmObject> subscribeToUpdatesAsync(realm: Realm, tClazz: Class<T>, field: String, value: Long, consumer: (T) -> Unit): Disposable {
     return realm.where(tClazz)
-            .equalTo(idField, id)
+            .equalTo(field, value)
             .findFirstAsync()
             .asFlowable<T>()
             .filter { it.isLoaded && it.isValid }

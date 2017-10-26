@@ -49,11 +49,11 @@ class InfoActivity : EvaBaseActivity(), OnClickListener {
         val et = EditText(this)
         searchBuilder.setView(et)
 
-        searchBuilder.setPositiveButton("Pretrazi") { dialog, which ->
+        searchBuilder.setPositiveButton("Pretrazi") { _, _ ->
             val search = et.text.toString()
-            NovaEvaApp.goSearch(search, this@InfoActivity)
+            NovaEvaApp.goSearch(search, this)
         }
-        searchBuilder.setNegativeButton("Odustani") { dialog, whichButton -> }
+        searchBuilder.setNegativeButton("Odustani") { _, _ -> }
         searchBuilder.show()
     }
 }

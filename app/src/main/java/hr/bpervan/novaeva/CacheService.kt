@@ -11,20 +11,17 @@ import io.realm.Realm
 object CacheService {
 
     fun cache(realm: Realm, evaContentDTO: EvaContentDTO) {
-        EvaContentDbAdapter.loadEvaContentMetadataAsync(realm, evaContentDTO.contentId, { contentMetadata ->
-            val evaContent = evaContentDTO.toDatabaseModel(contentMetadata)
-            EvaContentDbAdapter.storeEvaContent(realm, evaContent)
-        })
+        EvaContentDbAdapter.addOrUpdateEvaContent(realm, evaContentDTO.toDatabaseModel())
     }
 
     fun cache(realm: Realm, evaDirectoryDTO: EvaDirectoryDTO, directoryId: Long) {
-        val contentMetadataList: List<EvaContentMetadata> =
-                evaDirectoryDTO.contentMetadataList?.map { it.toDatabaseModel() } ?: listOf()
-
-        val subDirectoryMetadataList: List<EvaDirectoryMetadata> =
-                evaDirectoryDTO.subDirectoryMetadataList?.map { it.toDatabaseModel() } ?: listOf()
 
         EvaDirectoryDbAdapter.updateIfExistsEvaDirectoryAsync(realm, directoryId,
-                contentMetadataList, subDirectoryMetadataList)
+                newContentMetadataSupplier = {
+                    evaDirectoryDTO.contentMetadataList?.map { it.toDatabaseModel() } ?: listOf()
+                },
+                newSubDirectoryMetadataSupplier = {
+                    evaDirectoryDTO.subDirectoryMetadataList?.map { it.toDatabaseModel() } ?: listOf()
+                })
     }
 }

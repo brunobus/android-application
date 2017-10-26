@@ -65,7 +65,7 @@ class MolitvenikActivity : ListActivity(), OnClickListener {
 
         mainListView.adapter = MolitvenikAdapter(this, mainContentList)
 
-        mainListView.onItemClickListener = OnItemClickListener { arg0, arg1, position, id ->
+        mainListView.onItemClickListener = OnItemClickListener { _, _, position, _ ->
             //mGaTracker.sendEvent("Molitvenik", "OtvorenaMolitva", String.valueOf(position), null);
             val intent = Intent(this@MolitvenikActivity, MolitvenikDetaljiActivity::class.java)
             intent.putExtra("id", position.toString())

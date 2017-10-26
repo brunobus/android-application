@@ -1,10 +1,16 @@
 package hr.bpervan.novaeva
 
+import android.app.Activity
+import android.app.AlertDialog
 import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.graphics.Typeface
+import android.support.design.widget.Snackbar
 import android.util.Log
+import android.util.TypedValue
+import android.view.View
+import android.widget.TextView
 
 import com.google.android.gms.analytics.GoogleAnalytics
 import com.google.android.gms.analytics.Logger
@@ -105,6 +111,31 @@ class NovaEvaApp : Application() {
             i.putExtra("searchString", searchString)
             i.flags = Intent.FLAG_ACTIVITY_NO_HISTORY
             context.startActivity(i)
+        }
+
+        fun showErrorSnackbar(throwable: Throwable, context: Context, holderView: View?) {
+            Log.e("evaError", throwable.message, throwable)
+
+            holderView?.let { Snackbar.make(it, context.getString(R.string.error_fetching_data), Snackbar.LENGTH_LONG).show() }
+        }
+
+        inline fun showErrorPopupDialog(throwable: Throwable, context: Activity, crossinline onTryAgain: () -> Unit) {
+            Log.e("evaError", throwable.message, throwable)
+
+            val error = AlertDialog.Builder(context)
+            error.setTitle(context.getString(R.string.error))
+
+            val tv = TextView(context)
+            tv.text = context.getString(R.string.error_fetching_data)
+
+            NovaEvaApp.openSansRegular?.let { tv.typeface = it }
+
+            tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
+            error.setView(tv)
+
+            error.setPositiveButton(context.getString(R.string.try_again)) { _, _ -> onTryAgain() }
+            error.setNegativeButton(context.getString(R.string.go_back)) { _, _ -> NovaEvaApp.goHome(context) }
+            error.show()
         }
     }
 }

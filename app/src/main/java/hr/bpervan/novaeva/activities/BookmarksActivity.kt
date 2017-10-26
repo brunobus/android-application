@@ -99,7 +99,7 @@ class BookmarksActivity : EvaBaseActivity(), View.OnClickListener {
         emptyInfo.setTitle("Zabilješke")
         emptyInfo.setMessage("Trenutno nemate zabilješki")
 
-        emptyInfo.setPositiveButton("U redu") { dialog, which -> this@BookmarksActivity.onBackPressed() }
+        emptyInfo.setPositiveButton("U redu") { _, _ -> this.onBackPressed() }
 
         emptyInfo.show()
     }
@@ -114,7 +114,7 @@ class BookmarksActivity : EvaBaseActivity(), View.OnClickListener {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { contentInfo ->
-                    val i = Intent(this@BookmarksActivity, VijestActivity::class.java)
+                    val i = Intent(this, VijestActivity::class.java)
                     i.putExtra("contentId", contentInfo.contentId)
                     startActivity(i)
                 })
@@ -157,15 +157,15 @@ class BookmarksActivity : EvaBaseActivity(), View.OnClickListener {
     }
 
     private fun showSearchPopup() {
-        val search = AlertDialog.Builder(this)
-        search.setTitle("Pretraga")
+        val searchBuilder = AlertDialog.Builder(this)
+        searchBuilder.setTitle("Pretraga")
         val et = EditText(this)
-        search.setView(et)
-        search.setPositiveButton("Pretrazi") { dialog, which ->
+        searchBuilder.setView(et)
+        searchBuilder.setPositiveButton("Pretrazi") { _, _ ->
             val search = et.text.toString()
-            NovaEvaApp.goSearch(search, this@BookmarksActivity)
+            NovaEvaApp.goSearch(search, this)
         }
-        search.setNegativeButton("Odustani") { dialog, whichButton -> }
-        search.show()
+        searchBuilder.setNegativeButton("Odustani") { dialog, whichButton -> }
+        searchBuilder.show()
     }
 }

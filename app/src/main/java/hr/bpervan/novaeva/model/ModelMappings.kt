@@ -19,8 +19,8 @@ fun EvaImageDTO.toDatabaseModel(): EvaImage = EvaImage(timestamp = timestamp) //
 
 fun EvaAttachmentDTO.toDatabaseModel(): EvaAttachment = EvaAttachment(naziv ?: "", url ?: "")
 
-fun EvaContentDTO.toDatabaseModel(contentMetadata: EvaContentMetadata): EvaContent {
+fun EvaContentDTO.toDatabaseModel(): EvaContent {
     val attachmentsDb = attachments?.map { it.toDatabaseModel() }?.toTypedArray() ?: arrayOf()
     val imagesDb = images?.get(0)?.toDatabaseModel()
-    return EvaContent(contentId, contentMetadata, text ?: "", null, RealmList(*attachmentsDb), imagesDb, youtube, audio)
+    return EvaContent(contentId, null, text ?: "", null, RealmList(*attachmentsDb), imagesDb, youtube, audio)
 }

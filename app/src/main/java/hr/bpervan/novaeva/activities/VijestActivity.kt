@@ -39,6 +39,7 @@ import hr.bpervan.novaeva.utilities.*
 import io.reactivex.disposables.Disposable
 import io.realm.Realm
 import kotlinx.android.synthetic.*
+import kotlinx.android.synthetic.main.activity_brevijar_detalji.*
 import kotlinx.android.synthetic.main.activity_vijest.*
 import kotlinx.android.synthetic.main.vijest_fake_action_bar.view.*
 
@@ -101,7 +102,7 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
 
     private fun subscribeToEvaContentChanges() {
         evaContentChangesDisposable?.dispose()
-        evaContentChangesDisposable = EvaContentDbAdapter.subscribeToEvaContentChangesAsync(realm, contentId, { evaContent ->
+        evaContentChangesDisposable = EvaContentDbAdapter.subscribeToEvaContentUpdatesAsync(realm, contentId, { evaContent ->
             tvNaslov.text = evaContent.contentMetadata!!.title
 
             //if not null
@@ -267,11 +268,9 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
                 .getContentData(contentId)
                 .subscribeAsync({ contentDataDTO ->
                     CacheService.cache(realm, contentDataDTO)
-                }, { t ->
-                    showErrorPopup(t) {
-                        fetchContentFromServer(contentId)
-                    }
-                })
+                }) {
+                    NovaEvaApp.showErrorSnackbar(it, this, webView)
+                }
     }
 
     override fun onResume() {
@@ -429,9 +428,9 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
         searchBuilder.setTitle("Pretraga")
         val et = EditText(this)
         searchBuilder.setView(et)
-        searchBuilder.setPositiveButton("Pretraži") { dialog, which ->
+        searchBuilder.setPositiveButton("Pretraži") { _, _ ->
             val search = et.text.toString()
-            NovaEvaApp.goSearch(search, this@VijestActivity)
+            NovaEvaApp.goSearch(search, this)
         }
         searchBuilder.setNegativeButton("Odustani") { dialog, whichButton -> }
         searchBuilder.show()
@@ -439,7 +438,7 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
 
     private fun setQuestionButton() {
         btnPoziv.visibility = View.VISIBLE
-        btnPoziv.setOnClickListener(this@VijestActivity)
+        btnPoziv.setOnClickListener(this)
     }
 
     override fun onProgressChanged(seekArc: SeekBar, progress: Int,

@@ -68,10 +68,8 @@ class IzrekeActivity : EvaBaseActivity(), OnClickListener {
                             tvNaslov.text = title
                             webText.loadDataWithBaseURL(null, contentData, "text/html", "UTF-8", "")
                         }
-                    }) { t ->
-                        showErrorPopup(t) {
-                            loadRandomIzreka()
-                        }
+                    }) {
+                        NovaEvaApp.showErrorPopupDialog(it, this) { loadRandomIzreka() }
                     }
         } else {
             Toast.makeText(this, "Internetska veza nije dostupna", Toast.LENGTH_SHORT).show()
@@ -106,7 +104,7 @@ class IzrekeActivity : EvaBaseActivity(), OnClickListener {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        this?.clearFindViewByIdCache()
+        this?.clearFindViewByIdCache() // due to a bug in viewbinding library you must use null safe access!!
         initUI()
     }
 
@@ -168,7 +166,7 @@ class IzrekeActivity : EvaBaseActivity(), OnClickListener {
         val et = EditText(this)
         searchBuilder.setView(et)
 
-        searchBuilder.setPositiveButton("Pretrazi") { dialog, which ->
+        searchBuilder.setPositiveButton("Pretrazi") { _, _ ->
             val search = et.text.toString()
             NovaEvaApp.goSearch(search, this@IzrekeActivity)
         }

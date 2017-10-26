@@ -1,11 +1,8 @@
 package hr.bpervan.novaeva.activities
 
-import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
-import android.util.TypedValue
 import android.view.Menu
-import android.widget.TextView
 import android.widget.Toast
 import com.google.android.gms.analytics.GoogleAnalytics
 import com.google.android.gms.analytics.HitBuilders
@@ -108,11 +105,9 @@ class BreviaryContentActivity : EvaBaseActivity() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ breviary ->
                     webView.loadDataWithBaseURL(null, breviary.text, "text/html", "utf-8", "")
-                }, { t ->
-                    showErrorPopup(t) {
-                        loadBreviary()
-                    }
-                })
+                }) {
+                    NovaEvaApp.showErrorPopupDialog(it, this) { loadBreviary() }
+                }
     }
 
     override fun onDestroy() {

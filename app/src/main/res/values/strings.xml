@@ -43,7 +43,7 @@
     <string name="title_activity_vijest">Vijest</string>
     <string name="directory_identifier">MAPA:</string>
     <string name="introduction_identifier">Uvod:</string>
-    <string name="error_fetching_data">Greška pri dohvaćanju podataka sa poslužitelja</string>
+    <string name="error_fetching_data">Nije moguće dohvatiti najnovije podatke</string>
     <string name="try_again">Pokušaj ponovno</string>
     <string name="go_back">Povratak</string>
     <string name="error">Greška</string>

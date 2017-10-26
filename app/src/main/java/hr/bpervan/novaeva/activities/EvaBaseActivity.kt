@@ -1,12 +1,15 @@
 package hr.bpervan.novaeva.activities
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.util.TypedValue
+import android.view.View
 import android.widget.TextView
 import com.nostra13.universalimageloader.core.ImageLoader
 import hr.bpervan.novaeva.NovaEvaApp
@@ -28,24 +31,5 @@ abstract class EvaBaseActivity : AppCompatActivity() {
 
         prefs = getSharedPreferences("hr.bpervan.novaeva", Context.MODE_PRIVATE)
         imageLoader = ImageLoader.getInstance()
-    }
-
-    inline fun showErrorPopup(throwable: Throwable, crossinline onTryAgain: () -> Unit) {
-        Log.e("evaError", throwable.message, throwable)
-
-        val error = AlertDialog.Builder(this)
-        error.setTitle(getString(R.string.error))
-
-        val tv = TextView(this)
-        tv.text = getString(R.string.error_fetching_data)
-        NovaEvaApp.openSansRegular?.let {
-            tv.typeface = it
-        }
-        tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
-        error.setView(tv)
-
-        error.setPositiveButton(getString(R.string.try_again)) { _, _ -> onTryAgain() }
-        error.setNegativeButton(getString(R.string.go_back)) { _, _ -> NovaEvaApp.goHome(this) }
-        error.show()
     }
 }

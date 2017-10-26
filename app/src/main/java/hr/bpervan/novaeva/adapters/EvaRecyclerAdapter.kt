@@ -93,10 +93,10 @@ class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
         holder.bindTo(subject)
     }
 
-    class HeaderData(val directoryName: String,
-                     val infoMessage: String)
+    class HeaderData(var directoryName: String = "",
+                     var infoMessage: String = "")
 
-    class ConfigData(val colourSet: Int,
+    class ConfigData(var colourSet: Int,
                      val isLoadingSupplier: () -> Boolean = { false })
 
     inner abstract class BindableViewHolder(val view: View) : RecyclerView.ViewHolder(view) {

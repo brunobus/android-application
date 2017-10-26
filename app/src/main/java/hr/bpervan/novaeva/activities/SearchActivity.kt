@@ -170,10 +170,8 @@ class SearchActivity : EvaBaseActivity(), OnClickListener {
                     } else {
                         showEmptyListInfo()
                     }
-                }) { t ->
-                    showErrorPopup(t) {
-                        searchForContent(searchString)
-                    }
+                }) {
+                    NovaEvaApp.showErrorPopupDialog(it, this) { searchForContent(searchString) }
                 }
     }
 
@@ -190,7 +188,7 @@ class SearchActivity : EvaBaseActivity(), OnClickListener {
         emptyInfo.setTitle("Pretraga")
         emptyInfo.setMessage("Pretraga nije vratila rezultate")
 
-        emptyInfo.setPositiveButton("U redu") { dialog, which -> this@SearchActivity.onBackPressed() }
+        emptyInfo.setPositiveButton("U redu") { _, _ -> this.onBackPressed() }
 
         emptyInfo.show()
     }

@@ -59,6 +59,7 @@ open class EvaDirectory(
         @PrimaryKey
         var directoryId: Long = -1,
         var directoryMetadata: EvaDirectoryMetadata? = null,
+        var color: EvaColor? = null,
         var image: EvaImage? = null,
         var subDirectoryMetadataList: RealmList<EvaDirectoryMetadata> = RealmList(),
         var contentMetadataList: RealmList<EvaContentMetadata> = RealmList()

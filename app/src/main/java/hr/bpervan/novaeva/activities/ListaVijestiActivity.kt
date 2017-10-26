@@ -14,6 +14,7 @@ import hr.bpervan.novaeva.fragments.EvaRecyclerFragment
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaCategory
 import hr.bpervan.novaeva.model.EvaDirectory
+import hr.bpervan.novaeva.model.EvaDirectoryMetadata
 import hr.bpervan.novaeva.storage.EvaDirectoryDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
 import hr.bpervan.novaeva.utilities.ResourceHandler
@@ -23,6 +24,7 @@ import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
 import kotlinx.android.synthetic.*
 import kotlinx.android.synthetic.main.activity_lista_vijesti.*
+import kotlinx.android.synthetic.main.activity_lista_vijesti.view.*
 import kotlinx.android.synthetic.main.simple_fake_action_bar.view.*
 import java.util.concurrent.TimeUnit
 
@@ -64,7 +66,13 @@ class ListaVijestiActivity : EvaBaseActivity(), OnClickListener {
         initUI()
 
         if (savedInstanceState == null) {
-            showFragmentForDirectory(categoryId.toLong(), categoryName.toUpperCase(), false)
+            EvaDirectoryDbAdapter.createIfMissingEvaDirectoryAsync(realm, categoryId.toLong(),
+                    defaultSupplier = {
+                        EvaDirectory(categoryId.toLong(), EvaDirectoryMetadata(categoryId.toLong(), categoryName.toLowerCase()))
+                    },
+                    onSuccess = {
+                        showFragmentForDirectory(categoryId.toLong(), categoryName.toUpperCase(), false)
+                    })
         } else {
             /*fragment backstack already exists and fragments will be restored*/
         }
@@ -178,23 +186,21 @@ class ListaVijestiActivity : EvaBaseActivity(), OnClickListener {
                 .throttleFirst(500, TimeUnit.MILLISECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { evaDirMetadata ->
-                    EvaDirectoryDbAdapter.createIfMissingEvaDirectoryAsync(realm, evaDirMetadata.directoryId,
-                            defaultSupplier = {
-                                EvaDirectory(evaDirMetadata.directoryId, evaDirMetadata, null)
-                            },
-                            onSuccess = {
-                                showFragmentForDirectory(evaDirMetadata.directoryId, evaDirMetadata.title, true)
-                            })
+                .subscribe { evaDirectoryMetadata ->
+                    val directoryId = evaDirectoryMetadata.directoryId
+                    val title = evaDirectoryMetadata.title
+                    EvaDirectoryDbAdapter.createIfMissingEvaDirectoryAsync(realm, directoryId,
+                            defaultSupplier = { EvaDirectory(directoryId) },
+                            onSuccess = { showFragmentForDirectory(directoryId, title, true) })
                 })
 
         lifecycleBoundDisposables.add(NovaEvaApp.bus.contentOpenRequest
                 .throttleFirst(500, TimeUnit.MILLISECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { contentInfo ->
+                .subscribe { evaContentMetadata ->
                     val i = Intent(this@ListaVijestiActivity, VijestActivity::class.java)
-                    i.putExtra("contentId", contentInfo.contentId)
+                    i.putExtra("contentId", evaContentMetadata.contentId)
                     i.putExtra("colourSet", colourSet)
                     i.putExtra("categoryId", categoryId)
                     startActivity(i)
@@ -216,11 +222,11 @@ class ListaVijestiActivity : EvaBaseActivity(), OnClickListener {
         val et = EditText(this)
         searchBuilder.setView(et)
 
-        searchBuilder.setPositiveButton("Pretrazi") { dialog, which ->
+        searchBuilder.setPositiveButton("Pretrazi") { _, _ ->
             val search = et.text.toString()
-            NovaEvaApp.goSearch(search, this@ListaVijestiActivity)
+            NovaEvaApp.goSearch(search, this)
         }
-        searchBuilder.setNegativeButton("Odustani") { dialog, whichButton -> }
+        searchBuilder.setNegativeButton("Odustani") { _, _ -> }
         searchBuilder.show()
     }
 
