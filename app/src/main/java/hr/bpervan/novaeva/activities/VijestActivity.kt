@@ -26,19 +26,17 @@ import com.google.android.exoplayer2.util.Util
 import com.google.android.gms.analytics.GoogleAnalytics
 import com.google.android.gms.analytics.HitBuilders
 import com.google.android.gms.analytics.Tracker
+import hr.bpervan.novaeva.CacheService
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.EvaContentDTO
-import hr.bpervan.novaeva.model.EvaCategory
-import hr.bpervan.novaeva.model.EvaContentMetadata
+import hr.bpervan.novaeva.model.*
 import hr.bpervan.novaeva.services.BackgroundPlayerService
 import hr.bpervan.novaeva.services.NovaEvaService
 import hr.bpervan.novaeva.storage.EvaBookmarkDbAdapter
+import hr.bpervan.novaeva.storage.EvaContentDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
 import hr.bpervan.novaeva.utilities.*
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
 import kotlinx.android.synthetic.*
 import kotlinx.android.synthetic.main.activity_vijest.*
@@ -59,10 +57,11 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
      */
     private lateinit var mGaTracker: Tracker
 
-    /**
-     * Retrofit
-     */
-    private var thisContent: EvaContentDTO? = null
+    private lateinit var realm: Realm
+    private var evaContent: EvaContent? = null
+
+    private var fetchFromServerDisposable: Disposable? = null
+    private var evaContentChangesDisposable: Disposable? = null
 
     /**
      * Exoplayer
@@ -87,14 +86,57 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
                         .build()
         )
 
+        realm = Realm.getInstance(RealmConfigProvider.cacheConfig)
+
+        subscribeToEvaContentChanges()
         initUI()
 
         if (ConnectionChecker.hasConnection(this)) {
-            getContentData(contentId)
+            fetchContentFromServer(contentId)
         } else {
             Toast.makeText(this, "Internetska veza nije dostupna", Toast.LENGTH_SHORT).show()
             return
         }
+    }
+
+    private fun subscribeToEvaContentChanges() {
+        evaContentChangesDisposable?.dispose()
+        evaContentChangesDisposable = EvaContentDbAdapter.subscribeToEvaContentChangesAsync(realm, contentId, { evaContent ->
+            tvNaslov.text = evaContent.contentMetadata!!.title
+
+            //if not null
+            val image = evaContent.image
+            if (image != null) {
+                if (headerImage != null) {
+                    imageLoader.displayImage(image.url, headerImage, ImageLoaderConfigurator.createDefaultDisplayImageOptions(false))
+                }
+            } else {
+//                val url = prefs.getString("hr.bpervan.novaeva.categoryheader." + contentData.contentMetadata!!.directoryId, null)
+//                if (url != null && headerImage != null) {
+//                    imageLoader.displayImage(url, headerImage, ImageLoaderConfigurator.createDefaultDisplayImageOptions(true))
+//                }
+            }
+            vijestWebView.reload()
+            vijestWebView.loadDataWithBaseURL(null, evaContent.text, "text/html", "utf-8", null)
+
+            if (evaContent.audioURL != null) {
+                imgMp3.setImageResource(R.drawable.vijest_ind_mp3_active)
+
+                //TODO DO ONLY ONCE
+//                createPlayer()
+//                streamAudio(contentDataDTO.audio)
+            }
+            if (evaContent.videoURL != null) {
+                imgLink.setImageResource(R.drawable.vijest_ind_www_active)
+                imgLink.setOnClickListener(this)
+            }
+            if (evaContent.attachments.isNotEmpty()) {
+                imgText.setImageResource(R.drawable.vijest_ind_txt_active)
+                imgText.setOnClickListener(this)
+            }
+
+            loadingCircle.visibility = View.GONE
+        })
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -151,49 +193,11 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
             tvNaslov.typeface = it
         }
 
-        if (thisContent == null) {
-            loadingCircle.visibility = View.VISIBLE
-        } else {
-            loadingCircle.visibility = View.GONE
-        }
-
-        /** Lets try displaying news using WebView  */
-
-        thisContent?.let { contentData ->
-            tvNaslov.text = contentData.title
-
-            //if not null
-            if (contentData.hasImage()) {
-                if (headerImage != null) {
-                    imageLoader.displayImage(contentData.images!![0].size640, headerImage, ImageLoaderConfigurator.createDefaultDisplayImageOptions(false))
-                }
-            } else {
-                val url = prefs.getString("hr.bpervan.novaeva.categoryheader." + contentData.directoryId, null)
-                if (url != null && headerImage != null) {
-                    imageLoader.displayImage(url, headerImage, ImageLoaderConfigurator.createDefaultDisplayImageOptions(true))
-                }
-            }
-            vijestWebView.reload()
-            vijestWebView.loadDataWithBaseURL(null, contentData.text, "text/html", "utf-8", null)
-
-            if (contentData.audio != null) {
-                imgMp3.setImageResource(R.drawable.vijest_ind_mp3_active)
-            }
-            if (contentData.youtube != null) {
-                imgLink.setImageResource(R.drawable.vijest_ind_www_active)
-                imgLink.setOnClickListener(this)
-            }
-            if (contentData.attachments != null) {
-                imgText.setImageResource(R.drawable.vijest_ind_txt_active)
-                imgText.setOnClickListener(this)
-            }
-        }
-
         vijestWebView.isFocusable = false
         vijestWebView.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
                 view.reload()
-                view.loadDataWithBaseURL(null, thisContent!!.text, "text/html", "utf-8", null)
+                view.loadDataWithBaseURL(null, evaContent?.text, "text/html", "utf-8", null)
                 return false
             }
         }
@@ -255,58 +259,17 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
         window.decorView.setBackgroundResource(android.R.color.background_light)
     }
 
-    private var contentDataDisposable: Disposable? = null
-
-    private fun getContentData(contentId: Long) {
-        Log.d("getContentData", "getting content data for contentId: " + contentId)
-
+    private fun fetchContentFromServer(contentId: Long) {
         loadingCircle.visibility = View.VISIBLE
 
-        contentDataDisposable?.dispose()
-        contentDataDisposable = (NovaEvaService.instance
+        fetchFromServerDisposable?.dispose()
+        fetchFromServerDisposable = NovaEvaService.instance
                 .getContentData(contentId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ contentData ->
-                    if (contentData.audio != null) {
-                        imgMp3.setImageResource(R.drawable.vijest_ind_mp3_active)
-
-                        createPlayer()
-                        streamAudio(contentData.audio)
-                    }
-                    if (contentData.attachments != null) {
-                        imgText.setImageResource(R.drawable.vijest_ind_txt_active)
-                        imgText.setOnClickListener(this@VijestActivity)
-                    }
-                    if (contentData.youtube != null) {
-                        imgLink.setImageResource(R.drawable.vijest_ind_www_active)
-                        imgLink.setOnClickListener(this@VijestActivity)
-                    }
-
-                    if (contentData.hasImage()) {
-                        if (headerImage != null) {
-                            imageLoader.displayImage(contentData.images!![0].size640, headerImage, ImageLoaderConfigurator.createDefaultDisplayImageOptions(false))
-                        }
-                    } else {
-                        val url = prefs.getString("hr.bpervan.novaeva.categoryheader." + contentData.directoryId, null)
-                        if (url != null && headerImage != null) {
-                            imageLoader.displayImage(url, headerImage, ImageLoaderConfigurator.createDefaultDisplayImageOptions(true))
-                        }
-                    }
-                    if (contentData.directoryId == EvaCategory.POZIV.id.toLong()) {
-                        setQuestionButton()
-                    }
-
-                    tvNaslov.text = contentData.title
-                    loadingCircle.visibility = View.GONE
-                    vijestWebView.reload()
-                    vijestWebView.loadDataWithBaseURL(null, contentData.text, "text/html", "UTF-8", null)
-
-                    thisContent = contentData
-
-                }) { t ->
+                .subscribeAsync({ contentDataDTO ->
+                    CacheService.cache(realm, contentDataDTO)
+                }, { t ->
                     showErrorPopup(t) {
-                        getContentData(contentId)
+                        fetchContentFromServer(contentId)
                     }
                 })
     }
@@ -334,7 +297,9 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
     override fun onDestroy() {
         super.onDestroy()
 
-        contentDataDisposable?.dispose()
+        fetchFromServerDisposable?.dispose()
+        evaContentChangesDisposable?.dispose()
+        realm.close()
     }
 
     public override fun onStart() {
@@ -376,8 +341,8 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
                 if (BackgroundPlayerService.isRunning) {
                     val messageIntent = Intent(this@VijestActivity, BackgroundPlayerService::class.java)
                     messageIntent.putExtra(BackgroundPlayerService.KEY_DIRECTIVE, BackgroundPlayerService.DIRECTIVE_SET_SOURCE_PLAY)
-                    messageIntent.putExtra(BackgroundPlayerService.KEY_PATH, thisContent!!.audio)
-                    messageIntent.putExtra(BackgroundPlayerService.KEY_TITLE, thisContent!!.title)
+                    messageIntent.putExtra(BackgroundPlayerService.KEY_PATH, evaContent!!.audioURL)
+                    messageIntent.putExtra(BackgroundPlayerService.KEY_TITLE, evaContent!!.contentMetadata!!.title)
                     startService(messageIntent)
                     btnPlay.visibility = View.INVISIBLE
                     btnPause.visibility = View.VISIBLE
@@ -405,24 +370,19 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
             R.id.btnSearch ->
                 if (ConnectionChecker.hasConnection(this))
                     showSearchPopup()
-            R.id.btnBookmark ->
-                if (thisContent != null) {
-                    val contentData = thisContent!!
-
-                    Realm.getInstance(RealmConfigProvider.bookmarksConfig).use { realm ->
-
-                        //todo use db to fetch contentInfo
-                        val evaContentInfo = EvaContentMetadata(
-                                contentId = contentData.contentId,
-                                datetime = contentData.datetime ?: "",
-                                title = contentData.title ?: "",
-                                preview = "")
-                        EvaBookmarkDbAdapter.storeBookmarkAsync(realm, evaContentInfo)
+            R.id.btnBookmark -> {
+                val evaContent = this.evaContent
+                if (evaContent != null) {
+                    val evaContentMetadata = evaContent.contentMetadata!!
+                    Realm.getInstance(RealmConfigProvider.bookmarksConfig).use { bookmarksRealm ->
+                        EvaBookmarkDbAdapter.storeEvaBookmarkAsync(bookmarksRealm, evaContentMetadata)
                     }
+
                     fakeActionBar.btnBookmark.setImageResource(R.drawable.action_button_bookmarked)
                 } else {
                     //todo
                 }
+            }
             R.id.btnShare -> {
                 val faceIntent = Intent(Intent.ACTION_SEND)
                 faceIntent.type = "text/plain"
@@ -432,7 +392,7 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
             R.id.btnMail -> {
                 val mailIntent = Intent(Intent.ACTION_SEND)
                 mailIntent.type = "message/rfc822"
-                mailIntent.putExtra(Intent.EXTRA_SUBJECT, thisContent!!.title)
+                mailIntent.putExtra(Intent.EXTRA_SUBJECT, evaContent!!.contentMetadata!!.title)
                 mailIntent.putExtra(Intent.EXTRA_TEXT, "http://novaeva.com/node/$contentId")
                 startActivity(Intent.createChooser(mailIntent, "Odaberite aplikaciju"))
             }
@@ -443,17 +403,19 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
                     mCurrentSize = 12
                 }
 
-                prefs.edit().putInt("hr.bpervan.novaeva.velicinateksta", mCurrentSize).commit()
+                prefs.edit().putInt("hr.bpervan.novaeva.velicinateksta", mCurrentSize).apply()
                 vijestWebView.settings.defaultFontSize = mCurrentSize
             }
             R.id.btnBack -> this@VijestActivity.onBackPressed()
-            R.id.imgLink -> if (thisContent!!.youtube != null) {
-                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(thisContent!!.youtube)))
-            }
-            R.id.imgText -> if (thisContent!!.attachments != null) {
-                startActivity(Intent.createChooser(Intent(Intent.ACTION_VIEW, Uri.parse(thisContent!!.attachments!![0].url)),
-                        "Otvaranje dokumenta " + thisContent!!.attachments!![0].naziv))
-            }
+            R.id.imgLink ->
+                evaContent!!.videoURL?.let { videoUrl ->
+                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(videoUrl)))
+                }
+            R.id.imgText ->
+                if (evaContent!!.attachments.isNotEmpty()) {
+                    startActivity(Intent.createChooser(Intent(Intent.ACTION_VIEW, Uri.parse(evaContent!!.attachments[0]!!.url)),
+                            "Otvaranje dokumenta " + evaContent!!.attachments[0]!!.name))
+                }
         }
     }
 
@@ -463,16 +425,16 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
     }
 
     private fun showSearchPopup() {
-        val search = AlertDialog.Builder(this)
-        search.setTitle("Pretraga")
+        val searchBuilder = AlertDialog.Builder(this)
+        searchBuilder.setTitle("Pretraga")
         val et = EditText(this)
-        search.setView(et)
-        search.setPositiveButton("Pretraži") { dialog, which ->
+        searchBuilder.setView(et)
+        searchBuilder.setPositiveButton("Pretraži") { dialog, which ->
             val search = et.text.toString()
             NovaEvaApp.goSearch(search, this@VijestActivity)
         }
-        search.setNegativeButton("Odustani") { dialog, whichButton -> }
-        search.show()
+        searchBuilder.setNegativeButton("Odustani") { dialog, whichButton -> }
+        searchBuilder.show()
     }
 
     private fun setQuestionButton() {

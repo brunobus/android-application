@@ -10,6 +10,4 @@ import io.reactivex.subjects.PublishSubject
 class RxEventBus {
     val directoryOpenRequest = PublishSubject.create<EvaDirectoryMetadata>()
     val contentOpenRequest = PublishSubject.create<EvaContentMetadata>()
-
-
 }

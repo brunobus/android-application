@@ -16,9 +16,10 @@ import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaCategory
 import hr.bpervan.novaeva.model.EvaContentMetadata
-import hr.bpervan.novaeva.model.asDatabaseModel
+import hr.bpervan.novaeva.model.toDatabaseModel
 import hr.bpervan.novaeva.services.NovaEvaService
 import hr.bpervan.novaeva.utilities.ConnectionChecker
+import hr.bpervan.novaeva.utilities.subscribeAsync
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
@@ -158,14 +159,12 @@ class SearchActivity : EvaBaseActivity(), OnClickListener {
 
         searchForContentDisposable = NovaEvaService.instance
                 .searchForContent(searchString)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ searchResult ->
+                .subscribeAsync({ searchResult ->
                     if (searchResult.searchResultContentMetadataList != null
                             && !searchResult.searchResultContentMetadataList.isEmpty()) {
 
                         searchResultList.addAll(
-                                searchResult.searchResultContentMetadataList.map { it.asDatabaseModel() })
+                                searchResult.searchResultContentMetadataList.map { it.toDatabaseModel() })
 
                         adapter.notifyDataSetChanged()
                     } else {

@@ -10,10 +10,12 @@ import io.realm.annotations.PrimaryKey
 
 const val CONTENT_ID_FIELD = "contentId"
 const val DIRECTORY_ID_FIELD = "directoryId"
+const val TIMESTAMP_FIELD = "timestamp"
 
 interface TreeElementInfo
 
 open class EvaDirectoryMetadata(
+        @PrimaryKey
         var directoryId: Long = -1,
         var title: String = ""
 ) : RealmObject(), TreeElementInfo
@@ -22,7 +24,7 @@ open class EvaContentMetadata(
         @PrimaryKey
         var contentId: Long = -1,
         var attachmentsIndicator: EvaAttachmentsIndicator? = null,
-        var datetime: String = "",
+        var timestamp: Long = 0,
         var title: String = "",
         var preview: String = ""
 ) : RealmObject(), TreeElementInfo
@@ -48,19 +50,29 @@ open class EvaAttachment(
 ) : RealmObject()
 
 open class EvaImage(
-        var rawImage: ByteArray = ByteArray(0),
-        var date: Int = 0
+        var rawImage: ByteArray = ByteArray(0), //todo
+        var url: String = "",
+        var timestamp: Long = 0
+) : RealmObject()
+
+open class EvaDirectory(
+        @PrimaryKey
+        var directoryId: Long = -1,
+        var directoryMetadata: EvaDirectoryMetadata? = null,
+        var image: EvaImage? = null,
+        var subDirectoryMetadataList: RealmList<EvaDirectoryMetadata> = RealmList(),
+        var contentMetadataList: RealmList<EvaContentMetadata> = RealmList()
 ) : RealmObject()
 
 open class EvaContent(
         @PrimaryKey
         var contentId: Long = -1,
         var contentMetadata: EvaContentMetadata? = null,
+        var text: String = "",
         var color: EvaColor? = null,
         var attachments: RealmList<EvaAttachment> = RealmList(),
         var image: EvaImage? = null,
-        var text: String = "",
-        var title: String = "",
-        var videoURL: String = "",
-        var audioURL: String = ""
+        var videoURL: String? = null,
+        var audioURL: String? = null
 ) : RealmObject()
+

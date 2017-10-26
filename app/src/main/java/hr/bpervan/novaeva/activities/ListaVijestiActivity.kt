@@ -7,24 +7,26 @@ import android.os.Bundle
 import android.view.View
 import android.view.View.OnClickListener
 import android.widget.EditText
-import android.widget.Toast
 import com.google.android.gms.analytics.GoogleAnalytics
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.fragments.EvaRecyclerFragment
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaCategory
-import hr.bpervan.novaeva.utilities.ConnectionChecker
+import hr.bpervan.novaeva.model.EvaDirectory
+import hr.bpervan.novaeva.storage.EvaDirectoryDbAdapter
+import hr.bpervan.novaeva.storage.RealmConfigProvider
 import hr.bpervan.novaeva.utilities.ResourceHandler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import io.realm.Realm
 import kotlinx.android.synthetic.*
 import kotlinx.android.synthetic.main.activity_lista_vijesti.*
 import kotlinx.android.synthetic.main.simple_fake_action_bar.view.*
 import java.util.concurrent.TimeUnit
 
-class ListaVijestiActivity : EvaBaseActivity(), OnClickListener{
+class ListaVijestiActivity : EvaBaseActivity(), OnClickListener {
 
     private var categoryId = -1
     private lateinit var categoryName: String
@@ -32,6 +34,8 @@ class ListaVijestiActivity : EvaBaseActivity(), OnClickListener{
     private var colourSet = -1
 
     private val lifecycleBoundDisposables = CompositeDisposable()
+
+    private lateinit var realm: Realm
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,14 +59,12 @@ class ListaVijestiActivity : EvaBaseActivity(), OnClickListener{
         //mGaTracker.sendEvent("Kategorije", "OtvorenaKategorija", Constants.getCatNameById(kategorija), null);
         killRedDot(categoryId)
 
+        realm = Realm.getInstance(RealmConfigProvider.cacheConfig)
+
         initUI()
 
         if (savedInstanceState == null) {
-            if (ConnectionChecker.hasConnection(this)) {
-                showFragmentForDirectory(categoryId.toLong(), categoryName.toUpperCase(), false)
-            } else {
-                Toast.makeText(this, "Internetska veza nije dostupna", Toast.LENGTH_SHORT).show()
-            }
+            showFragmentForDirectory(categoryId.toLong(), categoryName.toUpperCase(), false)
         } else {
             /*fragment backstack already exists and fragments will be restored*/
         }
@@ -164,26 +166,26 @@ class ListaVijestiActivity : EvaBaseActivity(), OnClickListener{
         GoogleAnalytics.getInstance(this).reportActivityStop(this)
     }
 
-    public override fun onRestart() {
-        super.onRestart()
-        if (!ConnectionChecker.hasConnection(this)) {
-            Toast.makeText(this, "Internetska veza nije dostupna", Toast.LENGTH_SHORT).show()
-        }
+    override fun onDestroy() {
+        super.onDestroy()
+        realm.close()
     }
 
     public override fun onResume() {
         super.onResume()
-        if (!ConnectionChecker.hasConnection(this)) {
-            Toast.makeText(this, "Internetska veza nije dostupna", Toast.LENGTH_SHORT).show()
-            return
-        }
 
         lifecycleBoundDisposables.add(NovaEvaApp.bus.directoryOpenRequest
                 .throttleFirst(500, TimeUnit.MILLISECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { directoryInfo ->
-                    showFragmentForDirectory(directoryInfo.directoryId, directoryInfo.title ?: "", true)
+                .subscribe { evaDirMetadata ->
+                    EvaDirectoryDbAdapter.createIfMissingEvaDirectoryAsync(realm, evaDirMetadata.directoryId,
+                            defaultSupplier = {
+                                EvaDirectory(evaDirMetadata.directoryId, evaDirMetadata, null)
+                            },
+                            onSuccess = {
+                                showFragmentForDirectory(evaDirMetadata.directoryId, evaDirMetadata.title, true)
+                            })
                 })
 
         lifecycleBoundDisposables.add(NovaEvaApp.bus.contentOpenRequest
@@ -191,7 +193,7 @@ class ListaVijestiActivity : EvaBaseActivity(), OnClickListener{
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { contentInfo ->
-                    val i: Intent = Intent(this@ListaVijestiActivity, VijestActivity::class.java)
+                    val i = Intent(this@ListaVijestiActivity, VijestActivity::class.java)
                     i.putExtra("contentId", contentInfo.contentId)
                     i.putExtra("colourSet", colourSet)
                     i.putExtra("categoryId", categoryId)

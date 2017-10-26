@@ -177,7 +177,7 @@ class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
             //todo refactor and simplify this old code
 
             tvNaslov.text = contentInfo.title
-            cal.timeInMillis = 1000 * java.lang.Long.parseLong(contentInfo.datetime)
+            cal.timeInMillis = 1000 * contentInfo.timestamp
 
             val sat: String
             val minuta: String

@@ -1,6 +1,5 @@
 package hr.bpervan.novaeva.fragments
 
-import android.app.AlertDialog
 import android.content.res.Configuration
 import android.os.Bundle
 import android.os.Parcel
@@ -10,35 +9,40 @@ import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import hr.bpervan.novaeva.NovaEvaApp
+import hr.bpervan.novaeva.CacheService
+import hr.bpervan.novaeva.activities.EvaBaseActivity
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaContentMetadata
+import hr.bpervan.novaeva.model.TIMESTAMP_FIELD
 import hr.bpervan.novaeva.model.TreeElementInfo
-import hr.bpervan.novaeva.model.asDatabaseModel
 import hr.bpervan.novaeva.services.NovaEvaService
-import io.reactivex.android.schedulers.AndroidSchedulers
+import hr.bpervan.novaeva.storage.EvaDirectoryDbAdapter
+import hr.bpervan.novaeva.storage.RealmConfigProvider
+import hr.bpervan.novaeva.utilities.subscribeAsync
 import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
+import io.realm.Realm
+import io.realm.Sort
 
 /**
  * Created by vpriscan on 08.10.17..
  */
 class EvaRecyclerFragment : Fragment() {
 
-    private var hasMore = true
-    private var menuElementsDisposable: Disposable? = null
+    private var fetchFromServerDisposable: Disposable? = null
+    private var evaDirectoryChangesDisposable: Disposable? = null
 
     private lateinit var fragmentConfig: FragmentConfig
     private lateinit var adapter: EvaRecyclerAdapter
     private var elementsList: MutableList<TreeElementInfo> = ArrayList()
 
+    private var hasMore = true
     private var loading = true
+
+    private lateinit var realm: Realm
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,16 +50,48 @@ class EvaRecyclerFragment : Fragment() {
         val inState: Bundle = savedInstanceState ?: arguments
         fragmentConfig = inState.getParcelable("fragmentConfig")
 
-        val infoText = if (fragmentConfig.isSubDirectory) "NALAZITE SE U MAPI" else "NALAZITE SE U KATEGORIJI"
+        realm = Realm.getInstance(RealmConfigProvider.cacheConfig)
 
+        val infoText = if (fragmentConfig.isSubDirectory) "NALAZITE SE U MAPI" else "NALAZITE SE U KATEGORIJI"
         adapter = EvaRecyclerAdapter(elementsList,
                 EvaRecyclerAdapter.ConfigData(fragmentConfig.colourSet, { loading }),
                 EvaRecyclerAdapter.HeaderData(fragmentConfig.directoryName, infoText))
         adapter.registerAdapterDataObserver(DataChangeLogger())
 
-
-        loadData()
+        subscribeToDirectoryUpdates()
+        fetchDirectoryDataFromServer()
     }
+
+    private fun subscribeToDirectoryUpdates() {
+        evaDirectoryChangesDisposable?.dispose()
+        evaDirectoryChangesDisposable = EvaDirectoryDbAdapter.subscribeToEvaDirectoryChangesAsync(realm, fragmentConfig.directoryId, { evaDirectory ->
+            elementsList.clear()
+            elementsList.addAll(evaDirectory.contentMetadataList)
+            elementsList.addAll(evaDirectory.subDirectoryMetadataList)
+
+            //FIXME ON SERVER: ADD TIMESTAMP TO DIRECTORIES
+            elementsList.sortBy {
+                when (it) {
+                    is EvaContentMetadata -> it.timestamp
+                    else -> 0L
+                }
+            }
+
+            adapter.notifyDataSetChanged()
+        })
+    }
+
+//    private fun createAdapter(contentMetadataList: RealmList<EvaContentMetadata>,
+//                              subDirectoryMetadataList: RealmList<EvaDirectoryMetadata>): EvaRecyclerAdapter {
+//        val infoText = if (fragmentConfig.isSubDirectory) "NALAZITE SE U MAPI" else "NALAZITE SE U KATEGORIJI"
+//
+//        //FIXME Create new adapter class that efficiently uses TWO OBSERVABLE REALMLISTS and has a header and loadingCircle
+//        adapter = EvaRecyclerAdapter(contentMetadataList,
+//                EvaRecyclerAdapter.ConfigData(fragmentConfig.colourSet, { loading }),
+//                EvaRecyclerAdapter.HeaderData(fragmentConfig.directoryName, infoText))
+//        adapter.registerAdapterDataObserver(DataChangeLogger())
+//        return adapter
+//    }
 
     class FragmentConfig(val directoryId: Long,
                          val directoryName: String,
@@ -104,6 +140,13 @@ class EvaRecyclerFragment : Fragment() {
         recyclerView.adapter = adapter
         recyclerView.addOnScrollListener(EndlessScrollListener(linearLayoutManager))
 
+        //todo use this when new adapter class that uses two realmlists is created
+//        EvaDirectoryDbAdapter.loadEvaDirectoryAsync(realm, fragmentConfig.directoryId) { evaDirectory ->
+//            if (evaDirectory != null) {
+//                recyclerView.adapter = createAdapter(evaDirectory.contentMetadataList, evaDirectory.subDirectoryMetadataList)
+//            }
+//        }
+
         return recyclerView
     }
 
@@ -116,7 +159,9 @@ class EvaRecyclerFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        menuElementsDisposable?.dispose()
+        evaDirectoryChangesDisposable?.dispose()
+        fetchFromServerDisposable?.dispose()
+        realm.close()
     }
 
     class DataChangeLogger : RecyclerView.AdapterDataObserver() {
@@ -137,64 +182,36 @@ class EvaRecyclerFragment : Fragment() {
                 if (!loading && hasMore && totalItemCount - visibleItemCount <= firstVisibleItem + visibleThreshold) {
 
                     /** Ako je zadnji u listi podkategorija, onda on nema UnixDatum, pa tražimo zadnji koji ima */
-                    val zadnjiDatum = elementsList
-                            .filter { it is EvaContentMetadata }
-                            .map { it as EvaContentMetadata }
-                            .lastOrNull()
-                            ?.datetime
 
                     loading = true
                     val progressBarIndex = adapter.itemCount - 1
                     recyclerView.post {
                         adapter.notifyItemChanged(progressBarIndex)
                     }
-                    loadData(date = zadnjiDatum)
+                    EvaDirectoryDbAdapter.loadEvaDirectoryAsync(realm, fragmentConfig.directoryId, { evaDirectory ->
+                        if (evaDirectory != null) {
+                            val oldestTimestamp = evaDirectory.contentMetadataList.sort(TIMESTAMP_FIELD, Sort.DESCENDING).lastOrNull()?.timestamp
+                            fetchDirectoryDataFromServer(oldestTimestamp)
+                        }
+                    })
                 }
             }
         }
     }
 
-    private fun showErrorPopup() {
-        activity?.let { activity ->
-            val error = AlertDialog.Builder(activity)
-            error.setTitle("Greška")
+    private fun fetchDirectoryDataFromServer(timestamp: Long? = null) {
+        fetchFromServerDisposable?.dispose()
+        fetchFromServerDisposable = NovaEvaService.instance
+                .getDirectoryContent(fragmentConfig.directoryId, timestamp)
+                .subscribeAsync({ evaDirectoryDTO ->
+                    CacheService.cache(realm, evaDirectoryDTO, fragmentConfig.directoryId)
 
-            val tv = TextView(activity)
-            tv.text = "Greška pri dohvaćanju podataka sa poslužitelja"
-            tv.typeface = NovaEvaApp.openSansRegular
-            tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
-            error.setView(tv)
-
-            error.setPositiveButton("Pokušaj ponovno") { dialog, which ->
-                loadData()
-            }
-            error.setNegativeButton("Povratak") { dialog, whichButton ->
-                NovaEvaApp.goHome(context)
-            }
-            error.show()
-        }
-    }
-
-    private fun loadData(date: String? = null) {
-        menuElementsDisposable?.dispose()
-        menuElementsDisposable = NovaEvaService.instance.getDirectoryContent(fragmentConfig.directoryId, date)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ result ->
-
-                    if (result.contentMetadataList != null) {
-                        elementsList.addAll(result.contentMetadataList.map { it.asDatabaseModel() })
-                    }
-                    if (result.subDirectoryMetadataList != null) {
-                        elementsList.addAll(result.subDirectoryMetadataList.map { it.asDatabaseModel() })
-                    }
-
-                    hasMore = result.more > 0
+                    hasMore = evaDirectoryDTO.more > 0
                     loading = false
-                    adapter.notifyDataSetChanged()
                 }, { t ->
-                    Log.e("listElementError", t.message, t)
-                    showErrorPopup()
+                    (activity as EvaBaseActivity).showErrorPopup(t, {
+                        fetchDirectoryDataFromServer()
+                    })
                 })
     }
 }

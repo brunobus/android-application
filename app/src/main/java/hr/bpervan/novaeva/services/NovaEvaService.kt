@@ -15,10 +15,10 @@ import retrofit2.http.Query
 interface NovaEvaService {
     @GET("json?api=2")
     fun getDirectoryContent(@Query("cid") directoryId: Long,
-                            @Query("date") date: String? = null): Single<EvaDirectoryContentListDTO>
+                            @Query("date") date: Long? = null): Single<EvaDirectoryDTO>
 
     @GET("json?api=2&rand=1")
-    fun getRandomDirectoryContent(@Query("cid") directoryId: Long): Single<EvaDirectoryContentListDTO>
+    fun getRandomDirectoryContent(@Query("cid") directoryId: Long): Single<EvaDirectoryDTO>
 
     @GET("json?api=2")
     fun getContentData(@Query("nid") contentId: Long): Single<EvaContentDTO>

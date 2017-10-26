@@ -30,7 +30,7 @@ abstract class EvaBaseActivity : AppCompatActivity() {
         imageLoader = ImageLoader.getInstance()
     }
 
-    inline protected fun showErrorPopup(throwable: Throwable, crossinline onTryAgain: () -> Unit) {
+    inline fun showErrorPopup(throwable: Throwable, crossinline onTryAgain: () -> Unit) {
         Log.e("evaError", throwable.message, throwable)
 
         val error = AlertDialog.Builder(this)

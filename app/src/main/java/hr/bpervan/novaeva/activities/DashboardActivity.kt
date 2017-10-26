@@ -13,19 +13,16 @@ import android.view.View.OnClickListener
 import android.view.View.OnTouchListener
 import android.widget.EditText
 import android.widget.Toast
-
 import com.google.android.gms.analytics.GoogleAnalytics
 import com.google.android.gms.analytics.HitBuilders
-
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.services.NovaEvaService
-import hr.bpervan.novaeva.utilities.ConnectionChecker
 import hr.bpervan.novaeva.model.EvaCategory
 import hr.bpervan.novaeva.model.LocalCategory
-import io.reactivex.android.schedulers.AndroidSchedulers
+import hr.bpervan.novaeva.services.NovaEvaService
+import hr.bpervan.novaeva.utilities.ConnectionChecker
+import hr.bpervan.novaeva.utilities.subscribeAsync
 import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_dashboard.*
 
 //// TODO: 13.10.17. refactor me
@@ -66,10 +63,9 @@ class DashboardActivity : EvaBaseActivity(), OnTouchListener, OnClickListener {
         val vrijemeZadnjeSync = prefs.getLong("vrijemeZadnjeSinkronizacije", 0L)
         if (System.currentTimeMillis() - vrijemeZadnjeSync > syncInterval) {
             if (ConnectionChecker.hasConnection(this)) {
-                NovaEvaService.instance.getNewStuff()
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe({ indicators ->
+                NovaEvaService.instance
+                        .getNewStuff()
+                        .subscribeAsync({ indicators ->
 
                             checkLastNid(EvaCategory.DUHOVNOST, indicators.duhovnost)
                             checkLastNid(EvaCategory.AKTUALNO, indicators.aktualno)
@@ -138,9 +134,7 @@ class DashboardActivity : EvaBaseActivity(), OnTouchListener, OnClickListener {
 
         fetchBreviaryImageDisposable = NovaEvaService.instance
                 .getDirectoryContent(546, null)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ directoryContent ->
+                .subscribeAsync({ directoryContent ->
                     if (directoryContent.image != null) {
                         prefs.edit().putString("hr.bpervan.novaeva.brevijarheaderimage", directoryContent.image.size640).apply()
                     }
@@ -231,74 +225,70 @@ class DashboardActivity : EvaBaseActivity(), OnTouchListener, OnClickListener {
             startActivity(Intent(this, BookmarksActivity::class.java))
         }
 
-        if (ConnectionChecker.hasConnection(this)) {
-            when (v.id) {
-                R.id.btnBrevijar -> {
-                    val i = Intent(this, BreviaryActivity::class.java)
-                    startActivity(i)
-                }
-                R.id.btnEvandjelje -> {
-                    val i = Intent(this, ListaVijestiActivity::class.java)
-                    i.putExtra("categoryId", EvaCategory.EVANDJELJE.id)
-                    i.putExtra("categoryName", EvaCategory.EVANDJELJE.rawName)
-                    startActivity(i)
-                }
-                R.id.btnMp3 -> {
-                    val i = Intent(this, ListaVijestiActivity::class.java)
-                    i.putExtra("categoryId", EvaCategory.PJESMARICA.id)
-                    i.putExtra("categoryName", EvaCategory.PJESMARICA.rawName)
-                    startActivity(i)
-                }
-                R.id.btnPropovjedi -> {
-                    val i = Intent(this, ListaVijestiActivity::class.java)
-                    i.putExtra("categoryId", EvaCategory.PROPOVIJEDI.id)
-                    i.putExtra("categoryName", EvaCategory.PROPOVIJEDI.rawName)
-                    startActivity(i)
-                }
-                R.id.btnOdgovori -> {
-                    val i = Intent(this, ListaVijestiActivity::class.java)
-                    i.putExtra("categoryId", EvaCategory.ODGOVORI.id)
-                    i.putExtra("categoryName", EvaCategory.ODGOVORI.rawName)
-                    startActivity(i)
-                }
-                R.id.btnPoziv -> {
-                    val i = Intent(this, ListaVijestiActivity::class.java)
-                    i.putExtra("categoryId", EvaCategory.POZIV.id)
-                    i.putExtra("categoryName", EvaCategory.POZIV.rawName)
-                    startActivity(i)
-                }
-                R.id.btnDuhovnost -> {
-                    val i = Intent(this, ListaVijestiActivity::class.java)
-                    i.putExtra("categoryId", EvaCategory.DUHOVNOST.id)
-                    i.putExtra("categoryName", EvaCategory.DUHOVNOST.rawName)
-                    startActivity(i)
-                }
-                R.id.btnIzreke -> {
-                    val i = Intent(this, IzrekeActivity::class.java)
-                    startActivity(i)
-                }
-                R.id.btnMultimedia -> {
-                    val i = Intent(this, ListaVijestiActivity::class.java)
-                    i.putExtra("categoryId", EvaCategory.MULTIMEDIJA.id)
-                    i.putExtra("categoryName", EvaCategory.MULTIMEDIJA.rawName)
-                    startActivity(i)
-                }
-                R.id.btnAktualno -> {
-                    val i = Intent(this, ListaVijestiActivity::class.java)
-                    i.putExtra("categoryId", EvaCategory.AKTUALNO.id)
-                    i.putExtra("categoryName", EvaCategory.AKTUALNO.rawName)
-                    startActivity(i)
-                }
+        when (v.id) {
+            R.id.btnBrevijar -> {
+                val i = Intent(this, BreviaryActivity::class.java)
+                startActivity(i)
             }
-        } else {
-            Toast.makeText(this, "Internetska veza nije dostupna", Toast.LENGTH_SHORT).show()
+            R.id.btnEvandjelje -> {
+                val i = Intent(this, ListaVijestiActivity::class.java)
+                i.putExtra("categoryId", EvaCategory.EVANDJELJE.id)
+                i.putExtra("categoryName", EvaCategory.EVANDJELJE.rawName)
+                startActivity(i)
+            }
+            R.id.btnMp3 -> {
+                val i = Intent(this, ListaVijestiActivity::class.java)
+                i.putExtra("categoryId", EvaCategory.PJESMARICA.id)
+                i.putExtra("categoryName", EvaCategory.PJESMARICA.rawName)
+                startActivity(i)
+            }
+            R.id.btnPropovjedi -> {
+                val i = Intent(this, ListaVijestiActivity::class.java)
+                i.putExtra("categoryId", EvaCategory.PROPOVIJEDI.id)
+                i.putExtra("categoryName", EvaCategory.PROPOVIJEDI.rawName)
+                startActivity(i)
+            }
+            R.id.btnOdgovori -> {
+                val i = Intent(this, ListaVijestiActivity::class.java)
+                i.putExtra("categoryId", EvaCategory.ODGOVORI.id)
+                i.putExtra("categoryName", EvaCategory.ODGOVORI.rawName)
+                startActivity(i)
+            }
+            R.id.btnPoziv -> {
+                val i = Intent(this, ListaVijestiActivity::class.java)
+                i.putExtra("categoryId", EvaCategory.POZIV.id)
+                i.putExtra("categoryName", EvaCategory.POZIV.rawName)
+                startActivity(i)
+            }
+            R.id.btnDuhovnost -> {
+                val i = Intent(this, ListaVijestiActivity::class.java)
+                i.putExtra("categoryId", EvaCategory.DUHOVNOST.id)
+                i.putExtra("categoryName", EvaCategory.DUHOVNOST.rawName)
+                startActivity(i)
+            }
+            R.id.btnIzreke -> {
+                val i = Intent(this, IzrekeActivity::class.java)
+                startActivity(i)
+            }
+            R.id.btnMultimedia -> {
+                val i = Intent(this, ListaVijestiActivity::class.java)
+                i.putExtra("categoryId", EvaCategory.MULTIMEDIJA.id)
+                i.putExtra("categoryName", EvaCategory.MULTIMEDIJA.rawName)
+                startActivity(i)
+            }
+            R.id.btnAktualno -> {
+                val i = Intent(this, ListaVijestiActivity::class.java)
+                i.putExtra("categoryId", EvaCategory.AKTUALNO.id)
+                i.putExtra("categoryName", EvaCategory.AKTUALNO.rawName)
+                startActivity(i)
+            }
         }
     }
 
     //na drugim mobovima treba return true, zato nestane natpis odmah!!!
     override fun onTouch(v: View, event: MotionEvent): Boolean {
         var text: String? = null
-        
+
         text = if (this.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
             getString(R.string.app_name)
         } else {

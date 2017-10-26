@@ -8,17 +8,14 @@ import android.view.View
 import android.view.View.OnClickListener
 import android.widget.EditText
 import android.widget.Toast
-
 import com.google.android.gms.analytics.HitBuilders
-
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
+import hr.bpervan.novaeva.model.EvaCategory
 import hr.bpervan.novaeva.services.NovaEvaService
 import hr.bpervan.novaeva.utilities.ConnectionChecker
-import hr.bpervan.novaeva.model.EvaCategory
-import io.reactivex.android.schedulers.AndroidSchedulers
+import hr.bpervan.novaeva.utilities.subscribeAsync
 import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.*
 import kotlinx.android.synthetic.main.activity_izreke.*
 import kotlinx.android.synthetic.main.izreke_fake_action_bar.view.*
@@ -60,10 +57,8 @@ class IzrekeActivity : EvaBaseActivity(), OnClickListener {
 
             randomIzrekaDisposable = NovaEvaService.instance
                     .getRandomDirectoryContent(1)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({ directoryContent ->
-                        if (directoryContent.contentMetadataList != null && !directoryContent.contentMetadataList.isEmpty()) {
+                    .subscribeAsync({ directoryContent ->
+                        if (directoryContent.contentMetadataList != null && directoryContent.contentMetadataList.isNotEmpty()) {
                             val contentInfo = directoryContent.contentMetadataList[0]
 
                             this.contentTitle = contentInfo.title

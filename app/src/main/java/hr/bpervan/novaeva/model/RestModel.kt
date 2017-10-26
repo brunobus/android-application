@@ -2,7 +2,7 @@ package hr.bpervan.novaeva.model
 
 import com.google.gson.annotations.SerializedName
 
-data class EvaDirectoryContentListDTO(
+data class EvaDirectoryDTO(
         val image: EvaImageDTO? = null,
         val paket: Int = 0,
         @SerializedName("jos") val more: Int = 0,
@@ -46,7 +46,7 @@ data class EvaAttachmentsIndicatorDTO(
 data class EvaContentDTO(
         @SerializedName("nid") val contentId: Long = 0,
         @SerializedName("cid") val directoryId: Long = 0,
-        @SerializedName("prilozi") val attachments: List<AttachmentDTO>? = null,
+        @SerializedName("prilozi") val attachments: List<EvaAttachmentDTO>? = null,
         @SerializedName("image") val images: List<EvaImageDTO>? = null,
         @SerializedName("tekst") val text: String? = null,
         @SerializedName("naslov") val title: String? = null,
@@ -55,16 +55,14 @@ data class EvaContentDTO(
         @SerializedName("time") val datetime: String? = null) {
 
     fun hasImage(): Boolean = images != null && images.isNotEmpty() && this.images[0].size640 != null
-
-
 }
 
-data class AttachmentDTO(val naziv: String? = null,
-                         val url: String? = null)
+data class EvaAttachmentDTO(val naziv: String? = null,
+                            val url: String? = null)
 
 data class EvaImageDTO(@SerializedName("640") val size640: String? = null,
                        @SerializedName("720") val size720: String? = null,
-                       val date: Int = 0,
+                       @SerializedName("date") val timestamp: Long = 0,
                        val original: String? = null)
 
 data class EvaBreviaryDTO(@SerializedName("tekst") val text: String? = null)
