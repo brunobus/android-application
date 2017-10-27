@@ -41,7 +41,8 @@ class EvaRecyclerFragment : Fragment() {
     private var elementsList: MutableList<TreeElementInfo> = ArrayList()
 
     private var hasMore = true
-    private var loading = true
+    private var loadingFromDb = true
+    private var fetchingFromServer = true
 
     private lateinit var realm: Realm
 
@@ -57,7 +58,7 @@ class EvaRecyclerFragment : Fragment() {
         headerData = EvaRecyclerAdapter.HeaderData(fragmentConfig.directoryTitle, infoText)
 
         adapter = EvaRecyclerAdapter(elementsList,
-                EvaRecyclerAdapter.ConfigData(fragmentConfig.colourSet, { loading }),
+                EvaRecyclerAdapter.ConfigData(fragmentConfig.colourSet, { loadingFromDb || fetchingFromServer }),
                 headerData)
         adapter.registerAdapterDataObserver(DataChangeLogger())
 
@@ -83,7 +84,8 @@ class EvaRecyclerFragment : Fragment() {
                     else -> 0L
                 }
             }
-            loading = false
+
+            loadingFromDb = false
 
             adapter.notifyDataSetChanged()
         })
@@ -187,11 +189,11 @@ class EvaRecyclerFragment : Fragment() {
             val firstVisibleItem = linearLayoutManager.findFirstVisibleItemPosition()
 
             if (firstVisibleItem > 0 && visibleItemCount > 0 && totalItemCount > 0) {
-                if (!loading && hasMore && totalItemCount - visibleItemCount <= firstVisibleItem + visibleThreshold) {
+                if (!fetchingFromServer && hasMore && totalItemCount - visibleItemCount <= firstVisibleItem + visibleThreshold) {
 
                     /** Ako je zadnji u listi podkategorija, onda on nema UnixDatum, pa tražimo zadnji koji ima */
 
-                    loading = true
+                    fetchingFromServer = true
                     safeRefreshLoadingCircle()
                     val progressBarIndex = adapter.itemCount - 1
                     recyclerView.post { adapter.notifyItemChanged(progressBarIndex) }
@@ -215,20 +217,22 @@ class EvaRecyclerFragment : Fragment() {
     }
 
     private fun fetchDirectoryDataFromServer(timestamp: Long? = null) {
-        loading = true
+        fetchingFromServer = true
         safeRefreshLoadingCircle()
 
         fetchFromServerDisposable?.dispose()
         fetchFromServerDisposable = NovaEvaService.instance
                 .getDirectoryContent(fragmentConfig.directoryId, timestamp)
                 .subscribeAsync({ evaDirectoryDTO ->
+                    loadingFromDb = true
+                    fetchingFromServer = false
+
                     CacheService.cache(realm, evaDirectoryDTO, fragmentConfig.directoryId)
 
                     hasMore = evaDirectoryDTO.more > 0
 
-                    loading = false
                 }) {
-                    loading = false
+                    fetchingFromServer = false
                     NovaEvaApp.showErrorSnackbar(it, context, view)
                     safeRefreshLoadingCircle()
                 }

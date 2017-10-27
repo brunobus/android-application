@@ -88,6 +88,8 @@ class ListaVijestiActivity : EvaBaseActivity(), OnClickListener {
     }
 
     private fun initUI() {
+        eva_directory_fragment_frame.progress_bar.visibility = View.INVISIBLE //todo
+
         fakeActionBar.btnHome.setOnClickListener(this)
         fakeActionBar.btnSearch.setOnClickListener(this)
         fakeActionBar.btnBack.setOnClickListener(this)
