@@ -106,7 +106,7 @@ class BreviaryContentActivity : EvaBaseActivity() {
                 .subscribe({ breviary ->
                     webView.loadDataWithBaseURL(null, breviary.text, "text/html", "utf-8", "")
                 }) {
-                    NovaEvaApp.showErrorPopupDialog(it, this) { loadBreviary() }
+                    NovaEvaApp.showFetchErrorDialog(it, this) { loadBreviary() }
                 }
     }
 

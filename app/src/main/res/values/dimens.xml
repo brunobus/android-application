@@ -31,5 +31,7 @@
 	<dimen name="vijestNaslovWidthLand">215dp</dimen>
 	<dimen name="vijestUvodWidth">405dp</dimen>
 	<dimen name="vijestUvodWidthLand">365dp</dimen>
+
+
 	
 </resources>

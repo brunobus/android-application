@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout 
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/relativeLayout1"
 	android:layout_width="match_parent" 
 	android:layout_height="wrap_content"
+	android:alpha="@dimen/row_alpha"
 	android:background="@drawable/izbornik_btn_normal_propovijedi" >
 	
     <TextView
@@ -11,8 +12,10 @@
         android:layout_width="@dimen/vijestUvodWidth"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
+		android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginLeft="8dp"
+		android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="@string/title_default"
         android:textColor="#4c4c4c"
@@ -26,8 +29,10 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/tvNaslov"
         android:layout_toRightOf="@+id/tvUvodNatpis"
+		android:layout_toEndOf="@+id/tvUvodNatpis"
         android:layout_marginTop="4dp"
         android:layout_marginLeft="10dp"
+		android:layout_marginStart="10dp"
         android:textColor="#7d7d7d"
         android:textSize="13sp"
         android:maxLines="2"
@@ -38,24 +43,29 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
+		android:layout_alignParentStart="true"
         android:layout_marginLeft="8dp"
+		android:layout_marginStart="8dp"
         android:layout_marginTop="4dp"
         android:layout_below="@+id/tvNaslov"
         android:text="@string/introduction_identifier"
         android:textColor="#7d7d7d"
         android:textSize="13sp" />
-	<RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignTop="@+id/tvNaslov"
-        android:layout_marginRight="15dp" >
+	<LinearLayout
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentRight="true"
+		android:layout_alignParentEnd="true"
+		android:layout_alignTop="@+id/tvNaslov"
+		android:layout_marginRight="2dp"
+		android:layout_marginEnd="2dp"
+
+		android:orientation="vertical" >
 
 	    <TextView
 	        android:id="@+id/tvDatum"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:layout_alignParentRight="true"
 	        android:textColor="#ffffff"
 	        android:textSize="22sp"
 	        android:text="14.2" />
@@ -64,45 +74,39 @@
 			android:id="@+id/tvGodinaSatMinuta"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_alignLeft="@+id/tvDatum"
-			android:layout_below="@+id/tvDatum"
 			android:textColor="#7fffffff"
 			android:textSize="@dimen/listaVijestiGodinaSatMinuta"
 			android:text="2014, 14:22" />
-	
-	    <ImageView
-	        android:id="@+id/imgViewMp3"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_below="@+id/tvGodinaSatMinuta"
-	        android:layout_alignParentRight="true"
-	        android:src="@drawable/izbornik_mp3"
-	        android:contentDescription="@string/dummyDesc"
-	        android:layout_marginTop="5dp"
-	        android:visibility="invisible" />
-	
-	    <ImageView
-	        android:id="@+id/imgViewLink"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_below="@+id/tvGodinaSatMinuta"
-	        android:layout_marginTop="5dp"
-	        android:layout_toLeftOf="@+id/imgViewMp3"
-	        android:layout_marginRight="2dp"
-	        android:src="@drawable/izbornik_link"
-	        android:contentDescription="@string/dummyDesc"
-	        android:visibility="invisible" />
-	
-	    <ImageView
-	        android:id="@+id/imgViewTxt"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_below="@+id/tvGodinaSatMinuta"
-	        android:layout_toLeftOf="@+id/imgViewLink"
-	        android:layout_marginRight="2dp"
-	        android:src="@drawable/izbornik_txt"
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
 			android:layout_marginTop="5dp"
-	        android:contentDescription="@string/dummyDesc"
-	        android:visibility="invisible" />
-	</RelativeLayout>    
+			android:orientation="horizontal" >
+
+			<ImageView
+				android:id="@+id/imgViewMp3"
+				android:layout_width="12dp"
+				android:layout_height="12dp"
+				android:contentDescription="@string/dummyDesc"
+				android:src="@drawable/izbornik_mp3"
+				android:visibility="invisible" />
+
+			<ImageView
+				android:id="@+id/imgViewLink"
+				android:layout_width="12dp"
+				android:layout_height="12dp"
+				android:contentDescription="@string/dummyDesc"
+				android:src="@drawable/izbornik_link"
+				android:visibility="invisible" />
+
+			<ImageView
+				android:id="@+id/imgViewTxt"
+				android:layout_width="12dp"
+				android:layout_height="12dp"
+				android:contentDescription="@string/dummyDesc"
+				android:src="@drawable/izbornik_txt"
+				android:visibility="invisible" />
+		</LinearLayout>
+	</LinearLayout>
 </RelativeLayout>

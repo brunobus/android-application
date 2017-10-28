@@ -124,9 +124,9 @@ class SearchActivity : EvaBaseActivity(), OnClickListener {
     private fun initUI() {
         setContentView(R.layout.activity_search)
 
-        fakeActionBar.btnHome.setOnClickListener(this)
+//        fakeActionBar.btnHome.setOnClickListener(this)
         fakeActionBar.btnSearch.setOnClickListener(this)
-        fakeActionBar.btnBack.setOnClickListener(this)
+//        fakeActionBar.btnBack.setOnClickListener(this)
 
         //todo make this nicer
         evaRecyclerView.evaRecyclerView.adapter = adapter
@@ -171,15 +171,15 @@ class SearchActivity : EvaBaseActivity(), OnClickListener {
                         showEmptyListInfo()
                     }
                 }) {
-                    NovaEvaApp.showErrorPopupDialog(it, this) { searchForContent(searchString) }
+                    NovaEvaApp.showFetchErrorDialog(it, this) { searchForContent(searchString) }
                 }
     }
 
     override fun onClick(v: View) {
         when (v.id) {
             R.id.btnSearch -> showSearchPopup()
-            R.id.btnHome -> NovaEvaApp.goHome(this)
-            R.id.btnBack -> onBackPressed()
+//            R.id.btnHome -> NovaEvaApp.goHome(this)
+//            R.id.btnBack -> onBackPressed()
         }
     }
 

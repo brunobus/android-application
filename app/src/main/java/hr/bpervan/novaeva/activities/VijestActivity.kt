@@ -13,7 +13,6 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.EditText
 import android.widget.SeekBar
-import android.widget.Toast
 import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
@@ -71,6 +70,7 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_vijest)
 
         val inState = savedInstanceState ?: intent.extras
         contentId = inState.getLong("contentId", -1)
@@ -89,20 +89,27 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
 
         realm = Realm.getInstance(RealmConfigProvider.cacheConfig)
 
-        subscribeToEvaContentChanges()
+        createIfMissingAndSubscribeToEvaContentUpdates()
         initUI()
 
         if (ConnectionChecker.hasConnection(this)) {
             fetchContentFromServer(contentId)
         } else {
-            Toast.makeText(this, "Internetska veza nije dostupna", Toast.LENGTH_SHORT).show()
-            return
+            NovaEvaApp.showFetchErrorSnackbar(null, this, webView)
         }
     }
 
-    private fun subscribeToEvaContentChanges() {
+    private fun createIfMissingAndSubscribeToEvaContentUpdates() {
+        EvaContentDbAdapter.createIfMissingEvaContentAsync(realm, contentId) {
+            subscribeToEvaContentUpdates()
+        }
+    }
+
+    private fun subscribeToEvaContentUpdates() {
         evaContentChangesDisposable?.dispose()
         evaContentChangesDisposable = EvaContentDbAdapter.subscribeToEvaContentUpdatesAsync(realm, contentId, { evaContent ->
+            this.evaContent = evaContent
+
             tvNaslov.text = evaContent.contentMetadata!!.title
 
             //if not null
@@ -179,6 +186,8 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
     override fun onConfigurationChanged(newConfig: Configuration) {
         this?.clearFindViewByIdCache() //because of a bug in library, you must use "this?." otherwise npe is thrown !!!
         super.onConfigurationChanged(newConfig)
+        setContentView(R.layout.activity_vijest)
+        createIfMissingAndSubscribeToEvaContentUpdates()
         initUI()
     }
 
@@ -187,7 +196,6 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
      * widgets on User interface, sets category specified colour
      */
     private fun initUI() {
-        setContentView(R.layout.activity_vijest)
 
         /** Basic data  */
         NovaEvaApp.openSansBold?.let {
@@ -223,12 +231,12 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
 
         btnTextPlus.setOnClickListener(this)
 
-        fakeActionBar.btnHome.setOnClickListener(this)
+//        fakeActionBar.btnHome.setOnClickListener(this)
         fakeActionBar.btnShare.setOnClickListener(this)
         fakeActionBar.btnMail.setOnClickListener(this)
         fakeActionBar.btnBookmark.setOnClickListener(this)
         fakeActionBar.btnSearch.setOnClickListener(this)
-        fakeActionBar.btnBack.setOnClickListener(this)
+//        fakeActionBar.btnBack.setOnClickListener(this)
 
         /** Set category name and set text size */
         vijestWebView.settings.defaultFontSize = prefs.getInt("hr.bpervan.novaeva.velicinateksta", 14)
@@ -269,7 +277,7 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
                 .subscribeAsync({ contentDataDTO ->
                     CacheService.cache(realm, contentDataDTO)
                 }) {
-                    NovaEvaApp.showErrorSnackbar(it, this, webView)
+                    NovaEvaApp.showFetchErrorSnackbar(it, this, webView)
                 }
     }
 
@@ -365,7 +373,7 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
                 btnPlay.visibility = View.VISIBLE
                 btnPlay.isEnabled = false
             }
-            R.id.btnHome -> NovaEvaApp.goHome(this)
+//            R.id.btnHome -> NovaEvaApp.goHome(this)
             R.id.btnSearch ->
                 if (ConnectionChecker.hasConnection(this))
                     showSearchPopup()
@@ -405,7 +413,7 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
                 prefs.edit().putInt("hr.bpervan.novaeva.velicinateksta", mCurrentSize).apply()
                 vijestWebView.settings.defaultFontSize = mCurrentSize
             }
-            R.id.btnBack -> this@VijestActivity.onBackPressed()
+//            R.id.btnBack -> this@VijestActivity.onBackPressed()
             R.id.imgLink ->
                 evaContent!!.videoURL?.let { videoUrl ->
                     startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(videoUrl)))

@@ -70,9 +70,9 @@ class BookmarksActivity : EvaBaseActivity(), View.OnClickListener {
 
         this.title = "Bookmarks"
 
-        fakeActionBar.btnHome.setOnClickListener(this)
+//        fakeActionBar.btnHome.setOnClickListener(this)
         fakeActionBar.btnSearch.setOnClickListener(this)
-        fakeActionBar.btnBack.setOnClickListener(this)
+//        fakeActionBar.btnBack.setOnClickListener(this)
 
         /*
 		for(ListElement l : listaBookmarksa){
@@ -144,15 +144,10 @@ class BookmarksActivity : EvaBaseActivity(), View.OnClickListener {
 
     override fun onClick(v: View) {
         val vId = v.id
-        if (vId == R.id.btnSearch) {
-            showSearchPopup()
-
-        } else if (vId == R.id.btnHome) {
-            NovaEvaApp.goHome(this)
-
-        } else if (vId == R.id.btnBack) {
-            onBackPressed()
-
+        when (vId) {
+            R.id.btnSearch -> showSearchPopup()
+//            R.id.btnHome -> NovaEvaApp.goHome(this)
+//            R.id.btnBack -> onBackPressed()
         }
     }
 

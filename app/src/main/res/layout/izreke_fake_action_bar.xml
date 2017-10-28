@@ -12,8 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginEnd="15dp"
-        android:layout_marginRight="15dp"
+        android:padding="8dp"
         android:layout_toLeftOf="@+id/btnMail"
         android:layout_toStartOf="@+id/btnMail"
         android:contentDescription="@string/dummyDesc"
@@ -25,6 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
+        android:padding="8dp"
         android:contentDescription="@string/dummyDesc"
         android:src="@drawable/action_button_mail" />
 
@@ -33,35 +33,32 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="15dp"
-        android:layout_marginStart="15dp"
+        android:padding="8dp"
         android:layout_toEndOf="@+id/btnMail"
         android:layout_toRightOf="@+id/btnMail"
         android:contentDescription="@string/dummyDesc"
         android:src="@drawable/action_button_search" />
 
 
-    <ImageView
-        android:id="@+id/btnHome"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:layout_marginEnd="20dp"
-        android:layout_marginRight="20dp"
-        android:contentDescription="@string/dummyDesc"
-        android:src="@drawable/action_button_home" />
+    <!--<ImageView-->
+        <!--android:id="@+id/btnHome"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentEnd="true"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_centerVertical="true"-->
+        <!--android:padding="8dp"-->
+        <!--android:contentDescription="@string/dummyDesc"-->
+        <!--android:src="@drawable/action_button_home" />-->
 
-    <ImageView
-        android:id="@+id/btnBack"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="20dp"
-        android:layout_marginStart="20dp"
-        android:contentDescription="@string/dummyDesc"
-        android:src="@drawable/action_button_back" />
+    <!--<ImageView-->
+        <!--android:id="@+id/btnBack"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentLeft="true"-->
+        <!--android:layout_alignParentStart="true"-->
+        <!--android:layout_centerVertical="true"-->
+        <!--android:padding="8dp"-->
+        <!--android:contentDescription="@string/dummyDesc"-->
+        <!--android:src="@drawable/action_button_back" />-->
 </RelativeLayout>

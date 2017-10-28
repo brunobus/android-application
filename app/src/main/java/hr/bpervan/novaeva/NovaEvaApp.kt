@@ -113,14 +113,14 @@ class NovaEvaApp : Application() {
             context.startActivity(i)
         }
 
-        fun showErrorSnackbar(throwable: Throwable, context: Context, holderView: View?) {
-            Log.e("evaError", throwable.message, throwable)
+        fun showFetchErrorSnackbar(throwable: Throwable?, context: Context, holderView: View?) {
+            if (throwable != null) Log.e("evaError", throwable.message, throwable)
 
             holderView?.let { Snackbar.make(it, context.getString(R.string.error_fetching_data), Snackbar.LENGTH_LONG).show() }
         }
 
-        inline fun showErrorPopupDialog(throwable: Throwable, context: Activity, crossinline onTryAgain: () -> Unit) {
-            Log.e("evaError", throwable.message, throwable)
+        inline fun showFetchErrorDialog(throwable: Throwable?, context: Activity, crossinline onTryAgain: () -> Unit) {
+            if (throwable != null) Log.e("evaError", throwable.message, throwable)
 
             val error = AlertDialog.Builder(context)
             error.setTitle(context.getString(R.string.error))

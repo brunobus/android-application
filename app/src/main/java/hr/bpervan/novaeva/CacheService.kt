@@ -16,7 +16,7 @@ object CacheService {
 
     fun cache(realm: Realm, evaDirectoryDTO: EvaDirectoryDTO, directoryId: Long) {
 
-        EvaDirectoryDbAdapter.updateIfExistsEvaDirectoryAsync(realm, directoryId,
+        EvaDirectoryDbAdapter.addOrUpdateEvaDirectoryAsync(realm, directoryId,
                 newContentMetadataSupplier = {
                     evaDirectoryDTO.contentMetadataList?.map { it.toDatabaseModel() } ?: listOf()
                 },

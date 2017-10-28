@@ -23,22 +23,17 @@ class InfoActivity : EvaBaseActivity(), OnClickListener {
 
         webViewInfo.loadUrl("file:///android_asset/info.htm")
 
-        fakeActionBar.btnBack.setOnClickListener(this)
+//        fakeActionBar.btnBack.setOnClickListener(this)
         fakeActionBar.btnSearch.setOnClickListener(this)
-        fakeActionBar.btnHome.setOnClickListener(this)
+//        fakeActionBar.btnHome.setOnClickListener(this)
     }
 
     override fun onClick(v: View) {
         val id = v.id
-        if (id == R.id.btnSearch) {
-            showSearchPopup()
-
-        } else if (id == R.id.btnHome) {
-            NovaEvaApp.goHome(this)
-
-        } else if (id == R.id.btnBack) {
-            onBackPressed()
-
+        when (id) {
+            R.id.btnSearch -> showSearchPopup()
+//            R.id.btnHome -> NovaEvaApp.goHome(this)
+//            R.id.btnBack -> onBackPressed()
         }
     }
 

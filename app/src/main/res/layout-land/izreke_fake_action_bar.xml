@@ -2,21 +2,21 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/fakeActionBar"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:layout_alignParentRight="true"
     android:layout_alignParentEnd="true"
     android:background="@drawable/toolbar_izreke"
     android:orientation="horizontal">
 
-    <ImageView
-        android:id="@+id/btnHome"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
-        android:contentDescription="@string/dummyDesc"
-        android:src="@drawable/action_button_home" />
+    <!--<ImageView-->
+        <!--android:id="@+id/btnHome"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:padding="8dp"-->
+        <!--android:contentDescription="@string/dummyDesc"-->
+        <!--android:src="@drawable/action_button_home" />-->
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -29,7 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="10dp"
+            android:padding="8dp"
             android:contentDescription="@string/dummyDesc"
             android:src="@drawable/action_button_search" />
 
@@ -39,7 +39,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/btnSearch"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="10dp"
+            android:padding="8dp"
             android:contentDescription="@string/dummyDesc"
             android:src="@drawable/action_button_mail" />
 
@@ -49,18 +49,18 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/btnMail"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="10dp"
+            android:padding="8dp"
             android:contentDescription="@string/dummyDesc"
             android:src="@drawable/action_button_share" />
     </RelativeLayout>
 
-    <ImageView
-        android:id="@+id/btnBack"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:contentDescription="@string/dummyDesc"
-        android:paddingBottom="20dp"
-        android:src="@drawable/action_button_back" />
+    <!--<ImageView-->
+        <!--android:id="@+id/btnBack"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:contentDescription="@string/dummyDesc"-->
+        <!--android:padding="8dp"-->
+        <!--android:src="@drawable/action_button_back"/>-->
 </RelativeLayout>

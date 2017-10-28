@@ -17,6 +17,7 @@ import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaContentMetadata
+import hr.bpervan.novaeva.model.EvaDirectory
 import hr.bpervan.novaeva.model.TIMESTAMP_FIELD
 import hr.bpervan.novaeva.model.TreeElementInfo
 import hr.bpervan.novaeva.services.NovaEvaService
@@ -62,8 +63,15 @@ class EvaRecyclerFragment : Fragment() {
                 headerData)
         adapter.registerAdapterDataObserver(DataChangeLogger())
 
-        subscribeToDirectoryUpdates()
-        fetchDirectoryDataFromServer()
+        createIfMissingAndSubscribeToEvaDirectoryUpdates()
+
+        fetchEvaDirectoryDataFromServer()
+    }
+
+    private fun createIfMissingAndSubscribeToEvaDirectoryUpdates() {
+        EvaDirectoryDbAdapter.createIfMissingEvaDirectoryAsync(realm, fragmentConfig.directoryId) {
+            subscribeToDirectoryUpdates()
+        }
     }
 
     private fun subscribeToDirectoryUpdates() {
@@ -194,14 +202,12 @@ class EvaRecyclerFragment : Fragment() {
                     /** Ako je zadnji u listi podkategorija, onda on nema UnixDatum, pa tražimo zadnji koji ima */
 
                     fetchingFromServer = true
-                    safeRefreshLoadingCircle()
-                    val progressBarIndex = adapter.itemCount - 1
-                    recyclerView.post { adapter.notifyItemChanged(progressBarIndex) }
+                    refreshLoadingCircleState()
 
                     EvaDirectoryDbAdapter.loadEvaDirectoryAsync(realm, fragmentConfig.directoryId, { evaDirectory ->
                         if (evaDirectory != null) {
                             val oldestTimestamp = evaDirectory.contentMetadataList.sort(TIMESTAMP_FIELD, Sort.DESCENDING).lastOrNull()?.timestamp
-                            fetchDirectoryDataFromServer(oldestTimestamp)
+                            fetchEvaDirectoryDataFromServer(oldestTimestamp)
                         }
                     })
                 }
@@ -209,16 +215,16 @@ class EvaRecyclerFragment : Fragment() {
         }
     }
 
-    private fun safeRefreshLoadingCircle() {
+    private fun refreshLoadingCircleState() {
         view?.let {
-            val progressBarIndex = adapter.itemCount - 1
-            it.post { adapter.notifyItemChanged(progressBarIndex) }
+            val loadingCircleIndex = adapter.itemCount - 1
+            it.post { adapter.notifyItemChanged(loadingCircleIndex) }
         }
     }
 
-    private fun fetchDirectoryDataFromServer(timestamp: Long? = null) {
+    private fun fetchEvaDirectoryDataFromServer(timestamp: Long? = null) {
         fetchingFromServer = true
-        safeRefreshLoadingCircle()
+        refreshLoadingCircleState()
 
         fetchFromServerDisposable?.dispose()
         fetchFromServerDisposable = NovaEvaService.instance
@@ -229,12 +235,22 @@ class EvaRecyclerFragment : Fragment() {
 
                     CacheService.cache(realm, evaDirectoryDTO, fragmentConfig.directoryId)
 
+                    view?.postDelayed({
+                        /*if there are no actual new changes from server, data in cache will not be "updated"
+                        and on update callback (in subscribeToDirectoryUpdates) will not be called,
+                        resulting in progress circle spinning forever
+                        This block kills loading circle after some reasonable time
+                        */
+                        loadingFromDb = false
+                        refreshLoadingCircleState()
+                    }, 5000)
+
                     hasMore = evaDirectoryDTO.more > 0
 
                 }) {
                     fetchingFromServer = false
-                    NovaEvaApp.showErrorSnackbar(it, context, view)
-                    safeRefreshLoadingCircle()
+                    NovaEvaApp.showFetchErrorSnackbar(it, context, view)
+                    refreshLoadingCircleState()
                 }
     }
 }

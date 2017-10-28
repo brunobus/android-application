@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/fakeActionBar"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_alignParentBottom="true"
-    android:background="@drawable/toolbar_propoviedi"
-    android:orientation="horizontal">
+                android:id="@+id/fakeActionBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:background="@drawable/toolbar_propoviedi"
+                android:orientation="horizontal">
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -18,36 +18,33 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
             android:layout_toLeftOf="@+id/btnMail"
             android:layout_toStartOf="@+id/btnMail"
             android:contentDescription="@string/dummyDesc"
-            android:src="@drawable/action_button_share" />
+            android:padding="8dp"
+            android:src="@drawable/action_button_share"/>
 
         <ImageView
             android:id="@+id/btnMail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
             android:layout_toLeftOf="@+id/btnSearch"
             android:layout_toStartOf="@+id/btnSearch"
             android:contentDescription="@string/dummyDesc"
-            android:src="@drawable/action_button_mail" />
+            android:padding="8dp"
+            android:src="@drawable/action_button_mail"/>
 
         <ImageView
             android:id="@+id/btnSearch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
             android:layout_toLeftOf="@+id/btnBookmark"
             android:layout_toStartOf="@+id/btnBookmark"
             android:contentDescription="@string/dummyDesc"
-            android:src="@drawable/action_button_search" />
+            android:padding="8dp"
+            android:src="@drawable/action_button_search"/>
 
         <ImageView
             android:id="@+id/btnBookmark"
@@ -56,34 +53,31 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
             android:contentDescription="@string/dummyDesc"
-            android:src="@drawable/action_button_bookmark" />
+            android:padding="8dp"
+            android:src="@drawable/action_button_bookmark"/>
     </RelativeLayout>
 
 
-    <ImageView
-        android:id="@+id/btnHome"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:layout_marginEnd="20dp"
-        android:layout_marginRight="20dp"
-        android:contentDescription="@string/dummyDesc"
-        android:src="@drawable/action_button_home" />
+    <!--<ImageView-->
+        <!--android:id="@+id/btnHome"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentEnd="true"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_centerVertical="true"-->
+        <!--android:contentDescription="@string/dummyDesc"-->
+        <!--android:padding="8dp"-->
+        <!--android:src="@drawable/action_button_home"/>-->
 
-    <ImageView
-        android:id="@+id/btnBack"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="20dp"
-        android:layout_marginStart="20dp"
-        android:contentDescription="@string/dummyDesc"
-        android:src="@drawable/action_button_back" />
+    <!--<ImageView-->
+        <!--android:id="@+id/btnBack"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentLeft="true"-->
+        <!--android:layout_alignParentStart="true"-->
+        <!--android:layout_centerVertical="true"-->
+        <!--android:contentDescription="@string/dummyDesc"-->
+        <!--android:padding="8dp"-->
+        <!--android:src="@drawable/action_button_back"/>-->
 </RelativeLayout>

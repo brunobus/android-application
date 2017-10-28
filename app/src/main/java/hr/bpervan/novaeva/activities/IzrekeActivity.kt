@@ -69,7 +69,7 @@ class IzrekeActivity : EvaBaseActivity(), OnClickListener {
                             webText.loadDataWithBaseURL(null, contentData, "text/html", "UTF-8", "")
                         }
                     }) {
-                        NovaEvaApp.showErrorPopupDialog(it, this) { loadRandomIzreka() }
+                        NovaEvaApp.showFetchErrorDialog(it, this) { loadRandomIzreka() }
                     }
         } else {
             Toast.makeText(this, "Internetska veza nije dostupna", Toast.LENGTH_SHORT).show()
@@ -91,11 +91,11 @@ class IzrekeActivity : EvaBaseActivity(), OnClickListener {
         btnTextPlus.setOnClickListener(this)
         btnObnovi.setOnClickListener(this)
 
-        fakeActionBar.btnHome.setOnClickListener(this)
+//        fakeActionBar.btnHome.setOnClickListener(this)
         fakeActionBar.btnShare.setOnClickListener(this)
         fakeActionBar.btnMail.setOnClickListener(this)
         fakeActionBar.btnSearch.setOnClickListener(this)
-        fakeActionBar.btnBack.setOnClickListener(this)
+//        fakeActionBar.btnBack.setOnClickListener(this)
 
         webText.settings.defaultFontSize = prefs.getInt("hr.bpervan.novaeva.velicinateksta", 14)
 
@@ -116,45 +116,42 @@ class IzrekeActivity : EvaBaseActivity(), OnClickListener {
 
     override fun onClick(v: View) {
         val vId = v.id
-        if (vId == R.id.btnObnovi) {
-            loadRandomIzreka()
-
-        } else if (vId == R.id.btnHome) {
-            NovaEvaApp.goHome(this)
-
-        } else if (vId == R.id.btnSearch) {
-            if (ConnectionChecker.hasConnection(this))
+        when (vId) {
+            R.id.btnObnovi -> loadRandomIzreka()
+//            R.id.btnHome -> NovaEvaApp.goHome(this)
+            R.id.btnSearch -> if (ConnectionChecker.hasConnection(this))
                 showSearchPopup()
-
-        } else if (vId == R.id.btnBookmark) {
-        } else if (vId == R.id.btnShare) {
-            val temp = "http://novaeva.com/node/" + contentId
-            val faceIntent = Intent(Intent.ACTION_SEND)
-            faceIntent.type = "text/plain"
-            faceIntent.putExtra(Intent.EXTRA_TEXT, temp)
-            startActivity(Intent.createChooser(faceIntent, "Facebook"))
-
-        } else if (vId == R.id.btnMail) {
-            val temp2 = "http://novaeva.com/node/" + contentId
-            val mailIntent = Intent(Intent.ACTION_SEND)
-            mailIntent.type = "message/rfc822" //ovo ispipati još malo
-            mailIntent.putExtra(Intent.EXTRA_SUBJECT, contentTitle)
-            mailIntent.putExtra(Intent.EXTRA_TEXT, temp2)
-            startActivity(Intent.createChooser(mailIntent, "Odaberite aplikaciju"))
-
-        } else if (vId == R.id.btnTextPlus) {//showTextSizePopup();
-            var mCurrentSize = prefs.getInt("hr.bpervan.novaeva.velicinateksta", 14)
-            mCurrentSize += 2
-            if (mCurrentSize >= 28) {
-                mCurrentSize = 12
+            R.id.btnBookmark -> {
             }
+            R.id.btnShare -> {
+                val temp = "http://novaeva.com/node/" + contentId
+                val faceIntent = Intent(Intent.ACTION_SEND)
+                faceIntent.type = "text/plain"
+                faceIntent.putExtra(Intent.EXTRA_TEXT, temp)
+                startActivity(Intent.createChooser(faceIntent, "Facebook"))
 
-            prefs.edit().putInt("hr.bpervan.novaeva.velicinateksta", mCurrentSize).apply()
-            webText.settings.defaultFontSize = mCurrentSize
+            }
+            R.id.btnMail -> {
+                val temp2 = "http://novaeva.com/node/" + contentId
+                val mailIntent = Intent(Intent.ACTION_SEND)
+                mailIntent.type = "message/rfc822" //ovo ispipati još malo
+                mailIntent.putExtra(Intent.EXTRA_SUBJECT, contentTitle)
+                mailIntent.putExtra(Intent.EXTRA_TEXT, temp2)
+                startActivity(Intent.createChooser(mailIntent, "Odaberite aplikaciju"))
 
-        } else if (vId == R.id.btnBack) {
-            onBackPressed()
+            }
+            R.id.btnTextPlus -> {//showTextSizePopup();
+                var mCurrentSize = prefs.getInt("hr.bpervan.novaeva.velicinateksta", 14)
+                mCurrentSize += 2
+                if (mCurrentSize >= 28) {
+                    mCurrentSize = 12
+                }
 
+                prefs.edit().putInt("hr.bpervan.novaeva.velicinateksta", mCurrentSize).apply()
+                webText.settings.defaultFontSize = mCurrentSize
+
+            }
+//            R.id.btnBack -> onBackPressed()
         }
 
     }

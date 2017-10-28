@@ -66,13 +66,7 @@ class ListaVijestiActivity : EvaBaseActivity(), OnClickListener {
         initUI()
 
         if (savedInstanceState == null) {
-            EvaDirectoryDbAdapter.createIfMissingEvaDirectoryAsync(realm, categoryId.toLong(),
-                    defaultSupplier = {
-                        EvaDirectory(categoryId.toLong(), EvaDirectoryMetadata(categoryId.toLong(), categoryName.toLowerCase()))
-                    },
-                    onSuccess = {
-                        showFragmentForDirectory(categoryId.toLong(), categoryName.toUpperCase(), false)
-                    })
+            showFragmentForDirectory(categoryId.toLong(), categoryName.toUpperCase(), false)
         } else {
             /*fragment backstack already exists and fragments will be restored*/
         }
@@ -90,14 +84,16 @@ class ListaVijestiActivity : EvaBaseActivity(), OnClickListener {
     private fun initUI() {
         eva_directory_fragment_frame.progress_bar.visibility = View.INVISIBLE //todo
 
-        fakeActionBar.btnHome.setOnClickListener(this)
-        fakeActionBar.btnSearch.setOnClickListener(this)
-        fakeActionBar.btnBack.setOnClickListener(this)
+//        fakeActionBar.btnHome.setOnClickListener(this)
+//        fakeActionBar.btnSearch.setOnClickListener(this)
+//        fakeActionBar.btnBack.setOnClickListener(this)
 
         if (categoryId == EvaCategory.ODGOVORI.id) {
             btnImamPitanjeListaVijesti.setOnClickListener(this)
             btnImamPitanjeListaVijesti.visibility = View.VISIBLE
         }
+
+        floatingSearchButton.setOnClickListener { showSearchPopup() }
 
         setCategoryTypeColour()
     }
@@ -135,34 +131,30 @@ class ListaVijestiActivity : EvaBaseActivity(), OnClickListener {
     override fun onClick(v: View) {
         val vId = v.id
 
-        if (vId == R.id.btnSearch) {
-            showSearchPopup()
+        when (vId) {
+            R.id.btnSearch -> showSearchPopup()
+//            R.id.btnHome -> NovaEvaApp.goHome(this)
+//            R.id.btnBack -> onBackPressed()
+            R.id.btnImamPitanjeListaVijesti -> {
+                val text = "Hvaljen Isus i Marija, javljam Vam se jer imam pitanje."
+                val mail = arrayOfNulls<String>(1)
+                mail[0] = "odgovori.novaeva@gmail.com"
+                val i = Intent(Intent.ACTION_SEND)
+                i.type = "message/rfc822"
+                i.putExtra(Intent.EXTRA_SUBJECT, "Nova Eva pitanje")
+                i.putExtra(Intent.EXTRA_TEXT, text)
+                i.putExtra(Intent.EXTRA_EMAIL, mail)
+                startActivity(Intent.createChooser(i, "Odaberite aplikaciju"))
 
-        } else if (vId == R.id.btnHome) {
-            NovaEvaApp.goHome(this)
-
-        } else if (vId == R.id.btnBack) {
-            onBackPressed()
-
-        } else if (vId == R.id.btnImamPitanjeListaVijesti) {
-            val text = "Hvaljen Isus i Marija, javljam Vam se jer imam pitanje."
-            val mail = arrayOfNulls<String>(1)
-            mail[0] = "odgovori.novaeva@gmail.com"
-            val i = Intent(Intent.ACTION_SEND)
-            i.type = "message/rfc822"
-            i.putExtra(Intent.EXTRA_SUBJECT, "Nova Eva pitanje")
-            i.putExtra(Intent.EXTRA_TEXT, text)
-            i.putExtra(Intent.EXTRA_EMAIL, mail)
-            startActivity(Intent.createChooser(i, "Odaberite aplikaciju"))
-
+            }
         }
     }
 
     private fun setCategoryTypeColour() {
         if (this.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            fakeActionBar.setBackgroundResource(ResourceHandler.getFakeActionBarResourceId(colourSet))
+//            fakeActionBar.setBackgroundResource(ResourceHandler.getFakeActionBarResourceId(colourSet))
         } else {
-            fakeActionBar.setBackgroundResource(ResourceHandler.getFakeActionBarResourceId(colourSet))
+//            fakeActionBar.setBackgroundResource(ResourceHandler.getFakeActionBarResourceId(colourSet))
         }
     }
 
@@ -189,11 +181,7 @@ class ListaVijestiActivity : EvaBaseActivity(), OnClickListener {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { evaDirectoryMetadata ->
-                    val directoryId = evaDirectoryMetadata.directoryId
-                    val title = evaDirectoryMetadata.title
-                    EvaDirectoryDbAdapter.createIfMissingEvaDirectoryAsync(realm, directoryId,
-                            defaultSupplier = { EvaDirectory(directoryId) },
-                            onSuccess = { showFragmentForDirectory(directoryId, title, true) })
+                    showFragmentForDirectory(evaDirectoryMetadata.directoryId, evaDirectoryMetadata.title, true)
                 })
 
         lifecycleBoundDisposables.add(NovaEvaApp.bus.contentOpenRequest

@@ -81,16 +81,16 @@ class MolitvenikActivity : ListActivity(), OnClickListener {
         mainListView = listView
         mainListView.isClickable = true
 
-        fakeActionBar.btnBack.setOnClickListener(this)
+//        fakeActionBar.btnBack.setOnClickListener(this)
         fakeActionBar.btnSearch.setOnClickListener(this)
-        fakeActionBar.btnHome.setOnClickListener(this)
+//        fakeActionBar.btnHome.setOnClickListener(this)
     }
 
     override fun onClick(v: View) {
         when (v.id) {
             R.id.btnSearch -> showSearchPopup()
-            R.id.btnHome -> NovaEvaApp.goHome(this)
-            R.id.btnBack -> onBackPressed()
+//            R.id.btnHome -> NovaEvaApp.goHome(this)
+//            R.id.btnBack -> onBackPressed()
         }
     }
 

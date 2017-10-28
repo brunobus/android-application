@@ -11,7 +11,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        app:layout_constraintBottom_toTopOf="@+id/fakeActionBar"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -36,17 +36,29 @@
         android:contentDescription="@string/dummyDesc"
         android:src="@drawable/button_imam_pitanje"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/fakeActionBar"
+        app:layout_constraintBottom_toTopOf="@+id/floatingSearchButton"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"/>
 
-    <include
-        android:id="@+id/fakeActionBar"
-        layout="@layout/simple_fake_action_bar"
-        android:layout_width="0dp"
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/floatingSearchButton"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:src="@drawable/action_button_search"
+        android:scaleType="center"
+        app:fabSize="mini"
+        android:layout_marginBottom="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"/>
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"/>
+
+    <!--<include-->
+        <!--android:id="@+id/fakeActionBar"-->
+        <!--layout="@layout/simple_fake_action_bar"-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--app:layout_constraintLeft_toLeftOf="parent"-->
+        <!--app:layout_constraintRight_toRightOf="parent"/>-->
 
 </android.support.constraint.ConstraintLayout>
