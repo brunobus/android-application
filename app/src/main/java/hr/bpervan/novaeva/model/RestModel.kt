@@ -50,8 +50,8 @@ data class EvaContentDTO(
         @SerializedName("image") val images: List<EvaImageDTO>? = null,
         @SerializedName("tekst") val text: String? = null,
         @SerializedName("naslov") val title: String? = null,
-        val youtube: String? = null,
-        val audio: String? = null,
+        @SerializedName("youtube") val videoURL: String? = null,
+        @SerializedName("audio") val audioURL: String? = null,
         @SerializedName("time") val datetime: String? = null) {
 
     fun hasImage(): Boolean = images != null && images.isNotEmpty() && this.images[0].size640 != null

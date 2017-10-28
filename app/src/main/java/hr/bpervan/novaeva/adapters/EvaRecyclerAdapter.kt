@@ -15,6 +15,7 @@ import hr.bpervan.novaeva.utilities.ResourceHandler
 import kotlinx.android.synthetic.main.folder_row.view.*
 import kotlinx.android.synthetic.main.izbornik_top.view.*
 import kotlinx.android.synthetic.main.vijest_row.view.*
+import java.text.SimpleDateFormat
 import java.util.*
 
 /**
@@ -25,9 +26,10 @@ class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
                          private val headerData: HeaderData?
 ) : RecyclerView.Adapter<EvaRecyclerAdapter.BindableViewHolder>() {
 
-    private val cal = Calendar.getInstance()
-
     companion object {
+        val dayMonthFormat = SimpleDateFormat("d.M.", Locale.US)
+        val yearHourMinuteFormat = SimpleDateFormat("yyyy, HH:mm", Locale.US)
+
         val HEADER_VIEW_TYPE = 0
         val CONTENT_VIEW_TYPE = 1
         val SUBDIRECTORY_VIEW_TYPE = 2
@@ -174,63 +176,22 @@ class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
         override fun bindTo(t: Any) {
             val contentInfo = t as EvaContentMetadata
 
-            //todo refactor and simplify this old code
-
             tvNaslov.text = contentInfo.title
-            cal.timeInMillis = 1000 * contentInfo.timestamp
 
-            val sat: String
-            val minuta: String
-            val dan: String
-            val mjesec: String
-            val godina: String = cal.get(Calendar.YEAR).toString()
+            val datetime = Date(1000 * contentInfo.timestamp)
 
-            //sat = String.valueOf(cal.get(Calendar.HOUR_OF_DAY));
+            //todo move formatted datetime to DB
+            val dayMonth: String = dayMonthFormat.format(datetime)
+            val yearHourMinute: String = yearHourMinuteFormat.format(datetime)
 
-            if (cal.get(Calendar.HOUR_OF_DAY) < 10) {
-                sat = "0" + cal.get(Calendar.HOUR_OF_DAY).toString()
-            } else {
-                sat = cal.get(Calendar.HOUR_OF_DAY).toString()
+            contentInfo.attachmentsIndicator.let {
+                imgHasTxt.visibility = if (it != null && it.hasDocuments) View.VISIBLE else View.GONE
+                imgHasLink.visibility = if (it != null && it.hasVideo) View.VISIBLE else View.GONE
+                imgHasAudio.visibility = if (it != null && it.hasMusic) View.VISIBLE else View.GONE
             }
 
-            if (cal.get(Calendar.MINUTE) < 10) {
-                minuta = "0" + cal.get(Calendar.MINUTE).toString()
-            } else {
-                minuta = cal.get(Calendar.MINUTE).toString()
-            }
-
-            //dan = String.valueOf(cal.get(Calendar.DAY_OF_MONTH));
-
-            if (cal.get(Calendar.DAY_OF_MONTH) < 9) {
-                dan = "0" + (cal.get(Calendar.DAY_OF_MONTH) + 1).toString()
-            } else {
-                dan = (cal.get(Calendar.DAY_OF_MONTH) + 1).toString()
-            }
-
-            if (cal.get(Calendar.MONTH) < 9) {
-                mjesec = "0" + (cal.get(Calendar.MONTH) + 1).toString()
-            } else {
-                mjesec = (cal.get(Calendar.MONTH) + 1).toString()
-            }
-            /** Pitanje je kako će se u APIu ovo mapirati youtube - video itd. */
-
-            if (contentInfo.attachmentsIndicator != null) {
-                contentInfo.attachmentsIndicator?.let {
-
-                    if (it.hasVideo) {
-                        imgHasLink.visibility = View.VISIBLE
-                    }
-                    if (it.hasMusic) {
-                        imgHasAudio.visibility = View.VISIBLE
-                    }
-                    if (it.hasDocuments) {
-                        imgHasTxt.visibility = View.VISIBLE
-                    }
-                }
-            }
-
-            tvGodinaSatMinuta.text = "$godina, $sat:$minuta"
-            tvDatum.text = "$dan.$mjesec."
+            tvGodinaSatMinuta.text = yearHourMinute
+            tvDatum.text = dayMonth
             tvUvod.text = contentInfo.preview
 
             view.setOnClickListener {
