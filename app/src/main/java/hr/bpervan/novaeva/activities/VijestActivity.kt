@@ -31,7 +31,6 @@ import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.*
 import hr.bpervan.novaeva.services.BackgroundPlayerService
 import hr.bpervan.novaeva.services.NovaEvaService
-import hr.bpervan.novaeva.storage.EvaBookmarkDbAdapter
 import hr.bpervan.novaeva.storage.EvaContentDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
 import hr.bpervan.novaeva.utilities.*
@@ -62,7 +61,7 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
 
     private var fetchFromServerDisposable: Disposable? = null
     private var evaContentChangesDisposable: Disposable? = null
-
+    private var evaContentMetadataChangesDisposable: Disposable? = null
     /**
      * Exoplayer
      */
@@ -87,7 +86,7 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
                         .build()
         )
 
-        realm = Realm.getInstance(RealmConfigProvider.cacheConfig)
+        realm = Realm.getInstance(RealmConfigProvider.evaDBConfig)
 
         createIfMissingAndSubscribeToEvaContentUpdates()
         initUI()
@@ -106,8 +105,16 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
     }
 
     private fun subscribeToEvaContentUpdates() {
+        evaContentMetadataChangesDisposable?.dispose()
+        evaContentMetadataChangesDisposable = EvaContentDbAdapter
+                .subscribeToEvaContentMetadataUpdatesAsync(realm, contentId) { evaContentMetadata ->
+
+                fakeActionBar.btnBookmark.setImageResource(
+                        if(evaContentMetadata.bookmark) R.drawable.action_button_bookmarked
+                        else R.drawable.action_button_bookmark)
+        }
         evaContentChangesDisposable?.dispose()
-        evaContentChangesDisposable = EvaContentDbAdapter.subscribeToEvaContentUpdatesAsync(realm, contentId, { evaContent ->
+        evaContentChangesDisposable = EvaContentDbAdapter.subscribeToEvaContentUpdatesAsync(realm, contentId){ evaContent ->
             this.evaContent = evaContent
 
             tvNaslov.text = evaContent.contentMetadata!!.title
@@ -144,7 +151,7 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
             }
 
             loadingCircle.visibility = View.GONE
-        })
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -306,6 +313,7 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
 
         fetchFromServerDisposable?.dispose()
         evaContentChangesDisposable?.dispose()
+        evaContentMetadataChangesDisposable?.dispose()
         realm.close()
     }
 
@@ -381,13 +389,9 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
                 val evaContent = this.evaContent
                 if (evaContent != null) {
                     val evaContentMetadata = evaContent.contentMetadata!!
-                    Realm.getInstance(RealmConfigProvider.bookmarksConfig).use { bookmarksRealm ->
-                        EvaBookmarkDbAdapter.storeEvaBookmarkAsync(bookmarksRealm, evaContentMetadata)
+                    EvaContentDbAdapter.updateEvaContentMetadataAsync(realm, evaContentMetadata.contentId){
+                        it.bookmark = !it.bookmark
                     }
-
-                    fakeActionBar.btnBookmark.setImageResource(R.drawable.action_button_bookmarked)
-                } else {
-                    //todo
                 }
             }
             R.id.btnShare -> {

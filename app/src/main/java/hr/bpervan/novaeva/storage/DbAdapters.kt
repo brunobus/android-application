@@ -10,24 +10,6 @@ import io.realm.*
  * Created by vpriscan on 19.10.17..
  */
 
-object EvaBookmarkDbAdapter {
-    fun loadEvaBookmarksAsync(realm: Realm, bookmarksConsumer: (RealmResults<EvaContentMetadata>) -> Unit) {
-        realm.where(EvaContentMetadata::class.java)
-                .findAllSortedAsync(TIMESTAMP_FIELD, Sort.DESCENDING)
-                .asFlowable()
-                .filter { it.isLoaded }
-                .firstOrError()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(bookmarksConsumer, ::handleError)
-    }
-
-    fun storeEvaBookmarkAsync(realm: Realm, bookmark: EvaContentMetadata) {
-        realm.executeTransactionAsync { realmInTrans ->
-            realmInTrans.insertOrUpdate(bookmark)
-        }
-    }
-}
-
 object EvaDirectoryDbAdapter {
 
     private fun loadEvaDirectoryMetadata(realm: Realm, directoryId: Long): EvaDirectoryMetadata? =
@@ -110,6 +92,10 @@ object EvaContentDbAdapter {
     fun subscribeToEvaContentUpdatesAsync(realm: Realm, contentId: Long, contentConsumer: (EvaContent) -> Unit): Disposable =
             subscribeToUpdatesAsync(realm, EvaContent::class.java, CONTENT_ID_FIELD, contentId, contentConsumer)
 
+    fun subscribeToEvaContentMetadataUpdatesAsync(realm: Realm, contentId: Long,
+                                                  contentMetadataConsumer: (EvaContentMetadata) -> Unit): Disposable =
+            subscribeToUpdatesAsync(realm, EvaContentMetadata::class.java, CONTENT_ID_FIELD, contentId, contentMetadataConsumer)
+
     fun addOrUpdateEvaContent(realm: Realm, evaContent: EvaContent) {
         realm.executeTransactionAsync { realmInTrans ->
             if (evaContent.contentMetadata == null) {
@@ -118,5 +104,16 @@ object EvaContentDbAdapter {
             }
             realmInTrans.insertOrUpdate(evaContent)
         }
+    }
+
+    fun updateEvaContentMetadataAsync(realm: Realm, evaContentId: Long, updateFunction: (EvaContentMetadata) -> Unit) {
+        realm.executeTransactionAsync({realmInTrans ->
+            loadEvaContentMetadata(realmInTrans, evaContentId)?.let(updateFunction)
+        })
+    }
+
+    fun loadManyEvaContentMetadata(realm: Realm, predicate: (EvaContentMetadata)->Boolean,
+                                   subscriber: (EvaContentMetadata) -> Unit, onComplete: () -> Unit){
+        loadManyAsync(realm, EvaContentMetadata::class.java, predicate, subscriber, onComplete)
     }
 }
