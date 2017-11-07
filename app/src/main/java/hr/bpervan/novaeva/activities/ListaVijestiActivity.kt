@@ -33,7 +33,7 @@ class ListaVijestiActivity : EvaBaseActivity(), OnClickListener {
     private var categoryId = -1
     private lateinit var categoryName: String
 
-    private var colourSet = -1
+    private var themeId = -1
 
     private val lifecycleBoundDisposables = CompositeDisposable()
 
@@ -41,12 +41,18 @@ class ListaVijestiActivity : EvaBaseActivity(), OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_lista_vijesti)
+
 
         val inState: Bundle = savedInstanceState ?: intent.extras
         categoryName = inState.getString("categoryName", "")
         categoryId = inState.getInt("categoryId", 11)
-        colourSet = inState.getInt("colourSet", categoryId)
+        themeId = inState.getInt("themeId", -1)
+
+        if (themeId != -1) {
+            setTheme(themeId)
+        }
+
+        setContentView(R.layout.activity_lista_vijesti)
 
         //mGaTracker = mGaInstance.getTracker("UA-40344870-1");
         val mGaTracker = (application as NovaEvaApp).getTracker(NovaEvaApp.TrackerName.APP_TRACKER)
@@ -76,7 +82,7 @@ class ListaVijestiActivity : EvaBaseActivity(), OnClickListener {
 
         outState.putString("categoryName", categoryName)
         outState.putInt("categoryId", categoryId)
-        outState.putInt("colourSet", colourSet)
+        outState.putInt("themeId", themeId)
 
         super.onSaveInstanceState(outState)
     }
@@ -102,7 +108,7 @@ class ListaVijestiActivity : EvaBaseActivity(), OnClickListener {
 
         val evaRecyclerFragment = EvaRecyclerFragment()
         val bundle = Bundle()
-        bundle.putParcelable("fragmentConfig", EvaRecyclerFragment.FragmentConfig(dirId, dirName, isSubDir, colourSet))
+        bundle.putParcelable("fragmentConfig", EvaRecyclerFragment.FragmentConfig(dirId, dirName, isSubDir, themeId))
         evaRecyclerFragment.arguments = bundle
 
         supportFragmentManager
@@ -191,7 +197,7 @@ class ListaVijestiActivity : EvaBaseActivity(), OnClickListener {
                 .subscribe { evaContentMetadata ->
                     val i = Intent(this@ListaVijestiActivity, VijestActivity::class.java)
                     i.putExtra("contentId", evaContentMetadata.contentId)
-                    i.putExtra("colourSet", colourSet)
+                    i.putExtra("themeId", themeId)
                     i.putExtra("categoryId", categoryId)
                     startActivity(i)
                     overridePendingTransition(R.anim.move_right_in, R.anim.move_left_out)

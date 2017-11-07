@@ -59,7 +59,7 @@ class EvaRecyclerFragment : Fragment() {
         headerData = EvaRecyclerAdapter.HeaderData(fragmentConfig.directoryTitle, infoText)
 
         adapter = EvaRecyclerAdapter(elementsList,
-                EvaRecyclerAdapter.ConfigData(fragmentConfig.colourSet, { loadingFromDb || fetchingFromServer }),
+                EvaRecyclerAdapter.ConfigData(fragmentConfig.themeId, { loadingFromDb || fetchingFromServer }),
                 headerData)
         adapter.registerAdapterDataObserver(DataChangeLogger())
 
@@ -114,7 +114,7 @@ class EvaRecyclerFragment : Fragment() {
     class FragmentConfig(val directoryId: Long,
                          val directoryTitle: String,
                          val isSubDirectory: Boolean,
-                         val colourSet: Int) : Parcelable {
+                         val themeId: Int) : Parcelable {
 
         constructor(parcel: Parcel) : this(
                 parcel.readLong(),
@@ -126,7 +126,7 @@ class EvaRecyclerFragment : Fragment() {
             dest.writeLong(directoryId)
             dest.writeString(directoryTitle)
             dest.writeByte(if (isSubDirectory) 1.toByte() else 0.toByte())
-            dest.writeInt(colourSet)
+            dest.writeInt(themeId)
         }
 
         override fun describeContents(): Int = 0
@@ -142,7 +142,7 @@ class EvaRecyclerFragment : Fragment() {
                 fragmentConfig.directoryId,
                 fragmentConfig.directoryTitle,
                 fragmentConfig.isSubDirectory,
-                fragmentConfig.colourSet
+                fragmentConfig.themeId
         ))
 
         super.onSaveInstanceState(outState)

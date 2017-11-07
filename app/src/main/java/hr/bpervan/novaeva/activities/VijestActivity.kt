@@ -38,9 +38,8 @@ import hr.bpervan.novaeva.utilities.*
 import io.reactivex.disposables.Disposable
 import io.realm.Realm
 import kotlinx.android.synthetic.*
-import kotlinx.android.synthetic.main.activity_brevijar_detalji.*
 import kotlinx.android.synthetic.main.activity_vijest.*
-import kotlinx.android.synthetic.main.vijest_fake_action_bar.view.*
+import kotlinx.android.synthetic.main.eva_collapsing_bar.view.*
 
 class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBarChangeListener {
     /** ------------------------------------------FIELDS------------------------------------------ */
@@ -95,7 +94,7 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
         if (ConnectionChecker.hasConnection(this)) {
             fetchContentFromServer(contentId)
         } else {
-            NovaEvaApp.showFetchErrorSnackbar(null, this, webView)
+            NovaEvaApp.showFetchErrorSnackbar(null, this, vijestWebView)
         }
     }
 
@@ -110,13 +109,13 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
         evaContentChangesDisposable = EvaContentDbAdapter.subscribeToEvaContentUpdatesAsync(realm, contentId, { evaContent ->
             this.evaContent = evaContent
 
-            tvNaslov.text = evaContent.contentMetadata!!.title
+            evaCollapsingBar.collapsingToolbar.title = evaContent.contentMetadata!!.title
 
             //if not null
             val image = evaContent.image
             if (image != null) {
-                if (headerImage != null) {
-                    imageLoader.displayImage(image.url, headerImage, ImageLoaderConfigurator.createDefaultDisplayImageOptions(false))
+                if (evaCollapsingBar.coverImage != null) {
+                    imageLoader.displayImage(image.url, evaCollapsingBar.coverImage, ImageLoaderConfigurator.createDefaultDisplayImageOptions(false))
                 }
             } else {
 //                val url = prefs.getString("hr.bpervan.novaeva.categoryheader." + contentData.contentMetadata!!.directoryId, null)
@@ -198,9 +197,12 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
     private fun initUI() {
 
         /** Basic data  */
-        NovaEvaApp.openSansBold?.let {
-            tvNaslov.typeface = it
-        }
+//        NovaEvaApp.openSansBold?.let {
+//            tvNaslov.typeface = it
+//        }
+
+        vijestWebView.settings.builtInZoomControls = true
+        vijestWebView.settings.displayZoomControls = false
 
         vijestWebView.isFocusable = false
         vijestWebView.webViewClient = object : WebViewClient() {
@@ -229,13 +231,13 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
             tvElapsed.typeface = it
         }
 
-        btnTextPlus.setOnClickListener(this)
+//        btnTextPlus.setOnClickListener(this)
 
 //        fakeActionBar.btnHome.setOnClickListener(this)
-        fakeActionBar.btnShare.setOnClickListener(this)
-        fakeActionBar.btnMail.setOnClickListener(this)
-        fakeActionBar.btnBookmark.setOnClickListener(this)
-        fakeActionBar.btnSearch.setOnClickListener(this)
+//        fakeActionBar.btnShare.setOnClickListener(this)
+//        fakeActionBar.btnMail.setOnClickListener(this)
+//        fakeActionBar.btnBookmark.setOnClickListener(this)
+//        fakeActionBar.btnSearch.setOnClickListener(this)
 //        fakeActionBar.btnBack.setOnClickListener(this)
 
         /** Set category name and set text size */
@@ -264,7 +266,7 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
             		(int) (mPlayer.getCurrentPosition() / 1000) % 60,
             		(int) ((mPlayer.getCurrentPosition() / (1000 * 60)) % 60)));
 		}*/
-        fakeActionBar.btnBookmark.setImageResource(R.drawable.action_button_bookmark)
+//        fakeActionBar.btnBookmark.setImageResource(R.drawable.action_button_bookmark)
         window.decorView.setBackgroundResource(android.R.color.background_light)
     }
 
@@ -277,7 +279,7 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
                 .subscribeAsync({ contentDataDTO ->
                     CacheService.cache(realm, contentDataDTO)
                 }) {
-                    NovaEvaApp.showFetchErrorSnackbar(it, this, webView)
+                    NovaEvaApp.showFetchErrorSnackbar(it, this, vijestWebView)
                 }
     }
 
@@ -320,8 +322,8 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
     }
 
     private fun setCategoryTypeColour() {
-        fakeActionBar.setBackgroundResource(ResourceHandler.getFakeActionBarResourceId(colourSet))
-        imgNaslovnaTraka.setImageResource(ResourceHandler.getContentTitleBarResourceId(colourSet))
+//        fakeActionBar.setBackgroundResource(ResourceHandler.getFakeActionBarResourceId(colourSet))
+//        imgNaslovnaTraka.setImageResource(ResourceHandler.getContentTitleBarResourceId(colourSet))
     }
 
     override fun onClick(v: View) {
@@ -385,7 +387,7 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
                         EvaBookmarkDbAdapter.storeEvaBookmarkAsync(bookmarksRealm, evaContentMetadata)
                     }
 
-                    fakeActionBar.btnBookmark.setImageResource(R.drawable.action_button_bookmarked)
+//                    fakeActionBar.btnBookmark.setImageResource(R.drawable.action_button_bookmarked)
                 } else {
                     //todo
                 }

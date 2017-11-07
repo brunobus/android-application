@@ -48,16 +48,12 @@
         Molitvenik izbornik
     </screenName>
 
-    <screenName name = "hr.bpervan.novaeva.activities.MolitvenikDetaljiActivity">
+    <screenName name = "hr.bpervan.novaeva.activities.PrayerContentActivity">
         Molitvenik molitva
     </screenName>
 
     <screenName name = "hr.bpervan.novaeva.activities.SearchActivity">
         Search
-    </screenName>
-
-    <screenName name = "hr.bpervan.novaeva.activities.SplashActivity">
-        Splash
     </screenName>
 
     <screenName name = "hr.bpervan.novaeva.activities.VijestActivity">

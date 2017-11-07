@@ -7,34 +7,54 @@
 
     <!-- Application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+        <item name="android:windowNoTitle">true</item>
+        <item name="colorPrimary">@color/CornflowerBlue</item>
+        <item name="colorPrimaryDark">@color/Blue</item>
+        <item name="colorAccent">@color/Orange</item>
     </style>
 
-    <style name="NovaEva" parent="AppTheme">
-        <item name="android:windowNoTitle">true</item>
-        <item name="android:windowBackground">@drawable/background</item>
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+
+    <style name="NovaEva.TextAppearance.Title" parent="TextAppearance.AppCompat.Title">
+        <item name="android:textSize">@dimen/title_size</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
-    
-    <style name="NovaEvaSplash" parent="AppTheme">
-        <item name="android:windowNoTitle">true</item>
+
+    <style name="NovaEva.TextAppearance.Title.Small" parent="TextAppearance.AppCompat.Title">
+        <item name="android:textSize">@dimen/title_size_small</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+    </style>
+
+    <style name="DashboardTheme" parent="AppTheme">
         <item name="android:windowBackground">@drawable/splash</item>
     </style>
-    
-    <style name="BrevijarMenu" parent="AppTheme">
-        <item name="android:windowNoTitle">true</item>
+
+    <style name="ContentTheme" parent="AppTheme">
+        <item name="android:colorBackground">@color/FloralWhite</item>
+    </style>
+
+    <style name="BreviaryTheme" parent="AppTheme">
         <item name="android:windowBackground">@drawable/brevijar_backbrevijar</item>
     </style>
-    
-    <style name="ListaVijesti" parent="AppTheme">
-    	<item name="android:windowNoTitle">true</item>
+
+    <style name="BreviaryContentTheme" parent="BreviaryTheme">
+        <item name="colorPrimary">@drawable/brevijar_backbrevijar</item>
+        <item name="colorPrimaryDark">@drawable/brevijar_backbrevijar</item>
+        <item name="colorAccent">@drawable/brevijar_backbrevijar</item>
     </style>
-    
-    <style name="Vijest" parent="AppTheme">
-    	<item name="android:windowNoTitle">true</item>
-        <item name="android:colorBackground">#ffffff</item>
+
+    <style name="MultimedijaTheme" parent="AppTheme">
+        <item name="colorPrimary">@color/CornflowerBlue</item>
+        <item name="colorPrimaryDark">@color/Blue</item>
+        <item name="colorAccent">@color/Orange</item>
     </style>
-    
-    <style name="Brevijar" parent="AppTheme">
-        <item name="android:windowNoTitle">false</item>
+
+    <style name="AktualnoTheme" parent="AppTheme">
+        <item name="colorPrimary">@color/CornflowerBlue</item>
+        <item name="colorPrimaryDark">@color/Blue</item>
+        <item name="colorAccent">@color/Orange</item>
     </style>
+
 </resources>

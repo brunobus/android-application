@@ -11,10 +11,12 @@ import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.services.NovaEvaService
 import hr.bpervan.novaeva.utilities.ConnectionChecker
+import hr.bpervan.novaeva.utilities.ImageLoaderConfigurator
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_brevijar_detalji.*
+import kotlinx.android.synthetic.main.eva_simple_content.*
+import kotlinx.android.synthetic.main.eva_collapsing_bar.view.*
 
 class BreviaryContentActivity : EvaBaseActivity() {
 
@@ -27,7 +29,7 @@ class BreviaryContentActivity : EvaBaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_brevijar_detalji)
+        setContentView(R.layout.eva_simple_content)
 
         breviaryId = intent.getIntExtra("BREV_CAT", 4)
 
@@ -67,6 +69,9 @@ class BreviaryContentActivity : EvaBaseActivity() {
 
     private fun initUI() {
 
+//        webView.settings.builtInZoomControls = true
+//        webView.settings.displayZoomControls = false
+
         /*webView.getSettings().setSupportZoom(true);
 		webView.getSettings().setBuiltInZoomControls(true);
 		webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
@@ -76,7 +81,15 @@ class BreviaryContentActivity : EvaBaseActivity() {
         webView.isLongClickable = false
         setTitle()
 
-        webView!!.settings.defaultTextEncodingName = "utf-8"
+        val coverImage = evaCollapsingBar.collapsingToolbar.coverImage
+
+        val headerUrl = prefs.getString("hr.bpervan.novaeva.brevijarheaderimage", null)
+
+        if (headerUrl != null && coverImage != null) {
+            imageLoader.displayImage(headerUrl, coverImage, ImageLoaderConfigurator.createDefaultDisplayImageOptions(true))
+        }
+
+//        webView!!.settings.defaultTextEncodingName = "utf-8"
     }
 
     private fun setTitle() {
@@ -92,7 +105,7 @@ class BreviaryContentActivity : EvaBaseActivity() {
             8 -> activityTitle += "Sutra, Večernja"
             9 -> activityTitle += "Sutra, Povečerje"
         }
-        this.title = activityTitle
+        evaCollapsingBar.collapsingToolbar.title = activityTitle
     }
 
     private fun loadBreviary() {

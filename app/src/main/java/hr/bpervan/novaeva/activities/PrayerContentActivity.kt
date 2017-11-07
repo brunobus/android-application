@@ -1,6 +1,5 @@
 package hr.bpervan.novaeva.activities
 
-import android.R.color
 import android.os.Bundle
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -8,13 +7,17 @@ import com.google.android.gms.analytics.GoogleAnalytics
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
-import kotlinx.android.synthetic.main.activity_molitvenik_detalji.*
+import kotlinx.android.synthetic.main.eva_simple_content.*
+import kotlinx.android.synthetic.main.eva_collapsing_bar.view.*
+import android.view.MotionEvent
+import android.view.View.OnTouchListener
 
-class MolitvenikDetaljiActivity : EvaBaseActivity() {
+
+class PrayerContentActivity : EvaBaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_molitvenik_detalji)
+        setContentView(R.layout.eva_simple_content)
 
         val mGaTracker = (application as NovaEvaApp).getTracker(NovaEvaApp.TrackerName.APP_TRACKER)
         mGaTracker.send(
@@ -42,13 +45,16 @@ class MolitvenikDetaljiActivity : EvaBaseActivity() {
     }
 
     protected fun initUI() {
-        webView.settings.setSupportZoom(true)
+
         webView.settings.builtInZoomControls = true
+        webView.settings.displayZoomControls = false
+
+//        webView.settings.setSupportZoom(true)
         webView.scrollBarStyle = WebView.SCROLLBARS_OUTSIDE_OVERLAY
         webView.isScrollbarFadingEnabled = true
-        webView.setBackgroundColor(color.background_light)
         webView.setOnLongClickListener { true }
         webView.isLongClickable = false
+        webView.settings.defaultTextEncodingName = "utf-8"
 
         webView.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(webView: WebView, url: String): Boolean {
@@ -57,11 +63,13 @@ class MolitvenikDetaljiActivity : EvaBaseActivity() {
             }
         }
 
-        this.title = intent.getStringExtra("title")
+        val title = intent.getStringExtra("title")
+        val id = intent.getIntExtra("id", 0)
 
-        webView.settings.defaultTextEncodingName = "utf-8"
 
-        var url = getUrl(Integer.parseInt(intent.getStringExtra("id")))
+        evaCollapsingBar.collapsingToolbar.title = title
+
+        var url = getUrl(id)
 
         url = "file:///android_asset/" + url
         webView.loadUrl(url)

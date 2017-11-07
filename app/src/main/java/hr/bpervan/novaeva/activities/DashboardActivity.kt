@@ -217,71 +217,54 @@ class DashboardActivity : EvaBaseActivity(), OnTouchListener, OnClickListener {
 
     override fun onClick(v: View) {
 
-        if (v.id == R.id.btnMolitvenik) {
-            startActivity(Intent(this, MolitvenikActivity::class.java))
-        } else if (v.id == R.id.btnInfo) {
-            startActivity(Intent(this, InfoActivity::class.java))
-        } else if (v.id == R.id.btnBookmarks) {
-            startActivity(Intent(this, BookmarksActivity::class.java))
-        }
-
         when (v.id) {
-            R.id.btnBrevijar -> {
-                val i = Intent(this, BreviaryActivity::class.java)
-                startActivity(i)
-            }
-            R.id.btnEvandjelje -> {
-                val i = Intent(this, ListaVijestiActivity::class.java)
-                i.putExtra("categoryId", EvaCategory.EVANDJELJE.id)
-                i.putExtra("categoryName", EvaCategory.EVANDJELJE.rawName)
-                startActivity(i)
-            }
-            R.id.btnMp3 -> {
-                val i = Intent(this, ListaVijestiActivity::class.java)
-                i.putExtra("categoryId", EvaCategory.PJESMARICA.id)
-                i.putExtra("categoryName", EvaCategory.PJESMARICA.rawName)
-                startActivity(i)
-            }
-            R.id.btnPropovjedi -> {
-                val i = Intent(this, ListaVijestiActivity::class.java)
-                i.putExtra("categoryId", EvaCategory.PROPOVIJEDI.id)
-                i.putExtra("categoryName", EvaCategory.PROPOVIJEDI.rawName)
-                startActivity(i)
-            }
-            R.id.btnOdgovori -> {
-                val i = Intent(this, ListaVijestiActivity::class.java)
-                i.putExtra("categoryId", EvaCategory.ODGOVORI.id)
-                i.putExtra("categoryName", EvaCategory.ODGOVORI.rawName)
-                startActivity(i)
-            }
-            R.id.btnPoziv -> {
-                val i = Intent(this, ListaVijestiActivity::class.java)
-                i.putExtra("categoryId", EvaCategory.POZIV.id)
-                i.putExtra("categoryName", EvaCategory.POZIV.rawName)
-                startActivity(i)
-            }
-            R.id.btnDuhovnost -> {
-                val i = Intent(this, ListaVijestiActivity::class.java)
-                i.putExtra("categoryId", EvaCategory.DUHOVNOST.id)
-                i.putExtra("categoryName", EvaCategory.DUHOVNOST.rawName)
-                startActivity(i)
-            }
-            R.id.btnIzreke -> {
-                val i = Intent(this, IzrekeActivity::class.java)
-                startActivity(i)
-            }
-            R.id.btnMultimedia -> {
-                val i = Intent(this, ListaVijestiActivity::class.java)
-                i.putExtra("categoryId", EvaCategory.MULTIMEDIJA.id)
-                i.putExtra("categoryName", EvaCategory.MULTIMEDIJA.rawName)
-                startActivity(i)
-            }
-            R.id.btnAktualno -> {
-                val i = Intent(this, ListaVijestiActivity::class.java)
-                i.putExtra("categoryId", EvaCategory.AKTUALNO.id)
-                i.putExtra("categoryName", EvaCategory.AKTUALNO.rawName)
-                startActivity(i)
-            }
+            R.id.btnMolitvenik -> startActivity(Intent(this, MolitvenikActivity::class.java))
+            R.id.btnInfo -> startActivity(Intent(this, InfoActivity::class.java))
+            R.id.btnBookmarks -> startActivity(Intent(this, BookmarksActivity::class.java))
+            R.id.btnBrevijar -> startActivity(Intent(this, BreviaryActivity::class.java))
+            R.id.btnEvandjelje -> startActivity(Intent(this, ListaVijestiActivity::class.java).apply {
+                putExtra("categoryId", EvaCategory.EVANDJELJE.id)
+                putExtra("categoryName", EvaCategory.EVANDJELJE.rawName)
+                putExtra("themeId", R.style.MultimedijaTheme)
+            })
+            R.id.btnMp3 -> startActivity(Intent(this, ListaVijestiActivity::class.java).apply {
+                putExtra("categoryId", EvaCategory.PJESMARICA.id)
+                putExtra("categoryName", EvaCategory.PJESMARICA.rawName)
+                putExtra("themeId", R.style.MultimedijaTheme)
+            })
+            R.id.btnPropovjedi -> startActivity(Intent(this, ListaVijestiActivity::class.java).apply {
+                putExtra("categoryId", EvaCategory.PROPOVIJEDI.id)
+                putExtra("categoryName", EvaCategory.PROPOVIJEDI.rawName)
+                putExtra("themeId", R.style.MultimedijaTheme)
+            })
+            R.id.btnOdgovori -> startActivity(Intent(this, ListaVijestiActivity::class.java).apply {
+                putExtra("categoryId", EvaCategory.ODGOVORI.id)
+                putExtra("categoryName", EvaCategory.ODGOVORI.rawName)
+                putExtra("themeId", R.style.MultimedijaTheme)
+            })
+            R.id.btnPoziv -> startActivity(Intent(this, ListaVijestiActivity::class.java).apply {
+                putExtra("categoryId", EvaCategory.POZIV.id)
+                putExtra("categoryName", EvaCategory.POZIV.rawName)
+                putExtra("themeId", R.style.MultimedijaTheme)
+            })
+            R.id.btnDuhovnost -> startActivity(Intent(this, ListaVijestiActivity::class.java).apply {
+                putExtra("categoryId", EvaCategory.DUHOVNOST.id)
+                putExtra("categoryName", EvaCategory.DUHOVNOST.rawName)
+                putExtra("themeId", R.style.MultimedijaTheme)
+            })
+            R.id.btnIzreke -> startActivity(Intent(this, IzrekeActivity::class.java).apply {
+                putExtra("themeId", R.style.MultimedijaTheme)
+            })
+            R.id.btnMultimedia -> startActivity(Intent(this, ListaVijestiActivity::class.java).apply {
+                putExtra("categoryId", EvaCategory.MULTIMEDIJA.id)
+                putExtra("categoryName", EvaCategory.MULTIMEDIJA.rawName)
+                putExtra("themeId", R.style.MultimedijaTheme)
+            })
+            R.id.btnAktualno -> startActivity(Intent(this, ListaVijestiActivity::class.java).apply {
+                putExtra("categoryId", EvaCategory.AKTUALNO.id)
+                putExtra("categoryName", EvaCategory.AKTUALNO.rawName)
+                putExtra("themeId", R.style.MultimedijaTheme)
+            })
         }
     }
 

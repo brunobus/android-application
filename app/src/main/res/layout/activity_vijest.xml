@@ -1,54 +1,28 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:keepScreenOn="true">
+    android:fitsSystemWindows="true"
+    android:keepScreenOn="true"
+    tools:context="hr.bpervan.novaeva.activities.VijestActivity">
 
-    <ScrollView
-        android:id="@+id/scrollView1"
+    <include
+        android:id="@+id/evaCollapsingBar"
+        layout="@layout/eva_collapsing_bar"/>
+
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/fakeActionBar"
-        android:layout_alignParentTop="true">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <RelativeLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
-            <ImageView
-                android:id="@+id/headerImage"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:adjustViewBounds="true"
-                android:contentDescription="@string/dummyDesc"
-                android:maxHeight="250dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/vijest_testimage" />
-
-            <ImageView
-                android:id="@+id/imgNaslovnaTraka"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/headerImage"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentRight="true"
-                android:contentDescription="@string/dummyDesc"
-                android:scaleType="fitXY"
-                android:src="@drawable/vijest_naslovnapropovjedi" />
-
-            <TextView
-                android:id="@+id/tvNaslov"
-                android:layout_width="0dip"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignTop="@+id/imgNaslovnaTraka"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="5dp"
-                android:ellipsize="end"
-                android:maxLines="2"
-                android:textColor="#ffffff" />
 
             <com.google.android.exoplayer2.ui.SimpleExoPlayerView
                 android:id="@+id/player_view"
@@ -60,7 +34,7 @@
                 android:padding="20dp"
                 app:hide_on_touch="false"
                 app:use_artwork="false"
-                app:use_controller="true" />
+                app:use_controller="true"/>
 
             <RelativeLayout
                 android:id="@+id/mp3Player"
@@ -80,7 +54,7 @@
                     android:contentDescription="@string/dummyDesc"
                     android:padding="15dp"
                     android:src="@drawable/player_btn_play"
-                    android:visibility="visible" />
+                    android:visibility="visible"/>
 
                 <ImageView
                     android:id="@+id/btnPause"
@@ -91,7 +65,7 @@
                     android:contentDescription="@string/dummyDesc"
                     android:padding="15dp"
                     android:src="@drawable/player_btn_pause"
-                    android:visibility="invisible" />
+                    android:visibility="invisible"/>
 
                 <SeekBar
                     android:id="@+id/seekArc"
@@ -99,7 +73,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/btnPlay"
                     android:layout_marginTop="20dp"
-                    android:padding="30dp" />
+                    android:padding="30dp"/>
 
                 <RelativeLayout
                     android:id="@+id/playerTime"
@@ -113,7 +87,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="00:00"
-                        android:textSize="18sp" />
+                        android:textSize="18sp"/>
 
                     <TextView
                         android:id="@+id/tvSlash"
@@ -121,14 +95,14 @@
                         android:layout_height="wrap_content"
                         android:layout_toRightOf="@id/tvElapsed"
                         android:text=" / "
-                        android:textSize="18sp" />
+                        android:textSize="18sp"/>
 
                     <TextView
                         android:id="@+id/tvDuration"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_toRightOf="@id/tvSlash"
-                        android:textSize="18sp" />
+                        android:textSize="18sp"/>
                 </RelativeLayout>
 
             </RelativeLayout>
@@ -138,90 +112,99 @@
                 style="?android:progressBarStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/player_view"
+                android:layout_centerInParent="true"
                 android:layout_gravity="center"
                 android:layout_marginTop="30dp"
-                android:layout_centerInParent="true"
-                android:layout_below="@+id/player_view"
                 android:indeterminate="true"
-                android:visibility="visible"
                 android:indeterminateOnly="true"
+                android:visibility="visible"
                 />
 
             <WebView
                 android:id="@+id/vijestWebView"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_below="@+id/loadingCircle"
                 android:layout_marginTop="5dp"
-                android:textColor="#4c4c4c" />
+                android:textColor="#4c4c4c"/>
 
-            <ImageView
-                android:id="@+id/btnTextPlus"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/imgNaslovnaTraka"
-                android:layout_alignParentRight="true"
-                android:contentDescription="@string/dummyDesc"
-                android:paddingBottom="16dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="12dp"
-                android:paddingTop="10dp"
-                android:src="@drawable/vijest_button_textplus" />
+            <!--<ImageView-->
+            <!--android:id="@+id/btnTextPlus"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignBottom="@+id/imgNaslovnaTraka"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--android:contentDescription="@string/dummyDesc"-->
+            <!--android:paddingBottom="16dp"-->
+            <!--android:paddingLeft="10dp"-->
+            <!--android:paddingRight="12dp"-->
+            <!--android:paddingTop="10dp"-->
+            <!--android:src="@drawable/vijest_button_textplus"/>-->
 
             <ImageView
                 android:id="@+id/imgMp3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_below="@+id/headerImage"
+
                 android:layout_marginRight="25dp"
                 android:layout_marginTop="10dp"
                 android:contentDescription="@string/dummyDesc"
                 android:src="@drawable/vijest_ind_mp3_inactive"
-                android:visibility="visible" />
+                android:visibility="visible"/>
 
             <ImageView
                 android:id="@+id/imgLink"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/headerImage"
+
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="10dp"
                 android:contentDescription="@string/dummyDesc"
                 android:src="@drawable/vijest_ind_www_inactive"
-                android:visibility="visible" />
+                android:visibility="visible"/>
 
             <ImageView
                 android:id="@+id/imgText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
-                android:layout_below="@+id/headerImage"
+
                 android:layout_marginLeft="25dp"
                 android:layout_marginTop="10dp"
                 android:contentDescription="@string/dummyDesc"
                 android:src="@drawable/vijest_ind_txt_inactive"
-                android:visibility="visible" />
+                android:visibility="visible"/>
 
 
         </RelativeLayout>
 
-    </ScrollView>
+    </android.support.v4.widget.NestedScrollView>
 
-    <ImageView
-        android:id="@+id/btnPoziv"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/fakeActionBar"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="5dp"
-        android:contentDescription="@string/dummyDesc"
-        android:src="@drawable/button_razmisljam_o_pozivu"
-        android:visibility="gone" />
+        app:layout_anchor="@+id/scrollView"
+        app:layout_anchorGravity="bottom">
 
-    <include android:id="@+id/fakeActionBar"
-        layout="@layout/vijest_fake_action_bar"/>
+        <ImageView
+            android:id="@+id/btnPoziv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:contentDescription="@string/dummyDesc"
+            android:src="@drawable/button_razmisljam_o_pozivu"
+            android:visibility="gone"
+            />
+    </RelativeLayout>
 
-</RelativeLayout>
+    <!--<include-->
+    <!--android:id="@+id/fakeActionBar"-->
+    <!--layout="@layout/vijest_fake_action_bar"/>-->
+
+</android.support.design.widget.CoordinatorLayout>

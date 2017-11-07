@@ -2,39 +2,29 @@ package hr.bpervan.novaeva.activities
 
 import android.app.AlertDialog
 import android.os.Bundle
-import android.view.View
-import android.view.View.OnClickListener
 import android.widget.EditText
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
-import kotlinx.android.synthetic.main.activity_info.*
-import kotlinx.android.synthetic.main.simple_fake_action_bar.view.*
+import kotlinx.android.synthetic.main.eva_simple_content.*
+import kotlinx.android.synthetic.main.eva_collapsing_bar.view.*
 
-class InfoActivity : EvaBaseActivity(), OnClickListener {
+class InfoActivity : EvaBaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_info)
+        setContentView(R.layout.eva_simple_content)
 
         initUI()
     }
 
     private fun initUI() {
 
-        webViewInfo.loadUrl("file:///android_asset/info.htm")
+        webView.settings.builtInZoomControls = true
+        webView.settings.displayZoomControls = false
+        webView.loadUrl("file:///android_asset/info.htm")
 
-//        fakeActionBar.btnBack.setOnClickListener(this)
-        fakeActionBar.btnSearch.setOnClickListener(this)
-//        fakeActionBar.btnHome.setOnClickListener(this)
-    }
+        evaCollapsingBar.collapsingToolbar.title = "Nova Eva info"
 
-    override fun onClick(v: View) {
-        val id = v.id
-        when (id) {
-            R.id.btnSearch -> showSearchPopup()
-//            R.id.btnHome -> NovaEvaApp.goHome(this)
-//            R.id.btnBack -> onBackPressed()
-        }
     }
 
     private fun showSearchPopup() {

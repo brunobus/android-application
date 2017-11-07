@@ -1,89 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="hr.bpervan.novaeva.main"
-    android:installLocation="auto">
+          package="hr.bpervan.novaeva.main"
+          android:installLocation="auto">
 
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
     <application
         android:name="hr.bpervan.novaeva.NovaEvaApp"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/NovaEva">
+        android:theme="@style/AppTheme">
         <meta-data
             android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
+            android:value="@integer/google_play_services_version"/>
 
         <activity
             android:name="hr.bpervan.novaeva.activities.DashboardActivity"
-            android:label="@string/app_name" />
+            android:label="@string/app_name"
+            android:theme="@style/DashboardTheme">
+            <intent-filter android:label="@string/app_name">
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
         <activity
             android:name="hr.bpervan.novaeva.activities.MolitvenikActivity"
-            android:label="@string/title_activity_molitvenik"
-            android:theme="@style/ListaVijesti" />
+            android:label="@string/title_activity_molitvenik"/>
         <activity
             android:name="hr.bpervan.novaeva.activities.IzrekeActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="@string/title_activity_izreke"
-            android:theme="@style/Vijest" />
+            android:theme="@style/ContentTheme"/>
         <activity
-            android:name="hr.bpervan.novaeva.activities.MolitvenikDetaljiActivity"
-            android:label="@string/title_activity_molitvenik_detalji" />
-        <activity
-            android:name="hr.bpervan.novaeva.activities.SplashActivity"
-            android:label="@string/app_name"
-            android:noHistory="true"
-            android:screenOrientation="portrait"
-            android:theme="@style/NovaEvaSplash">
-            <intent-filter android:label="@string/app_name">
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:name="hr.bpervan.novaeva.activities.PrayerContentActivity"
+            android:label="@string/title_activity_molitvenik_detalji"
+            android:theme="@style/ContentTheme"/>
         <activity
             android:name="hr.bpervan.novaeva.activities.SearchActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="@string/title_activity_search"
-            android:noHistory="true"
-            android:theme="@style/ListaVijesti" />
+            android:noHistory="true"/>
         <activity
             android:name="hr.bpervan.novaeva.activities.ListaVijestiActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:label="@string/title_activity_lista_vijesti"
-            android:theme="@style/ListaVijesti" />
+            android:label="@string/title_activity_lista_vijesti"/>
         <activity
             android:name="hr.bpervan.novaeva.activities.BookmarksActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="@string/title_activity_bookmarks"
-            android:noHistory="true"
-            android:theme="@style/ListaVijesti" />
+            android:noHistory="true"/>
         <activity
             android:name="hr.bpervan.novaeva.activities.BreviaryActivity"
             android:label="@string/title_activity_brevijar_predizbor"
-            android:theme="@style/BrevijarMenu" />
+            android:theme="@style/BreviaryTheme"/>
         <activity
             android:name="hr.bpervan.novaeva.activities.BreviaryContentActivity"
             android:label="@string/title_activity_brevijar_detalji"
-            android:theme="@style/Brevijar" />
+            android:theme="@style/BreviaryContentTheme"/>
         <activity
             android:name="hr.bpervan.novaeva.activities.VijestActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:hardwareAccelerated="true"
             android:label="@string/title_activity_vijest"
-            android:theme="@style/Vijest" />
+            android:theme="@style/ContentTheme"/>
         <!-- keyboardHidden -->
         <activity
             android:name="hr.bpervan.novaeva.activities.InfoActivity"
-            android:label="@string/title_activity_info" />
+            android:label="@string/title_activity_info"
+            android:theme="@style/ContentTheme"/>
 
-        <service android:name="hr.bpervan.novaeva.services.BackgroundPlayerService" />
+        <service android:name="hr.bpervan.novaeva.services.BackgroundPlayerService"/>
 
     </application>
 

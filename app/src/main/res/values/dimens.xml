@@ -3,35 +3,40 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
-	<dimen name="FulVeliko">30dp</dimen>
+    <dimen name="FulVeliko">30dp</dimen>
     <dimen name="DatumNaListi">5dp</dimen>
     <dimen name="listaVijestiGodinaSatMinuta">8sp</dimen>
-    
+
     <!-- Fake action bar -->
     <dimen name="fakeActionBarParentMargin">20dp</dimen>
-    
+
     <!-- Brevijar predizbor -->
     <dimen name="brevijarIconSpace">2dp</dimen>
     <dimen name="brevijarTopMargin">15dp</dimen>
-    
+
     <!-- Vijest/Izreke Activity -->
-    
+
     <!-- ListaVijesti/Search/Bookmarks -->
-    
+
     <!-- Folder row -->
-	<dimen name="naslovWidth">250dp</dimen>    
-	<dimen name="naslovWidthLand">520dp</dimen>
-	
-	<!-- Molitvenik row -->
-	<dimen name="molitvenikWidth">270dp</dimen>
-	<dimen name="molitvenikWidthLand">475dp</dimen>
-	
-	<!-- Vijest row -->
-	<dimen name="vijestNaslovWidth">250dp</dimen>
-	<dimen name="vijestNaslovWidthLand">215dp</dimen>
-	<dimen name="vijestUvodWidth">405dp</dimen>
-	<dimen name="vijestUvodWidthLand">365dp</dimen>
+    <dimen name="naslovWidth">250dp</dimen>
+    <dimen name="naslovWidthLand">520dp</dimen>
 
+    <!-- Molitvenik row -->
+    <dimen name="molitvenikWidth">270dp</dimen>
+    <dimen name="molitvenikWidthLand">475dp</dimen>
 
-	
+    <!-- Vijest row -->
+    <dimen name="vijestNaslovWidth">250dp</dimen>
+    <dimen name="vijestNaslovWidthLand">215dp</dimen>
+    <dimen name="vijestUvodWidth">405dp</dimen>
+    <dimen name="vijestUvodWidthLand">365dp</dimen>
+
+    <dimen name="app_bar_height">140dp</dimen>
+    <dimen name="tool_bar_height">30dp</dimen>
+
+    <bool name="app_bar_expanded">true</bool>
+    <dimen name="title_size_small">14dp</dimen>
+    <dimen name="title_size">20dp</dimen>
+
 </resources>
