@@ -107,7 +107,6 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
         evaContentMetadataChangesDisposable?.dispose()
         evaContentMetadataChangesDisposable = EvaContentDbAdapter
                 .subscribeToEvaContentMetadataUpdatesAsync(realm, contentId) { evaContentMetadata ->
-
 //                fakeActionBar.btnBookmark.setImageResource(
 //                        if(evaContentMetadata.bookmark) R.drawable.action_button_bookmarked
 //                        else R.drawable.action_button_bookmark)

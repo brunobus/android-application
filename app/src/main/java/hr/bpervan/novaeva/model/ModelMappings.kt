@@ -17,7 +17,16 @@ fun EvaAttachmentsIndicatorDTO.toDatabaseModel(): EvaAttachmentsIndicator =
 
 fun EvaAttachmentDTO.toDatabaseModel(): EvaAttachment = EvaAttachment(naziv ?: "", url ?: "")
 
+fun EvaImageDTO.toDatabaseModel(): EvaImage?{
+    var imageURL = this.original ?: this.size720 ?: this.size640
+    imageURL ?: return null
+
+    return EvaImage(imageURL, this.timestamp)
+}
+
 fun EvaContentDTO.toDatabaseModel(): EvaContent {
     val attachmentsDb = attachments?.map { it.toDatabaseModel() }?.toTypedArray() ?: arrayOf()
-    return EvaContent(contentId, null, text ?: "", null, RealmList(*attachmentsDb), null, videoURL, audioURL)
+    // tricks with ifs :D
+    val image = if(images?.size == 0) null else images?.get(0)
+    return EvaContent(contentId, null, text ?: "", null, RealmList(*attachmentsDb), image?.toDatabaseModel(), videoURL, audioURL)
 }

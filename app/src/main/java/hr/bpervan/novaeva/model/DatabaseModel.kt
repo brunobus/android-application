@@ -51,7 +51,6 @@ open class EvaAttachment(
 ) : RealmObject()
 
 open class EvaImage(
-        var rawImage: ByteArray = ByteArray(0), //todo
         var url: String = "",
         var timestamp: Long = 0
 ) : RealmObject()
