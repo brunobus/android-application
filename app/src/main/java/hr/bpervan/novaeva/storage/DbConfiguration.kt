@@ -9,21 +9,11 @@ import io.realm.annotations.RealmModule
  * Created by vpriscan on 19.10.17..
  */
 
-@RealmModule(classes = arrayOf(EvaContentMetadata::class, EvaAttachmentsIndicator::class))
-class EvaBookmarksModule
-
 object RealmConfigProvider {
 
-    val bookmarksConfig: RealmConfiguration by lazy {
+    val evaDBConfig: RealmConfiguration by lazy {
         RealmConfiguration.Builder()
-                .name("novaeva_bookmarks.realm")
-                .modules(EvaBookmarksModule())
-                .build()
-    }
-
-    val cacheConfig: RealmConfiguration by lazy {
-        RealmConfiguration.Builder()
-                .name("novaeva_cache.realm")
+                .name("novaevaDB.realm")
                 .build()
     }
 }

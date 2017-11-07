@@ -15,8 +15,8 @@ import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaContentMetadata
 import hr.bpervan.novaeva.model.EvaCategory
+import hr.bpervan.novaeva.storage.EvaContentDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
-import hr.bpervan.novaeva.storage.EvaBookmarkDbAdapter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -32,7 +32,7 @@ class BookmarksActivity : EvaBaseActivity(), View.OnClickListener {
 
     private val lifecycleBoundDisposables = CompositeDisposable()
 
-    private lateinit var bookmarksRealm: Realm
+    private lateinit var realm: Realm
     private lateinit var adapter: EvaRecyclerAdapter
     private var bookmarksList: MutableList<EvaContentMetadata> = ArrayList()
 
@@ -54,7 +54,7 @@ class BookmarksActivity : EvaBaseActivity(), View.OnClickListener {
 
         val configData = EvaRecyclerAdapter.ConfigData(EvaCategory.PROPOVIJEDI.id)
 
-        bookmarksRealm = Realm.getInstance(RealmConfigProvider.bookmarksConfig)
+        realm = Realm.getInstance(RealmConfigProvider.evaDBConfig)
         adapter = EvaRecyclerAdapter(bookmarksList, configData, null)
 
         initUI()
@@ -62,7 +62,7 @@ class BookmarksActivity : EvaBaseActivity(), View.OnClickListener {
 
     override fun onDestroy() {
         super.onDestroy()
-        bookmarksRealm.close()
+        realm.close()
     }
 
     private fun initUI() {
@@ -87,11 +87,9 @@ class BookmarksActivity : EvaBaseActivity(), View.OnClickListener {
 
     private fun reloadBookmarksFromDb() {
         bookmarksList.clear()
-        EvaBookmarkDbAdapter.loadEvaBookmarksAsync(bookmarksRealm) {
-            bookmarksList.clear()
-            bookmarksList.addAll(it)
-            adapter.notifyDataSetChanged()
-        }
+        EvaContentDbAdapter.loadManyEvaContentMetadata(realm, {it.bookmark}, {
+            bookmarksList.add(it)
+        }){ adapter.notifyDataSetChanged() }
     }
 
     private fun showEmptyListInfo() {

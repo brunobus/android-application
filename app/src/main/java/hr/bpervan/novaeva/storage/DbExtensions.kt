@@ -1,6 +1,8 @@
 package hr.bpervan.novaeva.storage
 
 import android.util.Log
+import io.reactivex.Flowable
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.realm.Realm
@@ -12,6 +14,18 @@ import io.realm.RealmObject
 
 fun handleError(throwable: Throwable) {
     Log.e("error", throwable.message, throwable)
+}
+
+fun <T : RealmObject> loadManyAsync(realm: Realm, tClazz: Class<T>, predicate: (T) -> Boolean,
+                                    subscriber: (T) -> Unit, onComplete: () -> Unit) {
+    realm.where(tClazz)
+            .findAllAsync()
+            .asFlowable()
+            .filter { it.isLoaded }
+            .flatMap { Flowable.fromIterable(it) }
+            .filter(predicate)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(subscriber, ::handleError, onComplete)
 }
 
 fun <T : RealmObject> loadOne(realm: Realm, tClazz: Class<T>, field: String, value: Long): T? {

@@ -13,11 +13,7 @@ import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.fragments.EvaRecyclerFragment
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaCategory
-import hr.bpervan.novaeva.model.EvaDirectory
-import hr.bpervan.novaeva.model.EvaDirectoryMetadata
-import hr.bpervan.novaeva.storage.EvaDirectoryDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
-import hr.bpervan.novaeva.utilities.ResourceHandler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -25,7 +21,6 @@ import io.realm.Realm
 import kotlinx.android.synthetic.*
 import kotlinx.android.synthetic.main.activity_lista_vijesti.*
 import kotlinx.android.synthetic.main.activity_lista_vijesti.view.*
-import kotlinx.android.synthetic.main.simple_fake_action_bar.view.*
 import java.util.concurrent.TimeUnit
 
 class ListaVijestiActivity : EvaBaseActivity(), OnClickListener {
@@ -67,7 +62,7 @@ class ListaVijestiActivity : EvaBaseActivity(), OnClickListener {
         //mGaTracker.sendEvent("Kategorije", "OtvorenaKategorija", Constants.getCatNameById(kategorija), null);
         killRedDot(categoryId)
 
-        realm = Realm.getInstance(RealmConfigProvider.cacheConfig)
+        realm = Realm.getInstance(RealmConfigProvider.evaDBConfig)
 
         initUI()
 

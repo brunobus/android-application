@@ -17,7 +17,6 @@ import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaContentMetadata
-import hr.bpervan.novaeva.model.EvaDirectory
 import hr.bpervan.novaeva.model.TIMESTAMP_FIELD
 import hr.bpervan.novaeva.model.TreeElementInfo
 import hr.bpervan.novaeva.services.NovaEvaService
@@ -53,7 +52,7 @@ class EvaRecyclerFragment : Fragment() {
         val inState: Bundle = savedInstanceState ?: arguments
         fragmentConfig = inState.getParcelable("fragmentConfig")
 
-        realm = Realm.getInstance(RealmConfigProvider.cacheConfig)
+        realm = Realm.getInstance(RealmConfigProvider.evaDBConfig)
 
         val infoText = if (fragmentConfig.isSubDirectory) "NALAZITE SE U MAPI" else "NALAZITE SE U KATEGORIJI"
         headerData = EvaRecyclerAdapter.HeaderData(fragmentConfig.directoryTitle, infoText)

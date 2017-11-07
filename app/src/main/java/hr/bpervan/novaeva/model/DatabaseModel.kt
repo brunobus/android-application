@@ -26,7 +26,8 @@ open class EvaContentMetadata(
         var attachmentsIndicator: EvaAttachmentsIndicator? = null,
         var timestamp: Long = 0,
         var title: String = "",
-        var preview: String = ""
+        var preview: String = "",
+        var bookmark: Boolean = false
 ) : RealmObject(), TreeElementInfo
 
 open class EvaAttachmentsIndicator(
