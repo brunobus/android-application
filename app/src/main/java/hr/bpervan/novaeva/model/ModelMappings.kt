@@ -18,7 +18,7 @@ fun EvaAttachmentsIndicatorDTO.toDatabaseModel(): EvaAttachmentsIndicator =
 fun EvaAttachmentDTO.toDatabaseModel(): EvaAttachment = EvaAttachment(naziv ?: "", url ?: "")
 
 fun EvaImageDTO.toDatabaseModel(): EvaImage?{
-    var imageURL = this.original ?: this.size720 ?: this.size640
+    val imageURL = this.original ?: this.size720 ?: this.size640
     imageURL ?: return null
 
     return EvaImage(imageURL, this.timestamp)

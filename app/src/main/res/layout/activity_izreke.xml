@@ -1,120 +1,70 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ScrollView
-        android:id="@+id/scrollView1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/fakeActionBar"
-        android:layout_alignParentTop="true"
-        android:fillViewport="true">
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fitsSystemWindows="true"
+        android:keepScreenOn="true"
+        app:layout_constraintBottom_toTopOf="@+id/btnObnovi"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:context="hr.bpervan.novaeva.activities.VijestActivity">
 
-        <RelativeLayout
+        <include
+            android:id="@+id/evaCollapsingBar"
+            layout="@layout/eva_collapsing_bar"/>
+
+        <android.support.v4.widget.NestedScrollView
+            android:id="@+id/scrollView1"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <ImageView
-                android:id="@+id/defaultImg"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:adjustViewBounds="true"
-                android:contentDescription="@string/dummyDesc"
-                android:maxHeight="250dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/vijest_testimage" />
-            <!-- fitCenter je bio -->
-            <!-- adjustViewBounds -->
-
-            <ImageView
-                android:id="@+id/imgNaslovnaTraka"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/defaultImg"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentRight="true"
-                android:adjustViewBounds="true"
-                android:contentDescription="@string/dummyDesc"
-                android:scaleType="fitXY"
-                android:src="@drawable/vijest_naslovnaizreke" />
-
-            <TextView
-                android:id="@+id/tvNaslov"
-                android:layout_width="0dip"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignRight="@+id/imgPodnaslovnaCrta"
-                android:layout_alignTop="@+id/imgNaslovnaTraka"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="5dp"
-                android:ellipsize="end"
-                android:fontFamily="Arial"
-                android:maxLines="2"
-                android:textColor="#ffffff"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/tvKategorija"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_below="@+id/defaultImg"
-                android:layout_marginLeft="15dp"
-                android:layout_marginTop="20dp"
-                android:fontFamily="Arial"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="#4c4c4c" />
-
-            <ImageView
-                android:id="@+id/imgPodnaslovnaCrta"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/tvKategorija"
-                android:layout_below="@+id/tvKategorija"
-                android:layout_marginTop="10dp"
-                android:contentDescription="@string/dummyDesc"
-                android:src="@drawable/vijest_podnaslovnalinija" />
+            android:layout_height="match_parent"
+            android:layout_above="@+id/fakeActionBar"
+            android:layout_alignParentTop="true"
+            android:fillViewport="true"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <WebView
                 android:id="@+id/webText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
+
                 android:layout_below="@+id/imgPodnaslovnaCrta"
                 android:layout_marginTop="5dp"
                 android:paddingBottom="30dp"
-                android:textColor="#4c4c4c" />
+                android:textColor="#4c4c4c"/>
 
-            <ImageView
-                android:id="@+id/btnTextPlus"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/imgNaslovnaTraka"
-                android:layout_alignParentRight="true"
-                android:layout_marginBottom="16dp"
-                android:layout_marginRight="12dp"
-                android:contentDescription="@string/dummyDesc"
-                android:src="@drawable/vijest_button_textplus" />
+        </android.support.v4.widget.NestedScrollView>
 
-        </RelativeLayout>
 
-    </ScrollView>
+    </android.support.design.widget.CoordinatorLayout>
 
     <ImageView
         android:id="@+id/btnObnovi"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/fakeActionBar"
-        android:layout_centerHorizontal="true"
         android:layout_marginBottom="5dp"
         android:layout_marginTop="5dp"
         android:contentDescription="@string/dummyDesc"
         android:src="@drawable/button_obnovi"
+        app:layout_constraintBottom_toTopOf="@+id/fakeActionBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         />
 
     <include
         android:id="@+id/fakeActionBar"
-        layout="@layout/izreke_fake_action_bar" />
+        layout="@layout/izreke_fake_action_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
 
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>

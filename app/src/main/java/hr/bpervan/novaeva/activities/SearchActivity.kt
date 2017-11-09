@@ -27,7 +27,6 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.*
 import kotlinx.android.synthetic.main.activity_search.*
 import kotlinx.android.synthetic.main.eva_recycler_view.view.*
-import kotlinx.android.synthetic.main.simple_fake_action_bar.view.*
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -62,9 +61,7 @@ class SearchActivity : EvaBaseActivity(), OnClickListener {
                         .build()
         )
 
-        val configData = EvaRecyclerAdapter.ConfigData(EvaCategory.PROPOVIJEDI.id)
-
-        adapter = EvaRecyclerAdapter(searchResultList, configData, null)
+        adapter = EvaRecyclerAdapter(searchResultList)
 
         initUI()
 
@@ -124,9 +121,7 @@ class SearchActivity : EvaBaseActivity(), OnClickListener {
     private fun initUI() {
         setContentView(R.layout.activity_search)
 
-//        fakeActionBar.btnHome.setOnClickListener(this)
-        fakeActionBar.btnSearch.setOnClickListener(this)
-//        fakeActionBar.btnBack.setOnClickListener(this)
+//        btnSearch.setOnClickListener(this)
 
         //todo make this nicer
         evaRecyclerView.evaRecyclerView.adapter = adapter

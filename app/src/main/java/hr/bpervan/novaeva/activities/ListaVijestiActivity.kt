@@ -20,7 +20,6 @@ import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
 import kotlinx.android.synthetic.*
 import kotlinx.android.synthetic.main.activity_lista_vijesti.*
-import kotlinx.android.synthetic.main.activity_lista_vijesti.view.*
 import java.util.concurrent.TimeUnit
 
 class ListaVijestiActivity : EvaBaseActivity(), OnClickListener {
@@ -36,7 +35,6 @@ class ListaVijestiActivity : EvaBaseActivity(), OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
 
         val inState: Bundle = savedInstanceState ?: intent.extras
         categoryName = inState.getString("categoryName", "")
@@ -68,8 +66,6 @@ class ListaVijestiActivity : EvaBaseActivity(), OnClickListener {
 
         if (savedInstanceState == null) {
             showFragmentForDirectory(categoryId.toLong(), categoryName.toUpperCase(), false)
-        } else {
-            /*fragment backstack already exists and fragments will be restored*/
         }
     }
 
@@ -83,7 +79,6 @@ class ListaVijestiActivity : EvaBaseActivity(), OnClickListener {
     }
 
     private fun initUI() {
-        eva_directory_fragment_frame.progress_bar.visibility = View.INVISIBLE //todo
 
 //        fakeActionBar.btnHome.setOnClickListener(this)
 //        fakeActionBar.btnSearch.setOnClickListener(this)
@@ -94,7 +89,7 @@ class ListaVijestiActivity : EvaBaseActivity(), OnClickListener {
             btnImamPitanjeListaVijesti.visibility = View.VISIBLE
         }
 
-        floatingSearchButton.setOnClickListener { showSearchPopup() }
+        btnSearch.setOnClickListener { showSearchPopup() }
 
         setCategoryTypeColour()
     }

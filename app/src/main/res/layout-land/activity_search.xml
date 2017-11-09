@@ -8,12 +8,6 @@
         android:id="@+id/evaRecyclerView"
         layout="@layout/eva_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_toLeftOf="@+id/fakeActionBar"
-        android:layout_toStartOf="@+id/fakeActionBar"/>
-
-    <include
-        android:id="@+id/fakeActionBar"
-        layout="@layout/simple_fake_action_bar"/>
+        android:layout_height="match_parent"/>
 
 </RelativeLayout>

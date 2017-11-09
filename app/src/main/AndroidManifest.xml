@@ -23,7 +23,7 @@
         <activity
             android:name="hr.bpervan.novaeva.activities.DashboardActivity"
             android:label="@string/app_name"
-            android:theme="@style/DashboardTheme">
+            android:theme="@style/SplashTheme">
             <intent-filter android:label="@string/app_name">
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -36,12 +36,10 @@
         <activity
             android:name="hr.bpervan.novaeva.activities.IzrekeActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:label="@string/title_activity_izreke"
-            android:theme="@style/ContentTheme"/>
+            android:label="@string/title_activity_izreke"/>
         <activity
             android:name="hr.bpervan.novaeva.activities.PrayerContentActivity"
-            android:label="@string/title_activity_molitvenik_detalji"
-            android:theme="@style/ContentTheme"/>
+            android:label="@string/title_activity_molitvenik_detalji"/>
         <activity
             android:name="hr.bpervan.novaeva.activities.SearchActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -63,18 +61,16 @@
         <activity
             android:name="hr.bpervan.novaeva.activities.BreviaryContentActivity"
             android:label="@string/title_activity_brevijar_detalji"
-            android:theme="@style/BreviaryContentTheme"/>
+            android:theme="@style/BreviaryTheme"/>
         <activity
             android:name="hr.bpervan.novaeva.activities.VijestActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:hardwareAccelerated="true"
-            android:label="@string/title_activity_vijest"
-            android:theme="@style/ContentTheme"/>
+            android:label="@string/title_activity_vijest"/>
         <!-- keyboardHidden -->
         <activity
             android:name="hr.bpervan.novaeva.activities.InfoActivity"
-            android:label="@string/title_activity_info"
-            android:theme="@style/ContentTheme"/>
+            android:label="@string/title_activity_info"/>
 
         <service android:name="hr.bpervan.novaeva.services.BackgroundPlayerService"/>
 

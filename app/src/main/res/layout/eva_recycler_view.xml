@@ -14,4 +14,4 @@
     app:layoutManager="LinearLayoutManager"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="hr.bpervan.novaeva.fragments.EvaRecyclerFragment"
-    tools:listitem="@layout/folder_row"/>
+    tools:listitem="@layout/vijest_row"/>

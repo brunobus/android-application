@@ -8,12 +8,5 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/fakeActionBar"
-        android:layout_toStartOf="@id/fakeActionBar"
         android:cacheColorHint="#00000000" />
-
-
-    <include
-        android:id="@+id/fakeActionBar"
-        layout="@layout/simple_fake_action_bar" />
 </RelativeLayout>

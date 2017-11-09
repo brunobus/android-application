@@ -35,8 +35,8 @@ class BreviaryActivity : EvaBaseActivity() {
 
         val headerUrl = prefs.getString("hr.bpervan.novaeva.brevijarheaderimage", null)
 
-        if (headerUrl != null && headerImageBrevijar != null) {
-            imageLoader.displayImage(headerUrl, headerImageBrevijar, ImageLoaderConfigurator.createDefaultDisplayImageOptions(true))
+        if (headerUrl != null && coverImage != null) {
+            imageLoader.displayImage(headerUrl, coverImage, ImageLoaderConfigurator.createDefaultDisplayImageOptions(true))
         }
 
         btnJucerJutarnja.setOnClickListener(BreviaryClickListener(1))

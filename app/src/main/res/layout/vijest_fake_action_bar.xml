@@ -1,83 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/fakeActionBar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:background="@drawable/toolbar_propoviedi"
-                android:orientation="horizontal">
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/fakeActionBarSrc">
 
-    <RelativeLayout
+    <ImageView
+        android:id="@+id/btnShare"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:gravity="center">
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:contentDescription="@string/dummyDesc"
+        android:padding="8dp"
+        android:src="@drawable/action_button_share"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btnMail"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"/>
 
-        <ImageView
-            android:id="@+id/btnShare"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/btnMail"
-            android:layout_toStartOf="@+id/btnMail"
-            android:contentDescription="@string/dummyDesc"
-            android:padding="8dp"
-            android:src="@drawable/action_button_share"/>
-
-        <ImageView
-            android:id="@+id/btnMail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/btnSearch"
-            android:layout_toStartOf="@+id/btnSearch"
-            android:contentDescription="@string/dummyDesc"
-            android:padding="8dp"
-            android:src="@drawable/action_button_mail"/>
-
-        <ImageView
-            android:id="@+id/btnSearch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/btnBookmark"
-            android:layout_toStartOf="@+id/btnBookmark"
-            android:contentDescription="@string/dummyDesc"
-            android:padding="8dp"
-            android:src="@drawable/action_button_search"/>
-
-        <ImageView
-            android:id="@+id/btnBookmark"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:contentDescription="@string/dummyDesc"
-            android:padding="8dp"
-            android:src="@drawable/action_button_bookmark"/>
-    </RelativeLayout>
+    <ImageView
+        android:id="@+id/btnMail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:contentDescription="@string/dummyDesc"
+        android:padding="8dp"
+        android:src="@drawable/action_button_mail"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btnBookmark"
+        app:layout_constraintStart_toEndOf="@+id/btnShare"/>
 
 
-    <!--<ImageView-->
-        <!--android:id="@+id/btnHome"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_alignParentEnd="true"-->
-        <!--android:layout_alignParentRight="true"-->
-        <!--android:layout_centerVertical="true"-->
-        <!--android:contentDescription="@string/dummyDesc"-->
-        <!--android:padding="8dp"-->
-        <!--android:src="@drawable/action_button_home"/>-->
+    <ImageView
+        android:id="@+id/btnBookmark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:contentDescription="@string/dummyDesc"
+        android:padding="8dp"
+        android:src="@drawable/action_button_bookmark"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btnSearch"
+        app:layout_constraintStart_toEndOf="@+id/btnMail"/>
 
-    <!--<ImageView-->
-        <!--android:id="@+id/btnBack"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_alignParentLeft="true"-->
-        <!--android:layout_alignParentStart="true"-->
-        <!--android:layout_centerVertical="true"-->
-        <!--android:contentDescription="@string/dummyDesc"-->
-        <!--android:padding="8dp"-->
-        <!--android:src="@drawable/action_button_back"/>-->
-</RelativeLayout>
+    <ImageView
+        android:id="@+id/btnSearch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:contentDescription="@string/dummyDesc"
+        android:padding="8dp"
+        android:src="@drawable/action_button_search"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btnBookmark"/>
+</android.support.constraint.ConstraintLayout>

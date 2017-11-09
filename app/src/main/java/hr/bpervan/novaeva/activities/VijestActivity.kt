@@ -39,6 +39,7 @@ import io.realm.Realm
 import kotlinx.android.synthetic.*
 import kotlinx.android.synthetic.main.activity_vijest.*
 import kotlinx.android.synthetic.main.eva_collapsing_bar.view.*
+import kotlinx.android.synthetic.main.vijest_fake_action_bar.view.*
 
 class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBarChangeListener {
     /** ------------------------------------------FIELDS------------------------------------------ */
@@ -48,7 +49,7 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
      */
     private var contentId: Long = 0
 
-    private var colourSet: Int = 0
+    private var themeId: Int = 0
 
     /**
      * Google analytics API
@@ -68,11 +69,16 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_vijest)
 
         val inState = savedInstanceState ?: intent.extras
         contentId = inState.getLong("contentId", -1)
-        colourSet = inState.getInt("colourSet", EvaCategory.PROPOVIJEDI.id)
+        themeId = inState.getInt("themeId", -1)
+
+        if (themeId != -1) {
+            setTheme(themeId)
+        }
+
+        setContentView(R.layout.activity_vijest)
 
         startService(Intent(this, BackgroundPlayerService::class.java)) //todo
 
@@ -90,7 +96,7 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
         createIfMissingAndSubscribeToEvaContentUpdates()
         initUI()
 
-        if (ConnectionChecker.hasConnection(this)) {
+        if (ConnectionChecker.hasConnection(this) && savedInstanceState == null) {
             fetchContentFromServer(contentId)
         } else {
             NovaEvaApp.showFetchErrorSnackbar(null, this, vijestWebView)
@@ -107,12 +113,12 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
         evaContentMetadataChangesDisposable?.dispose()
         evaContentMetadataChangesDisposable = EvaContentDbAdapter
                 .subscribeToEvaContentMetadataUpdatesAsync(realm, contentId) { evaContentMetadata ->
-//                fakeActionBar.btnBookmark.setImageResource(
-//                        if(evaContentMetadata.bookmark) R.drawable.action_button_bookmarked
-//                        else R.drawable.action_button_bookmark)
-        }
+                    fakeActionBar.btnBookmark.setImageResource(
+                            if (evaContentMetadata.bookmark) R.drawable.action_button_bookmarked
+                            else R.drawable.action_button_bookmark)
+                }
         evaContentChangesDisposable?.dispose()
-        evaContentChangesDisposable = EvaContentDbAdapter.subscribeToEvaContentUpdatesAsync(realm, contentId){ evaContent ->
+        evaContentChangesDisposable = EvaContentDbAdapter.subscribeToEvaContentUpdatesAsync(realm, contentId) { evaContent ->
             this.evaContent = evaContent
 
             evaCollapsingBar.collapsingToolbar.title = evaContent.contentMetadata!!.title
@@ -154,7 +160,7 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putLong("contentId", contentId)
-        outState.putInt("colourSet", colourSet)
+        outState.putInt("themeId", themeId)
 
         super.onSaveInstanceState(outState)
     }
@@ -237,14 +243,71 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
             tvElapsed.typeface = it
         }
 
-//        btnTextPlus.setOnClickListener(this)
+        run {
+            val fakeActionBarVisibility: Int
+            val btnToggleActionBarImageRes: Int
 
-//        fakeActionBar.btnHome.setOnClickListener(this)
-//        fakeActionBar.btnShare.setOnClickListener(this)
-//        fakeActionBar.btnMail.setOnClickListener(this)
-//        fakeActionBar.btnBookmark.setOnClickListener(this)
-//        fakeActionBar.btnSearch.setOnClickListener(this)
-//        fakeActionBar.btnBack.setOnClickListener(this)
+            if (prefs.getBoolean("hr.bpervan.novaeva.showFakeActionBar", false)) {
+                fakeActionBarVisibility = View.VISIBLE
+                btnToggleActionBarImageRes = R.drawable.action_button_toolbar_hide
+            } else {
+                fakeActionBarVisibility = View.GONE
+                btnToggleActionBarImageRes = R.drawable.action_button_toolbar_show
+            }
+            fakeActionBar.visibility = fakeActionBarVisibility
+            btnToggleActionBar.setImageResource(btnToggleActionBarImageRes)
+        }
+
+
+        btnToggleActionBar.setOnClickListener {
+
+            val fakeActionBarVisibility: Int
+            val btnToggleActionBarImageRes: Int
+            val showFakeActionBarPref: Boolean
+
+            if (fakeActionBar.visibility != View.VISIBLE) {
+                fakeActionBarVisibility = View.VISIBLE
+                btnToggleActionBarImageRes = R.drawable.action_button_toolbar_hide
+                showFakeActionBarPref = true
+            } else {
+                fakeActionBarVisibility = View.GONE
+                btnToggleActionBarImageRes = R.drawable.action_button_toolbar_show
+                showFakeActionBarPref = false
+            }
+
+            fakeActionBar.visibility = fakeActionBarVisibility
+            btnToggleActionBar.setImageResource(btnToggleActionBarImageRes)
+            prefs.edit().putBoolean("hr.bpervan.novaeva.showFakeActionBar", showFakeActionBarPref).apply()
+        }
+
+        fakeActionBar.btnSearch.setOnClickListener {
+            if (ConnectionChecker.hasConnection(this))
+                showSearchPopup()
+        }
+        fakeActionBar.btnBookmark.setOnClickListener {
+            val evaContent = this.evaContent
+            if (evaContent != null) {
+                val evaContentMetadata = evaContent.contentMetadata!!
+                EvaContentDbAdapter.updateEvaContentMetadataAsync(realm, evaContentMetadata.contentId) {
+                    it.bookmark = !it.bookmark
+                }
+            }
+        }
+
+        fakeActionBar.btnShare.setOnClickListener {
+            val shareIntent = Intent(Intent.ACTION_SEND)
+            shareIntent.type = "text/plain"
+            shareIntent.putExtra(Intent.EXTRA_TEXT, "http://novaeva.com/node/$contentId")
+            startActivity(Intent.createChooser(shareIntent, getString(R.string.title_share)))
+        }
+
+        fakeActionBar.btnMail.setOnClickListener {
+            val mailIntent = Intent(Intent.ACTION_SEND)
+            mailIntent.type = "message/rfc822"
+            mailIntent.putExtra(Intent.EXTRA_SUBJECT, evaContent!!.contentMetadata!!.title)
+            mailIntent.putExtra(Intent.EXTRA_TEXT, "http://novaeva.com/node/$contentId")
+            startActivity(Intent.createChooser(mailIntent, getString(R.string.title_share_mail)))
+        }
 
         /** Set category name and set text size */
         vijestWebView.settings.defaultFontSize = prefs.getInt("hr.bpervan.novaeva.velicinateksta", 14)
@@ -382,42 +445,16 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
                 btnPlay.visibility = View.VISIBLE
                 btnPlay.isEnabled = false
             }
-//            R.id.btnHome -> NovaEvaApp.goHome(this)
-            R.id.btnSearch ->
-                if (ConnectionChecker.hasConnection(this))
-                    showSearchPopup()
-            R.id.btnBookmark -> {
-                val evaContent = this.evaContent
-                if (evaContent != null) {
-                    val evaContentMetadata = evaContent.contentMetadata!!
-                    EvaContentDbAdapter.updateEvaContentMetadataAsync(realm, evaContentMetadata.contentId){
-                        it.bookmark = !it.bookmark
-                    }
-                }
-            }
-            R.id.btnShare -> {
-                val faceIntent = Intent(Intent.ACTION_SEND)
-                faceIntent.type = "text/plain"
-                faceIntent.putExtra(Intent.EXTRA_TEXT, "http://novaeva.com/node/$contentId")
-                startActivity(Intent.createChooser(faceIntent, "Share"))
-            }
-            R.id.btnMail -> {
-                val mailIntent = Intent(Intent.ACTION_SEND)
-                mailIntent.type = "message/rfc822"
-                mailIntent.putExtra(Intent.EXTRA_SUBJECT, evaContent!!.contentMetadata!!.title)
-                mailIntent.putExtra(Intent.EXTRA_TEXT, "http://novaeva.com/node/$contentId")
-                startActivity(Intent.createChooser(mailIntent, "Odaberite aplikaciju"))
-            }
-            R.id.btnTextPlus -> {
-                var mCurrentSize = prefs.getInt("hr.bpervan.novaeva.velicinateksta", 14)
-                mCurrentSize += 2
-                if (mCurrentSize >= 28) {
-                    mCurrentSize = 12
-                }
-
-                prefs.edit().putInt("hr.bpervan.novaeva.velicinateksta", mCurrentSize).apply()
-                vijestWebView.settings.defaultFontSize = mCurrentSize
-            }
+//            R.id.btnTextPlus -> {
+//                var mCurrentSize = prefs.getInt("hr.bpervan.novaeva.velicinateksta", 14)
+//                mCurrentSize += 2
+//                if (mCurrentSize >= 28) {
+//                    mCurrentSize = 12
+//                }
+//
+//                prefs.edit().putInt("hr.bpervan.novaeva.velicinateksta", mCurrentSize).apply()
+//                vijestWebView.settings.defaultFontSize = mCurrentSize
+//            }
 //            R.id.btnBack -> this@VijestActivity.onBackPressed()
             R.id.imgLink ->
                 evaContent!!.videoURL?.let { videoUrl ->

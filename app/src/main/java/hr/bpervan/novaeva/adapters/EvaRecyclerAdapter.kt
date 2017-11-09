@@ -11,7 +11,6 @@ import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaContentMetadata
 import hr.bpervan.novaeva.model.EvaDirectoryMetadata
 import hr.bpervan.novaeva.model.TreeElementInfo
-import hr.bpervan.novaeva.utilities.ResourceHandler
 import kotlinx.android.synthetic.main.folder_row.view.*
 import kotlinx.android.synthetic.main.izbornik_top.view.*
 import kotlinx.android.synthetic.main.vijest_row.view.*
@@ -22,8 +21,8 @@ import java.util.*
  * Created by vpriscan on 08.10.17..
  */
 class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
-                         private val configData: ConfigData,
-                         private val headerData: HeaderData?
+                         private val headerData: HeaderData? = null,
+                         val isLoadingSupplier: () -> Boolean = { false }
 ) : RecyclerView.Adapter<EvaRecyclerAdapter.BindableViewHolder>() {
 
     companion object {
@@ -59,17 +58,14 @@ class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
             when (viewType) {
                 HEADER_VIEW_TYPE -> {
                     val view = LayoutInflater.from(parent.context).inflate(R.layout.izbornik_top, parent, false)
-                    view.setBackgroundResource(ResourceHandler.getListViewHeader(configData.colourSet))
                     HeaderViewHolder(view)
                 }
                 CONTENT_VIEW_TYPE -> {
                     val view = LayoutInflater.from(parent.context).inflate(R.layout.vijest_row, parent, false)
-                    view.setBackgroundResource(ResourceHandler.getContentListItemResourceId(configData.colourSet))
                     ContentInfoViewHolder(view)
                 }
                 SUBDIRECTORY_VIEW_TYPE -> {
                     val view = LayoutInflater.from(parent.context).inflate(R.layout.folder_row, parent, false)
-                    view.setBackgroundResource(ResourceHandler.getDirectoryListItemResourceId(configData.colourSet))
                     DirectoryInfoViewHolder(view)
                 }
                 else -> {
@@ -97,9 +93,6 @@ class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
 
     class HeaderData(var directoryName: String = "",
                      var infoMessage: String = "")
-
-    class ConfigData(var colourSet: Int,
-                     val isLoadingSupplier: () -> Boolean = { false })
 
     inner abstract class BindableViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         abstract fun bindTo(t: Any)
@@ -204,7 +197,7 @@ class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
     private inner class ProgressBarViewHolder(view: View) : BindableViewHolder(view) {
 
         override fun bindTo(t: Any) {
-            view.visibility = if (configData.isLoadingSupplier()) View.VISIBLE else View.GONE
+            view.visibility = if (isLoadingSupplier()) View.VISIBLE else View.GONE
         }
     }
 }

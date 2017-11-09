@@ -1,198 +1,232 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".BrevijarActivity" >
+    tools:context="hr.bpervan.novaeva.activities.BreviaryActivity">
 
-	<ScrollView 
-	    android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:fillViewport="true" >
-    
-	    <RelativeLayout
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content">
-			
-   		    <ImageView
-		        android:id="@+id/imgDivinumOfficium"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_alignParentTop="true"
-		        android:layout_marginTop="5dp"
-		        android:layout_centerHorizontal="true"
-		        android:src="@drawable/brevijar_divinumofficium"
-		        android:contentDescription="@string/dummyDesc" />
-   		    
-		    <ImageView
-		        android:id="@+id/imgLine"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_below="@+id/imgDivinumOfficium"
-		        android:layout_centerHorizontal="true"
-		        android:src="@drawable/brevijar_line"
-		        android:contentDescription="@string/dummyDesc" />
-		
-		    <TextView
-		        android:id="@+id/imgDanas"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_alignTop="@+id/imgLine"
-		        android:layout_centerHorizontal="true"
-		        android:layout_marginTop="@dimen/brevijarTopMargin"
-		        android:background="@drawable/brevijar_danasnjidatum"
-		        android:contentDescription="@string/dummyDesc"
-		        android:textColor="#FFFFFF"
-		        android:gravity="center"
-		        android:text="2.5.2014" />
-		
-		    <TextView
-		        android:id="@+id/imgSutra"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_alignTop="@+id/imgLine"
-		        android:layout_marginLeft="@dimen/brevijarIconSpace"
-		        android:layout_marginTop="@dimen/brevijarTopMargin"
-		        android:layout_toRightOf="@+id/imgDanas"
-		        android:background="@drawable/brevijar_jucersutra"
-		        android:contentDescription="@string/dummyDesc"
-		        android:text="SUTRA"
-		        android:textColor="#FFFFFF"
-		        android:gravity="center" />
-			
-		    <TextView
-		        android:id="@+id/imgJucer"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_alignTop="@+id/imgLine"
-		        android:layout_marginRight="@dimen/brevijarIconSpace"
-		        android:layout_marginTop="@dimen/brevijarTopMargin"
-		        android:layout_toLeftOf="@+id/imgDanas"
-		        android:background="@drawable/brevijar_jucersutra"
-		        android:contentDescription="@string/dummyDesc"
-		        android:text="JUČER"
-		        android:textColor="#FFFFFF"
-		        android:gravity="center" />
-		    
-		    <Button
-		        android:id="@+id/btnDanasJutarnja"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-				android:layout_below="@+id/imgDanas"
-		        android:layout_centerHorizontal="true"
-		        android:layout_marginTop="@dimen/brevijarIconSpace"
-		        android:background="@drawable/brevijar_button_jutarnja_danas"
-		        android:contentDescription="@string/dummyDesc" />
-		
-		    <Button
-		        android:id="@+id/btnJucerVecernja"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_below="@+id/btnJucerJutarnja"
-		        android:layout_toLeftOf="@+id/btnDanasVecernja"
-		        android:layout_marginRight="@dimen/brevijarIconSpace"
-		        android:layout_marginTop="@dimen/brevijarIconSpace"
-		        android:background="@drawable/brevijar_button_vecernja"
-		        android:contentDescription="@string/dummyDesc" />
-		
-		    <Button
-		        android:id="@+id/btnDanasVecernja"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_below="@+id/btnDanasJutarnja"
-		        android:layout_centerHorizontal="true"
-		        android:layout_marginTop="@dimen/brevijarIconSpace"
-		        android:background="@drawable/brevijar_button_vecernja_danas"
-		        android:contentDescription="@string/dummyDesc" />
-		
-		    <Button
-		        android:id="@+id/btnJucerPovecerje"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_below="@+id/btnJucerVecernja"
-		        android:layout_toLeftOf="@+id/btnDanasVecernja"
-		        android:layout_marginRight="@dimen/brevijarIconSpace"
-		        android:layout_marginTop="@dimen/brevijarIconSpace"
-		        android:background="@drawable/brevijar_button_povecerje"
-		        android:contentDescription="@string/dummyDesc" />
-		    
-		    <Button
-		        android:id="@+id/btnSutraPovecerje"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_below="@+id/btnSutraVecernja"
-		        android:layout_toRightOf="@+id/btnDanasPovecerje"
-		        android:layout_marginLeft="2dp"
-		        android:layout_marginTop="2dp"
-		        android:background="@drawable/brevijar_button_povecerje"
-		        android:contentDescription="@string/dummyDesc" />
-		
-		    <Button
-		        android:id="@+id/btnDanasPovecerje"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_below="@+id/btnDanasVecernja"
-		        android:layout_centerHorizontal="true"
-		        android:layout_marginTop="2dp"
-		        android:background="@drawable/brevijar_button_povecerje_danas"
-		        android:contentDescription="@string/dummyDesc" />
-		
-		    <Button
-		        android:id="@+id/btnSutraVecernja"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_toRightOf="@+id/btnDanasVecernja"
-		        android:layout_below="@+id/btnSutraJutarnja"
-		        android:layout_marginLeft="2dp"
-		        android:layout_marginTop="2dp"
-		        android:background="@drawable/brevijar_button_vecernja"
-		        android:contentDescription="@string/dummyDesc" />
-		
-	
-		
-		    <Button
-		        android:id="@+id/btnJucerJutarnja"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_below="@+id/imgJucer"
-		        android:layout_toLeftOf="@+id/btnDanasJutarnja"
-		        android:layout_marginTop="@dimen/brevijarIconSpace"
-		        android:layout_marginRight="@dimen/brevijarIconSpace"
-		        android:background="@drawable/brevijar_button_jutarnja"
-		        android:contentDescription="@string/dummyDesc" />
-		
-		    <Button
-		        android:id="@+id/btnSutraJutarnja"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_below="@+id/imgSutra"
-		        android:layout_toRightOf="@+id/btnDanasJutarnja"
-		        android:layout_marginTop="@dimen/brevijarIconSpace"
-		        android:layout_marginLeft="@dimen/brevijarIconSpace"
-		        android:background="@drawable/brevijar_button_jutarnja"
-		        android:contentDescription="@string/dummyDesc" />
+    <android.support.design.widget.AppBarLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/appBar"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:fitsSystemWindows="true"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:expanded="@bool/app_bar_expanded">
 
-		    <TextView
-		        android:id="@+id/txtKs"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_below="@+id/btnSutraPovecerje"
-		        android:layout_centerHorizontal="true"
-		        android:text="@string/ksCopyright"
-		        android:textColor="#ffffff"
-		        android:textSize="8sp"
-		        android:contentDescription="@string/dummyDesc" />
-		   	
-		    <TextView
-		        android:id="@+id/txtLaudato"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_below="@+id/txtKs"
-		        android:layout_centerHorizontal="true"
-		        android:contentDescription="@string/dummyDesc"
-		        android:text="@string/laudatoCopyright"
-		        android:textColor="#ffffff"
-		        android:textSize="8sp" />
-	    
-	    </RelativeLayout>
-    </ScrollView>
-</RelativeLayout>
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/collapsingToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:titleEnabled="false">
+
+            <ImageView
+                android:id="@+id/coverImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:contentDescription="@string/dummyDesc"
+                android:scaleType="centerCrop"
+                android:src="@drawable/vijest_testimage"
+                app:layout_collapseMode="parallax"
+                app:layout_collapseParallaxMultiplier="0.5"/>
+
+        </android.support.design.widget.CollapsingToolbarLayout>
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/imgDivinumOfficium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="5dp"
+                android:contentDescription="@string/dummyDesc"
+                android:src="@drawable/brevijar_divinumofficium"/>
+
+            <ImageView
+                android:id="@+id/imgLine"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/imgDivinumOfficium"
+                android:layout_centerHorizontal="true"
+                android:contentDescription="@string/dummyDesc"
+                android:src="@drawable/brevijar_line"/>
+
+            <TextView
+                android:id="@+id/imgDanas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/imgLine"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/brevijarTopMargin"
+                android:background="@drawable/brevijar_danasnjidatum"
+                android:contentDescription="@string/dummyDesc"
+                android:gravity="center"
+                android:text="2.5.2014"
+                android:textColor="#FFFFFF"/>
+
+            <TextView
+                android:id="@+id/imgSutra"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/imgLine"
+                android:layout_marginLeft="@dimen/brevijarIconSpace"
+                android:layout_marginTop="@dimen/brevijarTopMargin"
+                android:layout_toRightOf="@+id/imgDanas"
+                android:background="@drawable/brevijar_jucersutra"
+                android:contentDescription="@string/dummyDesc"
+                android:gravity="center"
+                android:text="SUTRA"
+                android:textColor="#FFFFFF"/>
+
+            <TextView
+                android:id="@+id/imgJucer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/imgLine"
+                android:layout_marginRight="@dimen/brevijarIconSpace"
+                android:layout_marginTop="@dimen/brevijarTopMargin"
+                android:layout_toLeftOf="@+id/imgDanas"
+                android:background="@drawable/brevijar_jucersutra"
+                android:contentDescription="@string/dummyDesc"
+                android:gravity="center"
+                android:text="JUČER"
+                android:textColor="#FFFFFF"/>
+
+            <Button
+                android:id="@+id/btnDanasJutarnja"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/imgDanas"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/brevijarIconSpace"
+                android:background="@drawable/brevijar_button_jutarnja_danas"
+                android:contentDescription="@string/dummyDesc"/>
+
+            <Button
+                android:id="@+id/btnJucerVecernja"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/btnJucerJutarnja"
+                android:layout_marginRight="@dimen/brevijarIconSpace"
+                android:layout_marginTop="@dimen/brevijarIconSpace"
+                android:layout_toLeftOf="@+id/btnDanasVecernja"
+                android:background="@drawable/brevijar_button_vecernja"
+                android:contentDescription="@string/dummyDesc"/>
+
+            <Button
+                android:id="@+id/btnDanasVecernja"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/btnDanasJutarnja"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/brevijarIconSpace"
+                android:background="@drawable/brevijar_button_vecernja_danas"
+                android:contentDescription="@string/dummyDesc"/>
+
+            <Button
+                android:id="@+id/btnJucerPovecerje"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/btnJucerVecernja"
+                android:layout_marginRight="@dimen/brevijarIconSpace"
+                android:layout_marginTop="@dimen/brevijarIconSpace"
+                android:layout_toLeftOf="@+id/btnDanasVecernja"
+                android:background="@drawable/brevijar_button_povecerje"
+                android:contentDescription="@string/dummyDesc"/>
+
+            <Button
+                android:id="@+id/btnSutraPovecerje"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/btnSutraVecernja"
+                android:layout_marginLeft="2dp"
+                android:layout_marginTop="2dp"
+                android:layout_toRightOf="@+id/btnDanasPovecerje"
+                android:background="@drawable/brevijar_button_povecerje"
+                android:contentDescription="@string/dummyDesc"/>
+
+            <Button
+                android:id="@+id/btnDanasPovecerje"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/btnDanasVecernja"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="2dp"
+                android:background="@drawable/brevijar_button_povecerje_danas"
+                android:contentDescription="@string/dummyDesc"/>
+
+            <Button
+                android:id="@+id/btnSutraVecernja"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/btnSutraJutarnja"
+                android:layout_marginLeft="2dp"
+                android:layout_marginTop="2dp"
+                android:layout_toRightOf="@+id/btnDanasVecernja"
+                android:background="@drawable/brevijar_button_vecernja"
+                android:contentDescription="@string/dummyDesc"/>
+
+
+            <Button
+                android:id="@+id/btnJucerJutarnja"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/imgJucer"
+                android:layout_marginRight="@dimen/brevijarIconSpace"
+                android:layout_marginTop="@dimen/brevijarIconSpace"
+                android:layout_toLeftOf="@+id/btnDanasJutarnja"
+                android:background="@drawable/brevijar_button_jutarnja"
+                android:contentDescription="@string/dummyDesc"/>
+
+            <Button
+                android:id="@+id/btnSutraJutarnja"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/imgSutra"
+                android:layout_marginLeft="@dimen/brevijarIconSpace"
+                android:layout_marginTop="@dimen/brevijarIconSpace"
+                android:layout_toRightOf="@+id/btnDanasJutarnja"
+                android:background="@drawable/brevijar_button_jutarnja"
+                android:contentDescription="@string/dummyDesc"/>
+
+            <TextView
+                android:id="@+id/txtKs"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/btnSutraPovecerje"
+                android:layout_centerHorizontal="true"
+                android:contentDescription="@string/dummyDesc"
+                android:text="@string/ksCopyright"
+                android:textColor="#ffffff"
+                android:textSize="8sp"/>
+
+            <TextView
+                android:id="@+id/txtLaudato"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/txtKs"
+                android:layout_centerHorizontal="true"
+                android:contentDescription="@string/dummyDesc"
+                android:text="@string/laudatoCopyright"
+                android:textColor="#ffffff"
+                android:textSize="8sp"/>
+
+        </RelativeLayout>
+    </android.support.v4.widget.NestedScrollView>
+</android.support.design.widget.CoordinatorLayout>

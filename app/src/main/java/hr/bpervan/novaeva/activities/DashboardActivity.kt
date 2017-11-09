@@ -31,10 +31,12 @@ class DashboardActivity : EvaBaseActivity(), OnTouchListener, OnClickListener {
 
     private var fetchBreviaryImageDisposable: Disposable? = null
 
-    //List<Integer> listaKategorija = Constants.getIntCategoryList();
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        /*switch from SplashTheme to DashboardTheme*/
+        setTheme(R.style.DashboardTheme)
+
         setContentView(R.layout.activity_dashboard)
 
         fetchBreviaryImage()
@@ -230,30 +232,30 @@ class DashboardActivity : EvaBaseActivity(), OnTouchListener, OnClickListener {
             R.id.btnMp3 -> startActivity(Intent(this, ListaVijestiActivity::class.java).apply {
                 putExtra("categoryId", EvaCategory.PJESMARICA.id)
                 putExtra("categoryName", EvaCategory.PJESMARICA.rawName)
-                putExtra("themeId", R.style.MultimedijaTheme)
+                putExtra("themeId", R.style.PjesmaricaTheme)
             })
             R.id.btnPropovjedi -> startActivity(Intent(this, ListaVijestiActivity::class.java).apply {
                 putExtra("categoryId", EvaCategory.PROPOVIJEDI.id)
                 putExtra("categoryName", EvaCategory.PROPOVIJEDI.rawName)
-                putExtra("themeId", R.style.MultimedijaTheme)
+                putExtra("themeId", R.style.PropovjediTheme)
             })
             R.id.btnOdgovori -> startActivity(Intent(this, ListaVijestiActivity::class.java).apply {
                 putExtra("categoryId", EvaCategory.ODGOVORI.id)
                 putExtra("categoryName", EvaCategory.ODGOVORI.rawName)
-                putExtra("themeId", R.style.MultimedijaTheme)
+                putExtra("themeId", R.style.OdgovoriTheme)
             })
             R.id.btnPoziv -> startActivity(Intent(this, ListaVijestiActivity::class.java).apply {
                 putExtra("categoryId", EvaCategory.POZIV.id)
                 putExtra("categoryName", EvaCategory.POZIV.rawName)
-                putExtra("themeId", R.style.MultimedijaTheme)
+                putExtra("themeId", R.style.PozivTheme)
             })
             R.id.btnDuhovnost -> startActivity(Intent(this, ListaVijestiActivity::class.java).apply {
                 putExtra("categoryId", EvaCategory.DUHOVNOST.id)
                 putExtra("categoryName", EvaCategory.DUHOVNOST.rawName)
-                putExtra("themeId", R.style.MultimedijaTheme)
+                putExtra("themeId", R.style.DuhovnostTheme)
             })
             R.id.btnIzreke -> startActivity(Intent(this, IzrekeActivity::class.java).apply {
-                putExtra("themeId", R.style.MultimedijaTheme)
+                putExtra("themeId", R.style.IzrekeTheme)
             })
             R.id.btnMultimedia -> startActivity(Intent(this, ListaVijestiActivity::class.java).apply {
                 putExtra("categoryId", EvaCategory.MULTIMEDIJA.id)
@@ -263,7 +265,7 @@ class DashboardActivity : EvaBaseActivity(), OnTouchListener, OnClickListener {
             R.id.btnAktualno -> startActivity(Intent(this, ListaVijestiActivity::class.java).apply {
                 putExtra("categoryId", EvaCategory.AKTUALNO.id)
                 putExtra("categoryName", EvaCategory.AKTUALNO.rawName)
-                putExtra("themeId", R.style.MultimedijaTheme)
+                putExtra("themeId", R.style.AktualnoTheme)
             })
         }
     }

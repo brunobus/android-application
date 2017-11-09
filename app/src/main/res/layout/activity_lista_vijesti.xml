@@ -12,19 +12,9 @@
         android:layout_height="0dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-
-        <ProgressBar
-            android:id="@+id/progress_bar"
-            style="?android:progressBarStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:indeterminate="true"
-            android:indeterminateOnly="true"
-            />
     </FrameLayout>
 
     <ImageView
@@ -32,33 +22,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="5dp"
+        android:layout_marginBottom="8dp"
         android:contentDescription="@string/dummyDesc"
         android:src="@drawable/button_imam_pitanje"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/floatingSearchButton"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/floatingSearchButton"
+        android:id="@+id/btnSearch"
+        style="@style/floating_action_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/action_button_search"
         android:scaleType="center"
+        android:src="@drawable/action_button_search"
         app:fabSize="mini"
-        android:layout_marginBottom="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"/>
-
-    <!--<include-->
-        <!--android:id="@+id/fakeActionBar"-->
-        <!--layout="@layout/simple_fake_action_bar"-->
-        <!--android:layout_width="0dp"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--app:layout_constraintLeft_toLeftOf="parent"-->
-        <!--app:layout_constraintRight_toRightOf="parent"/>-->
+        app:layout_constraintBottom_toTopOf="@+id/btnImamPitanjeListaVijesti"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
 
 </android.support.constraint.ConstraintLayout>

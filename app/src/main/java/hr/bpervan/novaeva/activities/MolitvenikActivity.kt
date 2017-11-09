@@ -12,8 +12,6 @@ import android.widget.ListView
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.MolitvenikAdapter
 import hr.bpervan.novaeva.main.R
-import kotlinx.android.synthetic.main.activity_molitvenik.*
-import kotlinx.android.synthetic.main.simple_fake_action_bar.view.*
 
 /*import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.GoogleAnalytics;
@@ -82,9 +80,7 @@ class MolitvenikActivity : ListActivity(), OnClickListener {
         mainListView = listView
         mainListView.isClickable = true
 
-//        fakeActionBar.btnBack.setOnClickListener(this)
-        fakeActionBar.btnSearch.setOnClickListener(this)
-//        fakeActionBar.btnHome.setOnClickListener(this)
+//        btnSearch.setOnClickListener(this)
     }
 
     override fun onClick(v: View) {

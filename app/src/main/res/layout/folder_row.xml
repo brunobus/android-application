@@ -4,8 +4,7 @@
     android:id="@+id/relativeLayout1"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:alpha="@dimen/row_alpha"
-    android:background="@drawable/izbornik_btn_normal_propovijedi_folder">
+    android:background="?attr/directoryListItemSrc">
 
     <TextView
         android:id="@+id/tvMapaNatpis"

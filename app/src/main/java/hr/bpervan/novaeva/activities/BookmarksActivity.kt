@@ -24,7 +24,6 @@ import io.realm.Realm
 import kotlinx.android.synthetic.*
 import kotlinx.android.synthetic.main.activity_bookmarks.*
 import kotlinx.android.synthetic.main.eva_recycler_view.view.*
-import kotlinx.android.synthetic.main.simple_fake_action_bar.view.*
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -52,10 +51,8 @@ class BookmarksActivity : EvaBaseActivity(), View.OnClickListener {
         //initUI();
         //reloadBookmarksFromDb();
 
-        val configData = EvaRecyclerAdapter.ConfigData(EvaCategory.PROPOVIJEDI.id)
-
         realm = Realm.getInstance(RealmConfigProvider.evaDBConfig)
-        adapter = EvaRecyclerAdapter(bookmarksList, configData, null)
+        adapter = EvaRecyclerAdapter(bookmarksList)
 
         initUI()
     }
@@ -71,7 +68,7 @@ class BookmarksActivity : EvaBaseActivity(), View.OnClickListener {
         this.title = "Bookmarks"
 
 //        fakeActionBar.btnHome.setOnClickListener(this)
-        fakeActionBar.btnSearch.setOnClickListener(this)
+        btnSearch.setOnClickListener(this)
 //        fakeActionBar.btnBack.setOnClickListener(this)
 
         /*
@@ -87,9 +84,9 @@ class BookmarksActivity : EvaBaseActivity(), View.OnClickListener {
 
     private fun reloadBookmarksFromDb() {
         bookmarksList.clear()
-        EvaContentDbAdapter.loadManyEvaContentMetadata(realm, {it.bookmark}, {
+        EvaContentDbAdapter.loadManyEvaContentMetadata(realm, { it.bookmark }, {
             bookmarksList.add(it)
-        }){ adapter.notifyDataSetChanged() }
+        }) { adapter.notifyDataSetChanged() }
     }
 
     private fun showEmptyListInfo() {

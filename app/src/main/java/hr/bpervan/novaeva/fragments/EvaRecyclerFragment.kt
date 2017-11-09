@@ -57,14 +57,14 @@ class EvaRecyclerFragment : Fragment() {
         val infoText = if (fragmentConfig.isSubDirectory) "NALAZITE SE U MAPI" else "NALAZITE SE U KATEGORIJI"
         headerData = EvaRecyclerAdapter.HeaderData(fragmentConfig.directoryTitle, infoText)
 
-        adapter = EvaRecyclerAdapter(elementsList,
-                EvaRecyclerAdapter.ConfigData(fragmentConfig.themeId, { loadingFromDb || fetchingFromServer }),
-                headerData)
+        adapter = EvaRecyclerAdapter(elementsList, headerData, { loadingFromDb || fetchingFromServer })
         adapter.registerAdapterDataObserver(DataChangeLogger())
 
         createIfMissingAndSubscribeToEvaDirectoryUpdates()
 
-        fetchEvaDirectoryDataFromServer()
+        if (savedInstanceState == null) {
+            fetchEvaDirectoryDataFromServer()
+        }
     }
 
     private fun createIfMissingAndSubscribeToEvaDirectoryUpdates() {
@@ -104,8 +104,7 @@ class EvaRecyclerFragment : Fragment() {
 //
 //        //FIXME Create new adapter class that efficiently uses TWO OBSERVABLE REALMLISTS and has a header and loadingCircle
 //        adapter = EvaRecyclerAdapter(contentMetadataList,
-//                EvaRecyclerAdapter.ConfigData(fragmentConfig.colourSet, { loading }),
-//                EvaRecyclerAdapter.HeaderData(fragmentConfig.directoryName, infoText))
+//                EvaRecyclerAdapter.HeaderData(fragmentConfig.directoryName, infoText), { loading })
 //        adapter.registerAdapterDataObserver(DataChangeLogger())
 //        return adapter
 //    }

@@ -32,11 +32,12 @@
     <dimen name="vijestUvodWidth">405dp</dimen>
     <dimen name="vijestUvodWidthLand">365dp</dimen>
 
-    <dimen name="app_bar_height">140dp</dimen>
+    <dimen name="app_bar_height">160dp</dimen>
     <dimen name="tool_bar_height">30dp</dimen>
 
     <bool name="app_bar_expanded">true</bool>
     <dimen name="title_size_small">14dp</dimen>
-    <dimen name="title_size">20dp</dimen>
+    <dimen name="title_size">18dp</dimen>
+    <dimen name="title_bar_height">52dp</dimen>
 
 </resources>

@@ -21,7 +21,7 @@
     <string name="title_activity_dashboard">Početak</string>
     <string name="title_activity_pretraga">Pretraga</string>
     <string name="title_share_mail">E-pošta</string>
-    <string name="title_share_fb">Facebook</string>
+    <string name="title_share">Dijeli</string>
     <string name="title_activity_search">SearchActivity</string>
     <string name="title_activity_list">ListActivity</string>
     <string name="title_activity_lista_vijesti">ListaVijestiActivity</string>

@@ -11,6 +11,7 @@ import hr.bpervan.novaeva.model.EvaCategory
  * Created by vpriscan on 30.10.17..
  */
 
+//todo
 class AktualnoView(context: Context) : EvaBaseCustomView(context) {
 
     override fun backgroundResource(hasNewStuff: Boolean): Int {
@@ -26,7 +27,7 @@ class AktualnoView(context: Context) : EvaBaseCustomView(context) {
             Intent(context, ListaVijestiActivity::class.java).apply {
                 putExtra("categoryId", EvaCategory.AKTUALNO.id)
                 putExtra("categoryName", EvaCategory.AKTUALNO.rawName)
-                putExtra("themeId", R.style.MultimedijaTheme)
+                putExtra("themeId", R.style.AktualnoTheme)
             }
 
     override fun textFeedback(): String {

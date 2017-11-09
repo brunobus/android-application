@@ -1,66 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/fakeActionBar"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
-    android:layout_alignParentRight="true"
-    android:layout_alignParentEnd="true"
-    android:background="@drawable/toolbar_izreke"
-    android:orientation="horizontal">
+    android:background="?attr/fakeActionBarSrc">
 
-    <!--<ImageView-->
-        <!--android:id="@+id/btnHome"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_alignParentTop="true"-->
-        <!--android:layout_centerHorizontal="true"-->
-        <!--android:padding="8dp"-->
-        <!--android:contentDescription="@string/dummyDesc"-->
-        <!--android:src="@drawable/action_button_home" />-->
-
-    <RelativeLayout
+    <ImageView
+        android:id="@+id/btnMail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true">
+        android:contentDescription="@string/dummyDesc"
+        android:padding="8dp"
+        android:src="@drawable/action_button_mail"
+        app:layout_constraintBottom_toTopOf="@+id/btnShare"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"/>
 
-        <ImageView
-            android:id="@+id/btnSearch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:padding="8dp"
-            android:contentDescription="@string/dummyDesc"
-            android:src="@drawable/action_button_search" />
+    <ImageView
+        android:id="@+id/btnShare"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/dummyDesc"
+        android:padding="8dp"
+        android:src="@drawable/action_button_share"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnMail"/>
 
-        <ImageView
-            android:id="@+id/btnMail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/btnSearch"
-            android:layout_centerHorizontal="true"
-            android:padding="8dp"
-            android:contentDescription="@string/dummyDesc"
-            android:src="@drawable/action_button_mail" />
-
-        <ImageView
-            android:id="@+id/btnShare"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/btnMail"
-            android:layout_centerHorizontal="true"
-            android:padding="8dp"
-            android:contentDescription="@string/dummyDesc"
-            android:src="@drawable/action_button_share" />
-    </RelativeLayout>
-
-    <!--<ImageView-->
-        <!--android:id="@+id/btnBack"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_alignParentBottom="true"-->
-        <!--android:layout_centerHorizontal="true"-->
-        <!--android:contentDescription="@string/dummyDesc"-->
-        <!--android:padding="8dp"-->
-        <!--android:src="@drawable/action_button_back"/>-->
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>
