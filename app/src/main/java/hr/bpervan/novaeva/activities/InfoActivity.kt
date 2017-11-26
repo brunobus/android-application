@@ -24,7 +24,6 @@ class InfoActivity : EvaBaseActivity() {
         webView.loadUrl("file:///android_asset/info.htm")
 
         evaCollapsingBar.collapsingToolbar.title = "Nova Eva info"
-
     }
 
     private fun showSearchPopup() {

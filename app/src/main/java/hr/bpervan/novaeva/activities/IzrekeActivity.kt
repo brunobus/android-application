@@ -41,6 +41,8 @@ class IzrekeActivity : EvaBaseActivity() {
             setTheme(themeId)
         }
 
+        setContentView(R.layout.activity_izreke)
+
         val mGaTracker = (application as NovaEvaApp).getTracker(NovaEvaApp.TrackerName.APP_TRACKER)
 
         mGaTracker.send(
@@ -76,7 +78,7 @@ class IzrekeActivity : EvaBaseActivity() {
                             contentData = contentInfo.text
                             contentId = contentInfo.contentId
 
-                            evaCollapsingBar.collapsingToolbar.title = contentTitle
+                            setMyTitle(contentTitle)
                             webText.loadDataWithBaseURL(null, contentData, "text/html", "utf-8", "")
                         }
                     }) {
@@ -87,11 +89,14 @@ class IzrekeActivity : EvaBaseActivity() {
         }
     }
 
+    private fun setMyTitle(title:String?){
+        evaCollapsingBar.collapsingToolbar.title = title ?: ""
+    }
+
     private fun initUI() {
-        setContentView(R.layout.activity_izreke)
 
         if (contentTitle != null && contentData != null) {
-            evaCollapsingBar.collapsingToolbar.title = contentTitle
+            setMyTitle(contentTitle)
             webText.loadDataWithBaseURL(null, contentData, "text/html", "utf-8", "")
         }
 
@@ -123,6 +128,7 @@ class IzrekeActivity : EvaBaseActivity() {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         this?.clearFindViewByIdCache() // due to a bug in viewbinding library you must use null safe access!!
+        setContentView(R.layout.activity_izreke)
         initUI()
     }
 

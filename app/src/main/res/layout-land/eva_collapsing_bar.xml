@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/appBar"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/app_bar_height"
+    android:layout_height="52dp"
     android:fitsSystemWindows="true"
     android:theme="@style/AppTheme.AppBarOverlay"
     app:expanded="@bool/app_bar_expanded">
@@ -15,36 +15,12 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
         app:collapsedTitleTextAppearance="@style/NovaEva.TextAppearance.Title.Small"
-        app:contentScrim="?attr/colorPrimary"
         app:expandedTitleMarginBottom="18dp"
         app:expandedTitleMarginStart="18dp"
         app:expandedTitleTextAppearance="@style/NovaEva.TextAppearance.Title"
         app:layout_scrollFlags="scroll|exitUntilCollapsed"
-        app:scrimAnimationDuration="1000"
-        app:scrimVisibleHeightTrigger="@dimen/title_bar_height"
         app:titleEnabled="true"
         app:toolbarId="@+id/topToolbar">
-
-        <ImageView
-            android:id="@+id/coverImage"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:contentDescription="@string/dummyDesc"
-            android:scaleType="centerCrop"
-            android:src="@drawable/vijest_testimage"
-            app:layout_collapseMode="parallax"
-            app:layout_collapseParallaxMultiplier="0.5"/>
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/title_bar_height"
-            android:layout_alignParentBottom="true"
-            android:layout_gravity="bottom"
-            android:contentDescription="@string/dummyDesc"
-            android:scaleType="fitXY"
-            android:src="?attr/contentTitleBarSrc"
-            app:layout_collapseMode="pin"/>
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/topToolbar"

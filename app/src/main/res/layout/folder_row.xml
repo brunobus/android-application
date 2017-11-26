@@ -18,7 +18,7 @@
         android:layout_marginTop="1dp"
         android:ellipsize="end"
         android:maxLines="1"
-        android:text="@string/directory_identifier"
+        android:text="@string/dummyDesc"
         android:textColor="#4c4c4c"
         android:textSize="16sp"/>
 

@@ -56,16 +56,15 @@ class PrayerContentActivity : EvaBaseActivity() {
         webView.isLongClickable = false
         webView.settings.defaultTextEncodingName = "utf-8"
 
-        webView.webViewClient = object : WebViewClient() {
-            override fun shouldOverrideUrlLoading(webView: WebView, url: String): Boolean {
-                webView.loadUrl(url)
-                return false
-            }
-        }
+//        webView.webViewClient = object : WebViewClient() {
+//            override fun shouldOverrideUrlLoading(webView: WebView, url: String): Boolean {
+//                webView.loadUrl(url)
+//                return false
+//            }
+//        }
 
         val title = intent.getStringExtra("title")
         val id = intent.getIntExtra("id", 0)
-
 
         evaCollapsingBar.collapsingToolbar.title = title
 

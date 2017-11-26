@@ -123,13 +123,16 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
 
             evaCollapsingBar.collapsingToolbar.title = evaContent.contentMetadata!!.title
 
-            //if not null
-            val image = evaContent.image
-            if (image != null) {
-                if (evaCollapsingBar.coverImage != null) {
-                    imageLoader.displayImage(image.url, evaCollapsingBar.coverImage, ImageLoaderConfigurator.createDefaultDisplayImageOptions(false))
+
+            val coverImageInfo = evaContent.image
+            val coverImageView = evaCollapsingBar.coverImage
+
+            if (coverImageInfo != null) {
+                if (coverImageView != null) {
+                    imageLoader.displayImage(coverImageInfo.url, coverImageView, ImageLoaderConfigurator.createDefaultDisplayImageOptions(false))
                 }
             } else {
+                //todo
 //                val url = prefs.getString("hr.bpervan.novaeva.categoryheader." + contentData.contentMetadata!!.directoryId, null)
 //                if (url != null && headerImage != null) {
 //                    imageLoader.displayImage(url, headerImage, ImageLoaderConfigurator.createDefaultDisplayImageOptions(true))

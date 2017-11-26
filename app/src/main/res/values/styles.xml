@@ -15,9 +15,9 @@
     <!-- Application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowNoTitle">true</item>
-        <item name="colorPrimary">@drawable/background</item>
-        <item name="colorPrimaryDark">@drawable/background</item>
-        <item name="colorAccent">@color/Orange</item>
+        <item name="colorPrimary">@color/propovjedi</item>
+        <item name="colorPrimaryDark">@color/propovjedi</item>
+        <item name="colorAccent">@color/propovjedi</item>
         <item name="contentListItemSrc">@drawable/izbornik_btn_normal_propovijedi</item>
         <item name="directoryListItemSrc">@drawable/izbornik_btn_normal_propovijedi_folder</item>
         <item name="listViewHeaderSrc">@drawable/izbornik_top_propovjedi</item>
@@ -47,15 +47,14 @@
         <item name="android:windowBackground">@drawable/background</item>
     </style>
 
-    <style name="ContentTheme" parent="AppTheme">
-        <item name="android:colorBackground">@color/FloralWhite</item>
-    </style>
-
     <style name="BreviaryTheme" parent="AppTheme">
         <item name="android:windowBackground">@drawable/brevijar_backbrevijar</item>
-        <item name="colorPrimary">@drawable/brevijar_backbrevijar</item>
-        <item name="colorPrimaryDark">@drawable/brevijar_backbrevijar</item>
-        <item name="colorAccent">@color/Orange</item>
+        <item name="colorPrimary">@color/breviary</item>
+        <item name="colorPrimaryDark">@color/breviaryDark</item>
+        <item name="colorAccent">@color/breviary</item>
+
+        <item name="contentTitleBarSrc">@drawable/vijest_naslovnamp3</item>
+
     </style>
 
     <style name="MultimedijaTheme" parent="AppTheme">

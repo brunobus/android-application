@@ -46,6 +46,17 @@ class EvaRecyclerFragment : Fragment() {
 
     private lateinit var realm: Realm
 
+    companion object {
+
+        fun newInstance(directoryId: Long, directoryTitle: String, isSubDirectory: Boolean, themeId: Int): EvaRecyclerFragment {
+            val evaRecyclerFragment = EvaRecyclerFragment()
+            evaRecyclerFragment.arguments = Bundle().apply {
+                putParcelable("fragmentConfig", EvaRecyclerFragment.FragmentConfig(directoryId, directoryTitle, isSubDirectory, themeId))
+            }
+            return evaRecyclerFragment
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

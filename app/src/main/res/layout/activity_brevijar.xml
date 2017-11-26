@@ -16,6 +16,7 @@
         android:layout_height="250dp"
         android:fitsSystemWindows="true"
         android:theme="@style/AppTheme.AppBarOverlay"
+        android:background="@color/transparent"
         app:expanded="@bool/app_bar_expanded">
 
         <android.support.design.widget.CollapsingToolbarLayout
@@ -33,7 +34,6 @@
                 android:layout_gravity="center"
                 android:contentDescription="@string/dummyDesc"
                 android:scaleType="centerCrop"
-                android:src="@drawable/vijest_testimage"
                 app:layout_collapseMode="parallax"
                 app:layout_collapseParallaxMultiplier="0.5"/>
 

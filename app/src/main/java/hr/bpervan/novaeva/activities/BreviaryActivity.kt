@@ -56,7 +56,7 @@ class BreviaryActivity : EvaBaseActivity() {
 
         override fun onClick(v: View?) {
             val intent = Intent(this@BreviaryActivity, BreviaryContentActivity::class.java)
-            intent.putExtra("BREV_CAT", breviaryId)
+            intent.putExtra(BreviaryContentActivity.BREVIARY_ID_KEY, breviaryId)
             this@BreviaryActivity.startActivity(intent)
         }
     }

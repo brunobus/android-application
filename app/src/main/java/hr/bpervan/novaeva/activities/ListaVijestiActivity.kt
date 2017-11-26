@@ -96,15 +96,10 @@ class ListaVijestiActivity : EvaBaseActivity(), OnClickListener {
 
     private fun showFragmentForDirectory(dirId: Long, dirName: String, isSubDir: Boolean) {
 
-        val evaRecyclerFragment = EvaRecyclerFragment()
-        val bundle = Bundle()
-        bundle.putParcelable("fragmentConfig", EvaRecyclerFragment.FragmentConfig(dirId, dirName, isSubDir, themeId))
-        evaRecyclerFragment.arguments = bundle
-
         supportFragmentManager
                 .beginTransaction()
                 .setCustomAnimations(R.anim.move_right_in, R.anim.move_left_out, R.anim.move_left_in, R.anim.move_right_out)
-                .replace(R.id.eva_directory_fragment_frame, evaRecyclerFragment)
+                .replace(R.id.eva_directory_fragment_frame, EvaRecyclerFragment.newInstance(dirId, dirName, isSubDir, themeId))
                 .addToBackStack(null)
                 .commit()
     }
