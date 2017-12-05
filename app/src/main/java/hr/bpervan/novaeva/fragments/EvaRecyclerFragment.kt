@@ -26,6 +26,9 @@ import hr.bpervan.novaeva.utilities.subscribeAsync
 import io.reactivex.disposables.Disposable
 import io.realm.Realm
 import io.realm.Sort
+import kotlinx.android.synthetic.main.eva_directory.view.*
+import kotlinx.android.synthetic.main.eva_directory_collapsing_bar.view.*
+import kotlinx.android.synthetic.main.izbornik_top.view.*
 
 /**
  * Created by vpriscan on 08.10.17..
@@ -36,9 +39,8 @@ class EvaRecyclerFragment : Fragment() {
     private var evaDirectoryChangesDisposable: Disposable? = null
 
     private lateinit var fragmentConfig: FragmentConfig
-    private lateinit var headerData: EvaRecyclerAdapter.HeaderData
     private lateinit var adapter: EvaRecyclerAdapter
-    private var elementsList: MutableList<TreeElementInfo> = ArrayList()
+    private var elementsList: MutableList<TreeElementInfo> = mutableListOf()
 
     private var hasMore = true
     private var loadingFromDb = true
@@ -64,10 +66,7 @@ class EvaRecyclerFragment : Fragment() {
         fragmentConfig = inState.getParcelable("fragmentConfig")
         realm = Realm.getInstance(RealmConfigProvider.evaDBConfig)
 
-        val infoText = if (fragmentConfig.isSubDirectory) "NALAZITE SE U MAPI" else "NALAZITE SE U KATEGORIJI"
-        headerData = EvaRecyclerAdapter.HeaderData(fragmentConfig.directoryTitle, infoText)
-
-        adapter = EvaRecyclerAdapter(elementsList, headerData, { loadingFromDb || fetchingFromServer })
+        adapter = EvaRecyclerAdapter(elementsList, { loadingFromDb || fetchingFromServer })
         adapter.registerAdapterDataObserver(DataChangeLogger())
 
         createIfMissingAndSubscribeToEvaDirectoryUpdates()
@@ -89,8 +88,6 @@ class EvaRecyclerFragment : Fragment() {
         evaDirectoryChangesDisposable?.dispose()
         evaDirectoryChangesDisposable = EvaDirectoryDbAdapter.subscribeToEvaDirectoryUpdatesAsync(
                 realm, fragmentConfig.directoryId, { evaDirectory ->
-
-            headerData.directoryName = evaDirectory.directoryMetadata!!.title
 
             elementsList.clear()
             elementsList.addAll(evaDirectory.contentMetadataList)
@@ -160,22 +157,29 @@ class EvaRecyclerFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        val recyclerView = inflater.inflate(R.layout.eva_recycler_view, container, false) as RecyclerView
+        return inflater.inflate(R.layout.eva_directory, container, false).apply {
 
-        val linearLayoutManager = LinearLayoutManager(context)
-        recyclerView.layoutManager = linearLayoutManager
-        recyclerView.itemAnimator = DefaultItemAnimator()
-        recyclerView.adapter = adapter
-        recyclerView.addOnScrollListener(EndlessScrollListener(linearLayoutManager))
+            val infoText = if (fragmentConfig.isSubDirectory) "NALAZITE SE U MAPI" else "NALAZITE SE U KATEGORIJI"
+            evaDirectoryCollapsingBar.izbornikTop.izbornikTopNatpis.text = infoText
+            evaDirectoryCollapsingBar.izbornikTop.izbornikTopNazivKategorije.text = fragmentConfig.directoryTitle
 
-        //todo use this when new adapter class that uses two realmlists is created
-//        EvaDirectoryDbAdapter.loadEvaDirectoryAsync(realm, fragmentConfig.directoryId) { evaDirectory ->
-//            if (evaDirectory != null) {
-//                recyclerView.adapter = createAdapter(evaDirectory.contentMetadataList, evaDirectory.subDirectoryMetadataList)
-//            }
-//        }
+            evaDirectoryCollapsingBar.izbornikTop.izbornikTopNazivKategorije.typeface = NovaEvaApp.openSansBold
+            evaDirectoryCollapsingBar.izbornikTop.izbornikTopNatpis.typeface = NovaEvaApp.openSansBold
 
-        return recyclerView
+            val recyclerView = evaRecyclerView as RecyclerView
+
+            val linearLayoutManager = LinearLayoutManager(context)
+            recyclerView.layoutManager = linearLayoutManager
+            recyclerView.itemAnimator = DefaultItemAnimator()
+            recyclerView.adapter = adapter
+            recyclerView.addOnScrollListener(EndlessScrollListener(linearLayoutManager))
+            //todo use this when new adapter class that uses two realmlists is created
+            //        EvaDirectoryDbAdapter.loadEvaDirectoryAsync(realm, fragmentConfig.directoryId) { evaDirectory ->
+            //            if (evaDirectory != null) {
+            //                recyclerView.adapter = createAdapter(evaDirectory.contentMetadataList, evaDirectory.subDirectoryMetadataList)
+            //            }
+            //        }
+        }
     }
 
     override fun onConfigurationChanged(newConfig: Configuration?) {

@@ -21,7 +21,6 @@ import java.util.*
  * Created by vpriscan on 08.10.17..
  */
 class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
-                         private val headerData: HeaderData? = null,
                          val isLoadingSupplier: () -> Boolean = { false }
 ) : RecyclerView.Adapter<EvaRecyclerAdapter.BindableViewHolder>() {
 
@@ -29,37 +28,23 @@ class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
         val dayMonthFormat = SimpleDateFormat("d.M.", Locale.US)
         val yearHourMinuteFormat = SimpleDateFormat("yyyy, HH:mm", Locale.US)
 
-        val HEADER_VIEW_TYPE = 0
         val CONTENT_VIEW_TYPE = 1
         val SUBDIRECTORY_VIEW_TYPE = 2
         val PROGRESS_VIEW_TYPE = 3
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (headerData != null) {
-            when {
-                position == 0 -> HEADER_VIEW_TYPE
-                position == data.size + 1 -> PROGRESS_VIEW_TYPE
-                data[position - 1] is EvaContentMetadata -> CONTENT_VIEW_TYPE
-                else -> SUBDIRECTORY_VIEW_TYPE
-            }
-        } else {
-            when {
-                position == data.size -> PROGRESS_VIEW_TYPE
-                data[position] is EvaContentMetadata -> CONTENT_VIEW_TYPE
-                else -> SUBDIRECTORY_VIEW_TYPE
-            }
+        return when {
+            position == data.size -> PROGRESS_VIEW_TYPE
+            data[position] is EvaContentMetadata -> CONTENT_VIEW_TYPE
+            else -> SUBDIRECTORY_VIEW_TYPE
         }
     }
 
-    override fun getItemCount(): Int = data.size + if (headerData != null) 2 else 1
+    override fun getItemCount(): Int = data.size + 1
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BindableViewHolder =
             when (viewType) {
-                HEADER_VIEW_TYPE -> {
-                    val view = LayoutInflater.from(parent.context).inflate(R.layout.izbornik_top, parent, false)
-                    HeaderViewHolder(view)
-                }
                 CONTENT_VIEW_TYPE -> {
                     val view = LayoutInflater.from(parent.context).inflate(R.layout.vijest_row, parent, false)
                     ContentInfoViewHolder(view)
@@ -76,42 +61,15 @@ class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
 
     override fun onBindViewHolder(holder: BindableViewHolder, position: Int) {
         val subject: Any =
-                if (headerData != null) {
-                    when (position) {
-                        0 -> headerData
-                        data.size + 1 -> Unit
-                        else -> data[position - 1]
-                    }
-                } else {
-                    when (position) {
-                        data.size -> Unit
-                        else -> data[position]
-                    }
+                when (position) {
+                    data.size -> Unit
+                    else -> data[position]
                 }
         holder.bindTo(subject)
     }
 
-    class HeaderData(var directoryName: String = "",
-                     var infoMessage: String = "")
-
     inner abstract class BindableViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         abstract fun bindTo(t: Any)
-    }
-
-    private inner class HeaderViewHolder(view: View) : BindableViewHolder(view) {
-        private val headerTextView: TextView = view.izbornikTopNazivKategorije
-        private val headerTextViewNatpis: TextView = view.izbornikTopNatpis
-
-        init {
-            headerTextView.typeface = NovaEvaApp.openSansBold
-            headerTextViewNatpis.typeface = NovaEvaApp.openSansBold
-        }
-
-        override fun bindTo(t: Any) {
-            val headerData = t as HeaderData
-            headerTextViewNatpis.text = headerData.infoMessage
-            headerTextView.text = headerData.directoryName.toUpperCase()
-        }
     }
 
     private inner class DirectoryInfoViewHolder(view: View) : BindableViewHolder(view) {
