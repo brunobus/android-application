@@ -22,15 +22,6 @@ import kotlinx.android.synthetic.main.eva_simple_content.view.*
  * Created by vpriscan on 26.11.17..
  */
 class BreviaryContentFragment : EvaBaseFragment() {
-
-    private var breviaryId: Int = -1
-    private var coverImageUrl: String? = null
-
-    private var loadBreviaryDisposable: Disposable? = null
-
-    /*webview instance is being cached because its content can only be loaded asynchronously and his parent scrollview can't restore its scroll position*/
-    private var cachedWebViewInstance: WebView? = null
-
     companion object {
         private val BREVIARY_ID_KEY = "breviaryId"
 
@@ -42,6 +33,15 @@ class BreviaryContentFragment : EvaBaseFragment() {
             return breviaryContentFragment
         }
     }
+
+    private var breviaryId: Int = -1
+    private var coverImageUrl: String? = null
+
+    private var loadBreviaryDisposable: Disposable? = null
+
+    /*webview instance is being cached because its content can only be loaded asynchronously and his parent scrollview can't restore its scroll position*/
+    private var cachedWebViewInstance: WebView? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

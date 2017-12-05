@@ -22,16 +22,6 @@
             android:id="@+id/evaCollapsingBar"
             layout="@layout/eva_collapsing_bar"/>
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/btnToggleActionBar"
-            style="@style/floating_action_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:scaleType="center"
-            app:fabSize="mini"
-            app:layout_anchor="@+id/evaCollapsingBar"
-            app:layout_anchorGravity="bottom|end"/>
-
         <android.support.v4.widget.NestedScrollView
             android:id="@+id/scrollView"
             android:layout_width="match_parent"
@@ -173,10 +163,19 @@
 
                 </RelativeLayout>
 
-
             </RelativeLayout>
 
         </android.support.v4.widget.NestedScrollView>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/btnToggleActionBar"
+            style="@style/floating_action_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="center"
+            app:fabSize="mini"
+            app:layout_anchor="@+id/evaCollapsingBar"
+            app:layout_anchorGravity="bottom|end"/>
 
     </android.support.design.widget.CoordinatorLayout>
 

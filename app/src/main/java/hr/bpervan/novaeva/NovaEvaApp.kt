@@ -70,7 +70,7 @@ class NovaEvaApp : Application() {
 
     companion object {
         private val PROPERTY_ID = "UA-40344870-1"
-        private var instance: NovaEvaApp? = null
+        var instance: NovaEvaApp? = null
 
         private fun loadTypeface(resFile: String): Typeface? {
             Log.d("loadingTypeface", "loading typeface from $resFile")

@@ -101,16 +101,6 @@ class DashboardActivity : EvaBaseActivity(), OnTouchListener, OnClickListener {
         }
     }
 
-    public override fun onStart() {
-        super.onStart()
-        GoogleAnalytics.getInstance(this).reportActivityStart(this)
-    }
-
-    public override fun onStop() {
-        super.onStop()
-        GoogleAnalytics.getInstance(this).reportActivityStop(this)
-    }
-
     override fun onDestroy() {
         super.onDestroy()
 

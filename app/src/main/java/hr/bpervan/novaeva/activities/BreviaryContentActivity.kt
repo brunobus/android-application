@@ -10,19 +10,17 @@ class BreviaryContentActivity : EvaBaseActivity() {
 
     private var breviaryId: Int = -1
 
-    private lateinit var mGaTracker: Tracker
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_breviary_details)
+        setContentView(R.layout.eva_fragment_frame_layout)
 
         val inState = savedInstanceState ?: intent.extras
         breviaryId = inState.getInt(BREVIARY_ID_KEY, 4)
 
-        if (supportFragmentManager.findFragmentByTag(Companion.TAG_RETAINED_BREVIARY_FRAGMENT) == null) {
+        if (supportFragmentManager.findFragmentByTag(TAG_RETAINED_BREVIARY_FRAGMENT) == null) {
             supportFragmentManager
                     .beginTransaction()
-                    .add(R.id.eva_fragment_frame, BreviaryContentFragment.newInstance(breviaryId), Companion.TAG_RETAINED_BREVIARY_FRAGMENT)
+                    .add(R.id.eva_fragment_frame, BreviaryContentFragment.newInstance(breviaryId), TAG_RETAINED_BREVIARY_FRAGMENT)
                     .commit()
         }
 
@@ -42,16 +40,6 @@ class BreviaryContentActivity : EvaBaseActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putInt(BREVIARY_ID_KEY, breviaryId)
         super.onSaveInstanceState(outState)
-    }
-
-    public override fun onStart() {
-        super.onStart()
-        GoogleAnalytics.getInstance(this).reportActivityStart(this)
-    }
-
-    public override fun onStop() {
-        super.onStop()
-        GoogleAnalytics.getInstance(this).reportActivityStop(this)
     }
 
     companion object {

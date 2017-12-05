@@ -62,7 +62,6 @@ class EvaRecyclerFragment : Fragment() {
 
         val inState: Bundle = savedInstanceState ?: arguments
         fragmentConfig = inState.getParcelable("fragmentConfig")
-
         realm = Realm.getInstance(RealmConfigProvider.evaDBConfig)
 
         val infoText = if (fragmentConfig.isSubDirectory) "NALAZITE SE U MAPI" else "NALAZITE SE U KATEGORIJI"
@@ -79,7 +78,9 @@ class EvaRecyclerFragment : Fragment() {
     }
 
     private fun createIfMissingAndSubscribeToEvaDirectoryUpdates() {
-        EvaDirectoryDbAdapter.createIfMissingEvaDirectoryAsync(realm, fragmentConfig.directoryId) {
+        EvaDirectoryDbAdapter.createIfMissingEvaDirectoryAsync(realm, fragmentConfig.directoryId, {
+            it.title = fragmentConfig.directoryTitle
+        }) {
             subscribeToDirectoryUpdates()
         }
     }

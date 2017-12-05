@@ -7,9 +7,9 @@ import android.os.Bundle
 import android.view.View
 import android.view.View.OnClickListener
 import android.widget.EditText
-import com.google.android.gms.analytics.GoogleAnalytics
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.NovaEvaApp
+import hr.bpervan.novaeva.actions.sendEmailIntent
 import hr.bpervan.novaeva.fragments.EvaRecyclerFragment
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaCategory
@@ -128,15 +128,7 @@ class ListaVijestiActivity : EvaBaseActivity(), OnClickListener {
 //            R.id.btnBack -> onBackPressed()
             R.id.btnImamPitanjeListaVijesti -> {
                 val text = "Hvaljen Isus i Marija, javljam Vam se jer imam pitanje."
-                val mail = arrayOfNulls<String>(1)
-                mail[0] = "odgovori.novaeva@gmail.com"
-                val i = Intent(Intent.ACTION_SEND)
-                i.type = "message/rfc822"
-                i.putExtra(Intent.EXTRA_SUBJECT, "Nova Eva pitanje")
-                i.putExtra(Intent.EXTRA_TEXT, text)
-                i.putExtra(Intent.EXTRA_EMAIL, mail)
-                startActivity(Intent.createChooser(i, "Odaberite aplikaciju"))
-
+                sendEmailIntent(this, "Nova Eva pitanje", text, arrayOf("odgovori.novaeva@gmail.com"))
             }
         }
     }
@@ -147,16 +139,6 @@ class ListaVijestiActivity : EvaBaseActivity(), OnClickListener {
         } else {
 //            fakeActionBar.setBackgroundResource(ResourceHandler.getFakeActionBarResourceId(colourSet))
         }
-    }
-
-    public override fun onStart() {
-        super.onStart()
-        GoogleAnalytics.getInstance(this).reportActivityStart(this)
-    }
-
-    public override fun onStop() {
-        super.onStop()
-        GoogleAnalytics.getInstance(this).reportActivityStop(this)
     }
 
     override fun onDestroy() {

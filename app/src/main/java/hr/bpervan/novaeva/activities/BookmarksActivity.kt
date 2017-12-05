@@ -121,16 +121,6 @@ class BookmarksActivity : EvaBaseActivity(), View.OnClickListener {
         lifecycleBoundDisposables.clear()
     }
 
-    public override fun onStart() {
-        super.onStart()
-        GoogleAnalytics.getInstance(this).reportActivityStart(this)
-    }
-
-    public override fun onStop() {
-        super.onStop()
-        GoogleAnalytics.getInstance(this).reportActivityStop(this)
-    }
-
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         this?.clearFindViewByIdCache()

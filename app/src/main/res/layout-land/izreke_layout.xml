@@ -2,6 +2,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:animateLayoutChanges="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -11,7 +12,7 @@
         android:fitsSystemWindows="true"
         android:keepScreenOn="true"
         app:layout_constraintBottom_toTopOf="@+id/btnObnovi"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/fakeActionBar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:context="hr.bpervan.novaeva.activities.VijestActivity">
@@ -19,6 +20,7 @@
         <include
             android:id="@+id/evaCollapsingBar"
             layout="@layout/eva_collapsing_bar"/>
+
 
         <android.support.v4.widget.NestedScrollView
             android:id="@+id/scrollView1"
@@ -41,8 +43,27 @@
 
         </android.support.v4.widget.NestedScrollView>
 
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/btnToggleActionBar"
+            style="@style/floating_action_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="center"
+            app:fabSize="mini"
+            app:layout_anchor="@+id/evaCollapsingBar"
+            app:layout_anchorGravity="bottom|end"/>
 
     </android.support.design.widget.CoordinatorLayout>
+
+    <include
+        android:id="@+id/fakeActionBar"
+        layout="@layout/izreke_fake_action_bar"
+        android:visibility="visible"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <ImageView
         android:id="@+id/btnObnovi"
@@ -57,14 +78,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         />
-
-    <include
-        android:id="@+id/fakeActionBar"
-        layout="@layout/izreke_fake_action_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
 
 </android.support.constraint.ConstraintLayout>

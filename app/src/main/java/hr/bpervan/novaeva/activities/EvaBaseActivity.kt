@@ -1,19 +1,11 @@
 package hr.bpervan.novaeva.activities
 
-import android.app.Activity
-import android.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
-import android.util.TypedValue
-import android.view.View
-import android.widget.TextView
+import com.google.android.gms.analytics.GoogleAnalytics
 import com.nostra13.universalimageloader.core.ImageLoader
-import hr.bpervan.novaeva.NovaEvaApp
-import hr.bpervan.novaeva.main.R
 
 /**
  * Created by vpriscan on 17.10.17..
@@ -31,5 +23,15 @@ abstract class EvaBaseActivity : AppCompatActivity() {
 
         prefs = getSharedPreferences("hr.bpervan.novaeva", Context.MODE_PRIVATE)
         imageLoader = ImageLoader.getInstance()
+    }
+
+    public override fun onStart() {
+        super.onStart()
+        GoogleAnalytics.getInstance(this).reportActivityStart(this)
+    }
+
+    public override fun onStop() {
+        super.onStop()
+        GoogleAnalytics.getInstance(this).reportActivityStop(this)
     }
 }

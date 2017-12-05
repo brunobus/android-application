@@ -22,18 +22,21 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
-import com.google.android.gms.analytics.GoogleAnalytics
 import com.google.android.gms.analytics.HitBuilders
-import com.google.android.gms.analytics.Tracker
 import hr.bpervan.novaeva.CacheService
 import hr.bpervan.novaeva.NovaEvaApp
+import hr.bpervan.novaeva.actions.sendEmailIntent
+import hr.bpervan.novaeva.actions.shareIntent
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.*
+import hr.bpervan.novaeva.model.EvaCategory
+import hr.bpervan.novaeva.model.EvaContent
 import hr.bpervan.novaeva.services.BackgroundPlayerService
 import hr.bpervan.novaeva.services.NovaEvaService
 import hr.bpervan.novaeva.storage.EvaContentDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
-import hr.bpervan.novaeva.utilities.*
+import hr.bpervan.novaeva.utilities.ConnectionChecker
+import hr.bpervan.novaeva.utilities.ImageLoaderConfigurator
+import hr.bpervan.novaeva.utilities.subscribeAsync
 import io.reactivex.disposables.Disposable
 import io.realm.Realm
 import kotlinx.android.synthetic.*
@@ -44,17 +47,9 @@ import kotlinx.android.synthetic.main.vijest_fake_action_bar.view.*
 class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBarChangeListener {
     /** ------------------------------------------FIELDS------------------------------------------ */
 
-    /**
-     * Pure 'Vijest' data
-     */
+
     private var contentId: Long = 0
-
     private var themeId: Int = 0
-
-    /**
-     * Google analytics API
-     */
-    private lateinit var mGaTracker: Tracker
 
     private lateinit var realm: Realm
     private var evaContent: EvaContent? = null
@@ -71,19 +66,27 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
         super.onCreate(savedInstanceState)
 
         val inState = savedInstanceState ?: intent.extras
-        contentId = inState.getLong("contentId", -1)
+        contentId = inState.getLong("contentId", -1L)
         themeId = inState.getInt("themeId", -1)
 
         if (themeId != -1) {
             setTheme(themeId)
         }
 
+        if (contentId == -1L) {
+            contentId = intent.data?.lastPathSegment?.toLongOrNull() ?: -1L
+        }
+
+        if (contentId == -1L) {
+            finish()
+            return
+        }
+
         setContentView(R.layout.activity_vijest)
 
         startService(Intent(this, BackgroundPlayerService::class.java)) //todo
 
-        mGaTracker = (application as NovaEvaApp).getTracker(NovaEvaApp.TrackerName.APP_TRACKER)
-        mGaTracker.send(
+        (application as NovaEvaApp).getTracker(NovaEvaApp.TrackerName.APP_TRACKER).send(
                 HitBuilders.EventBuilder()
                         .setCategory("Vijesti")
                         .setAction("OtvorenaVijest")
@@ -246,46 +249,20 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
             tvElapsed.typeface = it
         }
 
-        run {
-            val fakeActionBarVisibility: Int
-            val btnToggleActionBarImageRes: Int
-
-            if (prefs.getBoolean("hr.bpervan.novaeva.showFakeActionBar", false)) {
-                fakeActionBarVisibility = View.VISIBLE
-                btnToggleActionBarImageRes = R.drawable.action_button_toolbar_hide
-            } else {
-                fakeActionBarVisibility = View.GONE
-                btnToggleActionBarImageRes = R.drawable.action_button_toolbar_show
-            }
-            fakeActionBar.visibility = fakeActionBarVisibility
-            btnToggleActionBar.setImageResource(btnToggleActionBarImageRes)
-        }
+        applyFakeActionBarVisibility()
 
 
         btnToggleActionBar.setOnClickListener {
-
-            val fakeActionBarVisibility: Int
-            val btnToggleActionBarImageRes: Int
-            val showFakeActionBarPref: Boolean
-
-            if (fakeActionBar.visibility != View.VISIBLE) {
-                fakeActionBarVisibility = View.VISIBLE
-                btnToggleActionBarImageRes = R.drawable.action_button_toolbar_hide
-                showFakeActionBarPref = true
-            } else {
-                fakeActionBarVisibility = View.GONE
-                btnToggleActionBarImageRes = R.drawable.action_button_toolbar_show
-                showFakeActionBarPref = false
-            }
-
-            fakeActionBar.visibility = fakeActionBarVisibility
-            btnToggleActionBar.setImageResource(btnToggleActionBarImageRes)
-            prefs.edit().putBoolean("hr.bpervan.novaeva.showFakeActionBar", showFakeActionBarPref).apply()
+            val showFakeActionBarPrefKey = "hr.bpervan.novaeva.showFakeActionBar"
+            val showFakeActionBarPref = prefs.getBoolean(showFakeActionBarPrefKey, false)
+            prefs.edit().putBoolean(showFakeActionBarPrefKey, !showFakeActionBarPref).apply()
+            applyFakeActionBarVisibility()
         }
 
         fakeActionBar.btnSearch.setOnClickListener {
-            if (ConnectionChecker.hasConnection(this))
+            if (ConnectionChecker.hasConnection(this)) {
                 showSearchPopup()
+            }
         }
         fakeActionBar.btnBookmark.setOnClickListener {
             val evaContent = this.evaContent
@@ -298,24 +275,15 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
         }
 
         fakeActionBar.btnShare.setOnClickListener {
-            val shareIntent = Intent(Intent.ACTION_SEND)
-            shareIntent.type = "text/plain"
-            shareIntent.putExtra(Intent.EXTRA_TEXT, "http://novaeva.com/node/$contentId")
-            startActivity(Intent.createChooser(shareIntent, getString(R.string.title_share)))
+            shareIntent(this, "http://novaeva.com/node/$contentId")
         }
 
         fakeActionBar.btnMail.setOnClickListener {
-            val mailIntent = Intent(Intent.ACTION_SEND)
-            mailIntent.type = "message/rfc822"
-            mailIntent.putExtra(Intent.EXTRA_SUBJECT, evaContent!!.contentMetadata!!.title)
-            mailIntent.putExtra(Intent.EXTRA_TEXT, "http://novaeva.com/node/$contentId")
-            startActivity(Intent.createChooser(mailIntent, getString(R.string.title_share_mail)))
+            sendEmailIntent(this, evaContent!!.contentMetadata!!.title, "http://novaeva.com/node/$contentId")
         }
 
         /** Set category name and set text size */
         vijestWebView.settings.defaultFontSize = prefs.getInt("hr.bpervan.novaeva.velicinateksta", 14)
-
-        this.setCategoryTypeColour()
         /*if(mPlayer != null){
 			mp3Player.setVisibility(View.VISIBLE);
 			btnPlay.setOnClickListener(VijestActivity.this);
@@ -340,6 +308,16 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
 		}*/
 //        fakeActionBar.btnBookmark.setImageResource(R.drawable.action_button_bookmark)
         window.decorView.setBackgroundResource(android.R.color.background_light)
+    }
+
+    private fun applyFakeActionBarVisibility() {
+        if (prefs.getBoolean("hr.bpervan.novaeva.showFakeActionBar", false)) {
+            fakeActionBar.visibility = View.VISIBLE
+            btnToggleActionBar.setImageResource(R.drawable.action_button_toolbar_hide)
+        } else {
+            fakeActionBar.visibility = View.GONE
+            btnToggleActionBar.setImageResource(R.drawable.action_button_toolbar_show)
+        }
     }
 
     private fun fetchContentFromServer(contentId: Long) {
@@ -384,37 +362,13 @@ class VijestActivity : EvaBaseActivity(), View.OnClickListener, SeekBar.OnSeekBa
         realm.close()
     }
 
-    public override fun onStart() {
-        super.onStart()
-        GoogleAnalytics.getInstance(this).reportActivityStart(this)
-    }
-
-    public override fun onStop() {
-        super.onStop()
-        GoogleAnalytics.getInstance(this).reportActivityStop(this)
-    }
-
-    private fun setCategoryTypeColour() {
-//        fakeActionBar.setBackgroundResource(ResourceHandler.getFakeActionBarResourceId(colourSet))
-//        imgNaslovnaTraka.setImageResource(ResourceHandler.getContentTitleBarResourceId(colourSet))
-    }
-
     override fun onClick(v: View) {
         when (v.id) {
             R.id.btnPoziv -> {
-                val text: String
-                val mail = arrayOfNulls<String>(1)
-                val i: Intent
                 when (intent.getIntExtra("kategorija", 11)) {
                     EvaCategory.POZIV.id -> {
-                        text = "Hvaljen Isus i Marija, javljam Vam se jer razmišljam o duhovnom pozivu."
-                        mail[0] = "duhovnipoziv@gmail.com"
-                        i = Intent(Intent.ACTION_SEND)
-                        i.type = "message/rfc822"
-                        i.putExtra(Intent.EXTRA_SUBJECT, "Duhovni poziv")
-                        i.putExtra(Intent.EXTRA_TEXT, text)
-                        i.putExtra(Intent.EXTRA_EMAIL, mail)
-                        startActivity(Intent.createChooser(i, "Odaberite aplikaciju"))
+                        val text = "Hvaljen Isus i Marija, javljam Vam se jer razmišljam o duhovnom pozivu."
+                        sendEmailIntent(this, "Duhovni poziv", text, arrayOf("duhovnipoziv@gmail.com"))
                     }
                 }
             }
