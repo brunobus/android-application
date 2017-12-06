@@ -217,7 +217,7 @@ class DashboardActivity : EvaBaseActivity(), OnTouchListener, OnClickListener {
             R.id.btnEvandjelje -> startActivity(Intent(this, ListaVijestiActivity::class.java).apply {
                 putExtra("categoryId", EvaCategory.EVANDJELJE.id)
                 putExtra("categoryName", EvaCategory.EVANDJELJE.rawName)
-                putExtra("themeId", R.style.MultimedijaTheme)
+                putExtra("themeId", R.style.EvandjeljeTheme)
             })
             R.id.btnMp3 -> startActivity(Intent(this, ListaVijestiActivity::class.java).apply {
                 putExtra("categoryId", EvaCategory.PJESMARICA.id)

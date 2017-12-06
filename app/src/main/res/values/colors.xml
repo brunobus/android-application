@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="colorPrimary">#30A6CC</color>
-    <color name="colorPrimaryDark">#0789BB</color>
+    <color name="novaEva">#30A6CC</color>
+    <color name="novaEvaDark">#0487B9</color>
 
     <color name="breviary">#303862</color>
     <color name="breviaryDark">#1B2B56</color>

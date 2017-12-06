@@ -1,24 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="floating_action_button">
+    <style name="eva_floating_action_button">
+        <item name="backgroundTint">?attr/colorPrimary</item>
+        <item name="android:backgroundTint">?attr/colorPrimary</item>
         <item name="android:layout_margin">16dp</item>
     </style>
 
     <!-- Application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowNoTitle">true</item>
-        <item name="android:colorPrimary">@color/propovjedi</item>
-        <item name="android:colorPrimaryDark">@color/propovjedi</item>
-        <item name="android:colorAccent">@color/propovjedi</item>
-        <item name="colorPrimary">@color/propovjedi</item>
-        <item name="colorPrimaryDark">@color/propovjedi</item>
-        <item name="colorAccent">@color/propovjedi</item>
-        <item name="android:navigationBarColor">@color/propovjedi</item>
+        <item name="android:colorPrimary">@color/novaEva</item>
+        <item name="android:colorPrimaryDark">@color/novaEvaDark</item>
+        <item name="android:colorAccent">@color/LightGoldenrodYellow</item>
+        <item name="colorPrimary">@color/novaEva</item>
+        <item name="colorPrimaryDark">@color/novaEvaDark</item>
+        <item name="colorAccent">@color/LightGoldenrodYellow</item>
+        <item name="android:navigationBarColor">@color/novaEva</item>
         <item name="contentListItemSrc">@drawable/izbornik_btn_normal_propovijedi</item>
         <item name="directoryListItemSrc">@drawable/izbornik_btn_normal_propovijedi_folder</item>
         <item name="listViewHeaderSrc">@drawable/izbornik_top_propovjedi</item>
-        <item name="contentTitleBarSrc">@drawable/vijest_naslovnapropovjedi</item>
+        <item name="contentTitleBarSrc">@drawable/vijest_titlebar_default</item>
         <item name="fakeActionBarSrc">@drawable/toolbar_propoviedi</item>
     </style>
 
@@ -26,10 +28,8 @@
         <item name="android:windowBackground">@drawable/brevijar_backbrevijar</item>
         <item name="android:colorPrimary">@color/breviary</item>
         <item name="android:colorPrimaryDark">@color/breviaryDark</item>
-        <item name="android:colorAccent">@color/breviary</item>
         <item name="colorPrimary">@color/breviary</item>
         <item name="colorPrimaryDark">@color/breviaryDark</item>
-        <item name="colorAccent">@color/breviary</item>
         <item name="android:navigationBarColor">@color/breviary</item>
         <item name="contentTitleBarSrc">@drawable/vijest_naslovnamp3</item>
     </style>
@@ -37,10 +37,8 @@
     <style name="MultimedijaTheme" parent="AppTheme">
         <item name="android:colorPrimary">@color/multimedija</item>
         <item name="android:colorPrimaryDark">@color/multimedijaDark</item>
-        <item name="android:colorAccent">@color/multimedija</item>
         <item name="colorPrimary">@color/multimedija</item>
         <item name="colorPrimaryDark">@color/multimedija</item>
-        <item name="colorAccent">@color/multimedija</item>
         <item name="android:navigationBarColor">@color/multimedija</item>
         <item name="contentListItemSrc">@drawable/izbornik_btn_normal_multimedija</item>
         <item name="directoryListItemSrc">@drawable/izbornik_btn_normal_multimedija_folder</item>
@@ -52,10 +50,8 @@
     <style name="AktualnoTheme" parent="AppTheme">
         <item name="android:colorPrimary">@color/aktualno</item>
         <item name="android:colorPrimaryDark">@color/aktualnoDark</item>
-        <item name="android:colorAccent">@color/aktualno</item>
         <item name="colorPrimary">@color/aktualno</item>
         <item name="colorPrimaryDark">@color/aktualno</item>
-        <item name="colorAccent">@color/aktualno</item>
         <item name="android:navigationBarColor">@color/aktualno</item>
         <item name="contentListItemSrc">@drawable/izbornik_btn_normal_aktualno</item>
         <item name="directoryListItemSrc">@drawable/izbornik_btn_normal_aktualno_folder</item>
@@ -67,10 +63,8 @@
     <style name="OdgovoriTheme" parent="AppTheme">
         <item name="android:colorPrimary">@color/odgovori</item>
         <item name="android:colorPrimaryDark">@color/odgovoriDark</item>
-        <item name="android:colorAccent">@color/odgovori</item>
         <item name="colorPrimary">@color/odgovori</item>
         <item name="colorPrimaryDark">@color/odgovori</item>
-        <item name="colorAccent">@color/odgovori</item>
         <item name="android:navigationBarColor">@color/odgovori</item>
         <item name="contentListItemSrc">@drawable/izbornik_btn_normal_odgovori</item>
         <item name="directoryListItemSrc">@drawable/izbornik_btn_normal_odgovori_folder</item>
@@ -82,10 +76,8 @@
     <style name="PozivTheme" parent="AppTheme">
         <item name="android:colorPrimary">@color/poziv</item>
         <item name="android:colorPrimaryDark">@color/pozivDark</item>
-        <item name="android:colorAccent">@color/poziv</item>
         <item name="colorPrimary">@color/poziv</item>
         <item name="colorPrimaryDark">@color/poziv</item>
-        <item name="colorAccent">@color/poziv</item>
         <item name="android:navigationBarColor">@color/poziv</item>
         <item name="contentListItemSrc">@drawable/izbornik_btn_normal_poziv</item>
         <item name="directoryListItemSrc">@drawable/izbornik_btn_normal_poziv_folder</item>
@@ -97,10 +89,8 @@
     <style name="EvandjeljeTheme" parent="AppTheme">
         <item name="android:colorPrimary">@color/evandjelje</item>
         <item name="android:colorPrimaryDark">@color/evandjeljeDark</item>
-        <item name="android:colorAccent">@color/evandjelje</item>
         <item name="colorPrimary">@color/evandjelje</item>
         <item name="colorPrimaryDark">@color/evandjelje</item>
-        <item name="colorAccent">@color/evandjelje</item>
         <item name="android:navigationBarColor">@color/evandjelje</item>
         <item name="contentListItemSrc">@drawable/izbornik_btn_normal_evandjelje</item>
         <item name="directoryListItemSrc">@drawable/izbornik_btn_normal_evandjelje_folder</item>
@@ -112,10 +102,8 @@
     <style name="PropovjediTheme" parent="AppTheme">
         <item name="android:colorPrimary">@color/propovjedi</item>
         <item name="android:colorPrimaryDark">@color/propovjediDark</item>
-        <item name="android:colorAccent">@color/propovjedi</item>
         <item name="colorPrimary">@color/propovjedi</item>
         <item name="colorPrimaryDark">@color/propovjedi</item>
-        <item name="colorAccent">@color/propovjedi</item>
         <item name="android:navigationBarColor">@color/propovjedi</item>
         <item name="contentListItemSrc">@drawable/izbornik_btn_normal_propovijedi</item>
         <item name="directoryListItemSrc">@drawable/izbornik_btn_normal_propovijedi_folder</item>
@@ -127,10 +115,8 @@
     <style name="IzrekeTheme" parent="AppTheme">
         <item name="android:colorPrimary">@color/izreke</item>
         <item name="android:colorPrimaryDark">@color/izrekeDark</item>
-        <item name="android:colorAccent">@color/izreke</item>
         <item name="colorPrimary">@color/izreke</item>
         <item name="colorPrimaryDark">@color/izreke</item>
-        <item name="colorAccent">@color/izreke</item>
         <item name="android:navigationBarColor">@color/izreke</item>
         <item name="contentTitleBarSrc">@drawable/vijest_naslovnaizreke</item>
         <item name="fakeActionBarSrc">@drawable/toolbar_izreke</item>
@@ -139,10 +125,8 @@
     <style name="PjesmaricaTheme" parent="AppTheme">
         <item name="android:colorPrimary">@color/pjesmarica</item>
         <item name="android:colorPrimaryDark">@color/pjesmaricaDark</item>
-        <item name="android:colorAccent">@color/pjesmarica</item>
         <item name="colorPrimary">@color/pjesmarica</item>
         <item name="colorPrimaryDark">@color/pjesmarica</item>
-        <item name="colorAccent">@color/pjesmarica</item>
         <item name="android:navigationBarColor">@color/pjesmarica</item>
         <item name="contentListItemSrc">@drawable/izbornik_btn_normal_mp3</item>
         <item name="directoryListItemSrc">@drawable/izbornik_btn_normal_mp3_folder</item>
@@ -154,10 +138,8 @@
     <style name="DuhovnostTheme" parent="AppTheme">
         <item name="android:colorPrimary">@color/duhovnost</item>
         <item name="android:colorPrimaryDark">@color/duhovnostDark</item>
-        <item name="android:colorAccent">@color/duhovnost</item>
         <item name="colorPrimary">@color/duhovnost</item>
         <item name="colorPrimaryDark">@color/duhovnost</item>
-        <item name="colorAccent">@color/duhovnost</item>
         <item name="android:navigationBarColor">@color/duhovnost</item>
         <item name="contentListItemSrc">@drawable/izbornik_btn_normal_duhovnosti</item>
         <item name="directoryListItemSrc">@drawable/izbornik_btn_normal_duhovnosti_folder</item>

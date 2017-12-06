@@ -1,6 +1,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="floating_action_button">
+    <style name="eva_floating_action_button">
+        <item name="backgroundTint">?attr/colorPrimary</item>
         <item name="android:layout_marginLeft">0dp</item>
         <item name="android:layout_marginTop">0dp</item>
         <item name="android:layout_marginRight">0dp</item>
@@ -15,13 +16,13 @@
     <!-- Application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowNoTitle">true</item>
-        <item name="colorPrimary">@color/propovjedi</item>
-        <item name="colorPrimaryDark">@color/propovjedi</item>
-        <item name="colorAccent">@color/propovjedi</item>
+        <item name="colorPrimary">@color/novaEva</item>
+        <item name="colorPrimaryDark">@color/novaEvaDark</item>
+        <item name="colorAccent">@color/LightGoldenrodYellow</item>
         <item name="contentListItemSrc">@drawable/izbornik_btn_normal_propovijedi</item>
         <item name="directoryListItemSrc">@drawable/izbornik_btn_normal_propovijedi_folder</item>
         <item name="listViewHeaderSrc">@drawable/izbornik_top_propovjedi</item>
-        <item name="contentTitleBarSrc">@drawable/vijest_naslovnapropovjedi</item>
+        <item name="contentTitleBarSrc">@drawable/vijest_titlebar_default</item>
         <item name="fakeActionBarSrc">@drawable/toolbar_propoviedi</item>
     </style>
 
@@ -51,14 +52,12 @@
         <item name="android:windowBackground">@drawable/brevijar_backbrevijar</item>
         <item name="colorPrimary">@color/breviary</item>
         <item name="colorPrimaryDark">@color/breviaryDark</item>
-        <item name="colorAccent">@color/breviary</item>
         <item name="contentTitleBarSrc">@drawable/vijest_naslovnamp3</item>
     </style>
 
     <style name="MultimedijaTheme" parent="AppTheme">
         <item name="colorPrimary">@color/multimedija</item>
-        <item name="colorPrimaryDark">@color/multimedija</item>
-        <item name="colorAccent">@color/multimedija</item>
+        <item name="colorPrimaryDark">@color/multimedijaDark</item>
         <item name="contentListItemSrc">@drawable/izbornik_btn_normal_multimedija</item>
         <item name="directoryListItemSrc">@drawable/izbornik_btn_normal_multimedija_folder</item>
         <item name="listViewHeaderSrc">@drawable/izbornik_top_multimedija</item>
@@ -68,8 +67,7 @@
 
     <style name="AktualnoTheme" parent="AppTheme">
         <item name="colorPrimary">@color/aktualno</item>
-        <item name="colorPrimaryDark">@color/aktualno</item>
-        <item name="colorAccent">@color/aktualno</item>
+        <item name="colorPrimaryDark">@color/aktualnoDark</item>
         <item name="contentListItemSrc">@drawable/izbornik_btn_normal_aktualno</item>
         <item name="directoryListItemSrc">@drawable/izbornik_btn_normal_aktualno_folder</item>
         <item name="listViewHeaderSrc">@drawable/izbornik_top_aktualno</item>
@@ -79,8 +77,7 @@
 
     <style name="OdgovoriTheme" parent="AppTheme">
         <item name="colorPrimary">@color/odgovori</item>
-        <item name="colorPrimaryDark">@color/odgovori</item>
-        <item name="colorAccent">@color/odgovori</item>
+        <item name="colorPrimaryDark">@color/odgovoriDark</item>
         <item name="contentListItemSrc">@drawable/izbornik_btn_normal_odgovori</item>
         <item name="directoryListItemSrc">@drawable/izbornik_btn_normal_odgovori_folder</item>
         <item name="listViewHeaderSrc">@drawable/izbornik_top_odgovori</item>
@@ -90,8 +87,7 @@
 
     <style name="PozivTheme" parent="AppTheme">
         <item name="colorPrimary">@color/poziv</item>
-        <item name="colorPrimaryDark">@color/poziv</item>
-        <item name="colorAccent">@color/poziv</item>
+        <item name="colorPrimaryDark">@color/pozivDark</item>
         <item name="contentListItemSrc">@drawable/izbornik_btn_normal_poziv</item>
         <item name="directoryListItemSrc">@drawable/izbornik_btn_normal_poziv_folder</item>
         <item name="listViewHeaderSrc">@drawable/izbornik_top_poziv</item>
@@ -101,8 +97,7 @@
 
     <style name="EvandjeljeTheme" parent="AppTheme">
         <item name="colorPrimary">@color/evandjelje</item>
-        <item name="colorPrimaryDark">@color/evandjelje</item>
-        <item name="colorAccent">@color/evandjelje</item>
+        <item name="colorPrimaryDark">@color/evandjeljeDark</item>
         <item name="contentListItemSrc">@drawable/izbornik_btn_normal_evandjelje</item>
         <item name="directoryListItemSrc">@drawable/izbornik_btn_normal_evandjelje_folder</item>
         <item name="listViewHeaderSrc">@drawable/izbornik_top_evandjelje</item>
@@ -112,8 +107,7 @@
 
     <style name="PropovjediTheme" parent="AppTheme">
         <item name="colorPrimary">@color/propovjedi</item>
-        <item name="colorPrimaryDark">@color/propovjedi</item>
-        <item name="colorAccent">@color/propovjedi</item>
+        <item name="colorPrimaryDark">@color/propovjediDark</item>
         <item name="contentListItemSrc">@drawable/izbornik_btn_normal_propovijedi</item>
         <item name="directoryListItemSrc">@drawable/izbornik_btn_normal_propovijedi_folder</item>
         <item name="listViewHeaderSrc">@drawable/izbornik_top_propovjedi</item>
@@ -123,16 +117,14 @@
 
     <style name="IzrekeTheme" parent="AppTheme">
         <item name="colorPrimary">@color/izreke</item>
-        <item name="colorPrimaryDark">@color/izreke</item>
-        <item name="colorAccent">@color/izreke</item>
+        <item name="colorPrimaryDark">@color/izrekeDark</item>
         <item name="contentTitleBarSrc">@drawable/vijest_naslovnaizreke</item>
         <item name="fakeActionBarSrc">@drawable/toolbar_izreke</item>
     </style>
 
     <style name="PjesmaricaTheme" parent="AppTheme">
         <item name="colorPrimary">@color/pjesmarica</item>
-        <item name="colorPrimaryDark">@color/pjesmarica</item>
-        <item name="colorAccent">@color/pjesmarica</item>
+        <item name="colorPrimaryDark">@color/pjesmaricaDark</item>
         <item name="contentListItemSrc">@drawable/izbornik_btn_normal_mp3</item>
         <item name="directoryListItemSrc">@drawable/izbornik_btn_normal_mp3_folder</item>
         <item name="listViewHeaderSrc">@drawable/izbornik_top_mp3</item>
@@ -142,8 +134,7 @@
 
     <style name="DuhovnostTheme" parent="AppTheme">
         <item name="colorPrimary">@color/duhovnost</item>
-        <item name="colorPrimaryDark">@color/duhovnost</item>
-        <item name="colorAccent">@color/duhovnost</item>
+        <item name="colorPrimaryDark">@color/duhovnostDark</item>
         <item name="contentListItemSrc">@drawable/izbornik_btn_normal_duhovnosti</item>
         <item name="directoryListItemSrc">@drawable/izbornik_btn_normal_duhovnosti_folder</item>
         <item name="listViewHeaderSrc">@drawable/izbornik_top_duhovnost</item>
