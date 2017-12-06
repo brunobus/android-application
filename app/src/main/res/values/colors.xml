@@ -5,18 +5,37 @@
     <color name="colorPrimaryDark">#0789BB</color>
 
     <color name="breviary">#303862</color>
-    <color name="breviaryDark">#1A2A55</color>
+    <color name="breviaryDark">#1B2B56</color>
+
     <color name="duhovnost">#00B5C0</color>
+    <color name="duhovnostDark">#00B5C0</color>
+
     <color name="izreke">#85B841</color>
+    <color name="izrekeDark">#85B841</color>
+
     <color name="propovjedi">#F8A818</color>
+    <color name="propovjediDark">#F8A818</color>
+
     <color name="aktualno">#EF551F</color>
+    <color name="aktualnoDark">#EF551F</color>
+
     <color name="poziv">#CB212A</color>
+    <color name="pozivDark">#CB212A</color>
+
     <color name="odgovori">#852980</color>
+    <color name="odgovoriDark">#852980</color>
+
     <color name="evandjelje">#852980</color>
+    <color name="evandjeljeDark">#852980</color>
+
     <color name="pjesmarica">#2E2B82</color>
+    <color name="pjesmaricaDark">#2E2B82</color>
+
     <color name="multimedija">#0174B5</color>
+    <color name="multimedijaDark">#0174B5</color>
 
     <color name="transparent">#00000000</color>
+
     <color name="White">#ffffff</color>
     <color name="Ivory">#FFFFF0</color>
     <color name="LightYellow">#FFFFE0</color>

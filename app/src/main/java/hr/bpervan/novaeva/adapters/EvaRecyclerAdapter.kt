@@ -33,6 +33,18 @@ class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
         val PROGRESS_VIEW_TYPE = 3
     }
 
+    private var themeColor: Int = 0
+    private var themeColorTrans: Int = 0
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+
+        val typedVal = TypedValue()
+        recyclerView.context.theme.resolveAttribute(R.attr.colorPrimary, typedVal, true)
+        themeColor = typedVal.data
+        themeColorTrans = Color.argb(127, Color.red(themeColor), Color.green(themeColor), Color.blue(themeColor))
+    }
+
     override fun getItemViewType(position: Int): Int {
         return when {
             position == data.size -> PROGRESS_VIEW_TYPE
@@ -163,7 +175,7 @@ class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
         }
     }
 
-    private class TouchFeedbackSimulator(val view: View) : View.OnTouchListener {
+    private inner class TouchFeedbackSimulator(val view: View) : View.OnTouchListener {
         private val waitScrollTimeout = 200L
         private val afterClickReleaseTimeout = 200L
 
@@ -200,9 +212,7 @@ class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
         }
 
         private fun setThemedColorFilter(view: View) {
-            val typedVal = TypedValue()
-            view.context.theme.resolveAttribute(R.attr.colorPrimary, typedVal, true)
-            view.background.setColorFilter(typedVal.data, PorterDuff.Mode.DARKEN)
+            view.background.setColorFilter(themeColorTrans, PorterDuff.Mode.DARKEN)
         }
     }
 }
