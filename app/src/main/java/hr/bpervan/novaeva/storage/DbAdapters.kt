@@ -54,14 +54,28 @@ object EvaDirectoryDbAdapter {
                 EvaDirectory(directoryId, directoryMetadata)
             }
 
-            val contentMetadataToAddManaged = realmInTrans.copyToRealmOrUpdate(newContentMetadataSupplier())
-            val subDirectoryMetadataToAddManaged = realmInTrans.copyToRealmOrUpdate(newSubDirectoryMetadataSupplier())
+            newContentMetadataSupplier().forEach {
+                var contentInDB = realmInTrans.where(it.javaClass).equalTo(CONTENT_ID_FIELD, it.contentId).findFirst()
 
-            contentMetadataToAddManaged.forEach { candidate ->
-                evaDirectory.contentMetadataList.addIfNoneExistingMatch(candidate) { existing ->
-                    candidate.contentId == existing.contentId
+                var bookmark = contentInDB?.bookmark ?: false
+                it.bookmark = bookmark
+                realmInTrans.copyToRealmOrUpdate(it);
+
+                evaDirectory.contentMetadataList.addIfNoneExistingMatch(it) { existing ->
+                    it.contentId == existing.contentId
                 }
             }
+
+            //val contentMetadataToAddManaged = realmInTrans.copyToRealmOrUpdate(newContentMetadataSupplier())
+
+            val subDirectoryMetadataToAddManaged = realmInTrans.copyToRealmOrUpdate(newSubDirectoryMetadataSupplier())
+
+            //contentMetadataToAddManaged.forEach { candidate ->
+            //    evaDirectory.contentMetadataList.addIfNoneExistingMatch(candidate) { existing ->
+            //        candidate.contentId == existing.contentId
+            //    }
+            //}
+
             subDirectoryMetadataToAddManaged.forEach { candidate ->
                 evaDirectory.subDirectoryMetadataList.addIfNoneExistingMatch(candidate) { existing ->
                     candidate.directoryId == existing.directoryId
