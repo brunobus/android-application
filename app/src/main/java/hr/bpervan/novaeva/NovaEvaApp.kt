@@ -61,7 +61,7 @@ class NovaEvaApp : Application() {
 
 
         if (BuildConfig.DEBUG) {
-            registerActivityLifecycleCallbacks(LifecycleLogger())
+//            registerActivityLifecycleCallbacks(LifecycleLogger())
         }
 
         Realm.init(this)

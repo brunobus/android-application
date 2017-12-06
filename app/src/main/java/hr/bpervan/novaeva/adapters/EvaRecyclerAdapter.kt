@@ -1,9 +1,10 @@
 package hr.bpervan.novaeva.adapters
 
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.util.TypedValue
+import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
 import hr.bpervan.novaeva.NovaEvaApp
@@ -12,7 +13,6 @@ import hr.bpervan.novaeva.model.EvaContentMetadata
 import hr.bpervan.novaeva.model.EvaDirectoryMetadata
 import hr.bpervan.novaeva.model.TreeElementInfo
 import kotlinx.android.synthetic.main.folder_row.view.*
-import kotlinx.android.synthetic.main.izbornik_top.view.*
 import kotlinx.android.synthetic.main.vijest_row.view.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -47,10 +47,12 @@ class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
             when (viewType) {
                 CONTENT_VIEW_TYPE -> {
                     val view = LayoutInflater.from(parent.context).inflate(R.layout.vijest_row, parent, false)
+                    view.background.mutate()
                     ContentInfoViewHolder(view)
                 }
                 SUBDIRECTORY_VIEW_TYPE -> {
                     val view = LayoutInflater.from(parent.context).inflate(R.layout.folder_row, parent, false)
+                    view.background.mutate()
                     DirectoryInfoViewHolder(view)
                 }
                 else -> {
@@ -86,6 +88,7 @@ class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
 
             tvMapaNaslov.text = directoryInfo.title
 
+            view.setOnTouchListener(TouchFeedbackSimulator(view))
             view.setOnClickListener {
                 NovaEvaApp.bus.directoryOpenRequest.onNext(directoryInfo)
             }
@@ -145,17 +148,61 @@ class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
             tvDatum.text = dayMonth
             tvUvod.text = contentInfo.preview
 
+            view.setOnTouchListener(TouchFeedbackSimulator(view))
+
             view.setOnClickListener {
                 NovaEvaApp.bus.contentOpenRequest.onNext(contentInfo)
             }
         }
-
     }
 
     private inner class ProgressBarViewHolder(view: View) : BindableViewHolder(view) {
 
         override fun bindTo(t: Any) {
             view.visibility = if (isLoadingSupplier()) View.VISIBLE else View.GONE
+        }
+    }
+
+    private class TouchFeedbackSimulator(val view: View) : View.OnTouchListener {
+        private val waitScrollTimeout = 200L
+        private val afterClickReleaseTimeout = 200L
+
+        private var cancelDelayedJob = false
+
+        override fun onTouch(v: View, event: MotionEvent): Boolean {
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    view.postDelayed({
+                        if (!cancelDelayedJob) {
+                            setThemedColorFilter(view)
+                        }
+                    }, waitScrollTimeout)
+                    cancelDelayedJob = false
+                }
+                MotionEvent.ACTION_CANCEL -> {
+                    clearColorFilter(view)
+                    cancelDelayedJob = true
+                }
+                MotionEvent.ACTION_UP -> {
+                    cancelDelayedJob = true
+                    setThemedColorFilter(view)
+                    view.postDelayed({
+                        view.background.clearColorFilter()
+                    }, afterClickReleaseTimeout)
+                    view.performClick()
+                }
+            }
+            return true
+        }
+
+        private fun clearColorFilter(view: View) {
+            view.background.clearColorFilter()
+        }
+
+        private fun setThemedColorFilter(view: View) {
+            val typedVal = TypedValue()
+            view.context.theme.resolveAttribute(R.attr.colorPrimary, typedVal, true)
+            view.background.setColorFilter(typedVal.data, PorterDuff.Mode.DARKEN)
         }
     }
 }
