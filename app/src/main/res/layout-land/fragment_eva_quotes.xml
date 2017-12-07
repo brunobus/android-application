@@ -15,7 +15,7 @@
         app:layout_constraintEnd_toStartOf="@+id/fakeActionBar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:context="hr.bpervan.novaeva.activities.VijestActivity">
+        tools:context="hr.bpervan.novaeva.activities.EvaContentActivity">
 
         <include
             android:id="@+id/evaCollapsingBar"

@@ -10,7 +10,7 @@ import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
 import kotlinx.android.synthetic.main.molitvenik_row.view.*
 
-class MolitvenikAdapter(private val context: Context, private val listVijest: List<String>) : BaseAdapter(), OnClickListener {
+class PrayerBookAdapter(private val context: Context, private val listVijest: List<String>) : BaseAdapter(), OnClickListener {
 
     override fun getCount(): Int = listVijest.size
 

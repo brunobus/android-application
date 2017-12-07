@@ -22,7 +22,7 @@ import kotlinx.android.synthetic.*
 import kotlinx.android.synthetic.main.activity_list_eva_content.*
 import java.util.concurrent.TimeUnit
 
-class ListaVijestiActivity : EvaBaseActivity(), OnClickListener {
+class ListEvaContentActivity : EvaBaseActivity(), OnClickListener {
 
     private var categoryId = -1
     private lateinit var categoryName: String
@@ -162,7 +162,7 @@ class ListaVijestiActivity : EvaBaseActivity(), OnClickListener {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { evaContentMetadata ->
-                    val i = Intent(this@ListaVijestiActivity, VijestActivity::class.java)
+                    val i = Intent(this@ListEvaContentActivity, EvaContentActivity::class.java)
                     i.putExtra("contentId", evaContentMetadata.contentId)
                     i.putExtra("themeId", themeId)
                     i.putExtra("categoryId", categoryId)

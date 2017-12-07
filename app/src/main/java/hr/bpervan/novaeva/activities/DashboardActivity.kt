@@ -13,7 +13,6 @@ import android.view.View.OnClickListener
 import android.view.View.OnTouchListener
 import android.widget.EditText
 import android.widget.Toast
-import com.google.android.gms.analytics.GoogleAnalytics
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
@@ -210,49 +209,49 @@ class DashboardActivity : EvaBaseActivity(), OnTouchListener, OnClickListener {
     override fun onClick(v: View) {
 
         when (v.id) {
-            R.id.btnMolitvenik -> startActivity(Intent(this, MolitvenikActivity::class.java))
+            R.id.btnMolitvenik -> startActivity(Intent(this, PrayerBookActivity::class.java))
             R.id.btnInfo -> startActivity(Intent(this, InfoActivity::class.java))
             R.id.btnBookmarks -> startActivity(Intent(this, BookmarksActivity::class.java))
             R.id.btnBrevijar -> startActivity(Intent(this, BreviaryActivity::class.java))
-            R.id.btnEvandjelje -> startActivity(Intent(this, ListaVijestiActivity::class.java).apply {
+            R.id.btnEvandjelje -> startActivity(Intent(this, ListEvaContentActivity::class.java).apply {
                 putExtra("categoryId", EvaCategory.EVANDJELJE.id)
                 putExtra("categoryName", EvaCategory.EVANDJELJE.rawName)
                 putExtra("themeId", R.style.EvandjeljeTheme)
             })
-            R.id.btnMp3 -> startActivity(Intent(this, ListaVijestiActivity::class.java).apply {
+            R.id.btnMp3 -> startActivity(Intent(this, ListEvaContentActivity::class.java).apply {
                 putExtra("categoryId", EvaCategory.PJESMARICA.id)
                 putExtra("categoryName", EvaCategory.PJESMARICA.rawName)
                 putExtra("themeId", R.style.PjesmaricaTheme)
             })
-            R.id.btnPropovjedi -> startActivity(Intent(this, ListaVijestiActivity::class.java).apply {
+            R.id.btnPropovjedi -> startActivity(Intent(this, ListEvaContentActivity::class.java).apply {
                 putExtra("categoryId", EvaCategory.PROPOVIJEDI.id)
                 putExtra("categoryName", EvaCategory.PROPOVIJEDI.rawName)
                 putExtra("themeId", R.style.PropovjediTheme)
             })
-            R.id.btnOdgovori -> startActivity(Intent(this, ListaVijestiActivity::class.java).apply {
+            R.id.btnOdgovori -> startActivity(Intent(this, ListEvaContentActivity::class.java).apply {
                 putExtra("categoryId", EvaCategory.ODGOVORI.id)
                 putExtra("categoryName", EvaCategory.ODGOVORI.rawName)
                 putExtra("themeId", R.style.OdgovoriTheme)
             })
-            R.id.btnPoziv -> startActivity(Intent(this, ListaVijestiActivity::class.java).apply {
+            R.id.btnPoziv -> startActivity(Intent(this, ListEvaContentActivity::class.java).apply {
                 putExtra("categoryId", EvaCategory.POZIV.id)
                 putExtra("categoryName", EvaCategory.POZIV.rawName)
                 putExtra("themeId", R.style.PozivTheme)
             })
-            R.id.btnDuhovnost -> startActivity(Intent(this, ListaVijestiActivity::class.java).apply {
+            R.id.btnDuhovnost -> startActivity(Intent(this, ListEvaContentActivity::class.java).apply {
                 putExtra("categoryId", EvaCategory.DUHOVNOST.id)
                 putExtra("categoryName", EvaCategory.DUHOVNOST.rawName)
                 putExtra("themeId", R.style.DuhovnostTheme)
             })
-            R.id.btnIzreke -> startActivity(Intent(this, IzrekeActivity::class.java).apply {
+            R.id.btnIzreke -> startActivity(Intent(this, EvaQuotesActivity::class.java).apply {
                 putExtra("themeId", R.style.IzrekeTheme)
             })
-            R.id.btnMultimedia -> startActivity(Intent(this, ListaVijestiActivity::class.java).apply {
+            R.id.btnMultimedia -> startActivity(Intent(this, ListEvaContentActivity::class.java).apply {
                 putExtra("categoryId", EvaCategory.MULTIMEDIJA.id)
                 putExtra("categoryName", EvaCategory.MULTIMEDIJA.rawName)
                 putExtra("themeId", R.style.MultimedijaTheme)
             })
-            R.id.btnAktualno -> startActivity(Intent(this, ListaVijestiActivity::class.java).apply {
+            R.id.btnAktualno -> startActivity(Intent(this, ListEvaContentActivity::class.java).apply {
                 putExtra("categoryId", EvaCategory.AKTUALNO.id)
                 putExtra("categoryName", EvaCategory.AKTUALNO.rawName)
                 putExtra("themeId", R.style.AktualnoTheme)

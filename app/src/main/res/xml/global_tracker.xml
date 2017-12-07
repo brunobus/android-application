@@ -36,15 +36,15 @@
         Info
     </screenName>
 
-    <screenName name = "hr.bpervan.novaeva.activities.IzrekeActivity">
+    <screenName name = "hr.bpervan.novaeva.activities.EvaQuotesActivity">
         Izreke
     </screenName>
 
-    <screenName name = "hr.bpervan.novaeva.activities.ListaVijestiActivity">
+    <screenName name = "hr.bpervan.novaeva.activities.ListEvaContentActivity">
         Kategorija
     </screenName>
 
-    <screenName name = "hr.bpervan.novaeva.activities.MolitvenikActivity">
+    <screenName name = "hr.bpervan.novaeva.activities.PrayerBookActivity">
         Molitvenik izbornik
     </screenName>
 
@@ -56,7 +56,7 @@
         Search
     </screenName>
 
-    <screenName name = "hr.bpervan.novaeva.activities.VijestActivity">
+    <screenName name = "hr.bpervan.novaeva.activities.EvaContentActivity">
         Vijest
     </screenName>
 </resources>

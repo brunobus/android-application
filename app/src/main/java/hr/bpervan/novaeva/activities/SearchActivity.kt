@@ -9,12 +9,10 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.view.View.OnClickListener
 import android.widget.EditText
-import com.google.android.gms.analytics.GoogleAnalytics
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.EvaCategory
 import hr.bpervan.novaeva.model.EvaContentMetadata
 import hr.bpervan.novaeva.model.toDatabaseModel
 import hr.bpervan.novaeva.services.NovaEvaService
@@ -84,7 +82,7 @@ class SearchActivity : EvaBaseActivity(), OnClickListener {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { contentInfo ->
-                    val i = Intent(this, VijestActivity::class.java)
+                    val i = Intent(this, EvaContentActivity::class.java)
                     i.putExtra("contentId", contentInfo.contentId)
                     startActivity(i)
                 })

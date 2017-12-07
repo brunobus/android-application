@@ -1,12 +1,12 @@
 package hr.bpervan.novaeva.activities
 
 import android.os.Bundle
-import hr.bpervan.novaeva.fragments.IzrekeFragment
+import hr.bpervan.novaeva.fragments.EvaQuotesFragment
 import hr.bpervan.novaeva.main.R
 
 //import com.google.analytics.tracking.android.EasyTracker;
 
-class IzrekeActivity : EvaBaseActivity() {
+class EvaQuotesActivity : EvaBaseActivity() {
 
     private var themeId: Int = 0
 
@@ -27,7 +27,7 @@ class IzrekeActivity : EvaBaseActivity() {
         if (supportFragmentManager.findFragmentByTag(TAG_RETAINED_IZREKE_FRAGMENT) == null) {
             supportFragmentManager
                     .beginTransaction()
-                    .add(R.id.evaFragmentFrame, IzrekeFragment.newInstance(), TAG_RETAINED_IZREKE_FRAGMENT)
+                    .add(R.id.evaFragmentFrame, EvaQuotesFragment.newInstance(), TAG_RETAINED_IZREKE_FRAGMENT)
                     .commit()
 
         }

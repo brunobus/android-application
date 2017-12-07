@@ -3,10 +3,10 @@ package hr.bpervan.novaeva.activities
 import android.os.Bundle
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.NovaEvaApp
-import hr.bpervan.novaeva.fragments.VijestFragment
+import hr.bpervan.novaeva.fragments.EvaContentFragment
 import hr.bpervan.novaeva.main.R
 
-class VijestActivity : EvaBaseActivity() {
+class EvaContentActivity : EvaBaseActivity() {
 
     private var contentId: Long = 0
     private var themeId: Int = 0
@@ -48,7 +48,7 @@ class VijestActivity : EvaBaseActivity() {
         if (supportFragmentManager.findFragmentByTag(TAG_RETAINED_VIJEST_FRAGMENT) == null) {
             supportFragmentManager
                     .beginTransaction()
-                    .add(R.id.evaFragmentFrame, VijestFragment.newInstance(contentId, categoryId.toLong()), TAG_RETAINED_VIJEST_FRAGMENT)
+                    .add(R.id.evaFragmentFrame, EvaContentFragment.newInstance(contentId, categoryId.toLong()), TAG_RETAINED_VIJEST_FRAGMENT)
                     .commit()
         }
     }
@@ -83,7 +83,7 @@ class VijestActivity : EvaBaseActivity() {
 //            R.id.btnPlay -> {
 //                Log.d(TAG, "btnPlay")
 //                if (BackgroundPlayerService.isRunning) {
-//                    val messageIntent = Intent(this@VijestActivity, BackgroundPlayerService::class.java)
+//                    val messageIntent = Intent(this@EvaContentActivity, BackgroundPlayerService::class.java)
 //                    messageIntent.putExtra(BackgroundPlayerService.KEY_DIRECTIVE, BackgroundPlayerService.DIRECTIVE_SET_SOURCE_PLAY)
 //                    messageIntent.putExtra(BackgroundPlayerService.KEY_PATH, evaContent!!.audioURL)
 //                    messageIntent.putExtra(BackgroundPlayerService.KEY_TITLE, evaContent!!.contentMetadata!!.title)
@@ -96,7 +96,7 @@ class VijestActivity : EvaBaseActivity() {
 //            }
 //            R.id.btnPause -> {
 //                Log.d(TAG, "btnPlay")
-//                val pauseIntent = Intent(this@VijestActivity, BackgroundPlayerService::class.java)
+//                val pauseIntent = Intent(this@EvaContentActivity, BackgroundPlayerService::class.java)
 //                pauseIntent.putExtra(BackgroundPlayerService.KEY_DIRECTIVE, BackgroundPlayerService.DIRECTIVE_PAUSE)
 //                startService(pauseIntent)
 //                /*if(mPlayer.isPlaying()){
@@ -120,7 +120,7 @@ class VijestActivity : EvaBaseActivity() {
 ////                prefs.edit().putInt("hr.bpervan.novaeva.velicinateksta", mCurrentSize).apply()
 ////                vijestWebView.settings.defaultFontSize = mCurrentSize
 ////            }
-////            R.id.btnBack -> this@VijestActivity.onBackPressed()
+////            R.id.btnBack -> this@EvaContentActivity.onBackPressed()
 //            R.id.imgLink ->
 //                evaContent!!.videoURL?.let { videoUrl ->
 //                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(videoUrl)))

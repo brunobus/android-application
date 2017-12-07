@@ -44,12 +44,12 @@ import kotlinx.android.synthetic.main.vijest_fake_action_bar.view.*
 /**
  * Created by vpriscan on 04.12.17..
  */
-class VijestFragment : EvaBaseFragment(), SeekBar.OnSeekBarChangeListener {
+class EvaContentFragment : EvaBaseFragment(), SeekBar.OnSeekBarChangeListener {
     companion object {
         private val CONTENT_ID_KEY = "contentId"
         private val CATEGORY_ID_KEY = "categoryId"
-        fun newInstance(contentId: Long, categoryId: Long): VijestFragment {
-            return VijestFragment().apply {
+        fun newInstance(contentId: Long, categoryId: Long): EvaContentFragment {
+            return EvaContentFragment().apply {
                 arguments = Bundle().apply {
                     putLong(CONTENT_ID_KEY, contentId)
                     putLong(CATEGORY_ID_KEY, categoryId)
@@ -213,7 +213,7 @@ class VijestFragment : EvaBaseFragment(), SeekBar.OnSeekBarChangeListener {
                 }
             }
 
-//            seekArc.setOnSeekBarChangeListener(this@VijestFragment)
+//            seekArc.setOnSeekBarChangeListener(this@EvaContentFragment)
 //
 //            NovaEvaApp.openSansRegular?.let {
 //                tvDuration.typeface = it
@@ -234,7 +234,7 @@ class VijestFragment : EvaBaseFragment(), SeekBar.OnSeekBarChangeListener {
                 showSearchPopup()
             }
             fakeActionBar.btnBookmark.setOnClickListener {
-                val evaContent = this@VijestFragment.evaContent
+                val evaContent = this@EvaContentFragment.evaContent
                 if (evaContent != null) {
                     val evaContentMetadata = evaContent.contentMetadata!!
                     EvaContentDbAdapter.updateEvaContentMetadataAsync(realm, evaContentMetadata.contentId) {
@@ -257,8 +257,8 @@ class VijestFragment : EvaBaseFragment(), SeekBar.OnSeekBarChangeListener {
             //todo check what is this
             /*if(mPlayer != null){
                 mp3Player.setVisibility(View.VISIBLE);
-                btnPlay.setOnClickListener(VijestActivity.this);
-                btnPause.setOnClickListener(VijestActivity.this);
+                btnPlay.setOnClickListener(EvaContentActivity.this);
+                btnPause.setOnClickListener(EvaContentActivity.this);
 
                 seekArc.setMax(mPlayer.getDuration());
 

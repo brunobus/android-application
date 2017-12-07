@@ -21,10 +21,10 @@ import kotlinx.android.synthetic.main.fragment_eva_quotes.view.*
 /**
  * Created by vpriscan on 04.12.17..
  */
-class IzrekeFragment : EvaBaseFragment() {
+class EvaQuotesFragment : EvaBaseFragment() {
     companion object {
-        fun newInstance(): IzrekeFragment {
-            return IzrekeFragment()
+        fun newInstance(): EvaQuotesFragment {
+            return EvaQuotesFragment()
         }
     }
 

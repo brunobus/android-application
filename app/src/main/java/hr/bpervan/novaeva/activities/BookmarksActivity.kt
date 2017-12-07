@@ -8,13 +8,11 @@ import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.widget.EditText
-import com.google.android.gms.analytics.GoogleAnalytics
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaContentMetadata
-import hr.bpervan.novaeva.model.EvaCategory
 import hr.bpervan.novaeva.storage.EvaContentDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -109,7 +107,7 @@ class BookmarksActivity : EvaBaseActivity(), View.OnClickListener {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { contentInfo ->
-                    val i = Intent(this, VijestActivity::class.java)
+                    val i = Intent(this, EvaContentActivity::class.java)
                     i.putExtra("contentId", contentInfo.contentId)
                     startActivity(i)
                 })

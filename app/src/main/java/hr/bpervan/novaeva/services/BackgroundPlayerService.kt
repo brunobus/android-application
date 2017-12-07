@@ -16,7 +16,7 @@ import java.util.*
 
 /**
  * Scenariji:
- * 1. VijestActivity šalje DIRECTIVE_SET_SOURCE_PLAY i locka ekran ili gasi aplikaciju
+ * 1. EvaContentActivity šalje DIRECTIVE_SET_SOURCE_PLAY i locka ekran ili gasi aplikaciju
  * 2. Korisnik otključava mobitel, activity se otvara
  * 3. Korisnik je gdje god, pritišće gumb u notification baru
  * 4. Korisnik je gdje god, otvara opet aplikaciju

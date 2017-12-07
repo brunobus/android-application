@@ -10,14 +10,14 @@ import android.widget.AdapterView.OnItemClickListener
 import android.widget.EditText
 import android.widget.ListView
 import hr.bpervan.novaeva.NovaEvaApp
-import hr.bpervan.novaeva.adapters.MolitvenikAdapter
+import hr.bpervan.novaeva.adapters.PrayerBookAdapter
 import hr.bpervan.novaeva.main.R
 
 /*import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.GoogleAnalytics;
 import com.google.analytics.tracking.android.Tracker;*/
 
-class MolitvenikActivity : ListActivity(), OnClickListener {
+class PrayerBookActivity : ListActivity(), OnClickListener {
     /*private Tracker mGaTracker;
 	private GoogleAnalytics mGaInstance;*/
 
@@ -61,7 +61,7 @@ class MolitvenikActivity : ListActivity(), OnClickListener {
                 "23. Moliti igrajući pred Gospodinom")
 
 
-        mainListView.adapter = MolitvenikAdapter(this, mainContentList)
+        mainListView.adapter = PrayerBookAdapter(this, mainContentList)
 
         mainListView.onItemClickListener = OnItemClickListener { _, _, position, _ ->
             //mGaTracker.sendEvent("Molitvenik", "OtvorenaMolitva", String.valueOf(position), null);
@@ -100,7 +100,7 @@ class MolitvenikActivity : ListActivity(), OnClickListener {
 
         searchBuilder.setPositiveButton("Pretraži") { _, _ ->
             val search = et.text.toString()
-            NovaEvaApp.goSearch(search, this@MolitvenikActivity)
+            NovaEvaApp.goSearch(search, this@PrayerBookActivity)
         }
         searchBuilder.setNegativeButton("Odustani") { _, _ -> }
         searchBuilder.show()

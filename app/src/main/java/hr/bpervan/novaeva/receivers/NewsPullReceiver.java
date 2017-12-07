@@ -80,12 +80,12 @@ public class NewsPullReceiver extends BroadcastReceiver{
 //						mBuilder.setAutoCancel(true);
 //						mBuilder.setOnlyAlertOnce(true);
 //
-//						resultIntent = new Intent(context, VijestActivity.class);
+//						resultIntent = new Intent(context, EvaContentActivity.class);
 //						resultIntent.putExtra("nid", Integer.parseInt(zadnjaVijest.getString("nid")));
 //						resultIntent.putExtra("kategorija", 18); //Ovo je banana, jer response ne vraća kategoriju :-/
 //
 //						stackBuilder = TaskStackBuilder.create(context);
-//						stackBuilder.addParentStack(VijestActivity.class);
+//						stackBuilder.addParentStack(EvaContentActivity.class);
 //						stackBuilder.addNextIntent(resultIntent);
 //
 //						PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);

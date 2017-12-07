@@ -3,7 +3,7 @@ package hr.bpervan.novaeva.customviews
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
-import hr.bpervan.novaeva.activities.ListaVijestiActivity
+import hr.bpervan.novaeva.activities.ListEvaContentActivity
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaCategory
 
@@ -24,7 +24,7 @@ class AktualnoView(context: Context) : EvaBaseCustomView(context) {
     }
 
     override fun intentToStartActivity(): Intent =
-            Intent(context, ListaVijestiActivity::class.java).apply {
+            Intent(context, ListEvaContentActivity::class.java).apply {
                 putExtra("categoryId", EvaCategory.AKTUALNO.id)
                 putExtra("categoryName", EvaCategory.AKTUALNO.rawName)
                 putExtra("themeId", R.style.AktualnoTheme)

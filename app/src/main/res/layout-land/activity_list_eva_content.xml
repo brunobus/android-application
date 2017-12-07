@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="hr.bpervan.novaeva.activities.ListaVijestiActivity">
+    tools:context="hr.bpervan.novaeva.activities.ListEvaContentActivity">
 
     <FrameLayout
         android:id="@+id/eva_directory_fragment_frame"

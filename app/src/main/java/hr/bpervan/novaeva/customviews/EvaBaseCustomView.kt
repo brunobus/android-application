@@ -2,13 +2,10 @@ package hr.bpervan.novaeva.customviews
 
 import android.content.Context
 import android.content.Intent
-import android.content.res.Configuration
 import android.view.MotionEvent
 import android.widget.TextView
 import hr.bpervan.novaeva.NovaEvaApp
-import hr.bpervan.novaeva.activities.ListaVijestiActivity
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.EvaCategory
 import kotlin.properties.Delegates
 
 /**

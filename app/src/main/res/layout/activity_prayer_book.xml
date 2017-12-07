@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="hr.bpervan.novaeva.activities.MolitvenikActivity">
+    tools:context="hr.bpervan.novaeva.activities.PrayerBookActivity">
 
     <ListView
         android:id="@+id/android:list"

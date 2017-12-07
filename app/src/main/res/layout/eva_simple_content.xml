@@ -8,7 +8,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:keepScreenOn="true"
-    tools:context="hr.bpervan.novaeva.activities.VijestActivity">
+    tools:context="hr.bpervan.novaeva.activities.EvaContentActivity">
 
     <include
         android:id="@+id/evaCollapsingBar"
