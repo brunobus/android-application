@@ -2,6 +2,7 @@ package hr.bpervan.novaeva.fragments
 
 import android.content.res.Configuration
 import android.os.Bundle
+import android.os.Handler
 import android.os.Parcel
 import android.os.Parcelable
 import android.support.v4.app.Fragment
@@ -35,6 +36,7 @@ import kotlinx.android.synthetic.main.izbornik_top.view.*
  */
 class EvaRecyclerFragment : Fragment() {
 
+    private val handler = Handler()
     private var fetchFromServerDisposable: Disposable? = null
     private var evaDirectoryChangesDisposable: Disposable? = null
 
@@ -249,7 +251,7 @@ class EvaRecyclerFragment : Fragment() {
 
                     CacheService.cache(realm, evaDirectoryDTO, fragmentConfig.directoryId)
 
-                    view?.postDelayed({
+                    handler.postDelayed({
                         /*if there are no actual new changes from server, data in cache will not be "updated"
                         and on update callback (in subscribeToDirectoryUpdates) will not be called,
                         resulting in progress circle spinning forever
@@ -257,14 +259,16 @@ class EvaRecyclerFragment : Fragment() {
                         */
                         loadingFromDb = false
                         refreshLoadingCircleState()
-                    }, 5000)
+                    }, 4000)
 
                     hasMore = evaDirectoryDTO.more > 0
 
                 }) {
-                    fetchingFromServer = false
+                    handler.postDelayed({
+                        fetchingFromServer = false
+                        refreshLoadingCircleState()
+                    }, 2000)
                     NovaEvaApp.showFetchErrorSnackbar(it, context, view)
-                    refreshLoadingCircleState()
                 }
     }
 }

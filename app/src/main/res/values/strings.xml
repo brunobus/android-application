@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">Nova Eva</string>
     <string name="app_name_vertical">N\no\nv\na\n \nE\nv\na</string>
     <string name="menu_settings">Settings</string>

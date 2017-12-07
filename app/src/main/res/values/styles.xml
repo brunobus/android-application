@@ -1,12 +1,14 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="eva_floating_action_button">
+    <style name="eva_floating_action_button" parent="Widget.Design.FloatingActionButton">
         <item name="backgroundTint">?attr/colorPrimary</item>
         <item name="android:layout_marginLeft">0dp</item>
         <item name="android:layout_marginTop">0dp</item>
         <item name="android:layout_marginRight">0dp</item>
         <item name="android:layout_marginBottom">0dp</item>
     </style>
+
+    <style name="eva_loading_circle" parent="Widget.AppCompat.ProgressBar"/>
 
     <!--
         Base application theme, dependent on API level. This theme is replaced
