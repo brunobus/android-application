@@ -11,6 +11,7 @@ import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 
 import com.google.android.gms.analytics.GoogleAnalytics
 import com.google.android.gms.analytics.Logger
@@ -117,6 +118,10 @@ class NovaEvaApp : Application() {
             if (throwable != null) Log.e("evaError", throwable.message, throwable)
 
             holderView?.let { Snackbar.make(it, context.getString(R.string.error_fetching_data), Snackbar.LENGTH_LONG).show() }
+        }
+
+        fun showNetworkUnavailableToast(context: Context) {
+            Toast.makeText(context, context.getString(R.string.network_unavailable), Toast.LENGTH_LONG).show()
         }
 
         inline fun showFetchErrorDialog(throwable: Throwable?, context: Activity, crossinline onTryAgain: () -> Unit) {

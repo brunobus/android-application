@@ -112,7 +112,7 @@ class DashboardActivity : EvaBaseActivity(), OnTouchListener, OnClickListener {
                 if (ConnectionChecker.hasConnection(this))
                     showSearchPopup()
                 else
-                    Toast.makeText(this@DashboardActivity, "Internetska veza nije dostupna", Toast.LENGTH_SHORT).show()
+                    NovaEvaApp.showNetworkUnavailableToast(this)
                 return true
             }
             else -> return super.onOptionsItemSelected(item)
@@ -130,7 +130,7 @@ class DashboardActivity : EvaBaseActivity(), OnTouchListener, OnClickListener {
                         prefs.edit().putString("hr.bpervan.novaeva.brevijarheaderimage", directoryContent.image.size640).apply()
                     }
                 }) {
-                    Toast.makeText(this@DashboardActivity, "Failed to connect", Toast.LENGTH_SHORT).show()
+                    NovaEvaApp.showNetworkUnavailableToast(this)
                 }
     }
 
