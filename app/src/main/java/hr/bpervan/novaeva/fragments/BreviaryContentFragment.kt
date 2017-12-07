@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.support.v4.widget.NestedScrollView
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebView
@@ -26,11 +25,11 @@ class BreviaryContentFragment : EvaBaseFragment() {
         private val BREVIARY_ID_KEY = "breviaryId"
 
         fun newInstance(breviaryId: Int): BreviaryContentFragment {
-            val breviaryContentFragment = BreviaryContentFragment()
-            breviaryContentFragment.arguments = Bundle().apply {
-                putInt(BREVIARY_ID_KEY, breviaryId)
+            return BreviaryContentFragment().apply {
+                arguments = Bundle().apply {
+                    putInt(BREVIARY_ID_KEY, breviaryId)
+                }
             }
-            return breviaryContentFragment
         }
     }
 

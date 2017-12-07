@@ -1,7 +1,6 @@
 package hr.bpervan.novaeva.services
 
 import android.app.IntentService
-import android.app.Notification
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
@@ -11,12 +10,9 @@ import android.media.MediaPlayer
 import android.support.v4.app.NotificationCompat
 import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
-
-import java.io.IOException
-import java.util.Timer
-import java.util.TimerTask
-
 import hr.bpervan.novaeva.main.R
+import java.io.IOException
+import java.util.*
 
 /**
  * Scenariji:
@@ -38,7 +34,7 @@ import hr.bpervan.novaeva.main.R
  * 4. resume/play
  * 5. seekto
  */
-class BackgroundPlayerService
+class BackgroundPlayerService /*todo*/
 /**
  * Creates an IntentService.  Invoked by your subclass's constructor.
  *

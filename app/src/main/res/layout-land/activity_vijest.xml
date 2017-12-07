@@ -76,7 +76,7 @@
                     style="?android:progressBarStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/mp3Player"
+                    android:layout_below="@+id/player_view"
                     android:layout_centerInParent="true"
                     android:layout_gravity="center"
                     android:layout_marginTop="30dp"
@@ -94,74 +94,19 @@
                     android:layout_marginTop="5dp"
                     android:textColor="#4c4c4c"/>
 
-                <RelativeLayout
-                    android:id="@+id/mp3Player"
+                <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+                    android:id="@+id/player_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/imgLink"
                     android:layout_marginTop="5dp"
+                    android:focusable="true"
+                    android:visibility="gone"
                     android:padding="20dp"
-                    android:visibility="gone">
-
-                    <ImageView
-                        android:id="@+id/btnPlay"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentTop="true"
-                        android:layout_centerHorizontal="true"
-                        android:contentDescription="@string/dummyDesc"
-                        android:src="@drawable/player_btn_play"
-                        android:visibility="visible"/>
-
-                    <ImageView
-                        android:id="@+id/btnPause"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentTop="true"
-                        android:layout_centerHorizontal="true"
-                        android:contentDescription="@string/dummyDesc"
-                        android:src="@drawable/player_btn_pause"
-                        android:visibility="gone"/>
-
-                    <SeekBar
-                        android:id="@+id/seekArc"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/btnPlay"
-                        android:layout_marginTop="20dp"
-                        android:padding="30dp"/>
-
-                    <RelativeLayout
-                        android:id="@+id/playerTime"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/seekArc"
-                        android:layout_centerHorizontal="true">
-
-                        <TextView
-                            android:id="@+id/tvElapsed"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="00:00"
-                            android:textSize="18sp"/>
-
-                        <TextView
-                            android:id="@+id/tvSlash"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_toRightOf="@id/tvElapsed"
-                            android:text=" / "
-                            android:textSize="18sp"/>
-
-                        <TextView
-                            android:id="@+id/tvDuration"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_toRightOf="@id/tvSlash"
-                            android:textSize="18sp"/>
-                    </RelativeLayout>
-
-                </RelativeLayout>
+                    app:shutter_background_color="?attr/colorPrimary"
+                    app:hide_on_touch="false"
+                    app:use_artwork="false"
+                    app:use_controller="true"/>
 
             </RelativeLayout>
 

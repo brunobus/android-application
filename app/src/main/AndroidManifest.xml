@@ -63,7 +63,6 @@
             android:theme="@style/BreviaryTheme"/>
         <activity
             android:name="hr.bpervan.novaeva.activities.VijestActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
             android:hardwareAccelerated="true"
             android:label="@string/title_activity_vijest">
             <intent-filter android:label="@string/app_name">

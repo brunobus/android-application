@@ -40,81 +40,12 @@
                     android:layout_below="@+id/imgLink"
                     android:layout_marginTop="5dp"
                     android:focusable="true"
+                    android:visibility="gone"
                     android:padding="20dp"
+                    app:shutter_background_color="?attr/colorPrimary"
                     app:hide_on_touch="false"
                     app:use_artwork="false"
                     app:use_controller="true"/>
-
-                <RelativeLayout
-                    android:id="@+id/mp3Player"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/imgLink"
-                    android:layout_marginTop="5dp"
-                    android:padding="20dp"
-                    android:visibility="gone">
-
-                    <ImageView
-                        android:id="@+id/btnPlay"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentTop="true"
-                        android:layout_centerHorizontal="true"
-                        android:contentDescription="@string/dummyDesc"
-                        android:padding="15dp"
-                        android:src="@drawable/player_btn_play"
-                        android:visibility="visible"/>
-
-                    <ImageView
-                        android:id="@+id/btnPause"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentTop="true"
-                        android:layout_centerHorizontal="true"
-                        android:contentDescription="@string/dummyDesc"
-                        android:padding="15dp"
-                        android:src="@drawable/player_btn_pause"
-                        android:visibility="invisible"/>
-
-                    <SeekBar
-                        android:id="@+id/seekArc"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/btnPlay"
-                        android:layout_marginTop="20dp"
-                        android:padding="30dp"/>
-
-                    <RelativeLayout
-                        android:id="@+id/playerTime"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/seekArc"
-                        android:layout_centerHorizontal="true">
-
-                        <TextView
-                            android:id="@+id/tvElapsed"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="00:00"
-                            android:textSize="18sp"/>
-
-                        <TextView
-                            android:id="@+id/tvSlash"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_toRightOf="@+id/tvElapsed"
-                            android:text=" / "
-                            android:textSize="18sp"/>
-
-                        <TextView
-                            android:id="@+id/tvDuration"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_toRightOf="@+id/tvSlash"
-                            android:textSize="18sp"/>
-                    </RelativeLayout>
-
-                </RelativeLayout>
 
                 <ProgressBar
                     android:id="@+id/loadingCircle"
