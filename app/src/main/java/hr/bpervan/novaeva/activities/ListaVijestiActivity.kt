@@ -19,7 +19,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
 import kotlinx.android.synthetic.*
-import kotlinx.android.synthetic.main.activity_lista_vijesti.*
+import kotlinx.android.synthetic.main.activity_list_eva_content.*
 import java.util.concurrent.TimeUnit
 
 class ListaVijestiActivity : EvaBaseActivity(), OnClickListener {
@@ -45,7 +45,7 @@ class ListaVijestiActivity : EvaBaseActivity(), OnClickListener {
             setTheme(themeId)
         }
 
-        setContentView(R.layout.activity_lista_vijesti)
+        setContentView(R.layout.activity_list_eva_content)
 
         //mGaTracker = mGaInstance.getTracker("UA-40344870-1");
         val mGaTracker = (application as NovaEvaApp).getTracker(NovaEvaApp.TrackerName.APP_TRACKER)
@@ -115,7 +115,7 @@ class ListaVijestiActivity : EvaBaseActivity(), OnClickListener {
     override fun onConfigurationChanged(newConfig: Configuration) {
         this?.clearFindViewByIdCache()
         super.onConfigurationChanged(newConfig)
-        setContentView(R.layout.activity_lista_vijesti)
+        setContentView(R.layout.activity_list_eva_content)
         initUI()
     }
 

@@ -33,7 +33,7 @@ class VijestActivity : EvaBaseActivity() {
             return
         }
 
-        setContentView(R.layout.eva_fragment_frame_layout)
+        setContentView(R.layout.eva_fragment_frame)
 
 //        startService(Intent(this, BackgroundPlayerService::class.java)) //todo
 
@@ -48,7 +48,7 @@ class VijestActivity : EvaBaseActivity() {
         if (supportFragmentManager.findFragmentByTag(TAG_RETAINED_VIJEST_FRAGMENT) == null) {
             supportFragmentManager
                     .beginTransaction()
-                    .add(R.id.eva_fragment_frame, VijestFragment.newInstance(contentId, categoryId.toLong()), TAG_RETAINED_VIJEST_FRAGMENT)
+                    .add(R.id.evaFragmentFrame, VijestFragment.newInstance(contentId, categoryId.toLong()), TAG_RETAINED_VIJEST_FRAGMENT)
                     .commit()
         }
     }

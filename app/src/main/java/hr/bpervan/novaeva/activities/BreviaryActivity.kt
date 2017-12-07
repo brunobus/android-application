@@ -7,7 +7,7 @@ import android.view.View.OnClickListener
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.utilities.ImageLoaderConfigurator
-import kotlinx.android.synthetic.main.activity_brevijar.*
+import kotlinx.android.synthetic.main.activity_breviary.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -17,7 +17,7 @@ class BreviaryActivity : EvaBaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_brevijar)
+        setContentView(R.layout.activity_breviary)
 
         initUI()
     }

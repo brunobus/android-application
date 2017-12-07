@@ -1,8 +1,6 @@
 package hr.bpervan.novaeva.activities
 
 import android.os.Bundle
-import com.google.android.gms.analytics.GoogleAnalytics
-import com.google.android.gms.analytics.Tracker
 import hr.bpervan.novaeva.fragments.BreviaryContentFragment
 import hr.bpervan.novaeva.main.R
 
@@ -12,7 +10,7 @@ class BreviaryContentActivity : EvaBaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.eva_fragment_frame_layout)
+        setContentView(R.layout.eva_fragment_frame)
 
         val inState = savedInstanceState ?: intent.extras
         breviaryId = inState.getInt(BREVIARY_ID_KEY, 4)
@@ -20,7 +18,7 @@ class BreviaryContentActivity : EvaBaseActivity() {
         if (supportFragmentManager.findFragmentByTag(TAG_RETAINED_BREVIARY_FRAGMENT) == null) {
             supportFragmentManager
                     .beginTransaction()
-                    .add(R.id.eva_fragment_frame, BreviaryContentFragment.newInstance(breviaryId), TAG_RETAINED_BREVIARY_FRAGMENT)
+                    .add(R.id.evaFragmentFrame, BreviaryContentFragment.newInstance(breviaryId), TAG_RETAINED_BREVIARY_FRAGMENT)
                     .commit()
         }
 

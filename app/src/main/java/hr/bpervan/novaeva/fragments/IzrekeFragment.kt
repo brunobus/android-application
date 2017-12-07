@@ -1,6 +1,5 @@
 package hr.bpervan.novaeva.fragments
 
-import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.view.LayoutInflater
@@ -17,7 +16,7 @@ import hr.bpervan.novaeva.utilities.subscribeAsync
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.eva_collapsing_bar.view.*
 import kotlinx.android.synthetic.main.izreke_fake_action_bar.view.*
-import kotlinx.android.synthetic.main.izreke_layout.view.*
+import kotlinx.android.synthetic.main.fragment_eva_quotes.view.*
 
 /**
  * Created by vpriscan on 04.12.17..
@@ -56,7 +55,7 @@ class IzrekeFragment : EvaBaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val izrekeView = inflater.inflate(R.layout.izreke_layout, container, false)
+        val izrekeView = inflater.inflate(R.layout.fragment_eva_quotes, container, false)
 
         if (contentTitle != null && contentData != null) {
             applyContent(izrekeView)

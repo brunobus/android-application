@@ -22,12 +22,12 @@ class IzrekeActivity : EvaBaseActivity() {
             setTheme(themeId)
         }
 
-        setContentView(R.layout.eva_fragment_frame_layout)
+        setContentView(R.layout.eva_fragment_frame)
 
         if (supportFragmentManager.findFragmentByTag(TAG_RETAINED_IZREKE_FRAGMENT) == null) {
             supportFragmentManager
                     .beginTransaction()
-                    .add(R.id.eva_fragment_frame, IzrekeFragment.newInstance(), TAG_RETAINED_IZREKE_FRAGMENT)
+                    .add(R.id.evaFragmentFrame, IzrekeFragment.newInstance(), TAG_RETAINED_IZREKE_FRAGMENT)
                     .commit()
 
         }

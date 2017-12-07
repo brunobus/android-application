@@ -26,7 +26,7 @@ class MolitvenikActivity : ListActivity(), OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_molitvenik)
+        setContentView(R.layout.activity_prayer_book)
 
         /*mGaInstance = GoogleAnalytics.getInstance(this);
 		mGaTracker = mGaInstance.getTracker("UA-40344870-1");*/
