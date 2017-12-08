@@ -46,7 +46,7 @@ class BreviaryContentFragment : EvaBaseFragment() {
         super.onCreate(savedInstanceState)
         retainInstance = true
 
-        val inState = savedInstanceState ?: arguments
+        val inState = savedInstanceState ?: arguments!!
         breviaryId = inState.getInt(BREVIARY_ID_KEY, 4)
         coverImageUrl = prefs.getString("hr.bpervan.novaeva.brevijarheaderimage", null)
     }
@@ -127,7 +127,9 @@ class BreviaryContentFragment : EvaBaseFragment() {
                 .subscribe({ breviary ->
                     loadBreviary(breviary.text)
                 }) {
-                    NovaEvaApp.showFetchErrorSnackbar(it, context, view)
+                    context?.let { ctx ->
+                        NovaEvaApp.showFetchErrorSnackbar(it, ctx, view)
+                    }
                 }
     }
 

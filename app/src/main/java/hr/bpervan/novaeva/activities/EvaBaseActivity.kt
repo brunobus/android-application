@@ -2,7 +2,6 @@ package hr.bpervan.novaeva.activities
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.google.android.gms.analytics.GoogleAnalytics
 import com.nostra13.universalimageloader.core.ImageLoader
@@ -12,17 +11,12 @@ import com.nostra13.universalimageloader.core.ImageLoader
  */
 abstract class EvaBaseActivity : AppCompatActivity() {
 
-    protected lateinit var prefs: SharedPreferences
-        private set
+    protected val prefs: SharedPreferences by lazy {
+        getSharedPreferences("hr.bpervan.novaeva", Context.MODE_PRIVATE)
+    }
 
-    protected lateinit var imageLoader: ImageLoader
-        private set
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        prefs = getSharedPreferences("hr.bpervan.novaeva", Context.MODE_PRIVATE)
-        imageLoader = ImageLoader.getInstance()
+    protected val imageLoader: ImageLoader by lazy {
+        ImageLoader.getInstance()
     }
 
     public override fun onStart() {

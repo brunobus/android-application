@@ -64,7 +64,7 @@ class EvaRecyclerFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val inState: Bundle = savedInstanceState ?: arguments
+        val inState: Bundle = savedInstanceState ?: arguments!!
         fragmentConfig = inState.getParcelable("fragmentConfig")
         realm = Realm.getInstance(RealmConfigProvider.evaDBConfig)
 
@@ -186,9 +186,9 @@ class EvaRecyclerFragment : Fragment() {
 
     override fun onConfigurationChanged(newConfig: Configuration?) {
         //A HACK TO DISPLAY CORRECT FRAGMENT VIEWS WHEN SWITCHING BETWEEN PORTRAIT AND LANDSCAPE
-        activity.supportFragmentManager.beginTransaction().detach(this).commitAllowingStateLoss()
+        activity?.supportFragmentManager?.beginTransaction()?.detach(this)?.commitAllowingStateLoss()
         super.onConfigurationChanged(newConfig)
-        activity.supportFragmentManager.beginTransaction().attach(this).commitAllowingStateLoss()
+        activity?.supportFragmentManager?.beginTransaction()?.attach(this)?.commitAllowingStateLoss()
     }
 
     override fun onDestroy() {
@@ -268,7 +268,9 @@ class EvaRecyclerFragment : Fragment() {
                         fetchingFromServer = false
                         refreshLoadingCircleState()
                     }, 2000)
-                    NovaEvaApp.showFetchErrorSnackbar(it, context, view)
+                    context?.let { ctx ->
+                        NovaEvaApp.showFetchErrorSnackbar(it, ctx, view)
+                    }
                 }
     }
 }

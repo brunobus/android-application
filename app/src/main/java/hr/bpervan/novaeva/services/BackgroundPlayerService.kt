@@ -34,6 +34,7 @@ import java.util.*
  * 4. resume/play
  * 5. seekto
  */
+@Deprecated("use new audioplayerservice")
 class BackgroundPlayerService /*todo*/
 /**
  * Creates an IntentService.  Invoked by your subclass's constructor.

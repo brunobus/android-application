@@ -12,20 +12,16 @@ import android.util.TypedValue
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
-
 import com.google.android.gms.analytics.GoogleAnalytics
 import com.google.android.gms.analytics.Logger
 import com.google.android.gms.analytics.Tracker
 import hr.bpervan.novaeva.activities.DashboardActivity
 import hr.bpervan.novaeva.activities.SearchActivity
-
-import java.util.HashMap
-
 import hr.bpervan.novaeva.main.BuildConfig
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.utilities.ImageLoaderConfigurator
-import hr.bpervan.novaeva.utilities.LifecycleLogger
 import io.realm.Realm
+import java.util.*
 
 /**
  * Created by Branimir on 17.1.2015..
@@ -67,6 +63,7 @@ class NovaEvaApp : Application() {
 
         Realm.init(this)
         ImageLoaderConfigurator.doInit(this)
+
     }
 
     companion object {
@@ -83,7 +80,7 @@ class NovaEvaApp : Application() {
         }
 
         //public static final properties
-        val bus = RxEventBus()
+        val bus = RxEventBus
 
         val openSansBold: Typeface? by lazy {
             loadTypeface("opensans-bold.ttf")

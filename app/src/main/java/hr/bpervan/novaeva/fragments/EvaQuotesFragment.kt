@@ -76,10 +76,14 @@ class EvaQuotesFragment : EvaBaseFragment() {
         }
 
         izrekeView.fakeActionBar.btnShare.setOnClickListener {
-            shareIntent(context, "http://novaeva.com/node/$contentId")
+            context?.let {
+                shareIntent(it, "http://novaeva.com/node/$contentId")
+            }
         }
         izrekeView.fakeActionBar.btnMail.setOnClickListener {
-            sendEmailIntent(context, contentTitle!!, "http://novaeva.com/node/$contentId")
+            context?.let {
+                sendEmailIntent(it, contentTitle!!, "http://novaeva.com/node/$contentId")
+            }
         }
 
         izrekeView.webText.settings.defaultFontSize = prefs.getInt("hr.bpervan.novaeva.velicinateksta", 14)
