@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,12 +14,9 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.EditText
 import android.widget.SeekBar
-import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.ExtractorMediaSource
-import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
@@ -59,10 +57,7 @@ class EvaContentFragment : EvaBaseFragment(), SeekBar.OnSeekBarChangeListener {
     }
 
     private val exoPlayer: SimpleExoPlayer by lazy {
-        val bandwidthMeter = DefaultBandwidthMeter()
-        val factory = AdaptiveTrackSelection.Factory(bandwidthMeter)
-        val trackSelector = DefaultTrackSelector(factory)
-        ExoPlayerFactory.newSimpleInstance(context, trackSelector)
+        NovaEvaApp.exoPlayerHolder.exoPlayer
     }
 
     private lateinit var realm: Realm
@@ -320,6 +315,7 @@ class EvaContentFragment : EvaBaseFragment(), SeekBar.OnSeekBarChangeListener {
         fetchFromServerDisposable?.dispose()
         previousPlayerView = null
         realm.close()
+
 
         super.onDestroy()
     }

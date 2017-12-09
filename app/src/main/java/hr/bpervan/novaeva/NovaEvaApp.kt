@@ -19,6 +19,7 @@ import hr.bpervan.novaeva.activities.DashboardActivity
 import hr.bpervan.novaeva.activities.SearchActivity
 import hr.bpervan.novaeva.main.BuildConfig
 import hr.bpervan.novaeva.main.R
+import hr.bpervan.novaeva.player.PlayerHolder
 import hr.bpervan.novaeva.utilities.ImageLoaderConfigurator
 import io.realm.Realm
 import java.util.*
@@ -81,6 +82,10 @@ class NovaEvaApp : Application() {
 
         //public static final properties
         val bus = RxEventBus
+
+        val exoPlayerHolder: PlayerHolder by lazy {
+            PlayerHolder(instance!!.applicationContext)
+        }
 
         val openSansBold: Typeface? by lazy {
             loadTypeface("opensans-bold.ttf")
