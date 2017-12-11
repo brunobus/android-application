@@ -7,7 +7,7 @@
     tools:context="hr.bpervan.novaeva.activities.ListEvaContentActivity">
 
     <FrameLayout
-        android:id="@+id/eva_directory_fragment_frame"
+        android:id="@+id/evaDirectoryFragmentFrame"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"

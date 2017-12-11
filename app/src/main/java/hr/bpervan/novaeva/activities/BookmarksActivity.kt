@@ -65,16 +65,8 @@ class BookmarksActivity : EvaBaseActivity(), View.OnClickListener {
 
         this.title = "Bookmarks"
 
-//        fakeActionBar.btnHome.setOnClickListener(this)
         btnSearch.setOnClickListener(this)
-//        fakeActionBar.btnBack.setOnClickListener(this)
 
-        /*
-		for(ListElement l : listaBookmarksa){
-			l.setUvod(makeUvod())
-		}*/
-
-        //todo make this nicer
         evaRecyclerView.evaRecyclerView.adapter = adapter
         evaRecyclerView.evaRecyclerView.layoutManager = LinearLayoutManager(evaRecyclerView.context)
         evaRecyclerView.evaRecyclerView.itemAnimator = DefaultItemAnimator()

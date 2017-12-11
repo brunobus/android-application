@@ -80,18 +80,12 @@ class ListEvaContentActivity : EvaBaseActivity(), OnClickListener {
 
     private fun initUI() {
 
-//        fakeActionBar.btnHome.setOnClickListener(this)
-//        fakeActionBar.btnSearch.setOnClickListener(this)
-//        fakeActionBar.btnBack.setOnClickListener(this)
-
         if (categoryId == EvaCategory.ODGOVORI.id) {
             btnImamPitanjeListaVijesti.setOnClickListener(this)
             btnImamPitanjeListaVijesti.visibility = View.VISIBLE
         }
 
         btnSearch.setOnClickListener { showSearchPopup() }
-
-        setCategoryTypeColour()
     }
 
     private fun showFragmentForDirectory(dirId: Long, dirName: String, isSubDir: Boolean) {
@@ -99,7 +93,7 @@ class ListEvaContentActivity : EvaBaseActivity(), OnClickListener {
         supportFragmentManager
                 .beginTransaction()
                 .setCustomAnimations(R.anim.move_right_in, R.anim.move_left_out, R.anim.move_left_in, R.anim.move_right_out)
-                .replace(R.id.eva_directory_fragment_frame, EvaRecyclerFragment.newInstance(dirId, dirName, isSubDir, themeId))
+                .replace(R.id.evaDirectoryFragmentFrame, EvaRecyclerFragment.newInstance(dirId, dirName, isSubDir, themeId))
                 .addToBackStack(null)
                 .commit()
     }
@@ -113,8 +107,8 @@ class ListEvaContentActivity : EvaBaseActivity(), OnClickListener {
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
-        this?.clearFindViewByIdCache()
         super.onConfigurationChanged(newConfig)
+        this?.clearFindViewByIdCache()
         setContentView(R.layout.activity_list_eva_content)
         initUI()
     }
@@ -124,20 +118,10 @@ class ListEvaContentActivity : EvaBaseActivity(), OnClickListener {
 
         when (vId) {
             R.id.btnSearch -> showSearchPopup()
-//            R.id.btnHome -> NovaEvaApp.goHome(this)
-//            R.id.btnBack -> onBackPressed()
             R.id.btnImamPitanjeListaVijesti -> {
                 val text = "Hvaljen Isus i Marija, javljam Vam se jer imam pitanje."
                 sendEmailIntent(this, "Nova Eva pitanje", text, arrayOf("odgovori.novaeva@gmail.com"))
             }
-        }
-    }
-
-    private fun setCategoryTypeColour() {
-        if (this.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-//            fakeActionBar.setBackgroundResource(ResourceHandler.getFakeActionBarResourceId(colourSet))
-        } else {
-//            fakeActionBar.setBackgroundResource(ResourceHandler.getFakeActionBarResourceId(colourSet))
         }
     }
 
@@ -151,7 +135,6 @@ class ListEvaContentActivity : EvaBaseActivity(), OnClickListener {
 
         lifecycleBoundDisposables.add(NovaEvaApp.bus.directoryOpenRequest
                 .throttleFirst(500, TimeUnit.MILLISECONDS)
-                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { evaDirectoryMetadata ->
                     showFragmentForDirectory(evaDirectoryMetadata.directoryId, evaDirectoryMetadata.title, true)
@@ -159,7 +142,6 @@ class ListEvaContentActivity : EvaBaseActivity(), OnClickListener {
 
         lifecycleBoundDisposables.add(NovaEvaApp.bus.contentOpenRequest
                 .throttleFirst(500, TimeUnit.MILLISECONDS)
-                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { evaContentMetadata ->
                     val i = Intent(this@ListEvaContentActivity, EvaContentActivity::class.java)

@@ -4,7 +4,7 @@
     android:id="@+id/relativeLayout1"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?attr/directoryListItemSrc">
+    android:background="?attr/listItemFolderSrc">
 
     <TextView
         android:id="@+id/tvMapaNatpis"

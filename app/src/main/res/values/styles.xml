@@ -15,19 +15,6 @@
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
 
-    <!-- Application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:windowNoTitle">true</item>
-        <item name="colorPrimary">@color/novaEva</item>
-        <item name="colorPrimaryDark">@color/novaEvaDark</item>
-        <item name="colorAccent">@color/LightGoldenrodYellow</item>
-        <item name="contentListItemSrc">@drawable/izbornik_btn_normal_propovijedi</item>
-        <item name="directoryListItemSrc">@drawable/izbornik_btn_normal_propovijedi_folder</item>
-        <item name="listViewHeaderSrc">@drawable/izbornik_top_propovjedi</item>
-        <item name="contentTitleBarSrc">@drawable/vijest_titlebar_default</item>
-        <item name="fakeActionBarSrc">@drawable/toolbar_propoviedi</item>
-    </style>
-
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
@@ -42,106 +29,145 @@
         <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
 
-    <style name="SplashTheme" parent="AppTheme">
+    <!-- Application theme. -->
+    <style name="AppThemeBase" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="colorPrimary">@color/propovjedi</item>
+        <item name="colorPrimaryDark">@color/propovjediDark</item>
+        <item name="colorAccent">@color/LightGoldenrodYellow</item>
+        <item name="listItemContentSrc">@drawable/list_row_content_propovijedi</item>
+        <item name="listItemFolderSrc">@drawable/list_row_folder_propovijedi</item>
+        <item name="directoryHeaderSrc">@drawable/directory_header_default</item>
+        <item name="contentTitleBarSrc">@drawable/content_titlebar_propovijedi</item>
+        <item name="toolbarSrc">@drawable/toolbar_propovijedi</item>
+    </style>
+
+    <style name="AppTheme" parent="AppThemeBase"/>
+
+    <style name="SplashThemeBase" parent="AppTheme">
         <item name="android:windowBackground">@drawable/splash</item>
     </style>
 
-    <style name="DashboardTheme" parent="AppTheme">
+    <style name="SplashTheme" parent="SplashThemeBase"/>
+
+    <style name="DashboardThemeBase" parent="AppTheme">
         <item name="android:windowBackground">@drawable/background</item>
     </style>
 
-    <style name="BreviaryTheme" parent="AppTheme">
+    <style name="DashboardTheme" parent="DashboardThemeBase"/>
+
+    <style name="BreviaryThemeBase" parent="AppTheme">
         <item name="android:windowBackground">@drawable/brevijar_backbrevijar</item>
         <item name="colorPrimary">@color/breviary</item>
         <item name="colorPrimaryDark">@color/breviaryDark</item>
-        <item name="contentTitleBarSrc">@drawable/vijest_naslovnamp3</item>
+        <item name="contentTitleBarSrc">@drawable/content_titlebar_pjesmarica</item>
     </style>
 
-    <style name="MultimedijaTheme" parent="AppTheme">
+    <style name="BreviaryTheme" parent="BreviaryThemeBase"/>
+
+    <style name="MultimedijaThemeBase" parent="AppTheme">
         <item name="colorPrimary">@color/multimedija</item>
         <item name="colorPrimaryDark">@color/multimedijaDark</item>
-        <item name="contentListItemSrc">@drawable/izbornik_btn_normal_multimedija</item>
-        <item name="directoryListItemSrc">@drawable/izbornik_btn_normal_multimedija_folder</item>
-        <item name="listViewHeaderSrc">@drawable/izbornik_top_multimedija</item>
-        <item name="contentTitleBarSrc">@drawable/vijest_naslovnamultimedija</item>
-        <item name="fakeActionBarSrc">@drawable/toolbar_multimedija</item>
+        <item name="listItemContentSrc">@drawable/list_row_content_multimedija</item>
+        <item name="listItemFolderSrc">@drawable/list_row_folder_multimedija</item>
+        <item name="directoryHeaderSrc">@drawable/directory_header_multimedija</item>
+        <item name="contentTitleBarSrc">@drawable/content_titlebar_multimedija</item>
+        <item name="toolbarSrc">@drawable/toolbar_multimedija</item>
     </style>
 
-    <style name="AktualnoTheme" parent="AppTheme">
+    <style name="MultimedijaTheme" parent="MultimedijaThemeBase"/>
+
+    <style name="AktualnoThemeBase" parent="AppTheme">
         <item name="colorPrimary">@color/aktualno</item>
         <item name="colorPrimaryDark">@color/aktualnoDark</item>
-        <item name="contentListItemSrc">@drawable/izbornik_btn_normal_aktualno</item>
-        <item name="directoryListItemSrc">@drawable/izbornik_btn_normal_aktualno_folder</item>
-        <item name="listViewHeaderSrc">@drawable/izbornik_top_aktualno</item>
-        <item name="contentTitleBarSrc">@drawable/vijest_naslovnaaktualno</item>
-        <item name="fakeActionBarSrc">@drawable/toolbar_aktualno</item>
+        <item name="listItemContentSrc">@drawable/list_row_content_aktualno</item>
+        <item name="listItemFolderSrc">@drawable/list_row_folder_aktualno</item>
+        <item name="directoryHeaderSrc">@drawable/directory_header_aktualno</item>
+        <item name="contentTitleBarSrc">@drawable/content_titlebar_aktualno</item>
+        <item name="toolbarSrc">@drawable/toolbar_aktualno</item>
     </style>
 
-    <style name="OdgovoriTheme" parent="AppTheme">
+    <style name="AktualnoTheme" parent="AktualnoThemeBase"/>
+
+    <style name="OdgovoriThemeBase" parent="AppTheme">
         <item name="colorPrimary">@color/odgovori</item>
         <item name="colorPrimaryDark">@color/odgovoriDark</item>
-        <item name="contentListItemSrc">@drawable/izbornik_btn_normal_odgovori</item>
-        <item name="directoryListItemSrc">@drawable/izbornik_btn_normal_odgovori_folder</item>
-        <item name="listViewHeaderSrc">@drawable/izbornik_top_odgovori</item>
-        <item name="contentTitleBarSrc">@drawable/vijest_naslovnaodgovori</item>
-        <item name="fakeActionBarSrc">@drawable/toolbar_odgovori</item>
+        <item name="listItemContentSrc">@drawable/list_row_content_odgovori</item>
+        <item name="listItemFolderSrc">@drawable/list_row_folder_odgovori</item>
+        <item name="directoryHeaderSrc">@drawable/directory_header_odgovori</item>
+        <item name="contentTitleBarSrc">@drawable/content_titlebar_odgovori</item>
+        <item name="toolbarSrc">@drawable/toolbar_odgovori</item>
     </style>
 
-    <style name="PozivTheme" parent="AppTheme">
+    <style name="OdgovoriTheme" parent="OdgovoriThemeBase"/>
+
+    <style name="PozivThemeBase" parent="AppTheme">
         <item name="colorPrimary">@color/poziv</item>
         <item name="colorPrimaryDark">@color/pozivDark</item>
-        <item name="contentListItemSrc">@drawable/izbornik_btn_normal_poziv</item>
-        <item name="directoryListItemSrc">@drawable/izbornik_btn_normal_poziv_folder</item>
-        <item name="listViewHeaderSrc">@drawable/izbornik_top_poziv</item>
-        <item name="contentTitleBarSrc">@drawable/vijest_naslovnapoziv</item>
-        <item name="fakeActionBarSrc">@drawable/toolbar_poziv</item>
+        <item name="listItemContentSrc">@drawable/list_row_content_poziv</item>
+        <item name="listItemFolderSrc">@drawable/list_row_folder_poziv</item>
+        <item name="directoryHeaderSrc">@drawable/directory_header_poziv</item>
+        <item name="contentTitleBarSrc">@drawable/content_titlebar_poziv</item>
+        <item name="toolbarSrc">@drawable/toolbar_poziv</item>
     </style>
 
-    <style name="EvandjeljeTheme" parent="AppTheme">
+    <style name="PozivTheme" parent="PozivThemeBase"/>
+
+    <style name="EvandjeljeThemeBase" parent="AppTheme">
         <item name="colorPrimary">@color/evandjelje</item>
         <item name="colorPrimaryDark">@color/evandjeljeDark</item>
-        <item name="contentListItemSrc">@drawable/izbornik_btn_normal_evandjelje</item>
-        <item name="directoryListItemSrc">@drawable/izbornik_btn_normal_evandjelje_folder</item>
-        <item name="listViewHeaderSrc">@drawable/izbornik_top_evandjelje</item>
-        <item name="contentTitleBarSrc">@drawable/vijest_naslovnaevandjelje</item>
-        <item name="fakeActionBarSrc">@drawable/toolbar_evandjelje</item>
+        <item name="listItemContentSrc">@drawable/list_row_content_evandjelje</item>
+        <item name="listItemFolderSrc">@drawable/list_row_folder_evandjelje</item>
+        <item name="directoryHeaderSrc">@drawable/directory_header_evandjelje</item>
+        <item name="contentTitleBarSrc">@drawable/content_titlebar_evandjelje</item>
+        <item name="toolbarSrc">@drawable/toolbar_evandjelje</item>
     </style>
 
-    <style name="PropovjediTheme" parent="AppTheme">
+    <style name="EvandjeljeTheme" parent="EvandjeljeThemeBase"/>
+
+    <style name="PropovjediThemeBase" parent="AppTheme">
         <item name="colorPrimary">@color/propovjedi</item>
         <item name="colorPrimaryDark">@color/propovjediDark</item>
-        <item name="contentListItemSrc">@drawable/izbornik_btn_normal_propovijedi</item>
-        <item name="directoryListItemSrc">@drawable/izbornik_btn_normal_propovijedi_folder</item>
-        <item name="listViewHeaderSrc">@drawable/izbornik_top_propovjedi</item>
-        <item name="contentTitleBarSrc">@drawable/vijest_naslovnapropovjedi</item>
-        <item name="fakeActionBarSrc">@drawable/toolbar_propoviedi</item>
+        <item name="listItemContentSrc">@drawable/list_row_content_propovijedi</item>
+        <item name="listItemFolderSrc">@drawable/list_row_folder_propovijedi</item>
+        <item name="directoryHeaderSrc">@drawable/directory_header_propovijedi</item>
+        <item name="contentTitleBarSrc">@drawable/content_titlebar_propovijedi</item>
+        <item name="toolbarSrc">@drawable/toolbar_propovijedi</item>
     </style>
 
-    <style name="IzrekeTheme" parent="AppTheme">
+    <style name="PropovjediTheme" parent="PropovjediThemeBase"/>
+
+    <style name="IzrekeThemeBase" parent="AppTheme">
         <item name="colorPrimary">@color/izreke</item>
         <item name="colorPrimaryDark">@color/izrekeDark</item>
-        <item name="contentTitleBarSrc">@drawable/vijest_naslovnaizreke</item>
-        <item name="fakeActionBarSrc">@drawable/toolbar_izreke</item>
+        <item name="contentTitleBarSrc">@drawable/content_titlebar_izreke</item>
+        <item name="toolbarSrc">@drawable/toolbar_izreke</item>
     </style>
 
-    <style name="PjesmaricaTheme" parent="AppTheme">
+    <style name="IzrekeTheme" parent="IzrekeThemeBase"/>
+
+    <style name="PjesmaricaThemeBase" parent="AppTheme">
         <item name="colorPrimary">@color/pjesmarica</item>
         <item name="colorPrimaryDark">@color/pjesmaricaDark</item>
-        <item name="contentListItemSrc">@drawable/izbornik_btn_normal_mp3</item>
-        <item name="directoryListItemSrc">@drawable/izbornik_btn_normal_mp3_folder</item>
-        <item name="listViewHeaderSrc">@drawable/izbornik_top_mp3</item>
-        <item name="contentTitleBarSrc">@drawable/vijest_naslovnamp3</item>
-        <item name="fakeActionBarSrc">@drawable/toolbar_piesmarica</item>
+        <item name="listItemContentSrc">@drawable/list_row_content_pjesmarica</item>
+        <item name="listItemFolderSrc">@drawable/list_row_folder_pjesmarica</item>
+        <item name="directoryHeaderSrc">@drawable/directory_header_pjesmarica</item>
+        <item name="contentTitleBarSrc">@drawable/content_titlebar_pjesmarica</item>
+        <item name="toolbarSrc">@drawable/toolbar_piesmarica</item>
     </style>
 
-    <style name="DuhovnostTheme" parent="AppTheme">
+    <style name="PjesmaricaTheme" parent="PjesmaricaThemeBase"/>
+
+    <style name="DuhovnostThemeBase" parent="AppTheme">
         <item name="colorPrimary">@color/duhovnost</item>
         <item name="colorPrimaryDark">@color/duhovnostDark</item>
-        <item name="contentListItemSrc">@drawable/izbornik_btn_normal_duhovnosti</item>
-        <item name="directoryListItemSrc">@drawable/izbornik_btn_normal_duhovnosti_folder</item>
-        <item name="listViewHeaderSrc">@drawable/izbornik_top_duhovnost</item>
-        <item name="contentTitleBarSrc">@drawable/vijest_naslovnaduhovnost</item>
-        <item name="fakeActionBarSrc">@drawable/toolbar_duhovnost</item>
+        <item name="listItemContentSrc">@drawable/list_row_content_duhovnost</item>
+        <item name="listItemFolderSrc">@drawable/list_row_folder_duhovnost</item>
+        <item name="directoryHeaderSrc">@drawable/directory_header_duhovnost</item>
+        <item name="contentTitleBarSrc">@drawable/content_titlebar_duhovnost</item>
+        <item name="toolbarSrc">@drawable/toolbar_duhovnost</item>
     </style>
+
+    <style name="DuhovnostTheme" parent="DuhovnostThemeBase"/>
 
 </resources>

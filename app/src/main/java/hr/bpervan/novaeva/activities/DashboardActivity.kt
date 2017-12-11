@@ -209,7 +209,9 @@ class DashboardActivity : EvaBaseActivity(), OnTouchListener, OnClickListener {
     override fun onClick(v: View) {
 
         when (v.id) {
-            R.id.btnMolitvenik -> startActivity(Intent(this, PrayerBookActivity::class.java))
+            R.id.btnMolitvenik -> startActivity(Intent(this, PrayerBookActivity::class.java).apply {
+                putExtra("themeId", R.style.AppTheme)
+            })
             R.id.btnInfo -> startActivity(Intent(this, InfoActivity::class.java))
             R.id.btnBookmarks -> startActivity(Intent(this, BookmarksActivity::class.java))
             R.id.btnBrevijar -> startActivity(Intent(this, BreviaryActivity::class.java))

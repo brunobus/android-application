@@ -1,7 +1,6 @@
 package hr.bpervan.novaeva.adapters
 
 import android.graphics.Color
-import android.graphics.PorterDuff
 import android.support.v7.widget.RecyclerView
 import android.util.TypedValue
 import android.view.*
@@ -12,6 +11,7 @@ import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaContentMetadata
 import hr.bpervan.novaeva.model.EvaDirectoryMetadata
 import hr.bpervan.novaeva.model.TreeElementInfo
+import hr.bpervan.novaeva.utilities.EvaTouchFeedback
 import kotlinx.android.synthetic.main.folder_row.view.*
 import kotlinx.android.synthetic.main.vijest_row.view.*
 import java.text.SimpleDateFormat
@@ -55,23 +55,24 @@ class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
 
     override fun getItemCount(): Int = data.size + 1
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BindableViewHolder =
-            when (viewType) {
-                CONTENT_VIEW_TYPE -> {
-                    val view = LayoutInflater.from(parent.context).inflate(R.layout.vijest_row, parent, false)
-                    view.background.mutate()
-                    ContentInfoViewHolder(view)
-                }
-                SUBDIRECTORY_VIEW_TYPE -> {
-                    val view = LayoutInflater.from(parent.context).inflate(R.layout.folder_row, parent, false)
-                    view.background.mutate()
-                    DirectoryInfoViewHolder(view)
-                }
-                else -> {
-                    val view = LayoutInflater.from(parent.context).inflate(R.layout.progress_row, parent, false)
-                    ProgressBarViewHolder(view)
-                }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BindableViewHolder {
+        return when (viewType) {
+            CONTENT_VIEW_TYPE -> {
+                val view = LayoutInflater.from(parent.context).inflate(R.layout.vijest_row, parent, false)
+                view.background.mutate()
+                ContentInfoViewHolder(view)
             }
+            SUBDIRECTORY_VIEW_TYPE -> {
+                val view = LayoutInflater.from(parent.context).inflate(R.layout.folder_row, parent, false)
+                view.background.mutate()
+                DirectoryInfoViewHolder(view)
+            }
+            else -> {
+                val view = LayoutInflater.from(parent.context).inflate(R.layout.progress_row, parent, false)
+                ProgressBarViewHolder(view)
+            }
+        }
+    }
 
     override fun onBindViewHolder(holder: BindableViewHolder, position: Int) {
         val subject: Any =
@@ -100,7 +101,7 @@ class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
 
             tvMapaNaslov.text = directoryInfo.title
 
-            view.setOnTouchListener(TouchFeedbackSimulator(view))
+            view.setOnTouchListener(EvaTouchFeedback(view, themeColorTrans))
             view.setOnClickListener {
                 NovaEvaApp.bus.directoryOpenRequest.onNext(directoryInfo)
             }
@@ -160,7 +161,7 @@ class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
             tvDatum.text = dayMonth
             tvUvod.text = contentInfo.preview
 
-            view.setOnTouchListener(TouchFeedbackSimulator(view))
+            view.setOnTouchListener(EvaTouchFeedback(view, themeColorTrans))
 
             view.setOnClickListener {
                 NovaEvaApp.bus.contentOpenRequest.onNext(contentInfo)
@@ -175,44 +176,4 @@ class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
         }
     }
 
-    private inner class TouchFeedbackSimulator(val view: View) : View.OnTouchListener {
-        private val waitScrollTimeout = 200L
-        private val afterClickReleaseTimeout = 200L
-
-        private var cancelDelayedJob = false
-
-        override fun onTouch(v: View, event: MotionEvent): Boolean {
-            when (event.action) {
-                MotionEvent.ACTION_DOWN -> {
-                    view.postDelayed({
-                        if (!cancelDelayedJob) {
-                            setThemedColorFilter(view)
-                        }
-                    }, waitScrollTimeout)
-                    cancelDelayedJob = false
-                }
-                MotionEvent.ACTION_CANCEL -> {
-                    clearColorFilter(view)
-                    cancelDelayedJob = true
-                }
-                MotionEvent.ACTION_UP -> {
-                    cancelDelayedJob = true
-                    setThemedColorFilter(view)
-                    view.postDelayed({
-                        view.background.clearColorFilter()
-                    }, afterClickReleaseTimeout)
-                    view.performClick()
-                }
-            }
-            return true
-        }
-
-        private fun clearColorFilter(view: View) {
-            view.background.clearColorFilter()
-        }
-
-        private fun setThemedColorFilter(view: View) {
-            view.background.setColorFilter(themeColorTrans, PorterDuff.Mode.DARKEN)
-        }
-    }
 }

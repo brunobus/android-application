@@ -1,8 +1,5 @@
 package hr.bpervan.novaeva.utilities
 
-import android.os.Build
-import android.text.Html
-import android.text.Spanned
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable

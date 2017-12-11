@@ -1,94 +1,75 @@
 package hr.bpervan.novaeva.activities
 
 import android.app.AlertDialog
-import android.app.ListActivity
-import android.content.Intent
 import android.os.Bundle
-import android.view.View
-import android.view.View.OnClickListener
-import android.widget.AdapterView.OnItemClickListener
 import android.widget.EditText
-import android.widget.ListView
 import hr.bpervan.novaeva.NovaEvaApp
-import hr.bpervan.novaeva.adapters.PrayerBookAdapter
+import hr.bpervan.novaeva.fragments.PrayerContentFragment
+import hr.bpervan.novaeva.fragments.PrayerRecyclerFragment
 import hr.bpervan.novaeva.main.R
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import kotlinx.android.synthetic.main.activity_list_eva_content.*
+import java.util.concurrent.TimeUnit
 
-/*import com.google.analytics.tracking.android.EasyTracker;
-import com.google.analytics.tracking.android.GoogleAnalytics;
-import com.google.analytics.tracking.android.Tracker;*/
 
-class PrayerBookActivity : ListActivity(), OnClickListener {
+class PrayerBookActivity : EvaBaseActivity() {
     /*private Tracker mGaTracker;
 	private GoogleAnalytics mGaInstance;*/
 
-    private lateinit var mainListView: ListView
-    private lateinit var mainContentList: List<String>
+    private var themeId = -1
+
+    private val lifecycleBoundDisposables = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_prayer_book)
 
-        /*mGaInstance = GoogleAnalytics.getInstance(this);
-		mGaTracker = mGaInstance.getTracker("UA-40344870-1");*/
+        val inState: Bundle = savedInstanceState ?: intent.extras
+        themeId = inState.getInt("themeId", -1)
 
-        initUI()
-
-        mainContentList = listOf(
-                "Često tražene molitve",
-                "0. Uvod",
-                "1. Obrasci vjere",
-                "2. Osnovne molitve",
-                "3. Svagdanje jutarnje molitve",
-                "4. Svagdanje večernje molitve",
-                "5. Prigodne molitve",
-                "6. Molitve mladih",
-                "7. Molitve u kušnji i napasti",
-                "8. Molitve za obitelj i roditelje",
-                "9. Molitve za bolesne i umiruće",
-                "10. Molitve po posebnim nakanama",
-                "11. Molitve svetih i velikih ljudi",
-                "12. Kratke molitve i zazivi",
-                "13. Molitve Duhu Svetome",
-                "14. Euharistijska pobožnost",
-                "15. Pomirenje",
-                "16. Pobožnost križnog puta",
-                "17. Deventica i krunica Božanskom milosrđu",
-                "18. Molitve Blaženoj Djevici Mariji",
-                "19. Salezijanske molitve",
-                "20. Molitve mladih",
-                "21. Molitve svetima",
-                "22. Lectio Divina",
-                "23. Moliti igrajući pred Gospodinom")
-
-
-        mainListView.adapter = PrayerBookAdapter(this, mainContentList)
-
-        mainListView.onItemClickListener = OnItemClickListener { _, _, position, _ ->
-            //mGaTracker.sendEvent("Molitvenik", "OtvorenaMolitva", String.valueOf(position), null);
-
-            startActivity(Intent(this, PrayerContentActivity::class.java).apply {
-                putExtra("id", position)
-                putExtra("title", mainContentList[position])
-            })
+        if (themeId != -1) {
+            setTheme(themeId)
         }
+
+        setContentView(R.layout.activity_list_eva_content)
+
+        if (supportFragmentManager.findFragmentByTag(TAG_RETAINED_PRAYERBOOK_FRAGMENT) == null) {
+            supportFragmentManager
+                    .beginTransaction()
+                    .setCustomAnimations(R.anim.move_right_in, R.anim.move_left_out, R.anim.move_left_in, R.anim.move_right_out)
+                    .add(R.id.evaDirectoryFragmentFrame, PrayerRecyclerFragment.newInstance(), TAG_RETAINED_PRAYERBOOK_FRAGMENT)
+                    .commit()
+        }
+
+        btnSearch.setOnClickListener { showSearchPopup() }
     }
 
-    private fun initUI() {
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putInt("themeId", themeId)
 
-        this.title = "Molitvenik"
-
-        mainListView = listView
-        mainListView.isClickable = true
-
-//        btnSearch.setOnClickListener(this)
+        super.onSaveInstanceState(outState)
     }
 
-    override fun onClick(v: View) {
-        when (v.id) {
-            R.id.btnSearch -> showSearchPopup()
-//            R.id.btnHome -> NovaEvaApp.goHome(this)
-//            R.id.btnBack -> onBackPressed()
-        }
+    override fun onResume() {
+        super.onResume()
+
+        lifecycleBoundDisposables.add(NovaEvaApp.bus.prayerOpenRequest
+                .throttleFirst(500, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { prayer ->
+                    supportFragmentManager
+                            .beginTransaction()
+                            .setCustomAnimations(R.anim.move_right_in, R.anim.move_left_out, R.anim.move_left_in, R.anim.move_right_out)
+                            .replace(R.id.evaDirectoryFragmentFrame, PrayerContentFragment.newInstance(prayer))
+                            .addToBackStack(null)
+                            .commit()
+                })
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        lifecycleBoundDisposables.clear() //clears and disposes
     }
 
     private fun showSearchPopup() {
@@ -98,12 +79,15 @@ class PrayerBookActivity : ListActivity(), OnClickListener {
         val et = EditText(this)
         searchBuilder.setView(et)
 
-        searchBuilder.setPositiveButton("Pretraži") { _, _ ->
+        searchBuilder.setPositiveButton("Pretrazi") { _, _ ->
             val search = et.text.toString()
-            NovaEvaApp.goSearch(search, this@PrayerBookActivity)
+            //todo
         }
         searchBuilder.setNegativeButton("Odustani") { _, _ -> }
         searchBuilder.show()
     }
 
+    companion object {
+        val TAG_RETAINED_PRAYERBOOK_FRAGMENT = "RetainedPrayerbookFragment"
+    }
 }

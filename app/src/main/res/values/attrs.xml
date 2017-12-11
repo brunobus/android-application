@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <attr name="fakeActionBarSrc" format="reference"/>
-    <attr name="contentListItemSrc" format="reference"/>
-    <attr name="directoryListItemSrc" format="reference"/>
-    <attr name="listViewHeaderSrc" format="reference"/>
+    <attr name="toolbarSrc" format="reference"/>
+    <attr name="listItemContentSrc" format="reference"/>
+    <attr name="listItemFolderSrc" format="reference"/>
+    <attr name="directoryHeaderSrc" format="reference"/>
     <attr name="contentTitleBarSrc" format="reference"/>
 </resources>

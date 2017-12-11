@@ -37,9 +37,6 @@
             android:name="hr.bpervan.novaeva.activities.EvaQuotesActivity"
             android:label="@string/title_activity_izreke"/>
         <activity
-            android:name="hr.bpervan.novaeva.activities.PrayerContentActivity"
-            android:label="@string/title_activity_molitvenik_detalji"/>
-        <activity
             android:name="hr.bpervan.novaeva.activities.SearchActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="@string/title_activity_search"

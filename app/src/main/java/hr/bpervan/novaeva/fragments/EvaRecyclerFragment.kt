@@ -53,11 +53,11 @@ class EvaRecyclerFragment : Fragment() {
     companion object {
 
         fun newInstance(directoryId: Long, directoryTitle: String, isSubDirectory: Boolean, themeId: Int): EvaRecyclerFragment {
-            val evaRecyclerFragment = EvaRecyclerFragment()
-            evaRecyclerFragment.arguments = Bundle().apply {
-                putParcelable("fragmentConfig", EvaRecyclerFragment.FragmentConfig(directoryId, directoryTitle, isSubDirectory, themeId))
+            return EvaRecyclerFragment().apply {
+                arguments = Bundle().apply {
+                    putParcelable("fragmentConfig", EvaRecyclerFragment.FragmentConfig(directoryId, directoryTitle, isSubDirectory, themeId))
+                }
             }
-            return evaRecyclerFragment
         }
     }
 
@@ -160,13 +160,16 @@ class EvaRecyclerFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         return inflater.inflate(R.layout.eva_directory, container, false).apply {
-
             val infoText = if (fragmentConfig.isSubDirectory) "NALAZITE SE U MAPI" else "NALAZITE SE U KATEGORIJI"
-            evaDirectoryCollapsingBar.izbornikTop.izbornikTopNatpis.text = infoText
-            evaDirectoryCollapsingBar.izbornikTop.izbornikTopNazivKategorije.text = fragmentConfig.directoryTitle
 
-            evaDirectoryCollapsingBar.izbornikTop.izbornikTopNazivKategorije.typeface = NovaEvaApp.openSansBold
-            evaDirectoryCollapsingBar.izbornikTop.izbornikTopNatpis.typeface = NovaEvaApp.openSansBold
+            evaDirectoryCollapsingBar.izbornikTop.izbornikTopNatpis.apply {
+                text = infoText
+                typeface = NovaEvaApp.openSansBold
+            }
+            evaDirectoryCollapsingBar.izbornikTop.izbornikTopNazivKategorije.apply {
+                text = fragmentConfig.directoryTitle
+                typeface = NovaEvaApp.openSansBold
+            }
 
             val recyclerView = evaRecyclerView as RecyclerView
 

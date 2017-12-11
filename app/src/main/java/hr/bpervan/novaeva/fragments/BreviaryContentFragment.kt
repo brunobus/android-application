@@ -52,49 +52,47 @@ class BreviaryContentFragment : EvaBaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val simpleContentView = inflater.inflate(R.layout.eva_simple_content, container, false)
-
-        val cachedWebViewInst: WebView? = cachedWebViewInstance
-        if (cachedWebViewInst == null) {
-            simpleContentView.webView.settings.builtInZoomControls = true
-            simpleContentView.webView.settings.displayZoomControls = false
+        return inflater.inflate(R.layout.eva_simple_content, container, false).apply {
+            val cachedWebViewInst: WebView? = cachedWebViewInstance
+            if (cachedWebViewInst == null) {
+                webView.settings.builtInZoomControls = true
+                webView.settings.displayZoomControls = false
 //            webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
 //            webView.setScrollbarFadingEnabled(true);
 //            webView.settings.defaultTextEncodingName = "utf-8"
 //            webView.setBackgroundColor(color.background_light);
 
-            simpleContentView.webView.setOnLongClickListener { true }
-            simpleContentView.webView.isLongClickable = false
+                webView.setOnLongClickListener { true }
+                webView.isLongClickable = false
 
-            cachedWebViewInstance = simpleContentView.webView
+                cachedWebViewInstance = webView
 
-            fetchBreviary()
-        } else {
-            val nestedScrollView = simpleContentView.simpleContentScrollView as NestedScrollView
-            nestedScrollView.removeAllViews()
-            nestedScrollView.addView(cachedWebViewInst)
+                fetchBreviary()
+            } else {
+                val nestedScrollView = simpleContentScrollView as NestedScrollView
+                nestedScrollView.removeAllViews()
+                nestedScrollView.addView(cachedWebViewInst)
+            }
+
+            val title = "Brevijar - " + when (breviaryId) {
+                1 -> "Jučer, Jutarnja"
+                2 -> "Jučer, Večernja"
+                3 -> "Jučer, Povečerje"
+                4 -> "Danas, Jutarnja"
+                5 -> "Danas, Večernja"
+                6 -> "Danas, Povečerje"
+                7 -> "Sutra, Jutarnja"
+                8 -> "Sutra, Večernja"
+                else -> "Sutra, Povečerje"
+            }
+            evaCollapsingBar.collapsingToolbar.title = title
+
+            val coverImageView = evaCollapsingBar.coverImage
+
+            if (coverImageUrl != null && coverImageView != null) {
+                imageLoader.displayImage(coverImageUrl, coverImageView, ImageLoaderConfigurator.createDefaultDisplayImageOptions(true))
+            }
         }
-
-        val title = "Brevijar - " + when (breviaryId) {
-            1 -> "Jučer, Jutarnja"
-            2 -> "Jučer, Večernja"
-            3 -> "Jučer, Povečerje"
-            4 -> "Danas, Jutarnja"
-            5 -> "Danas, Večernja"
-            6 -> "Danas, Povečerje"
-            7 -> "Sutra, Jutarnja"
-            8 -> "Sutra, Večernja"
-            else -> "Sutra, Povečerje"
-        }
-        simpleContentView.evaCollapsingBar.collapsingToolbar.title = title
-
-        val coverImageView = simpleContentView.evaCollapsingBar.coverImage
-
-        if (coverImageUrl != null && coverImageView != null) {
-            imageLoader.displayImage(coverImageUrl, coverImageView, ImageLoaderConfigurator.createDefaultDisplayImageOptions(true))
-        }
-
-        return simpleContentView
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
