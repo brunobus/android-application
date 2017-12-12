@@ -36,6 +36,8 @@ class BreviaryContentFragment : EvaBaseFragment() {
     private var breviaryId: Int = -1
     private var coverImageUrl: String? = null
 
+    private var breviaryText: String? = null
+
     private var loadBreviaryDisposable: Disposable? = null
 
     /*webview instance is being cached because its content can only be loaded asynchronously and his parent scrollview can't restore its scroll position*/
@@ -49,25 +51,30 @@ class BreviaryContentFragment : EvaBaseFragment() {
         val inState = savedInstanceState ?: arguments!!
         breviaryId = inState.getInt(BREVIARY_ID_KEY, 4)
         coverImageUrl = prefs.getString("hr.bpervan.novaeva.brevijarheaderimage", null)
+
+        fetchBreviary()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.eva_simple_content, container, false).apply {
             val cachedWebViewInst: WebView? = cachedWebViewInstance
             if (cachedWebViewInst == null) {
-                webView.settings.builtInZoomControls = true
-                webView.settings.displayZoomControls = false
-//            webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
-//            webView.setScrollbarFadingEnabled(true);
-//            webView.settings.defaultTextEncodingName = "utf-8"
-//            webView.setBackgroundColor(color.background_light);
 
-                webView.setOnLongClickListener { true }
-                webView.isLongClickable = false
+                cachedWebViewInstance = webView.apply {
+                    settings.builtInZoomControls = true
+                    settings.displayZoomControls = false
+                    setOnLongClickListener { true }
+                    isLongClickable = false
+//                    setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
+//                    setScrollbarFadingEnabled(true);
+//                    settings.defaultTextEncodingName = "utf-8"
+//                    setBackgroundColor(color.background_light);
+                }
 
-                cachedWebViewInstance = webView
+                if (breviaryText != null) {
+                    loadBreviary()
+                }
 
-                fetchBreviary()
             } else {
                 val nestedScrollView = simpleContentScrollView as NestedScrollView
                 nestedScrollView.removeAllViews()
@@ -123,7 +130,8 @@ class BreviaryContentFragment : EvaBaseFragment() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ breviary ->
-                    loadBreviary(breviary.text)
+                    breviaryText = breviary.text
+                    loadBreviary()
                 }) {
                     context?.let { ctx ->
                         NovaEvaApp.showFetchErrorSnackbar(it, ctx, view)
@@ -131,7 +139,7 @@ class BreviaryContentFragment : EvaBaseFragment() {
                 }
     }
 
-    private fun loadBreviary(breviaryText: String?) {
+    private fun loadBreviary() {
         cachedWebViewInstance?.loadDataWithBaseURL(null, breviaryText, "text/html", "utf-8", "")
     }
 }

@@ -42,7 +42,7 @@ class EvaQuotesFragment : EvaBaseFragment() {
         if (savedInstanceState != null) {
             contentTitle = savedInstanceState.getString("contentTitle")
             contentData = savedInstanceState.getString("contentData")
-            contentId = savedInstanceState.getLong("contentId", -1)
+            contentId = savedInstanceState.getLong("contentId", -1L)
         } else {
             NovaEvaApp.instance?.getTracker(NovaEvaApp.TrackerName.APP_TRACKER)?.send(
                     HitBuilders.EventBuilder()
@@ -52,15 +52,17 @@ class EvaQuotesFragment : EvaBaseFragment() {
                             .build()
             )
         }
+
+        if (contentTitle == null || contentData == null || contentId == -1L) {
+            fetchRandomQuote()
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val izrekeView = inflater.inflate(R.layout.fragment_eva_quotes, container, false)
 
-        if (contentTitle != null && contentData != null) {
+        if (contentTitle != null && contentData != null && contentId != -1L) {
             applyContent(izrekeView)
-        } else {
-            loadRandomIzreka(izrekeView)
         }
 
         applyFakeActionBarVisibility(izrekeView)
@@ -72,7 +74,7 @@ class EvaQuotesFragment : EvaBaseFragment() {
         }
 
         izrekeView.btnObnovi.setOnClickListener {
-            loadRandomIzreka(izrekeView)
+            fetchRandomQuote()
         }
 
         izrekeView.fakeActionBar.btnShare.setOnClickListener {
@@ -119,7 +121,7 @@ class EvaQuotesFragment : EvaBaseFragment() {
         super.onDestroy()
     }
 
-    private fun loadRandomIzreka(izrekeView: View) {
+    private fun fetchRandomQuote() {
         loadRandomIzrekaDisposable?.dispose()
 
         loadRandomIzrekaDisposable = NovaEvaService.instance
@@ -132,10 +134,14 @@ class EvaQuotesFragment : EvaBaseFragment() {
                         contentData = contentInfo.text
                         contentId = contentInfo.contentId
 
-                        applyContent(izrekeView)
+                        view?.let {
+                            applyContent(it)
+                        }
                     }
                 }) {
-                    Snackbar.make(izrekeView, "Internetska veza nije dostupna", Snackbar.LENGTH_SHORT).show()
+                    view?.let { view ->
+                        Snackbar.make(view, "Internetska veza nije dostupna", Snackbar.LENGTH_SHORT).show()
+                    }
                 }
     }
 
