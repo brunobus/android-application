@@ -1,34 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?attr/directoryHeaderSrc"
-    android:id="@+id/izbornikTopPortrait">
+    android:background="?attr/directoryHeaderSrc">
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginLeft="60dp"
-        android:layout_marginStart="60dp"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="5dp"
-        android:textSize="10sp"
-        android:textColor="#ffffff"
         android:id="@+id/izbornikTopNatpis"
-        android:text="NALAZITE SE U KATEGORIJI" />
-
-    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
         android:layout_marginLeft="60dp"
         android:layout_marginStart="60dp"
-        android:layout_below="@+id/izbornikTopNatpis"
+        android:layout_marginTop="6dp"
+        android:text="NALAZITE SE U KATEGORIJI"
         android:textColor="#ffffff"
-        android:id="@+id/izbornikTopNazivKategorije"
-        android:text="IZREKE" />
+        android:textSize="12sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/izbornikTopNazivKategorije"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
-</RelativeLayout>
+    <TextView
+        android:id="@+id/izbornikTopNazivKategorije"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="6dp"
+        android:layout_marginLeft="60dp"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="6dp"
+        android:text="KATEGORIJA"
+        android:textColor="#ffffff"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/izbornikTopNatpis"/>
+
+</android.support.constraint.ConstraintLayout>
