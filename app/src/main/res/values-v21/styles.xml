@@ -12,16 +12,22 @@
 
     <style name="AppTheme" parent="AppThemeBase">
         <item name="android:colorPrimary">@color/propovjedi</item>
-        <item name="android:colorPrimaryDark">@color/propovjediDark</item>
-        <item name="android:colorAccent">@color/LightGoldenrodYellow</item>
-        <item name="android:navigationBarColor">@color/propovjedi</item>
+        <item name="android:colorPrimaryDark">@color/Black</item>
+        <item name="android:colorAccent">@color/DimGray</item>
+        <item name="android:navigationBarColor">@color/Black</item>
+    </style>
+
+    <style name="DashboardTheme" parent="DashboardThemeBase">
+        <item name="android:colorPrimary">@color/novaEva</item>
+        <item name="android:colorPrimaryDark">@color/novaEvaDark</item>
+        <item name="android:navigationBarColor">@color/novaEvaDark</item>
     </style>
 
     <style name="BreviaryTheme" parent="BreviaryThemeBase">
         <item name="android:windowBackground">@drawable/brevijar_backbrevijar</item>
         <item name="android:colorPrimary">@color/breviary</item>
         <item name="android:colorPrimaryDark">@color/breviaryDark</item>
-        <item name="android:navigationBarColor">@color/breviary</item>
+        <item name="android:navigationBarColor">@color/breviaryDark</item>
     </style>
 
     <style name="MultimedijaTheme" parent="MultimedijaThemeBase">

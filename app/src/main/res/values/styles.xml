@@ -33,8 +33,8 @@
     <style name="AppThemeBase" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowNoTitle">true</item>
         <item name="colorPrimary">@color/propovjedi</item>
-        <item name="colorPrimaryDark">@color/propovjediDark</item>
-        <item name="colorAccent">@color/LightGoldenrodYellow</item>
+        <item name="colorPrimaryDark">@color/Black</item>
+        <item name="colorAccent">@color/DimGray</item>
         <item name="listItemContentSrc">@drawable/list_row_content_propovijedi</item>
         <item name="listItemFolderSrc">@drawable/list_row_folder_propovijedi</item>
         <item name="directoryHeaderSrc">@drawable/directory_header_default</item>
@@ -54,7 +54,10 @@
         <item name="android:windowBackground">@drawable/background</item>
     </style>
 
-    <style name="DashboardTheme" parent="DashboardThemeBase"/>
+    <style name="DashboardTheme" parent="DashboardThemeBase">
+        <item name="colorPrimary">@color/novaEva</item>
+        <item name="colorPrimaryDark">@color/novaEvaDark</item>
+    </style>
 
     <style name="BreviaryThemeBase" parent="AppTheme">
         <item name="android:windowBackground">@drawable/brevijar_backbrevijar</item>
