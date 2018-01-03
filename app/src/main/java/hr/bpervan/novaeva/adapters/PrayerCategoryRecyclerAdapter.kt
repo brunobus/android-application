@@ -12,6 +12,7 @@ import android.widget.TextView
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.Prayer
+import hr.bpervan.novaeva.utilities.EvaTouchFeedback
 import kotlinx.android.synthetic.main.recycler_item_prayer.view.*
 import net.cachapa.expandablelayout.ExpandableLayout
 
@@ -75,15 +76,18 @@ class PrayerCategoryRecyclerAdapter(private val prayerList: List<Prayer>) :
 
         fun bindTo(prayer: Prayer) {
 
-            val position = adapterPosition
-            val isSelected = position == expandedItem
+//            val position = adapterPosition
+//            val isSelected = position == expandedItem
 
             prayerTitle.text = prayer.title
             prayerContent.loadUrl(prayer.contentUrl)
 
-            expandableLayout.setExpanded(isSelected, false)
+            expandableLayout.setExpanded(false, false)
 
-            view.setOnClickListener(this@PrayerViewHolder)
+            view.prayerTitleConstraintLayout.let {
+                it.setOnTouchListener(EvaTouchFeedback(it, themeColorTrans))
+                it.setOnClickListener(this@PrayerViewHolder)
+            }
         }
 
         override fun onClick(v: View?) {

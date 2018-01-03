@@ -45,7 +45,7 @@ class PrayerBookRecyclerAdapter(private val prayerCategoryList: List<PrayerCateg
     }
 
     private inner class PrayerCategoryViewHolder(view: View) : BindableViewHolder(view) {
-        private val prayerCategoryTitle: TextView = view.prayerTitleTextView
+        private val prayerCategoryTitle: TextView = view.prayerCategoryTitleTextView
 
         init {
             prayerCategoryTitle.typeface = NovaEvaApp.openSansRegular
