@@ -1,132 +1,145 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/relativeLayout1"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/evaContentRow"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?attr/listItemContentSrc"
-    android:baselineAligned="false"
-    android:orientation="horizontal">
+    android:background="?attr/listItemContentSrc">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1">
-
-        <TextView
-            android:id="@+id/tvNaslov"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:text="@string/title_default"
-            android:textColor="#4c4c4c"
-            android:textSize="16sp"/>
-
-        <TextView
-            android:id="@+id/tvUvod"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/tvNaslov"
-            android:layout_marginEnd="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="4dp"
-            android:layout_toEndOf="@+id/tvUvodNatpis"
-            android:layout_toRightOf="@+id/tvUvodNatpis"
-            android:ellipsize="end"
-            android:maxLines="2"
-            android:textColor="#7d7d7d"
-            android:textSize="13sp"/>
-
-        <TextView
-            android:id="@+id/tvUvodNatpis"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/tvNaslov"
-            android:layout_marginLeft="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="4dp"
-            android:text="@string/introduction_identifier"
-            android:textColor="#7d7d7d"
-            android:textSize="13sp"/>
-    </RelativeLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/tvNaslov"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:layout_marginEnd="2dp"
+        android:layout_marginEnd="20dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginRight="2dp"
+        android:layout_marginRight="20dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_weight="3"
+        android:ellipsize="end"
+        android:lines="1"
+        android:maxLines="1"
+        android:text="@string/title_default"
+        android:textColor="#4c4c4c"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toStartOf="@id/infoConstraintLayout"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
-        android:orientation="vertical">
+    <TextView
+        android:id="@+id/tvUvodNatpis"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        android:ellipsize="end"
+        android:lines="1"
+        android:maxLines="1"
+        android:text="@string/introduction_identifier"
+        android:textColor="#7d7d7d"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvNaslov"
+        app:layout_constraintVertical_bias="0"/>
+
+    <TextView
+        android:id="@+id/tvUvod"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginStart="10dp"
+        android:ellipsize="end"
+        android:lines="1"
+        android:maxLines="1"
+        android:textColor="#7d7d7d"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/infoConstraintLayout"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toEndOf="@id/tvUvodNatpis"
+        app:layout_constraintTop_toBottomOf="@id/tvNaslov"
+        app:layout_constraintVertical_bias="0"/>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/infoConstraintLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.95"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.45">
 
         <TextView
             android:id="@+id/tvDatum"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
             android:maxLines="1"
             android:text="14.2."
             android:textColor="#ffffff"
-            android:textSize="22sp"/>
+            android:textSize="22sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <TextView
             android:id="@+id/tvGodinaSatMinuta"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
             android:maxLines="1"
             android:text="2014, 14:22"
             android:textColor="#7fffffff"
-            android:textSize="@dimen/listaVijestiGodinaSatMinuta"/>
+            android:textSize="@dimen/listaVijestiGodinaSatMinuta"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvDatum"/>
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="5dp"
-            android:orientation="horizontal">
+        <ImageView
+            android:id="@+id/imgViewMp3"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:contentDescription="@string/dummyDesc"
+            android:src="@drawable/izbornik_mp3"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toStartOf="@+id/imgViewLink"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvGodinaSatMinuta"/>
 
-            <ImageView
-                android:id="@+id/imgViewMp3"
-                android:layout_width="12dp"
-                android:layout_height="12dp"
-                android:contentDescription="@string/dummyDesc"
-                android:src="@drawable/izbornik_mp3"
-                android:visibility="invisible"/>
+        <ImageView
+            android:id="@+id/imgViewLink"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:contentDescription="@string/dummyDesc"
+            android:src="@drawable/izbornik_link"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toStartOf="@+id/imgViewTxt"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/imgViewMp3"
+            app:layout_constraintTop_toBottomOf="@id/tvGodinaSatMinuta"/>
 
-            <ImageView
-                android:id="@+id/imgViewLink"
-                android:layout_width="12dp"
-                android:layout_height="12dp"
-                android:contentDescription="@string/dummyDesc"
-                android:src="@drawable/izbornik_link"
-                android:visibility="invisible"/>
+        <ImageView
+            android:id="@+id/imgViewTxt"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:contentDescription="@string/dummyDesc"
+            android:src="@drawable/izbornik_txt"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/imgViewLink"
+            app:layout_constraintTop_toBottomOf="@id/tvGodinaSatMinuta"/>
 
-            <ImageView
-                android:id="@+id/imgViewTxt"
-                android:layout_width="12dp"
-                android:layout_height="12dp"
-                android:contentDescription="@string/dummyDesc"
-                android:src="@drawable/izbornik_txt"
-                android:visibility="invisible"/>
-        </LinearLayout>
-    </LinearLayout>
+    </android.support.constraint.ConstraintLayout>
 
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>
