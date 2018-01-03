@@ -14,7 +14,7 @@ import hr.bpervan.novaeva.model.EvaCategory
 import hr.bpervan.novaeva.services.NovaEvaService
 import hr.bpervan.novaeva.utilities.subscribeAsync
 import io.reactivex.disposables.Disposable
-import kotlinx.android.synthetic.main.eva_collapsing_bar.view.*
+import kotlinx.android.synthetic.main.collapsing_content_header.view.*
 import kotlinx.android.synthetic.main.izreke_fake_action_bar.view.*
 import kotlinx.android.synthetic.main.fragment_eva_quotes.view.*
 

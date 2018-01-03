@@ -8,7 +8,7 @@
 
     <include
         android:id="@+id/evaDirectoryCollapsingBar"
-        layout="@layout/eva_directory_collapsing_bar"/>
+        layout="@layout/collapsing_directory_header"/>
 
     <include
         android:id="@+id/evaRecyclerView"

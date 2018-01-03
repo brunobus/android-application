@@ -14,7 +14,7 @@ import hr.bpervan.novaeva.utilities.ImageLoaderConfigurator
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.eva_collapsing_bar.view.*
+import kotlinx.android.synthetic.main.collapsing_content_header.view.*
 import kotlinx.android.synthetic.main.eva_simple_content.view.*
 
 /**

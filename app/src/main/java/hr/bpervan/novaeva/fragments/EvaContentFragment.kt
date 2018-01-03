@@ -35,7 +35,7 @@ import hr.bpervan.novaeva.utilities.ImageLoaderConfigurator
 import hr.bpervan.novaeva.utilities.subscribeAsync
 import io.reactivex.disposables.Disposable
 import io.realm.Realm
-import kotlinx.android.synthetic.main.eva_collapsing_bar.view.*
+import kotlinx.android.synthetic.main.collapsing_content_header.view.*
 import kotlinx.android.synthetic.main.fragment_eva_content.view.*
 import kotlinx.android.synthetic.main.vijest_fake_action_bar.view.*
 

@@ -8,6 +8,7 @@ import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.utilities.ImageLoaderConfigurator
 import kotlinx.android.synthetic.main.activity_breviary.*
+import kotlinx.android.synthetic.main.collapsing_breviary_header.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -35,8 +36,8 @@ class BreviaryActivity : EvaBaseActivity() {
 
         val headerUrl = prefs.getString("hr.bpervan.novaeva.brevijarheaderimage", null)
 
-        if (headerUrl != null && coverImage != null) {
-            imageLoader.displayImage(headerUrl, coverImage, ImageLoaderConfigurator.createDefaultDisplayImageOptions(true))
+        if (headerUrl != null && breviaryCoverImage != null) {
+            imageLoader.displayImage(headerUrl, breviaryCoverImage, ImageLoaderConfigurator.createDefaultDisplayImageOptions(true))
         }
 
         btnJucerJutarnja.setOnClickListener(BreviaryClickListener(1))

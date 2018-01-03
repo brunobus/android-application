@@ -6,7 +6,7 @@ import android.widget.EditText
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
 import kotlinx.android.synthetic.main.eva_simple_content.*
-import kotlinx.android.synthetic.main.eva_collapsing_bar.view.*
+import kotlinx.android.synthetic.main.collapsing_content_header.view.*
 
 class InfoActivity : EvaBaseActivity() {
 

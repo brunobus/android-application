@@ -28,7 +28,7 @@ import io.reactivex.disposables.Disposable
 import io.realm.Realm
 import io.realm.Sort
 import kotlinx.android.synthetic.main.eva_directory.view.*
-import kotlinx.android.synthetic.main.eva_directory_collapsing_bar.view.*
+import kotlinx.android.synthetic.main.collapsing_directory_header.view.*
 import kotlinx.android.synthetic.main.izbornik_top.view.*
 
 /**

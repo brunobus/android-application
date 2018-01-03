@@ -12,7 +12,7 @@
 
     <include
         android:id="@+id/evaCollapsingBar"
-        layout="@layout/eva_collapsing_bar"/>
+        layout="@layout/collapsing_content_header"/>
 
     <android.support.v4.widget.NestedScrollView
         android:id="@+id/simpleContentScrollView"
