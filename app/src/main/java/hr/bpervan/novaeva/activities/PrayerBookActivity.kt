@@ -4,8 +4,8 @@ import android.app.AlertDialog
 import android.os.Bundle
 import android.widget.EditText
 import hr.bpervan.novaeva.NovaEvaApp
-import hr.bpervan.novaeva.fragments.PrayerContentFragment
-import hr.bpervan.novaeva.fragments.PrayerRecyclerFragment
+import hr.bpervan.novaeva.fragments.PrayerCategoryRecyclerFragment
+import hr.bpervan.novaeva.fragments.PrayerBookRecyclerFragment
 import hr.bpervan.novaeva.main.R
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -37,7 +37,7 @@ class PrayerBookActivity : EvaBaseActivity() {
             supportFragmentManager
                     .beginTransaction()
                     .setCustomAnimations(R.anim.move_right_in, R.anim.move_left_out, R.anim.move_left_in, R.anim.move_right_out)
-                    .add(R.id.evaDirectoryFragmentFrame, PrayerRecyclerFragment.newInstance(), TAG_RETAINED_PRAYERBOOK_FRAGMENT)
+                    .add(R.id.evaDirectoryFragmentFrame, PrayerBookRecyclerFragment.newInstance(), TAG_RETAINED_PRAYERBOOK_FRAGMENT)
                     .commit()
         }
 
@@ -53,14 +53,14 @@ class PrayerBookActivity : EvaBaseActivity() {
     override fun onResume() {
         super.onResume()
 
-        lifecycleBoundDisposables.add(NovaEvaApp.bus.prayerOpenRequest
+        lifecycleBoundDisposables.add(NovaEvaApp.bus.prayerCategoryOpenRequest
                 .throttleFirst(500, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { prayer ->
+                .subscribe { prayerCategory ->
                     supportFragmentManager
                             .beginTransaction()
                             .setCustomAnimations(R.anim.move_right_in, R.anim.move_left_out, R.anim.move_left_in, R.anim.move_right_out)
-                            .replace(R.id.evaDirectoryFragmentFrame, PrayerContentFragment.newInstance(prayer))
+                            .replace(R.id.evaDirectoryFragmentFrame, PrayerCategoryRecyclerFragment.newInstance(prayerCategory))
                             .addToBackStack(null)
                             .commit()
                 })

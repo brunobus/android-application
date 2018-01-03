@@ -76,4 +76,3 @@ open class EvaContent(
         var videoURL: String? = null,
         var audioURL: String? = null
 ) : RealmObject()
-

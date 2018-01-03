@@ -26,9 +26,11 @@ enum class LocalCategory(val rawName: String) {
     val rawNameVertical = rawName.vertical()
 }
 
-class Prayer(val prayerId: Int,
-             val prayerTitle: String,
-             val prayerUrl: String) : Parcelable {
+class Prayer(val title: String, val contentUrl: String)
+
+class PrayerCategory(val id: Int,
+                     val title: String,
+                     val url: String) : Parcelable {
 
     constructor(parcel: Parcel) : this(
             parcel.readInt(),
@@ -36,20 +38,20 @@ class Prayer(val prayerId: Int,
             parcel.readString())
 
     override fun writeToParcel(dest: Parcel, flags: Int) {
-        dest.writeInt(prayerId)
-        dest.writeString(prayerTitle)
-        dest.writeString(prayerUrl)
+        dest.writeInt(id)
+        dest.writeString(title)
+        dest.writeString(url)
     }
 
     override fun describeContents(): Int = 0
 
-    companion object CREATOR : Parcelable.Creator<Prayer> {
-        override fun createFromParcel(parcel: Parcel): Prayer = Prayer(parcel)
-        override fun newArray(size: Int): Array<Prayer?> = arrayOfNulls(size)
+    companion object CREATOR : Parcelable.Creator<PrayerCategory> {
+        override fun createFromParcel(parcel: Parcel): PrayerCategory = PrayerCategory(parcel)
+        override fun newArray(size: Int): Array<PrayerCategory?> = arrayOfNulls(size)
     }
 }
 
-val hardcodedPrayerList: List<Prayer> = mapOf(
+val HARDCODED_PRAYER_CATEGORY_LIST: List<PrayerCategory> = mapOf(
         "Često tražene molitve" to "24_Najcesce_Koristene_Molitve.htm",
         "0. Uvod" to "0_Uvod.htm",
         "1. Obrasci vjere" to "1_Obrasci_vjere.htm",
@@ -77,7 +79,7 @@ val hardcodedPrayerList: List<Prayer> = mapOf(
         "23. Moliti igrajući pred Gospodinom" to "23_Moliti_igrajuci_pred_Gospodinom.htm")
         .entries
         .mapIndexed { index, entry ->
-            Prayer(index, entry.key, "file:///android_asset/${entry.value}")
+            PrayerCategory(index, entry.key, "file:///android_asset/${entry.value}")
         }
 
 private fun String.vertical() = this.asSequence().joinToString(separator = "\n")

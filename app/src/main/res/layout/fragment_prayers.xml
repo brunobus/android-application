@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/evaSimpleContent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:keepScreenOn="true"
+    tools:context="hr.bpervan.novaeva.activities.EvaContentActivity">
+
+    <include
+        android:id="@+id/collapsingPrayerHeader"
+        layout="@layout/collapsing_prayer_header"/>
+
+    <include
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/evaRecyclerView"
+        layout="@layout/eva_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
+</android.support.design.widget.CoordinatorLayout>

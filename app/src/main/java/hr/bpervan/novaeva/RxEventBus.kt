@@ -2,7 +2,7 @@ package hr.bpervan.novaeva
 
 import hr.bpervan.novaeva.model.EvaContentMetadata
 import hr.bpervan.novaeva.model.EvaDirectoryMetadata
-import hr.bpervan.novaeva.model.Prayer
+import hr.bpervan.novaeva.model.PrayerCategory
 import io.reactivex.subjects.PublishSubject
 
 /**
@@ -13,5 +13,5 @@ object RxEventBus {
     val directoryOpenRequest = PublishSubject.create<EvaDirectoryMetadata>()
     val contentOpenRequest = PublishSubject.create<EvaContentMetadata>()
 
-    val prayerOpenRequest = PublishSubject.create<Prayer>()
+    val prayerCategoryOpenRequest = PublishSubject.create<PrayerCategory>()
 }

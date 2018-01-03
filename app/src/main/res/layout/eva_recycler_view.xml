@@ -2,16 +2,9 @@
 <android.support.v7.widget.RecyclerView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/evaRecyclerView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginLeft="0dp"
-    android:layout_marginStart="0dp"
-    android:layout_marginRight="0dp"
-    android:layout_marginEnd="0dp"
-    android:cacheColorHint="#00000000"
+    android:cacheColorHint="#FFFFFF"
     app:layoutManager="LinearLayoutManager"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="hr.bpervan.novaeva.fragments.EvaRecyclerFragment"
-    tools:listitem="@layout/vijest_row"/>
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"/>

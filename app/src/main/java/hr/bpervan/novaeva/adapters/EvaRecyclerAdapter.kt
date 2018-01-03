@@ -12,8 +12,8 @@ import hr.bpervan.novaeva.model.EvaContentMetadata
 import hr.bpervan.novaeva.model.EvaDirectoryMetadata
 import hr.bpervan.novaeva.model.TreeElementInfo
 import hr.bpervan.novaeva.utilities.EvaTouchFeedback
-import kotlinx.android.synthetic.main.folder_row.view.*
-import kotlinx.android.synthetic.main.vijest_row.view.*
+import kotlinx.android.synthetic.main.recycler_item_folder.view.*
+import kotlinx.android.synthetic.main.recycler_item_eva_content.view.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -21,8 +21,8 @@ import java.util.*
  * Created by vpriscan on 08.10.17..
  */
 class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
-                         val isLoadingSupplier: () -> Boolean = { false }
-) : RecyclerView.Adapter<EvaRecyclerAdapter.BindableViewHolder>() {
+                         val isLoadingSupplier: () -> Boolean = { false }) :
+        RecyclerView.Adapter<EvaRecyclerAdapter.BindableViewHolder>() {
 
     companion object {
         val dayMonthFormat = SimpleDateFormat("d.M.", Locale.US)
@@ -58,17 +58,17 @@ class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BindableViewHolder {
         return when (viewType) {
             CONTENT_VIEW_TYPE -> {
-                val view = LayoutInflater.from(parent.context).inflate(R.layout.vijest_row, parent, false)
+                val view = LayoutInflater.from(parent.context).inflate(R.layout.recycler_item_eva_content, parent, false)
                 view.background.mutate()
                 ContentInfoViewHolder(view)
             }
             SUBDIRECTORY_VIEW_TYPE -> {
-                val view = LayoutInflater.from(parent.context).inflate(R.layout.folder_row, parent, false)
+                val view = LayoutInflater.from(parent.context).inflate(R.layout.recycler_item_folder, parent, false)
                 view.background.mutate()
                 DirectoryInfoViewHolder(view)
             }
             else -> {
-                val view = LayoutInflater.from(parent.context).inflate(R.layout.progress_row, parent, false)
+                val view = LayoutInflater.from(parent.context).inflate(R.layout.recycler_item_progress, parent, false)
                 ProgressBarViewHolder(view)
             }
         }
