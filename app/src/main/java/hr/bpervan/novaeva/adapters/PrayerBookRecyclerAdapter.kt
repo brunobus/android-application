@@ -51,7 +51,7 @@ class PrayerBookRecyclerAdapter(private val prayerList: List<Prayer>)
         val tvMolitva: TextView = view.tvMolitva
 
         init {
-            tvMolitva.typeface = NovaEvaApp.openSansBold
+            tvMolitva.typeface = NovaEvaApp.openSansRegular
         }
 
         override fun bindTo(t: Any) {

@@ -1,19 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:id="@+id/LinearLayout01"
-	android:layout_width="fill_parent" xmlns:android="http://schemas.android.com/apk/res/android"
-	android:paddingLeft="10sp" android:paddingRight="10sp"
-	android:layout_height="wrap_content"
-	android:orientation="vertical" android:paddingTop="2sp"
-	android:background="@drawable/list_row_prayer">
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/prayerConstraintLayout"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/list_row_prayer">
 
-        
-	    <TextView
-	        android:id="@+id/tvMolitva"
-	        android:layout_width="@dimen/molitvenikWidth"
-	        android:layout_height="wrap_content"
-	        android:layout_gravity="center_vertical"
-	        android:text="@string/title_default"
-	        android:textSize="20sp"
-	        android:textColor="#4c4c4c" />
-	    
-</LinearLayout>
+    <TextView
+        android:id="@+id/tvMolitva"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="6dp"
+        android:layout_marginEnd="25dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="6dp"
+        android:ellipsize="end"
+        android:lines="1"
+        android:maxLines="1"
+        android:text="@string/title_default"
+        android:textColor="#252525"
+        android:textSize="11pt"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+</android.support.constraint.ConstraintLayout>
