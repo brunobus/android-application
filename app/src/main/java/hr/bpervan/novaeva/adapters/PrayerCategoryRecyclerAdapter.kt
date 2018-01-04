@@ -6,12 +6,14 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.OvershootInterpolator
+import android.view.animation.DecelerateInterpolator
 import android.webkit.WebView
 import android.widget.TextView
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
+import hr.bpervan.novaeva.model.PRAYERS_ASSETS_DIR_PATH
 import hr.bpervan.novaeva.model.Prayer
+import hr.bpervan.novaeva.model.PrayerCategory
 import hr.bpervan.novaeva.utilities.EvaTouchFeedback
 import kotlinx.android.synthetic.main.recycler_item_prayer.view.*
 import net.cachapa.expandablelayout.ExpandableLayout
@@ -20,10 +22,10 @@ import net.cachapa.expandablelayout.ExpandableLayout
 /**
  * Created by vpriscan on 03.01.18..
  */
-class PrayerCategoryRecyclerAdapter(private val prayerList: List<Prayer>) :
+class PrayerCategoryRecyclerAdapter(private val prayerCategory: PrayerCategory) :
         RecyclerView.Adapter<PrayerCategoryRecyclerAdapter.PrayerViewHolder>() {
 
-    override fun getItemCount(): Int = prayerList.size
+    override fun getItemCount(): Int = prayerCategory.prayerList.size
 
     private var themeColorTrans: Int = 0
 
@@ -47,40 +49,24 @@ class PrayerCategoryRecyclerAdapter(private val prayerList: List<Prayer>) :
     }
 
     override fun onBindViewHolder(holder: PrayerViewHolder, position: Int) {
-        holder.bindTo(prayerList[position])
+        holder.bindTo(prayerCategory.prayerList[position])
     }
 
-    private var expandedItem = RecyclerView.NO_POSITION
-
-    inner class PrayerViewHolder(val view: View) : RecyclerView.ViewHolder(view), ExpandableLayout.OnExpansionUpdateListener, View.OnClickListener {
+    inner class PrayerViewHolder(val view: View) : RecyclerView.ViewHolder(view), View.OnClickListener {
         private val expandableLayout: ExpandableLayout = view.expandableLayout
         private val prayerTitle: TextView = view.prayerTitleTextView
         private val prayerContent: WebView = view.prayerContentView
 
         init {
-            expandableLayout.setInterpolator(OvershootInterpolator())
-            expandableLayout.setOnExpansionUpdateListener(this@PrayerViewHolder)
+            expandableLayout.setInterpolator(DecelerateInterpolator())
 
             prayerTitle.typeface = NovaEvaApp.openSansRegular
         }
 
-        override fun onExpansionUpdate(expansionFraction: Float, state: Int) {
-            if (expansionFraction == 1.0F) {
-//                adapterPosition.let {
-//                    if (it != RecyclerView.NO_POSITION && it > 0) {
-//                        recyclerView?.smoothScrollToPosition(it - 1)
-//                    }
-//                }
-            }
-        }
-
         fun bindTo(prayer: Prayer) {
 
-//            val position = adapterPosition
-//            val isSelected = position == expandedItem
-
             prayerTitle.text = prayer.title
-            prayerContent.loadUrl(prayer.contentUrl)
+            prayerContent.loadUrl(PRAYERS_ASSETS_DIR_PATH + prayerCategory.directoryName + "/" + prayer.fileName)
 
             expandableLayout.setExpanded(false, false)
 
@@ -91,21 +77,6 @@ class PrayerCategoryRecyclerAdapter(private val prayerList: List<Prayer>) :
         }
 
         override fun onClick(v: View?) {
-
-//            adapterPosition.let {
-//                if (it == expandedItem) {
-//                    expandableLayout.collapse()
-//                    expandedItem = RecyclerView.NO_POSITION
-//                } else {
-//                    if (expandedItem != RecyclerView.NO_POSITION) {
-//                        val otherExpandedViewHolder = recyclerView?.findViewHolderForAdapterPosition(expandedItem) as? PrayerViewHolder
-//                        otherExpandedViewHolder?.expandableLayout?.collapse()
-//                    }
-//
-//                    expandableLayout.expand()
-//                    expandedItem = it
-//                }
-//            }
 
             if (expandableLayout.isExpanded) {
                 expandableLayout.collapse()

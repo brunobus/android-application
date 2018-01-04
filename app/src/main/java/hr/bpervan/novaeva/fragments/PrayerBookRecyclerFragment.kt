@@ -10,7 +10,7 @@ import android.view.ViewGroup
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.PrayerBookRecyclerAdapter
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.HARDCODED_PRAYER_CATEGORY_LIST
+import hr.bpervan.novaeva.model.PRAYER_CATEGORIES
 import kotlinx.android.synthetic.main.eva_directory.view.*
 import kotlinx.android.synthetic.main.prayerbook_top.view.*
 
@@ -32,7 +32,7 @@ class PrayerBookRecyclerFragment : EvaBaseFragment() {
 
         retainInstance = true
 
-        adapter = PrayerBookRecyclerAdapter(HARDCODED_PRAYER_CATEGORY_LIST)
+        adapter = PrayerBookRecyclerAdapter(PRAYER_CATEGORIES)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

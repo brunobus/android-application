@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.PrayerCategoryRecyclerAdapter
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.Prayer
+import hr.bpervan.novaeva.model.PRAYER_CATEGORIES
 import hr.bpervan.novaeva.model.PrayerCategory
 import kotlinx.android.synthetic.main.fragment_prayers.view.*
 import kotlinx.android.synthetic.main.prayerbook_top.view.*
@@ -17,10 +17,10 @@ import kotlinx.android.synthetic.main.prayerbook_top.view.*
 class PrayerCategoryRecyclerFragment : EvaBaseFragment() {
 
     companion object {
-        fun newInstance(prayerCategory: PrayerCategory): PrayerCategoryRecyclerFragment {
+        fun newInstance(prayerCategoryId: Int): PrayerCategoryRecyclerFragment {
             return PrayerCategoryRecyclerFragment().apply {
                 arguments = Bundle().apply {
-                    putParcelable("prayerCategory", prayerCategory)
+                    putInt("prayerCategoryId", prayerCategoryId)
                 }
             }
         }
@@ -34,7 +34,7 @@ class PrayerCategoryRecyclerFragment : EvaBaseFragment() {
         retainInstance = true
 
         val inState = savedInstanceState ?: arguments!!
-        prayerCategory = inState.getParcelable("prayerCategory")
+        prayerCategory = PRAYER_CATEGORIES.first { it.id == inState.getInt("prayerCategoryId") }
 
 //        val mGaTracker = (application as NovaEvaApp).getTracker(NovaEvaApp.TrackerName.APP_TRACKER)
 //        mGaTracker.send(
@@ -50,19 +50,16 @@ class PrayerCategoryRecyclerFragment : EvaBaseFragment() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putParcelable("prayerCategory", prayerCategory)
+        outState.putInt("prayerCategoryId", prayerCategory.id)
         super.onSaveInstanceState(outState)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-
-        val prayerList = generateSequence { Prayer(prayerCategory.title, prayerCategory.url) }.take(10).toList() //TODO FIXME split prayer URLs
-
         return inflater.inflate(R.layout.fragment_prayers, container, false).apply {
 
             val recyclerView = evaRecyclerView as RecyclerView
             recyclerView.layoutManager = LinearLayoutManager(context)
-            recyclerView.adapter = PrayerCategoryRecyclerAdapter(prayerList)
+            recyclerView.adapter = PrayerCategoryRecyclerAdapter(prayerCategory)
 
             prayerTitleTextView.text = prayerCategory.title
             prayerTitleTextView.typeface = NovaEvaApp.openSansBold

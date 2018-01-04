@@ -60,7 +60,7 @@ class PrayerBookActivity : EvaBaseActivity() {
                     supportFragmentManager
                             .beginTransaction()
                             .setCustomAnimations(R.anim.move_right_in, R.anim.move_left_out, R.anim.move_left_in, R.anim.move_right_out)
-                            .replace(R.id.evaDirectoryFragmentFrame, PrayerCategoryRecyclerFragment.newInstance(prayerCategory))
+                            .replace(R.id.evaDirectoryFragmentFrame, PrayerCategoryRecyclerFragment.newInstance(prayerCategory.id))
                             .addToBackStack(null)
                             .commit()
                 })
