@@ -59,6 +59,14 @@
         <item name="colorPrimaryDark">@color/novaEvaDark</item>
     </style>
 
+    <style name="PrayersThemeBase" parent="AppTheme">
+        <item name="android:windowBackground">@color/White</item>
+        <item name="colorPrimary">@color/propovjedi</item>
+        <item name="colorPrimaryDark">@color/Black</item>
+    </style>
+
+    <style name="PrayersTheme" parent="PrayersThemeBase"/>
+
     <style name="BreviaryThemeBase" parent="AppTheme">
         <item name="android:windowBackground">@drawable/brevijar_backbrevijar</item>
         <item name="colorPrimary">@color/breviary</item>

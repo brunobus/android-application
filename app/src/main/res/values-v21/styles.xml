@@ -23,8 +23,13 @@
         <item name="android:navigationBarColor">@color/novaEvaDark</item>
     </style>
 
+    <style name="PrayersTheme" parent="PrayersThemeBase">
+        <item name="android:colorPrimary">@color/propovjedi</item>
+        <item name="android:colorPrimaryDark">@color/Black</item>
+        <item name="android:navigationBarColor">@color/Black</item>
+    </style>
+
     <style name="BreviaryTheme" parent="BreviaryThemeBase">
-        <item name="android:windowBackground">@drawable/brevijar_backbrevijar</item>
         <item name="android:colorPrimary">@color/breviary</item>
         <item name="android:colorPrimaryDark">@color/breviaryDark</item>
         <item name="android:navigationBarColor">@color/breviaryDark</item>

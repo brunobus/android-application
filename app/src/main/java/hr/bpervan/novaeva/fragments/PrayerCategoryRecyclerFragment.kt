@@ -12,7 +12,7 @@ import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.Prayer
 import hr.bpervan.novaeva.model.PrayerCategory
 import kotlinx.android.synthetic.main.fragment_prayers.view.*
-import kotlinx.android.synthetic.main.prayer_top.view.*
+import kotlinx.android.synthetic.main.prayerbook_top.view.*
 
 class PrayerCategoryRecyclerFragment : EvaBaseFragment() {
 
@@ -64,8 +64,8 @@ class PrayerCategoryRecyclerFragment : EvaBaseFragment() {
             recyclerView.layoutManager = LinearLayoutManager(context)
             recyclerView.adapter = PrayerCategoryRecyclerAdapter(prayerList)
 
-            prayerTitle.text = prayerCategory.title
-            prayerTitle.typeface = NovaEvaApp.openSansBold
+            prayerTitleTextView.text = prayerCategory.title
+            prayerTitleTextView.typeface = NovaEvaApp.openSansBold
 
 //            webView.settings.builtInZoomControls = true
 //            webView.settings.displayZoomControls = false

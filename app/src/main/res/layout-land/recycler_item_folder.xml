@@ -1,42 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/relativeLayout1"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/evaContentRow"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?attr/listItemFolderSrc">
-
-    <TextView
-        android:id="@+id/tvMapaNatpis"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="1dp"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:text="@string/dummyDesc"
-        android:textColor="#4c4c4c"
-        android:textSize="16sp"/>
-    <!-- android:fontFamily="opensans-bold" -->
+    android:background="?attr/listItemContentSrc">
 
     <TextView
         android:id="@+id/tvMapaNaslov"
-        android:layout_width="@dimen/naslovWidthLand"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/tvMapaNatpis"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:ellipsize="end"
+        android:lines="1"
+        android:maxLines="1"
+        android:text="@string/title_default"
+        android:textColor="#4c4c4c"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toStartOf="@id/infoConstraintLayout"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/tvMapaUvodNatpis"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="10dp"
+        android:ellipsize="end"
+        android:lines="1"
+        android:maxLines="1"
         android:text="@string/introduction_identifier"
         android:textColor="#7d7d7d"
-        android:textSize="13sp"/>
+        android:textSize="13sp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvMapaNaslov"
+        app:layout_constraintVertical_bias="0"/>
 
-    <!-- android:fontFamily="opensans-bold" -->
+    <TextView
+        android:id="@+id/tvMapaUvod"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginStart="10dp"
+        android:ellipsize="end"
+        android:lines="1"
+        android:maxLines="1"
+        android:textColor="#7d7d7d"
+        android:textSize="13sp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/infoConstraintLayout"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toEndOf="@id/tvMapaUvodNatpis"
+        app:layout_constraintTop_toBottomOf="@id/tvMapaNaslov"
+        app:layout_constraintVertical_bias="0"/>
 
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>

@@ -210,7 +210,7 @@ class DashboardActivity : EvaBaseActivity(), OnTouchListener, OnClickListener {
 
         when (v.id) {
             R.id.btnMolitvenik -> startActivity(Intent(this, PrayerBookActivity::class.java).apply {
-                putExtra("themeId", R.style.AppTheme)
+                putExtra("themeId", R.style.PrayersTheme)
             })
             R.id.btnInfo -> startActivity(Intent(this, InfoActivity::class.java))
             R.id.btnBookmarks -> startActivity(Intent(this, BookmarksActivity::class.java))

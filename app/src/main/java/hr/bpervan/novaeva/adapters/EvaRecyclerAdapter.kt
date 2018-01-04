@@ -3,7 +3,9 @@ package hr.bpervan.novaeva.adapters
 import android.graphics.Color
 import android.support.v7.widget.RecyclerView
 import android.util.TypedValue
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import hr.bpervan.novaeva.NovaEvaApp
@@ -12,8 +14,8 @@ import hr.bpervan.novaeva.model.EvaContentMetadata
 import hr.bpervan.novaeva.model.EvaDirectoryMetadata
 import hr.bpervan.novaeva.model.TreeElementInfo
 import hr.bpervan.novaeva.utilities.EvaTouchFeedback
-import kotlinx.android.synthetic.main.recycler_item_folder.view.*
 import kotlinx.android.synthetic.main.recycler_item_eva_content.view.*
+import kotlinx.android.synthetic.main.recycler_item_folder.view.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -89,11 +91,9 @@ class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
 
     private inner class DirectoryInfoViewHolder(view: View) : BindableViewHolder(view) {
         val tvMapaNaslov: TextView = view.tvMapaNaslov
-        val tvMapaNatpis: TextView = view.tvMapaNatpis
 
         init {
             tvMapaNaslov.typeface = NovaEvaApp.openSansBold
-            tvMapaNatpis.typeface = NovaEvaApp.openSansBold
         }
 
         override fun bindTo(t: Any) {

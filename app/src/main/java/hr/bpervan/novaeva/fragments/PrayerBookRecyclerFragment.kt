@@ -12,8 +12,7 @@ import hr.bpervan.novaeva.adapters.PrayerBookRecyclerAdapter
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.HARDCODED_PRAYER_CATEGORY_LIST
 import kotlinx.android.synthetic.main.eva_directory.view.*
-import kotlinx.android.synthetic.main.collapsing_directory_header.view.*
-import kotlinx.android.synthetic.main.izbornik_top.view.*
+import kotlinx.android.synthetic.main.prayerbook_top.view.*
 
 /**
  * Created by vpriscan on 11.12.17..
@@ -37,14 +36,10 @@ class PrayerBookRecyclerFragment : EvaBaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.eva_directory, container, false).apply {
-            val infoText = "NALAZITE SE U KATEGORIJI"
+        return inflater.inflate(R.layout.fragment_prayers, container, false).apply {
             val title = "MOLITVENIK"
-            evaDirectoryCollapsingBar.izbornikTop.izbornikTopNatpis.apply {
-                text = infoText
-                typeface = NovaEvaApp.openSansBold
-            }
-            evaDirectoryCollapsingBar.izbornikTop.izbornikTopNazivKategorije.apply {
+            prayerArrow.visibility = View.INVISIBLE
+            prayerTitleTextView.apply {
                 text = title
                 typeface = NovaEvaApp.openSansBold
             }
