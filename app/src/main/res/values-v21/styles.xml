@@ -2,90 +2,62 @@
 <resources>
 
     <style name="eva_floating_action_button" parent="Widget.Design.FloatingActionButton">
-        <item name="backgroundTint">?attr/colorPrimary</item>
         <item name="android:layout_margin">16dp</item>
     </style>
 
     <style name="eva_loading_circle" parent="Widget.AppCompat.ProgressBar">
-        <item name="android:indeterminateTint">?attr/colorPrimary</item>
+        <item name="android:indeterminateTintMode">src_in</item>
     </style>
 
     <style name="AppTheme" parent="AppThemeBase">
-        <item name="android:colorPrimary">@color/propovjedi</item>
-        <item name="android:colorPrimaryDark">@color/Black</item>
-        <item name="android:colorAccent">@color/DimGray</item>
         <item name="android:navigationBarColor">@color/Black</item>
     </style>
 
     <style name="DashboardTheme" parent="DashboardThemeBase">
-        <item name="android:colorPrimary">@color/novaEva</item>
-        <item name="android:colorPrimaryDark">@color/novaEvaDark</item>
         <item name="android:navigationBarColor">@color/novaEvaDark</item>
     </style>
 
     <style name="PrayersTheme" parent="PrayersThemeBase">
-        <item name="android:colorPrimary">@color/propovjedi</item>
-        <item name="android:colorPrimaryDark">@color/Black</item>
-        <item name="android:navigationBarColor">@color/Black</item>
+        <item name="android:navigationBarColor">@color/prayerbookDark</item>
     </style>
 
     <style name="BreviaryTheme" parent="BreviaryThemeBase">
-        <item name="android:colorPrimary">@color/breviary</item>
-        <item name="android:colorPrimaryDark">@color/breviaryDark</item>
         <item name="android:navigationBarColor">@color/breviaryDark</item>
     </style>
 
     <style name="MultimedijaTheme" parent="MultimedijaThemeBase">
-        <item name="android:colorPrimary">@color/multimedija</item>
-        <item name="android:colorPrimaryDark">@color/multimedijaDark</item>
         <item name="android:navigationBarColor">@color/multimedija</item>
     </style>
 
     <style name="AktualnoTheme" parent="AktualnoThemeBase">
-        <item name="android:colorPrimary">@color/aktualno</item>
-        <item name="android:colorPrimaryDark">@color/aktualnoDark</item>
         <item name="android:navigationBarColor">@color/aktualno</item>
     </style>
 
     <style name="OdgovoriTheme" parent="OdgovoriThemeBase">
-        <item name="android:colorPrimary">@color/odgovori</item>
-        <item name="android:colorPrimaryDark">@color/odgovoriDark</item>
         <item name="android:navigationBarColor">@color/odgovori</item>
     </style>
 
     <style name="PozivTheme" parent="PozivThemeBase">
-        <item name="android:colorPrimary">@color/poziv</item>
-        <item name="android:colorPrimaryDark">@color/pozivDark</item>
         <item name="android:navigationBarColor">@color/poziv</item>
     </style>
 
     <style name="EvandjeljeTheme" parent="EvandjeljeThemeBase">
-        <item name="android:colorPrimary">@color/evandjelje</item>
-        <item name="android:colorPrimaryDark">@color/evandjeljeDark</item>
         <item name="android:navigationBarColor">@color/evandjelje</item>
     </style>
 
     <style name="PropovjediTheme" parent="PropovjediThemeBase">
-        <item name="android:colorPrimary">@color/propovjedi</item>
-        <item name="android:colorPrimaryDark">@color/propovjediDark</item>
         <item name="android:navigationBarColor">@color/propovjedi</item>
     </style>
 
     <style name="IzrekeTheme" parent="IzrekeThemeBase">
-        <item name="android:colorPrimary">@color/izreke</item>
-        <item name="android:colorPrimaryDark">@color/izrekeDark</item>
         <item name="android:navigationBarColor">@color/izreke</item>
     </style>
 
     <style name="PjesmaricaTheme" parent="PjesmaricaThemeBase">
-        <item name="android:colorPrimary">@color/pjesmarica</item>
-        <item name="android:colorPrimaryDark">@color/pjesmaricaDark</item>
         <item name="android:navigationBarColor">@color/pjesmarica</item>
     </style>
 
     <style name="DuhovnostTheme" parent="DuhovnostThemeBase">
-        <item name="android:colorPrimary">@color/duhovnost</item>
-        <item name="android:colorPrimaryDark">@color/duhovnostDark</item>
         <item name="android:navigationBarColor">@color/duhovnost</item>
     </style>
 

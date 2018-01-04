@@ -1,11 +1,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="eva_floating_action_button" parent="Widget.Design.FloatingActionButton">
-        <item name="backgroundTint">?attr/colorPrimary</item>
-        <item name="android:layout_marginLeft">0dp</item>
-        <item name="android:layout_marginTop">0dp</item>
-        <item name="android:layout_marginRight">0dp</item>
-        <item name="android:layout_marginBottom">0dp</item>
+        <item name="android:layout_margin">0dp</item>
     </style>
 
     <style name="eva_loading_circle" parent="Widget.AppCompat.ProgressBar"/>
@@ -32,9 +28,9 @@
     <!-- Application theme. -->
     <style name="AppThemeBase" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowNoTitle">true</item>
-        <item name="colorPrimary">@color/propovjedi</item>
+        <item name="colorPrimary">@color/Black</item>
         <item name="colorPrimaryDark">@color/Black</item>
-        <item name="colorAccent">@color/DimGray</item>
+        <item name="colorAccent">@color/propovjedi</item>
         <item name="listItemContentSrc">@drawable/list_row_content_propovijedi</item>
         <item name="listItemFolderSrc">@drawable/list_row_folder_propovijedi</item>
         <item name="directoryHeaderSrc">@drawable/directory_header_default</item>
@@ -52,17 +48,18 @@
 
     <style name="DashboardThemeBase" parent="AppTheme">
         <item name="android:windowBackground">@drawable/background</item>
-    </style>
-
-    <style name="DashboardTheme" parent="DashboardThemeBase">
         <item name="colorPrimary">@color/novaEva</item>
         <item name="colorPrimaryDark">@color/novaEvaDark</item>
+        <item name="colorAccent">@color/novaEvaDark</item>
     </style>
+
+    <style name="DashboardTheme" parent="DashboardThemeBase"/>
 
     <style name="PrayersThemeBase" parent="AppTheme">
         <item name="android:windowBackground">@color/White</item>
-        <item name="colorPrimary">@color/propovjedi</item>
-        <item name="colorPrimaryDark">@color/Black</item>
+        <item name="colorPrimary">@color/prayerbook</item>
+        <item name="colorPrimaryDark">@color/prayerbookDark</item>
+        <item name="colorAccent">@color/DimGray</item>
     </style>
 
     <style name="PrayersTheme" parent="PrayersThemeBase"/>
@@ -71,6 +68,7 @@
         <item name="android:windowBackground">@drawable/brevijar_backbrevijar</item>
         <item name="colorPrimary">@color/breviary</item>
         <item name="colorPrimaryDark">@color/breviaryDark</item>
+        <item name="colorAccent">@color/breviaryDark</item>
         <item name="contentTitleBarSrc">@drawable/content_titlebar_pjesmarica</item>
     </style>
 
@@ -79,6 +77,7 @@
     <style name="MultimedijaThemeBase" parent="AppTheme">
         <item name="colorPrimary">@color/multimedija</item>
         <item name="colorPrimaryDark">@color/multimedijaDark</item>
+        <item name="colorAccent">@color/multimedijaDark</item>
         <item name="listItemContentSrc">@drawable/list_row_content_multimedija</item>
         <item name="listItemFolderSrc">@drawable/list_row_folder_multimedija</item>
         <item name="directoryHeaderSrc">@drawable/directory_header_multimedija</item>
@@ -91,6 +90,7 @@
     <style name="AktualnoThemeBase" parent="AppTheme">
         <item name="colorPrimary">@color/aktualno</item>
         <item name="colorPrimaryDark">@color/aktualnoDark</item>
+        <item name="colorAccent">@color/aktualnoDark</item>
         <item name="listItemContentSrc">@drawable/list_row_content_aktualno</item>
         <item name="listItemFolderSrc">@drawable/list_row_folder_aktualno</item>
         <item name="directoryHeaderSrc">@drawable/directory_header_aktualno</item>
@@ -103,6 +103,7 @@
     <style name="OdgovoriThemeBase" parent="AppTheme">
         <item name="colorPrimary">@color/odgovori</item>
         <item name="colorPrimaryDark">@color/odgovoriDark</item>
+        <item name="colorAccent">@color/odgovoriDark</item>
         <item name="listItemContentSrc">@drawable/list_row_content_odgovori</item>
         <item name="listItemFolderSrc">@drawable/list_row_folder_odgovori</item>
         <item name="directoryHeaderSrc">@drawable/directory_header_odgovori</item>
@@ -115,6 +116,7 @@
     <style name="PozivThemeBase" parent="AppTheme">
         <item name="colorPrimary">@color/poziv</item>
         <item name="colorPrimaryDark">@color/pozivDark</item>
+        <item name="colorAccent">@color/pozivDark</item>
         <item name="listItemContentSrc">@drawable/list_row_content_poziv</item>
         <item name="listItemFolderSrc">@drawable/list_row_folder_poziv</item>
         <item name="directoryHeaderSrc">@drawable/directory_header_poziv</item>
@@ -127,6 +129,7 @@
     <style name="EvandjeljeThemeBase" parent="AppTheme">
         <item name="colorPrimary">@color/evandjelje</item>
         <item name="colorPrimaryDark">@color/evandjeljeDark</item>
+        <item name="colorAccent">@color/evandjeljeDark</item>
         <item name="listItemContentSrc">@drawable/list_row_content_evandjelje</item>
         <item name="listItemFolderSrc">@drawable/list_row_folder_evandjelje</item>
         <item name="directoryHeaderSrc">@drawable/directory_header_evandjelje</item>
@@ -139,6 +142,7 @@
     <style name="PropovjediThemeBase" parent="AppTheme">
         <item name="colorPrimary">@color/propovjedi</item>
         <item name="colorPrimaryDark">@color/propovjediDark</item>
+        <item name="colorAccent">@color/propovjediDark</item>
         <item name="listItemContentSrc">@drawable/list_row_content_propovijedi</item>
         <item name="listItemFolderSrc">@drawable/list_row_folder_propovijedi</item>
         <item name="directoryHeaderSrc">@drawable/directory_header_propovijedi</item>
@@ -151,6 +155,7 @@
     <style name="IzrekeThemeBase" parent="AppTheme">
         <item name="colorPrimary">@color/izreke</item>
         <item name="colorPrimaryDark">@color/izrekeDark</item>
+        <item name="colorAccent">@color/izrekeDark</item>
         <item name="contentTitleBarSrc">@drawable/content_titlebar_izreke</item>
         <item name="toolbarSrc">@drawable/toolbar_izreke</item>
     </style>
@@ -160,6 +165,7 @@
     <style name="PjesmaricaThemeBase" parent="AppTheme">
         <item name="colorPrimary">@color/pjesmarica</item>
         <item name="colorPrimaryDark">@color/pjesmaricaDark</item>
+        <item name="colorAccent">@color/pjesmaricaDark</item>
         <item name="listItemContentSrc">@drawable/list_row_content_pjesmarica</item>
         <item name="listItemFolderSrc">@drawable/list_row_folder_pjesmarica</item>
         <item name="directoryHeaderSrc">@drawable/directory_header_pjesmarica</item>
@@ -172,6 +178,7 @@
     <style name="DuhovnostThemeBase" parent="AppTheme">
         <item name="colorPrimary">@color/duhovnost</item>
         <item name="colorPrimaryDark">@color/duhovnostDark</item>
+        <item name="colorAccent">@color/duhovnostDark</item>
         <item name="listItemContentSrc">@drawable/list_row_content_duhovnost</item>
         <item name="listItemFolderSrc">@drawable/list_row_folder_duhovnost</item>
         <item name="directoryHeaderSrc">@drawable/directory_header_duhovnost</item>

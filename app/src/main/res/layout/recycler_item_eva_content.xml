@@ -23,7 +23,7 @@
         android:text="@string/title_default"
         android:textColor="#4c4c4c"
         android:textSize="16sp"
-        app:layout_constraintEnd_toStartOf="@id/infoConstraintLayout"
+        app:layout_constraintEnd_toStartOf="@+id/infoConstraintLayout"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
@@ -68,8 +68,8 @@
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/infoConstraintLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="62dp"
+        android:layout_height="60dp"
         android:layout_marginBottom="4dp"
         android:layout_marginTop="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
