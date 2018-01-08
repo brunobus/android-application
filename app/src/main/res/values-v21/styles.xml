@@ -10,11 +10,15 @@
     </style>
 
     <style name="AppTheme" parent="AppThemeBase">
-        <item name="android:navigationBarColor">@color/Black</item>
+        <item name="android:navigationBarColor">@color/propovjedi</item>
+    </style>
+
+    <style name="SplashTheme" parent="SplashThemeBase">
+        <item name="android:navigationBarColor">@color/transparent</item>
     </style>
 
     <style name="DashboardTheme" parent="DashboardThemeBase">
-        <item name="android:navigationBarColor">@color/novaEvaDark</item>
+        <item name="android:navigationBarColor">@color/transparent</item>
     </style>
 
     <style name="PrayersTheme" parent="PrayersThemeBase">
@@ -22,7 +26,7 @@
     </style>
 
     <style name="BreviaryTheme" parent="BreviaryThemeBase">
-        <item name="android:navigationBarColor">@color/breviaryDark</item>
+        <item name="android:navigationBarColor">@color/transparent</item>
     </style>
 
     <style name="MultimedijaTheme" parent="MultimedijaThemeBase">

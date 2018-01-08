@@ -1,4 +1,4 @@
-<resources xmlns:android="http://schemas.android.com/apk/res/android">
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="eva_floating_action_button" parent="Widget.Design.FloatingActionButton">
         <item name="android:layout_margin">0dp</item>
@@ -28,7 +28,7 @@
     <!-- Application theme. -->
     <style name="AppThemeBase" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowNoTitle">true</item>
-        <item name="colorPrimary">@color/Black</item>
+        <item name="colorPrimary">@color/propovjedi</item>
         <item name="colorPrimaryDark">@color/Black</item>
         <item name="colorAccent">@color/propovjedi</item>
         <item name="listItemContentSrc">@drawable/list_row_content_propovijedi</item>
@@ -42,6 +42,7 @@
 
     <style name="SplashThemeBase" parent="AppTheme">
         <item name="android:windowBackground">@drawable/splash</item>
+        <item name="colorPrimaryDark">@color/transparent</item>
     </style>
 
     <style name="SplashTheme" parent="SplashThemeBase"/>
@@ -49,7 +50,7 @@
     <style name="DashboardThemeBase" parent="AppTheme">
         <item name="android:windowBackground">@drawable/background</item>
         <item name="colorPrimary">@color/novaEva</item>
-        <item name="colorPrimaryDark">@color/novaEvaDark</item>
+        <item name="colorPrimaryDark">@color/transparent</item>
         <item name="colorAccent">@color/novaEvaDark</item>
     </style>
 
@@ -67,7 +68,7 @@
     <style name="BreviaryThemeBase" parent="AppTheme">
         <item name="android:windowBackground">@drawable/brevijar_backbrevijar</item>
         <item name="colorPrimary">@color/breviary</item>
-        <item name="colorPrimaryDark">@color/breviaryDark</item>
+        <item name="colorPrimaryDark">@color/transparent</item>
         <item name="colorAccent">@color/breviaryDark</item>
         <item name="contentTitleBarSrc">@drawable/content_titlebar_pjesmarica</item>
     </style>
