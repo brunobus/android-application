@@ -15,7 +15,7 @@ import hr.bpervan.novaeva.services.NovaEvaService
 import hr.bpervan.novaeva.utilities.subscribeAsync
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.collapsing_content_header.view.*
-import kotlinx.android.synthetic.main.izreke_fake_action_bar.view.*
+import kotlinx.android.synthetic.main.toolbar_eva_quotes.view.*
 import kotlinx.android.synthetic.main.fragment_eva_quotes.view.*
 
 /**
@@ -34,6 +34,7 @@ class EvaQuotesFragment : EvaBaseFragment() {
 
     private var loadRandomIzrekaDisposable: Disposable? = null
 
+    private var showTools = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,10 +67,9 @@ class EvaQuotesFragment : EvaBaseFragment() {
         }
 
         applyFakeActionBarVisibility(izrekeView)
+
         izrekeView.btnToggleActionBar.setOnClickListener {
-            val showFakeActionBarPrefKey = "hr.bpervan.novaeva.showFakeActionBar"
-            val showFakeActionBarPref = prefs.getBoolean(showFakeActionBarPrefKey, false)
-            prefs.edit().putBoolean(showFakeActionBarPrefKey, !showFakeActionBarPref).apply()
+            showTools = !showTools
             applyFakeActionBarVisibility(izrekeView)
         }
 
@@ -77,12 +77,12 @@ class EvaQuotesFragment : EvaBaseFragment() {
             fetchRandomQuote()
         }
 
-        izrekeView.fakeActionBar.btnShare.setOnClickListener {
+        izrekeView.options.btnShare.setOnClickListener {
             context?.let {
                 shareIntent(it, "http://novaeva.com/node/$contentId")
             }
         }
-        izrekeView.fakeActionBar.btnMail.setOnClickListener {
+        izrekeView.options.btnMail.setOnClickListener {
             context?.let {
                 sendEmailIntent(it, contentTitle!!, "http://novaeva.com/node/$contentId")
             }
@@ -93,13 +93,13 @@ class EvaQuotesFragment : EvaBaseFragment() {
         return izrekeView
     }
 
-    private fun applyFakeActionBarVisibility(izrekeView: View) {
-        if (prefs.getBoolean("hr.bpervan.novaeva.showFakeActionBar", false)) {
-            izrekeView.fakeActionBar.visibility = View.VISIBLE
-            izrekeView.btnToggleActionBar.setImageResource(R.drawable.action_button_toolbar_hide)
+    private fun applyFakeActionBarVisibility(view: View) {
+        if (showTools) {
+            view.options.visibility = View.VISIBLE
+            view.btnToggleActionBar.setImageResource(R.drawable.action_button_toolbar_hide)
         } else {
-            izrekeView.fakeActionBar.visibility = View.GONE
-            izrekeView.btnToggleActionBar.setImageResource(R.drawable.action_button_toolbar_show)
+            view.options.visibility = View.GONE
+            view.btnToggleActionBar.setImageResource(R.drawable.action_button_toolbar_show)
         }
     }
 

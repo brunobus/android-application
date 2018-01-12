@@ -3,60 +3,54 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="?attr/toolbarSrc">
+    android:layout_height="wrap_content">
 
-    <ImageView
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/btnShare"
+        style="@style/eva_floating_action_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginStart="8dp"
-        android:contentDescription="@string/dummyDesc"
-        android:padding="8dp"
+        android:scaleType="center"
         android:src="@drawable/action_button_share"
+        app:fabSize="mini"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/btnMail"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"/>
 
-    <ImageView
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/btnMail"
+        style="@style/eva_floating_action_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:contentDescription="@string/dummyDesc"
-        android:padding="8dp"
+        android:scaleType="center"
         android:src="@drawable/action_button_mail"
+        app:fabSize="mini"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/btnBookmark"
         app:layout_constraintStart_toEndOf="@+id/btnShare"/>
 
 
-    <ImageView
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/btnBookmark"
+        style="@style/eva_floating_action_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:contentDescription="@string/dummyDesc"
-        android:padding="8dp"
+        android:scaleType="center"
         android:src="@drawable/action_button_bookmark"
+        app:fabSize="mini"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/btnSearch"
         app:layout_constraintStart_toEndOf="@+id/btnMail"/>
 
-    <ImageView
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/btnSearch"
+        style="@style/eva_floating_action_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:contentDescription="@string/dummyDesc"
-        android:padding="8dp"
+        android:scaleType="center"
         android:src="@drawable/action_button_search"
+        app:fabSize="mini"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/btnBookmark"/>

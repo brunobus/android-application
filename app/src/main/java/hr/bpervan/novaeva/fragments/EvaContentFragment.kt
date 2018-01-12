@@ -37,7 +37,7 @@ import io.reactivex.disposables.Disposable
 import io.realm.Realm
 import kotlinx.android.synthetic.main.collapsing_content_header.view.*
 import kotlinx.android.synthetic.main.fragment_eva_content.view.*
-import kotlinx.android.synthetic.main.vijest_fake_action_bar.view.*
+import kotlinx.android.synthetic.main.toolbar_eva_content.view.*
 
 /**
  * Created by vpriscan on 04.12.17..
@@ -70,6 +70,8 @@ class EvaContentFragment : EvaBaseFragment(), SeekBar.OnSeekBarChangeListener {
     private var evaContentChangesDisposable: Disposable? = null
     private var evaContentMetadataChangesDisposable: Disposable? = null
 
+    private var showTools = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         retainInstance = true
@@ -101,7 +103,7 @@ class EvaContentFragment : EvaBaseFragment(), SeekBar.OnSeekBarChangeListener {
         evaContentMetadataChangesDisposable?.dispose()
         evaContentMetadataChangesDisposable = EvaContentDbAdapter
                 .subscribeToEvaContentMetadataUpdatesAsync(realm, contentId) { evaContentMetadata ->
-                    view.fakeActionBar.btnBookmark.setImageResource(
+                    view.options.btnBookmark.setImageResource(
                             if (evaContentMetadata.bookmark) R.drawable.action_button_bookmarked
                             else R.drawable.action_button_bookmark)
                 }
@@ -217,18 +219,15 @@ class EvaContentFragment : EvaBaseFragment(), SeekBar.OnSeekBarChangeListener {
 
             applyFakeActionBarVisibility(this@apply)
 
-
             btnToggleActionBar.setOnClickListener {
-                val showFakeActionBarPrefKey = "hr.bpervan.novaeva.showFakeActionBar"
-                val showFakeActionBarPref = prefs.getBoolean(showFakeActionBarPrefKey, false)
-                prefs.edit().putBoolean(showFakeActionBarPrefKey, !showFakeActionBarPref).apply()
+                showTools = !showTools
                 applyFakeActionBarVisibility(this@apply)
             }
 
-            fakeActionBar.btnSearch.setOnClickListener {
+            options.btnSearch.setOnClickListener {
                 showSearchPopup()
             }
-            fakeActionBar.btnBookmark.setOnClickListener {
+            options.btnBookmark.setOnClickListener {
                 val evaContent = this@EvaContentFragment.evaContent
                 if (evaContent != null) {
                     val evaContentMetadata = evaContent.contentMetadata!!
@@ -238,11 +237,11 @@ class EvaContentFragment : EvaBaseFragment(), SeekBar.OnSeekBarChangeListener {
                 }
             }
 
-            fakeActionBar.btnShare.setOnClickListener {
+            options.btnShare.setOnClickListener {
                 shareIntent(context, "http://novaeva.com/node/$contentId")
             }
 
-            fakeActionBar.btnMail.setOnClickListener {
+            options.btnMail.setOnClickListener {
                 sendEmailIntent(context, evaContent!!.contentMetadata!!.title, "http://novaeva.com/node/$contentId")
             }
 
@@ -276,11 +275,11 @@ class EvaContentFragment : EvaBaseFragment(), SeekBar.OnSeekBarChangeListener {
     }
 
     private fun applyFakeActionBarVisibility(view: View) {
-        if (prefs.getBoolean("hr.bpervan.novaeva.showFakeActionBar", false)) {
-            view.fakeActionBar.visibility = View.VISIBLE
+        if (showTools) {
+            view.options.visibility = View.VISIBLE
             view.btnToggleActionBar.setImageResource(R.drawable.action_button_toolbar_hide)
         } else {
-            view.fakeActionBar.visibility = View.GONE
+            view.options.visibility = View.GONE
             view.btnToggleActionBar.setImageResource(R.drawable.action_button_toolbar_show)
         }
     }
