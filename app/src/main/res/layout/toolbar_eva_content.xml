@@ -50,6 +50,7 @@
         android:layout_height="wrap_content"
         android:scaleType="center"
         android:src="@drawable/action_button_search"
+        android:visibility="gone"
         app:fabSize="mini"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

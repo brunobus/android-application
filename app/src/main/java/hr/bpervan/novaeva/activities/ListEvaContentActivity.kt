@@ -85,6 +85,8 @@ class ListEvaContentActivity : EvaBaseActivity(), OnClickListener {
             btnImamPitanjeListaVijesti.visibility = View.VISIBLE
         }
 
+        btnSearch.visibility = View.VISIBLE
+
         btnSearch.setOnClickListener { showSearchPopup() }
     }
 
