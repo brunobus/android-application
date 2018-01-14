@@ -12,7 +12,7 @@
 
     <include
         android:id="@+id/collapsingPrayerHeader"
-        layout="@layout/collapsing_prayer_header"/>
+        layout="@layout/collapsing_prayerbook_header"/>
 
     <include
         xmlns:tools="http://schemas.android.com/tools"

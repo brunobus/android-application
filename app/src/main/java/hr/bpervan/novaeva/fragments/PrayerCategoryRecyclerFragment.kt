@@ -12,7 +12,7 @@ import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.PRAYER_CATEGORIES
 import hr.bpervan.novaeva.model.PrayerCategory
 import kotlinx.android.synthetic.main.fragment_prayers.view.*
-import kotlinx.android.synthetic.main.prayerbook_top.view.*
+import kotlinx.android.synthetic.main.top_prayerbook.view.*
 
 class PrayerCategoryRecyclerFragment : EvaBaseFragment() {
 

@@ -24,7 +24,7 @@
 
         <include
             android:id="@+id/prayerTop"
-            layout="@layout/prayerbook_top"
+            layout="@layout/top_prayerbook"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"

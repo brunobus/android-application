@@ -12,7 +12,7 @@ import hr.bpervan.novaeva.adapters.PrayerBookRecyclerAdapter
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.PRAYER_CATEGORIES
 import kotlinx.android.synthetic.main.eva_directory.view.*
-import kotlinx.android.synthetic.main.prayerbook_top.view.*
+import kotlinx.android.synthetic.main.top_prayerbook.view.*
 
 /**
  * Created by vpriscan on 11.12.17..

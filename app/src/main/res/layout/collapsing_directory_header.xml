@@ -28,7 +28,7 @@
             android:layout_gravity="bottom"
             app:layout_collapseParallaxMultiplier="0.0"
             app:layout_collapseMode="parallax"
-            layout="@layout/izbornik_top"/>
+            layout="@layout/top_izbornik"/>
 
     </android.support.design.widget.CollapsingToolbarLayout>
 </android.support.design.widget.AppBarLayout>
