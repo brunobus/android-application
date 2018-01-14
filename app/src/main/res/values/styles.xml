@@ -27,6 +27,7 @@
 
     <!-- Application theme. -->
     <style name="AppThemeBase" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@color/White</item>
         <item name="android:windowNoTitle">true</item>
         <item name="colorPrimary">@color/propovjedi</item>
         <item name="colorPrimaryDark">@color/Black</item>
@@ -57,7 +58,6 @@
     <style name="DashboardTheme" parent="DashboardThemeBase"/>
 
     <style name="PrayersThemeBase" parent="AppTheme">
-        <item name="android:windowBackground">@color/White</item>
         <item name="colorPrimary">@color/prayerbook</item>
         <item name="colorPrimaryDark">@color/prayerbookDark</item>
         <item name="colorAccent">@color/DimGray</item>
