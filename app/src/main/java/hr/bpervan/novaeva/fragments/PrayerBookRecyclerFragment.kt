@@ -11,7 +11,7 @@ import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.PrayerBookRecyclerAdapter
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.PRAYER_CATEGORIES
-import kotlinx.android.synthetic.main.eva_directory.view.*
+import kotlinx.android.synthetic.main.fragment_prayers.view.*
 import kotlinx.android.synthetic.main.top_prayerbook.view.*
 
 /**
@@ -37,7 +37,8 @@ class PrayerBookRecyclerFragment : EvaBaseFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_prayers, container, false).apply {
-            val title = "MOLITVENIK"
+            val title = "Molitvenik"
+
             prayerArrow.visibility = View.INVISIBLE
             prayerTitleTextView.apply {
                 text = title
