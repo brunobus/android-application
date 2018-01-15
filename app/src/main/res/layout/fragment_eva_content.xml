@@ -43,6 +43,7 @@
                     android:visibility="gone"
                     android:padding="20dp"
                     app:shutter_background_color="?attr/colorPrimary"
+                    app:show_timeout="-1"
                     app:hide_on_touch="false"
                     app:use_artwork="false"
                     app:use_controller="true"/>
