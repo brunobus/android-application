@@ -4,7 +4,8 @@ import android.app.AlertDialog
 import android.os.Bundle
 import android.widget.EditText
 import hr.bpervan.novaeva.NovaEvaApp
-import hr.bpervan.novaeva.fragments.PrayerCategoryRecyclerFragment
+import hr.bpervan.novaeva.RxEventBus
+import hr.bpervan.novaeva.fragments.PrayersRecyclerFragment
 import hr.bpervan.novaeva.fragments.PrayerBookRecyclerFragment
 import hr.bpervan.novaeva.main.R
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -33,13 +34,12 @@ class PrayerBookActivity : EvaBaseActivity() {
 
         setContentView(R.layout.activity_list_eva_content)
 
-        if (supportFragmentManager.findFragmentByTag(TAG_RETAINED_PRAYERBOOK_FRAGMENT) == null) {
-            supportFragmentManager
-                    .beginTransaction()
-                    .setCustomAnimations(R.anim.move_right_in, R.anim.move_left_out, R.anim.move_left_in, R.anim.move_right_out)
-                    .add(R.id.evaDirectoryFragmentFrame, PrayerBookRecyclerFragment.newInstance(), TAG_RETAINED_PRAYERBOOK_FRAGMENT)
-                    .commit()
-        }
+        supportFragmentManager.findFragmentByTag(TAG_RETAINED_PRAYERBOOK_FRAGMENT)
+                ?: supportFragmentManager
+                        .beginTransaction()
+                        .setCustomAnimations(R.anim.move_right_in, R.anim.move_left_out, R.anim.move_left_in, R.anim.move_right_out)
+                        .add(R.id.evaDirectoryFragmentFrame, PrayerBookRecyclerFragment.newInstance(), TAG_RETAINED_PRAYERBOOK_FRAGMENT)
+                        .commit()
 
         btnSearch.setOnClickListener { showSearchPopup() }
     }
@@ -53,14 +53,14 @@ class PrayerBookActivity : EvaBaseActivity() {
     override fun onResume() {
         super.onResume()
 
-        lifecycleBoundDisposables.add(NovaEvaApp.bus.prayerCategoryOpenRequest
+        lifecycleBoundDisposables.add(RxEventBus.prayerCategoryOpenRequest
                 .throttleFirst(500, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { prayerCategory ->
                     supportFragmentManager
                             .beginTransaction()
                             .setCustomAnimations(R.anim.move_right_in, R.anim.move_left_out, R.anim.move_left_in, R.anim.move_right_out)
-                            .replace(R.id.evaDirectoryFragmentFrame, PrayerCategoryRecyclerFragment.newInstance(prayerCategory.id))
+                            .replace(R.id.evaDirectoryFragmentFrame, PrayersRecyclerFragment.newInstance(prayerCategory.id))
                             .addToBackStack(null)
                             .commit()
                 })

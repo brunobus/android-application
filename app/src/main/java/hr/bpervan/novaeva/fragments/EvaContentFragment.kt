@@ -1,6 +1,7 @@
 package hr.bpervan.novaeva.fragments
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -13,10 +14,10 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.EditText
 import android.widget.SeekBar
-import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.ExtractorMediaSource
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView
+import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
@@ -55,10 +56,7 @@ class EvaContentFragment : EvaBaseFragment(), SeekBar.OnSeekBarChangeListener {
         }
     }
 
-    private val exoPlayer: SimpleExoPlayer by lazy {
-        NovaEvaApp.exoPlayerHolder.exoPlayer
-    }
-
+    private lateinit var exoPlayer: ExoPlayer
     private lateinit var realm: Realm
 
     private var contentId: Long = 0
@@ -96,7 +94,7 @@ class EvaContentFragment : EvaBaseFragment(), SeekBar.OnSeekBarChangeListener {
         }
     }
 
-    private var previousPlayerView: SimpleExoPlayerView? = null
+    private var previousPlayerView: PlayerView? = null
 
     private fun subscribeToEvaContentUpdates(view: View) {
         evaContentMetadataChangesDisposable?.dispose()
@@ -110,7 +108,6 @@ class EvaContentFragment : EvaBaseFragment(), SeekBar.OnSeekBarChangeListener {
         evaContentChangesDisposable = EvaContentDbAdapter.subscribeToEvaContentUpdatesAsync(realm, contentId) { evaContent ->
 
             view.evaCollapsingBar.collapsingToolbar.title = evaContent.contentMetadata!!.title
-
 
             val coverImageInfo = evaContent.image
             val coverImageView = view.evaCollapsingBar.coverImage
@@ -137,7 +134,7 @@ class EvaContentFragment : EvaBaseFragment(), SeekBar.OnSeekBarChangeListener {
                 view.player_view?.let { playerView ->
                     playerView.visibility = View.VISIBLE
                     playerView.requestFocus()
-                    SimpleExoPlayerView.switchTargetView(exoPlayer, previousPlayerView, playerView)
+                    PlayerView.switchTargetView(exoPlayer, previousPlayerView, playerView)
                     previousPlayerView = playerView
                 }
             }
@@ -173,6 +170,12 @@ class EvaContentFragment : EvaBaseFragment(), SeekBar.OnSeekBarChangeListener {
                         NovaEvaApp.showFetchErrorSnackbar(it, ctx, view)
                     }
                 }
+    }
+
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+
+        exoPlayer = (activity!!.application as NovaEvaApp).exoPlayer
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

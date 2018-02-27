@@ -10,6 +10,7 @@ import android.view.View
 import android.widget.EditText
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.NovaEvaApp
+import hr.bpervan.novaeva.RxEventBus
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaContentMetadata
@@ -36,15 +37,13 @@ class BookmarksActivity : EvaBaseActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val mGaTracker = (application as NovaEvaApp).getTracker(NovaEvaApp.TrackerName.APP_TRACKER)
-        mGaTracker.send(
-                HitBuilders.EventBuilder()
+        (application as NovaEvaApp).defaultTracker
+                .send(HitBuilders.EventBuilder()
                         .setCategory("Zabiljeske")
                         .setAction("OtvoreneZabiljeske")
                         .setLabel("")
                         .setValue(0L)
-                        .build()
-        )
+                        .build())
         //mGaTracker.sendEvent("Zabiljeske", "OtvoreneZabiljeske", "", null);
         //initUI();
         //reloadBookmarksFromDb();
@@ -94,7 +93,7 @@ class BookmarksActivity : EvaBaseActivity(), View.OnClickListener {
         bookmarksList.clear()
         reloadBookmarksFromDb()
 
-        lifecycleBoundDisposables.add(NovaEvaApp.bus.contentOpenRequest
+        lifecycleBoundDisposables.add(RxEventBus.contentOpenRequest
                 .throttleFirst(500, TimeUnit.MILLISECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

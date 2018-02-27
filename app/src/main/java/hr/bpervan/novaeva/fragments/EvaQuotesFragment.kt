@@ -45,13 +45,14 @@ class EvaQuotesFragment : EvaBaseFragment() {
             contentData = savedInstanceState.getString("contentData")
             contentId = savedInstanceState.getLong("contentId", -1L)
         } else {
-            NovaEvaApp.instance?.getTracker(NovaEvaApp.TrackerName.APP_TRACKER)?.send(
-                    HitBuilders.EventBuilder()
-                            .setCategory("Kategorije")
-                            .setAction("OtvorenaKategorija")
-                            .setLabel(EvaCategory.IZREKE.rawName)
-                            .build()
-            )
+            activity?.apply {
+                (application as NovaEvaApp).defaultTracker
+                        .send(HitBuilders.EventBuilder()
+                                .setCategory("Kategorije")
+                                .setAction("OtvorenaKategorija")
+                                .setLabel(EvaCategory.IZREKE.rawName)
+                                .build())
+            }
         }
 
         if (contentTitle == null || contentData == null || contentId == -1L) {

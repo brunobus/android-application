@@ -43,9 +43,10 @@ class DashboardActivity : EvaBaseActivity(), OnTouchListener, OnClickListener {
         /*mGaInstance = GoogleAnalytics.getInstance(this);
 		mGaTracker = mGaInstance.getTracker("UA-40344870-1");*/
 
-        val mGaTracker = (application as NovaEvaApp).getTracker(NovaEvaApp.TrackerName.APP_TRACKER)
-        mGaTracker.setScreenName("Dashboard")
-        mGaTracker.send(HitBuilders.AppViewBuilder().build())
+        (application as NovaEvaApp).defaultTracker.apply {
+            setScreenName("Dashboard")
+            send(HitBuilders.AppViewBuilder().build())//todo deprecated
+        }
 
         NovaEvaApp.openSansRegular?.let { titleLineTitle.typeface = it }
 

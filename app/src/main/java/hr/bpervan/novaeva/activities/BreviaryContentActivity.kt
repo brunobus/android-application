@@ -15,12 +15,11 @@ class BreviaryContentActivity : EvaBaseActivity() {
         val inState = savedInstanceState ?: intent.extras
         breviaryId = inState.getInt(BREVIARY_ID_KEY, 4)
 
-        if (supportFragmentManager.findFragmentByTag(TAG_RETAINED_BREVIARY_FRAGMENT) == null) {
-            supportFragmentManager
-                    .beginTransaction()
-                    .add(R.id.evaFragmentFrame, BreviaryContentFragment.newInstance(breviaryId), TAG_RETAINED_BREVIARY_FRAGMENT)
-                    .commit()
-        }
+        supportFragmentManager.findFragmentByTag(TAG_RETAINED_BREVIARY_FRAGMENT)
+                ?: supportFragmentManager
+                        .beginTransaction()
+                        .add(R.id.evaFragmentFrame, BreviaryContentFragment.newInstance(breviaryId), TAG_RETAINED_BREVIARY_FRAGMENT)
+                        .commit()
 
 
 //        mGaTracker = (application as NovaEvaApp).getTracker(NovaEvaApp.TrackerName.APP_TRACKER)

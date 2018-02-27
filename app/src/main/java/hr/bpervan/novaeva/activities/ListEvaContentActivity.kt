@@ -9,6 +9,7 @@ import android.view.View.OnClickListener
 import android.widget.EditText
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.NovaEvaApp
+import hr.bpervan.novaeva.RxEventBus
 import hr.bpervan.novaeva.actions.sendEmailIntent
 import hr.bpervan.novaeva.fragments.EvaRecyclerFragment
 import hr.bpervan.novaeva.main.R
@@ -48,14 +49,12 @@ class ListEvaContentActivity : EvaBaseActivity(), OnClickListener {
         setContentView(R.layout.activity_list_eva_content)
 
         //mGaTracker = mGaInstance.getTracker("UA-40344870-1");
-        val mGaTracker = (application as NovaEvaApp).getTracker(NovaEvaApp.TrackerName.APP_TRACKER)
-        mGaTracker.send(
-                HitBuilders.EventBuilder()
+        (application as NovaEvaApp).defaultTracker
+                .send(HitBuilders.EventBuilder()
                         .setCategory("Kategorije")
                         .setAction("OtvorenaKategorija")
                         .setLabel(categoryName)
-                        .build()
-        )
+                        .build())
 
         //mGaTracker.sendEvent("Kategorije", "OtvorenaKategorija", Constants.getCatNameById(kategorija), null);
         killRedDot(categoryId)
@@ -135,14 +134,14 @@ class ListEvaContentActivity : EvaBaseActivity(), OnClickListener {
     public override fun onResume() {
         super.onResume()
 
-        lifecycleBoundDisposables.add(NovaEvaApp.bus.directoryOpenRequest
+        lifecycleBoundDisposables.add(RxEventBus.directoryOpenRequest
                 .throttleFirst(500, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { evaDirectoryMetadata ->
                     showFragmentForDirectory(evaDirectoryMetadata.directoryId, evaDirectoryMetadata.title, true)
                 })
 
-        lifecycleBoundDisposables.add(NovaEvaApp.bus.contentOpenRequest
+        lifecycleBoundDisposables.add(RxEventBus.contentOpenRequest
                 .throttleFirst(500, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { evaContentMetadata ->

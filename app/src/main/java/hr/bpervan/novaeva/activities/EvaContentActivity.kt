@@ -35,22 +35,21 @@ class EvaContentActivity : EvaBaseActivity() {
 
         setContentView(R.layout.eva_fragment_frame)
 
-//        startService(Intent(this, BackgroundPlayerService::class.java)) //todo
-
-        (application as NovaEvaApp).getTracker(NovaEvaApp.TrackerName.APP_TRACKER).send(
-                HitBuilders.EventBuilder()
+        (application as NovaEvaApp).defaultTracker
+                .send(HitBuilders.EventBuilder()
                         .setCategory("Vijesti")
                         .setAction("OtvorenaVijest")
-                        .setLabel(contentId.toString() + "")
-                        .build()
-        )
+                        .setLabel(contentId.toString())
+                        .build())
 
-        if (supportFragmentManager.findFragmentByTag(TAG_RETAINED_VIJEST_FRAGMENT) == null) {
-            supportFragmentManager
-                    .beginTransaction()
-                    .add(R.id.evaFragmentFrame, EvaContentFragment.newInstance(contentId, categoryId.toLong()), TAG_RETAINED_VIJEST_FRAGMENT)
-                    .commit()
-        }
+//        startService(Intent(this, AudioPlayerService::class.java))
+//        stopService(Intent(this, AudioPlayerService::class.java))
+
+        supportFragmentManager.findFragmentByTag(TAG_RETAINED_CONTENT_FRAGMENT)
+                ?: supportFragmentManager
+                        .beginTransaction()
+                        .add(R.id.evaFragmentFrame, EvaContentFragment.newInstance(contentId, categoryId.toLong()), TAG_RETAINED_CONTENT_FRAGMENT)
+                        .commit()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -139,10 +138,10 @@ class EvaContentActivity : EvaBaseActivity() {
     }
 
     companion object {
-        val CONTENT_ID_KEY = "contentId"
-        val CATEGORY_ID_KEY = "categoryId"
-        val THEME_ID_KEY = "themeId"
+        const val CONTENT_ID_KEY = "contentId"
+        const val CATEGORY_ID_KEY = "categoryId"
+        const val THEME_ID_KEY = "themeId"
 
-        private val TAG_RETAINED_VIJEST_FRAGMENT = "RetainedVijestFragment"
+        private const val TAG_RETAINED_CONTENT_FRAGMENT = "RetainedContentFragment"
     }
 }

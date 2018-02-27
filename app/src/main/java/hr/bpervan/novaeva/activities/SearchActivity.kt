@@ -11,6 +11,7 @@ import android.view.View.OnClickListener
 import android.widget.EditText
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.NovaEvaApp
+import hr.bpervan.novaeva.RxEventBus
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaContentMetadata
@@ -50,14 +51,12 @@ class SearchActivity : EvaBaseActivity(), OnClickListener {
 
 		mGaTracker.sendEvent("Pretraga", "KljucneRijeci", searchString, null);*/
 
-        val mGaTracker = (application as NovaEvaApp).getTracker(NovaEvaApp.TrackerName.APP_TRACKER)
-        mGaTracker.send(
-                HitBuilders.EventBuilder()
+        (application as NovaEvaApp).defaultTracker
+                .send(HitBuilders.EventBuilder()
                         .setCategory("Pretraga")
                         .setAction("KljucneRijeci")
                         .setLabel(searchString)
-                        .build()
-        )
+                        .build())
 
         adapter = EvaRecyclerAdapter(searchResultList)
 
@@ -77,7 +76,7 @@ class SearchActivity : EvaBaseActivity(), OnClickListener {
     override fun onResume() {
         super.onResume()
 
-        lifecycleBoundDisposables.add(NovaEvaApp.bus.contentOpenRequest
+        lifecycleBoundDisposables.add(RxEventBus.contentOpenRequest
                 .throttleFirst(500, TimeUnit.MILLISECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

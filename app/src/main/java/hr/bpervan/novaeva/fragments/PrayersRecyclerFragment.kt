@@ -14,11 +14,11 @@ import hr.bpervan.novaeva.model.PrayerCategory
 import kotlinx.android.synthetic.main.fragment_prayers.view.*
 import kotlinx.android.synthetic.main.top_prayerbook.view.*
 
-class PrayerCategoryRecyclerFragment : EvaBaseFragment() {
+class PrayersRecyclerFragment : EvaBaseFragment() {
 
     companion object {
-        fun newInstance(prayerCategoryId: Int): PrayerCategoryRecyclerFragment {
-            return PrayerCategoryRecyclerFragment().apply {
+        fun newInstance(prayerCategoryId: Int): PrayersRecyclerFragment {
+            return PrayersRecyclerFragment().apply {
                 arguments = Bundle().apply {
                     putInt("prayerCategoryId", prayerCategoryId)
                 }

@@ -2,6 +2,10 @@
 <resources
     xmlns:tools="http://schemas.android.com/tools"
     tools:ignore="TypographyDashes">
+
+    <!--  The following value should be replaced with correct property id. -->
+    <string name="ga_trackingId" translatable="false">UA-40344870-1</string>
+
     <integer name="ga_sessionTimeout">300</integer>
 
     <!-- Enable automatic Activity measurement -->
@@ -12,9 +16,6 @@
 
     <!--Enable automatic exception tracking-->
     <bool name="ga_reportUncaughtExceptions">true</bool>
-
-    <!--  The following value should be replaced with correct property id. -->
-    <string name="ga_trackingId">UA-40344870-1</string>
 
     <screenName name = "hr.bpervan.novaeva.activities.BookmarksActivity">
         Bookmarks

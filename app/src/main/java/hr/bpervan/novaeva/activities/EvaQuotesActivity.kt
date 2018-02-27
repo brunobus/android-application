@@ -24,13 +24,11 @@ class EvaQuotesActivity : EvaBaseActivity() {
 
         setContentView(R.layout.eva_fragment_frame)
 
-        if (supportFragmentManager.findFragmentByTag(TAG_RETAINED_IZREKE_FRAGMENT) == null) {
-            supportFragmentManager
-                    .beginTransaction()
-                    .add(R.id.evaFragmentFrame, EvaQuotesFragment.newInstance(), TAG_RETAINED_IZREKE_FRAGMENT)
-                    .commit()
-
-        }
+        supportFragmentManager.findFragmentByTag(TAG_RETAINED_IZREKE_FRAGMENT)
+                ?: supportFragmentManager
+                        .beginTransaction()
+                        .add(R.id.evaFragmentFrame, EvaQuotesFragment.newInstance(), TAG_RETAINED_IZREKE_FRAGMENT)
+                        .commit()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

@@ -12,6 +12,5 @@ object RxEventBus {
     val frontTextChange = PublishSubject.create<String>()
     val directoryOpenRequest = PublishSubject.create<EvaDirectoryMetadata>()
     val contentOpenRequest = PublishSubject.create<EvaContentMetadata>()
-
     val prayerCategoryOpenRequest = PublishSubject.create<PrayerCategory>()
 }

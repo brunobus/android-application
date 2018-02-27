@@ -1,4 +1,4 @@
-package hr.bpervan.novaeva.customviews;
+package hr.bpervan.novaeva.views;
 
 
 import android.content.Context;

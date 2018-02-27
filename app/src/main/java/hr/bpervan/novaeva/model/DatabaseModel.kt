@@ -1,6 +1,5 @@
 package hr.bpervan.novaeva.model
 
-import io.realm.Realm
 import io.realm.RealmList
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey

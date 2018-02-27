@@ -12,51 +12,35 @@ import android.util.TypedValue
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.gms.analytics.GoogleAnalytics
-import com.google.android.gms.analytics.Logger
 import com.google.android.gms.analytics.Tracker
 import hr.bpervan.novaeva.activities.DashboardActivity
 import hr.bpervan.novaeva.activities.SearchActivity
 import hr.bpervan.novaeva.main.BuildConfig
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.player.PlayerHolder
+import hr.bpervan.novaeva.player.ExoplayerFactory
 import hr.bpervan.novaeva.utilities.ImageLoaderConfigurator
 import io.realm.Realm
-import java.util.*
 
 /**
  * Created by Branimir on 17.1.2015..
  */
 class NovaEvaApp : Application() {
-    private var trackers: MutableMap<TrackerName, Tracker> = HashMap()
 
-    @Synchronized
-    fun getTracker(trackerId: TrackerName): Tracker {
-        if (!trackers.containsKey(trackerId)) {
-            val analytics = GoogleAnalytics.getInstance(this)
-            analytics.logger.logLevel = Logger.LogLevel.VERBOSE
+    lateinit var defaultTracker: Tracker
 
-            val t: Tracker = when (trackerId) {
-                NovaEvaApp.TrackerName.APP_TRACKER -> analytics.newTracker(PROPERTY_ID)
-                else -> analytics.newTracker(R.xml.global_tracker)
-            }
-
-            t.enableAdvertisingIdCollection(false)
-            trackers.put(trackerId, t)
-        }
-        return trackers[trackerId]!!
-    }
-
-    enum class TrackerName {
-        APP_TRACKER,
-        GLOBAL_TRACKER
+    /*
+    exoplayer is here because both service and activities use it
+     */
+    val exoPlayer: ExoPlayer by lazy {
+        ExoplayerFactory.createExoplayer(this)
     }
 
     override fun onCreate() {
         super.onCreate()
 
         instance = this
-
 
         if (BuildConfig.DEBUG) {
 //            registerActivityLifecycleCallbacks(LifecycleLogger())
@@ -65,27 +49,29 @@ class NovaEvaApp : Application() {
         Realm.init(this)
         ImageLoaderConfigurator.doInit(this)
 
+        val analytics = GoogleAnalytics.getInstance(this).apply {
+            setDryRun(BuildConfig.DEBUG)
+        }
+
+        defaultTracker = analytics.newTracker(NOVA_EVA_TRACKER_ID).apply {
+            enableAdvertisingIdCollection(false)
+        }
     }
 
     companion object {
-        private val PROPERTY_ID = "UA-40344870-1"
+        private const val NOVA_EVA_TRACKER_ID = "UA-40344870-1"
         var instance: NovaEvaApp? = null
 
         private fun loadTypeface(resFile: String): Typeface? {
             Log.d("loadingTypeface", "loading typeface from $resFile")
-            try {
-                return Typeface.createFromAsset(instance!!.assets, resFile)
+            return try {
+                Typeface.createFromAsset(instance!!.assets, resFile)
             } catch (e: Exception) {
-                return null
+                null
             }
         }
 
         //public static final properties
-        val bus = RxEventBus
-
-        val exoPlayerHolder: PlayerHolder by lazy {
-            PlayerHolder(instance!!.applicationContext)
-        }
 
         val openSansBold: Typeface? by lazy {
             loadTypeface("opensans-bold.ttf")

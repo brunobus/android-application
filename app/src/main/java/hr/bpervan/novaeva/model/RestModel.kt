@@ -18,7 +18,7 @@ data class EvaContentMetadataDTO(
         @SerializedName("attach") val attachmentsIndicator: EvaAttachmentsIndicatorDTO? = null,
         @SerializedName("datum") val datetime: String? = null,
         @SerializedName("naslov") val title: String? = null,
-        @SerializedName(value = "tekst", alternate = arrayOf("uvod")) val text: String? = null) {
+        @SerializedName(value = "tekst", alternate = ["uvod"]) val text: String? = null) {
 
     val preview: String by lazy {
         if (text != null) {

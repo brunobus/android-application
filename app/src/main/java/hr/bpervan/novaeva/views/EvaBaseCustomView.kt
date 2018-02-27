@@ -1,10 +1,10 @@
-package hr.bpervan.novaeva.customviews
+package hr.bpervan.novaeva.views
 
 import android.content.Context
 import android.content.Intent
 import android.view.MotionEvent
 import android.widget.TextView
-import hr.bpervan.novaeva.NovaEvaApp
+import hr.bpervan.novaeva.RxEventBus
 import hr.bpervan.novaeva.main.R
 import kotlin.properties.Delegates
 
@@ -28,7 +28,7 @@ abstract class EvaBaseCustomView(context: Context) : TextView(context) {
         setOnTouchListener { v, event ->
             if (event.action == MotionEvent.ACTION_DOWN) {
                 val text = textFeedback()
-                NovaEvaApp.bus.frontTextChange.onNext(text)
+                RxEventBus.frontTextChange.onNext(text)
             }
             false
         }
