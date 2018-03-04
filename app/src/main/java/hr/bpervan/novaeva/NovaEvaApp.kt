@@ -19,8 +19,9 @@ import hr.bpervan.novaeva.activities.DashboardActivity
 import hr.bpervan.novaeva.activities.SearchActivity
 import hr.bpervan.novaeva.main.BuildConfig
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.player.ExoplayerFactory
+import hr.bpervan.novaeva.player.MyExoPlayerFactory
 import hr.bpervan.novaeva.utilities.ImageLoaderConfigurator
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.realm.Realm
 
 /**
@@ -33,18 +34,11 @@ class NovaEvaApp : Application() {
     /*
     exoplayer is here because both service and activities use it
      */
-    val exoPlayer: ExoPlayer by lazy {
-        ExoplayerFactory.createExoplayer(this)
-    }
 
     override fun onCreate() {
         super.onCreate()
 
         instance = this
-
-        if (BuildConfig.DEBUG) {
-//            registerActivityLifecycleCallbacks(LifecycleLogger())
-        }
 
         Realm.init(this)
         ImageLoaderConfigurator.doInit(this)
@@ -56,11 +50,31 @@ class NovaEvaApp : Application() {
         defaultTracker = analytics.newTracker(NOVA_EVA_TRACKER_ID).apply {
             enableAdvertisingIdCollection(false)
         }
+
+        activeExoPlayer = MyExoPlayerFactory.createDefaultExoPlayer(this)
+        preparedExoPlayer = MyExoPlayerFactory.createDefaultExoPlayer(this)
+
+        RxEventBus.didSetActiveExoPlayer.onNext(activeExoPlayer)
+
+        RxEventBus.setActiveExoPlayer
+                .observeOn(AndroidSchedulers.mainThread())
+                .filter({ it != activeExoPlayer })
+                .subscribe {
+                    activeExoPlayer.playWhenReady = false
+                    activeExoPlayer.stop()
+                    preparedExoPlayer = activeExoPlayer
+                    activeExoPlayer = it
+                    RxEventBus.didSetActiveExoPlayer.onNext(it)
+                }
     }
 
     companion object {
         private const val NOVA_EVA_TRACKER_ID = "UA-40344870-1"
         var instance: NovaEvaApp? = null
+
+        var activeAudioTrackUri: String? = null
+        lateinit var activeExoPlayer: ExoPlayer
+        lateinit var preparedExoPlayer: ExoPlayer
 
         private fun loadTypeface(resFile: String): Typeface? {
             Log.d("loadingTypeface", "loading typeface from $resFile")

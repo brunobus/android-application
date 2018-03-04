@@ -48,5 +48,7 @@
     <string name="go_back">Povratak</string>
     <string name="error">Greška</string>
     <string name="dummyDesc"/>
+    <string name="pause">Pauziraj</string>
+    <string name="play">Pokreni</string>
 
 </resources>

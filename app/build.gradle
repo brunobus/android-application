@@ -41,6 +41,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
 
     compile 'com.android.support:support-compat:27.0.2'
+    compile 'com.android.support:support-media-compat:27.0.2'
     compile 'com.android.support:animated-vector-drawable:27.0.2'
     compile 'com.android.support:appcompat-v7:27.0.2'
     compile 'com.android.support:design:27.0.2'

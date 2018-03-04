@@ -10,8 +10,8 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 /**
  *
  */
-object ExoplayerFactory {
-    fun createExoplayer(context: Context): ExoPlayer {
+object MyExoPlayerFactory {
+    fun createDefaultExoPlayer(context: Context): ExoPlayer {
         val bandwidthMeter = DefaultBandwidthMeter()
         val factory = AdaptiveTrackSelection.Factory(bandwidthMeter)
         val trackSelector = DefaultTrackSelector(factory)

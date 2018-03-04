@@ -2,8 +2,11 @@ package hr.bpervan.novaeva.services
 
 import android.app.Notification
 import android.app.Service
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.media.AudioManager
 import android.os.IBinder
 import android.support.v4.app.NotificationCompat
@@ -15,158 +18,156 @@ import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ext.mediasession.DefaultPlaybackController
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
-import hr.bpervan.novaeva.NovaEvaApp
+import hr.bpervan.novaeva.RxEventBus
 import hr.bpervan.novaeva.main.R
 
 typealias MediaStyleCompat = android.support.v4.media.app.NotificationCompat.MediaStyle
 
 /**
- * todo
  * Created by vpriscan on 08.12.17..
  */
 class AudioPlayerService : Service() {
 
-    private lateinit var exoPlayer: ExoPlayer
-    private lateinit var mediaSession: MediaSessionCompat
-    private lateinit var audioManager: AudioManager
+    companion object {
+        @JvmStatic
+        private lateinit var mediaSession: MediaSessionCompat
+    }
 
-    private lateinit var playbackStateBuilder: PlaybackStateCompat.Builder
-//    lateinit var mediaMetadataBuilder: MediaMetadataCompat.Builder
+    private lateinit var mediaSessionConnector: MediaSessionConnector
+    private val playerEventListener = EvaServicePlayerEventListener()
+
+    private var activeExoPlayer: ExoPlayer? = null
+
+    private lateinit var audioManager: AudioManager
+    private lateinit var novaEvaBitmap: Bitmap
 
     override fun onCreate() {
         super.onCreate()
 
-        exoPlayer = (application as NovaEvaApp).exoPlayer
+        novaEvaBitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_launcher)
 
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
         mediaSession = MediaSessionCompat(this, "novaEvaMediaSession")
-        mediaSession.setFlags(
-                MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS
-                        or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
-
-//        mediaSession.setCallback(mediaSessionCallback)
-
-        playbackStateBuilder = PlaybackStateCompat.Builder()
-                .setActions(PlaybackStateCompat.ACTION_PLAY or PlaybackStateCompat.ACTION_PLAY_PAUSE)
-
-        mediaSession.setPlaybackState(playbackStateBuilder.build())
-
-        val mediaSessionConnector = MediaSessionConnector(mediaSession, MyPlaybackController())
-
-        mediaSessionConnector.setPlayer(exoPlayer, null, null)
-
+        mediaSession.setMediaButtonReceiver(null)
         mediaSession.isActive = true
 
-//        mediaMetadataBuilder = MediaMetadataCompat.Builder()
+        mediaSessionConnector = MediaSessionConnector(mediaSession, EvaPlaybackController())
+
+        RxEventBus.didSetActiveExoPlayer
+                .filter { it != activeExoPlayer }
+                .subscribe {
+                    activeExoPlayer?.removeListener(playerEventListener)
+                    activeExoPlayer = it
+                    playerEventListener.onPlayerStateChanged(it.playWhenReady, it.playbackState)
+                    it.addListener(playerEventListener)
+                    mediaSessionConnector.setPlayer(it, null)
+                }
     }
 
-    val audioFocusChangeListener = AudioManager.OnAudioFocusChangeListener {
-        when (it) {
-            AudioManager.AUDIOFOCUS_GAIN -> {
-                exoPlayer.playWhenReady = true
-            }
-            AudioManager.AUDIOFOCUS_LOSS,
-            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT,
-            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
-                exoPlayer.playWhenReady = false
+    private inner class EvaServicePlayerEventListener : Player.DefaultEventListener() {
+        override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+            if (playbackState == Player.STATE_READY) {
+                val notification = buildNotification(this@AudioPlayerService, mediaSession, playWhenReady)
+                startForeground(33313331, notification)
+            } else {
+                stopForeground(true)
             }
         }
     }
 
-    private inner class MyPlaybackController : DefaultPlaybackController() {
-        override fun onPlay(player: Player?) {
+    /**
+     * Must not be "inner" class to work
+     */
+    class EvaMediaReceiver : BroadcastReceiver() {
 
+        override fun onReceive(context: Context, intent: Intent) {
+            MediaButtonReceiver.handleIntent(mediaSession, intent)
+        }
+    }
+
+    private inner class EvaPlaybackController : DefaultPlaybackController() {
+
+        val audioFocusChangeListener = AudioManager.OnAudioFocusChangeListener {
+            when (it) {
+                AudioManager.AUDIOFOCUS_GAIN -> {
+                    activeExoPlayer?.playWhenReady = true
+                }
+                AudioManager.AUDIOFOCUS_LOSS,
+                AudioManager.AUDIOFOCUS_LOSS_TRANSIENT,
+                AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
+                    activeExoPlayer?.playWhenReady = false
+                }
+            }
+        }
+
+        override fun onPlay(player: Player) {
+            @Suppress("DEPRECATION")
             val focusRequestResult = audioManager.requestAudioFocus(audioFocusChangeListener,
                     AudioManager.STREAM_MUSIC,
                     AudioManager.AUDIOFOCUS_GAIN)
 
             if (focusRequestResult == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-                super.onPlay(player)
+                player.playWhenReady = true
             }
-
-            val notification = buildNotification(this@AudioPlayerService, mediaSession)
-            startForeground(33313331, notification)
         }
 
-        override fun onStop(player: Player?) {
+        override fun onStop(player: Player) {
+            player.playWhenReady = false
+            player.stop()
+            @Suppress("DEPRECATION")
             audioManager.abandonAudioFocus(audioFocusChangeListener)
-            super.onStop(player)
         }
 
-        override fun onPause(player: Player?) {
-            stopForeground(false)
-            super.onPause(player)
+        override fun onPause(player: Player) {
+            player.playWhenReady = false
         }
     }
 
-//    private val mediaSessionCallback: MediaSessionCompat.Callback = object : MediaSessionCompat.Callback() {
-//
-//        override fun onPlay() {
-//            exoPlayer.playWhenReady = true
-//            mediaSession.isActive = true//todo?
-//            startService(Intent(this@AudioPlayerService, AudioPlayerService::class.java))
-//
-//            val controller = mediaSession.controller
-//            val description = controller.metadata.description
-//
-//            val notification = buildNotification(this@AudioPlayerService, description, controller)
-//
-//            startForeground(567, notification)
-//        }
-//
-//        override fun onPause() {
-//            exoPlayer.playWhenReady = false
-//            stopForeground(false)
-//        }
-//
-//        override fun onStop() {
-//            exoPlayer.stop()
-//            mediaSession.isActive = false
-//            stopForeground(true)
-//            stopSelf()
-//        }
-//    }
-
-    private fun buildNotification(context: Context, mediaSession: MediaSessionCompat): Notification {
+    private fun buildNotification(context: Context, mediaSession: MediaSessionCompat,
+                                  playing: Boolean): Notification {
         val controller = mediaSession.controller
-        val description = controller.metadata.description
 
-        return NotificationCompat.Builder(context, "myChannel")
+        val playPauseIcon: Int
+        val playPauseString: String
+
+        if (playing) {
+            playPauseIcon = R.drawable.exo_controls_pause
+            playPauseString = getString(R.string.pause)
+        } else {
+            playPauseIcon = R.drawable.exo_controls_play
+            playPauseString = getString(R.string.play)
+        }
+
+        return NotificationCompat.Builder(context, "novaEvaChannel")
+                .setLargeIcon(novaEvaBitmap)
                 .setSmallIcon(R.drawable.ic_launcher)
-                .setContentTitle(description.title)
-                .setContentText(description.subtitle)
-                .setSubText(description.description)
-                .setLargeIcon(description.iconBitmap)
-                .setContentIntent(controller.sessionActivity)
-                .setDeleteIntent(MediaButtonReceiver.buildMediaButtonPendingIntent(context,
-                        PlaybackStateCompat.ACTION_STOP))
+                .setContentTitle("Nova Eva")
+                .setContentText("Reprodukcija zvuka")
+//                .setSubText("sub text")
+                .setContentIntent(controller.sessionActivity) //todo set
+//                .setDeleteIntent(MediaButtonReceiver.buildMediaButtonPendingIntent(context,
+//                        PlaybackStateCompat.ACTION_STOP))
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setColor(ContextCompat.getColor(context, R.color.novaEva))
-                .addAction(NotificationCompat.Action(R.drawable.player_btn_pause, "Pause",
+                .addAction(NotificationCompat.Action(playPauseIcon, playPauseString,
                         MediaButtonReceiver.buildMediaButtonPendingIntent(context,
                                 PlaybackStateCompat.ACTION_PLAY_PAUSE)))
                 .setStyle(MediaStyleCompat()
                         .setMediaSession(mediaSession.sessionToken)
-                        .setShowActionsInCompactView(0)//todo
+                        .setShowActionsInCompactView(0)
                         .setShowCancelButton(true)
-                        .setCancelButtonIntent(MediaButtonReceiver.buildMediaButtonPendingIntent(context,
-                                PlaybackStateCompat.ACTION_STOP))
+                        .setCancelButtonIntent(
+                                MediaButtonReceiver.buildMediaButtonPendingIntent(context,
+                                        PlaybackStateCompat.ACTION_STOP))
                 )
                 .build()
     }
 
-    override fun onBind(intent: Intent?): IBinder? = null
-
-    companion object {
-        val CONTINUE_ACTION = "hr.bpervan.novaeva.CONTINUE_ACTION"
-        val PAUSE_ACTION = "hr.bpervan.novaeva.PAUSE_ACTION"
-        val STOP_ACTION = "hr.bpervan.novaeva.STOP_ACTION"
-    }
-
     override fun onDestroy() {
+        mediaSession.release()
         super.onDestroy()
-
-        exoPlayer.release()
     }
+
+    override fun onBind(intent: Intent?): IBinder? = null
 }
