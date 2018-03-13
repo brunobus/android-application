@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,8 +23,10 @@ import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
+import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.CacheService
 import hr.bpervan.novaeva.NovaEvaApp
+import hr.bpervan.novaeva.model.OpenContentEvent
 import hr.bpervan.novaeva.RxEventBus
 import hr.bpervan.novaeva.actions.sendEmailIntent
 import hr.bpervan.novaeva.actions.shareIntent
@@ -46,15 +49,19 @@ import kotlinx.android.synthetic.main.toolbar_eva_content.view.*
  * Created by vpriscan on 04.12.17..
  */
 class EvaContentFragment : EvaBaseFragment(), SeekBar.OnSeekBarChangeListener {
-    companion object {
+
+    companion object : EvaFragmentFactory<EvaContentFragment, OpenContentEvent> {
+
         private const val CONTENT_ID_KEY = "contentId"
         private const val CATEGORY_ID_KEY = "categoryId"
+        private const val THEME_ID_KEY = "themeId"
 
-        fun newInstance(contentId: Long, categoryId: Long): EvaContentFragment {
+        override fun newInstance(initializer: OpenContentEvent): EvaContentFragment {
             return EvaContentFragment().apply {
                 arguments = Bundle().apply {
-                    putLong(CONTENT_ID_KEY, contentId)
-                    putLong(CATEGORY_ID_KEY, categoryId)
+                    putLong(CONTENT_ID_KEY, initializer.contentMetadata.contentId)
+                    putLong(CATEGORY_ID_KEY, initializer.contentMetadata.categoryId)
+                    putInt(THEME_ID_KEY, initializer.themeId)
                 }
             }
         }
@@ -72,24 +79,47 @@ class EvaContentFragment : EvaBaseFragment(), SeekBar.OnSeekBarChangeListener {
     private var evaContent: EvaContent? = null
 
     private var fetchFromServerDisposable: Disposable? = null
+        set(value) {
+            field = safeReplaceDisposable(field, value)
+        }
+
     private var evaContentChangesDisposable: Disposable? = null
+        set(value) {
+            field = safeReplaceDisposable(field, value)
+        }
+
     private var evaContentMetadataChangesDisposable: Disposable? = null
+        set(value) {
+            field = safeReplaceDisposable(field, value)
+        }
 
     private var showTools = false
 
+    private var themeId = -1
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        retainInstance = true
 
         val inState = savedInstanceState ?: arguments!!
         contentId = inState.getLong(CONTENT_ID_KEY)
         categoryId = inState.getLong(CATEGORY_ID_KEY)
+        themeId = inState.getInt(THEME_ID_KEY, -1)
+
+        savedInstanceState ?: NovaEvaApp.defaultTracker
+                .send(HitBuilders.EventBuilder()
+                        .setCategory("Vijesti")
+                        .setAction("OtvorenaVijest")
+                        .setLabel(contentId.toString())
+                        .setValue(contentId)
+                        .build())
 
         fetchContentFromServer(contentId)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putLong(CONTENT_ID_KEY, contentId)
+        outState.putLong(CATEGORY_ID_KEY, categoryId)
+        outState.putInt(THEME_ID_KEY, themeId)
 
         super.onSaveInstanceState(outState)
     }
@@ -103,14 +133,12 @@ class EvaContentFragment : EvaBaseFragment(), SeekBar.OnSeekBarChangeListener {
     private var previousPlayerView: PlayerView? = null
 
     private fun subscribeToEvaContentUpdates(view: View) {
-        evaContentMetadataChangesDisposable?.dispose()
-        evaContentMetadataChangesDisposable = EvaContentDbAdapter
-                .subscribeToEvaContentMetadataUpdatesAsync(realm, contentId) { evaContentMetadata ->
-                    view.options.btnBookmark.setImageResource(
-                            if (evaContentMetadata.bookmark) R.drawable.action_button_bookmarked
-                            else R.drawable.action_button_bookmark)
-                }
-        evaContentChangesDisposable?.dispose()
+        evaContentMetadataChangesDisposable = EvaContentDbAdapter.subscribeToEvaContentMetadataUpdatesAsync(realm, contentId) { evaContentMetadata ->
+            view.options.btnBookmark.setImageResource(
+                    if (evaContentMetadata.bookmark) R.drawable.action_button_bookmarked
+                    else R.drawable.action_button_bookmark)
+        }
+
         evaContentChangesDisposable = EvaContentDbAdapter.subscribeToEvaContentUpdatesAsync(realm, contentId) { evaContent ->
 
             view.evaCollapsingBar.collapsingToolbar.title = evaContent.contentMetadata!!.title
@@ -169,9 +197,7 @@ class EvaContentFragment : EvaBaseFragment(), SeekBar.OnSeekBarChangeListener {
     }
 
     private fun fetchContentFromServer(contentId: Long) {
-        fetchFromServerDisposable?.dispose()
-        fetchFromServerDisposable = NovaEvaService.instance
-                .getContentData(contentId)
+        fetchFromServerDisposable = NovaEvaService.instance.getContentData(contentId)
                 .subscribeAsync({ contentDataDTO ->
                     CacheService.cache(realm, contentDataDTO)
                 }) {
@@ -182,7 +208,13 @@ class EvaContentFragment : EvaBaseFragment(), SeekBar.OnSeekBarChangeListener {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_eva_content, container, false).apply {
+        val inflaterToUse =
+                if (themeId != -1)
+                    inflater.cloneInContext(ContextThemeWrapper(activity, themeId))
+                else
+                    inflater
+
+        return inflaterToUse.inflate(R.layout.fragment_eva_content, container, false).apply {
 
             loadingCircle.visibility = View.VISIBLE
 
@@ -215,13 +247,6 @@ class EvaContentFragment : EvaBaseFragment(), SeekBar.OnSeekBarChangeListener {
                 }
             }
 
-//            seekArc.setOnSeekBarChangeListener(this@EvaContentFragment)
-//
-//            NovaEvaApp.openSansRegular?.let {
-//                tvDuration.typeface = it
-//                tvElapsed.typeface = it
-//            }
-
             applyFakeActionBarVisibility(this@apply)
 
             btnToggleActionBar.setOnClickListener {
@@ -250,32 +275,7 @@ class EvaContentFragment : EvaBaseFragment(), SeekBar.OnSeekBarChangeListener {
                 sendEmailIntent(context, evaContent!!.contentMetadata!!.title, "http://novaeva.com/node/$contentId")
             }
 
-            /** Set category name and set text size */
             vijestWebView.settings.defaultFontSize = prefs.getInt("hr.bpervan.novaeva.velicinateksta", 14)
-
-            //todo check what is this
-            /*if(mPlayer != null){
-                mp3Player.setVisibility(View.VISIBLE);
-                btnPlay.setOnClickListener(EvaContentActivity.this);
-                btnPause.setOnClickListener(EvaContentActivity.this);
-
-                seekArc.setMax(mPlayer.getDuration());
-
-                int seconds = (int) (mPlayer.getDuration() / 1000) % 60 ;
-                int minutes = (int) ((mPlayer.getDuration() / (1000 * 60)) % 60);
-
-                if(mPlayer.isPlaying()){
-                    seekArc.setProgress(mPlayer.getCurrentPosition());
-                    btnPlay.setVisibility(View.INVISIBLE);
-                    btnPause.setVisibility(View.VISIBLE);
-                }
-
-                tvDuration.setText(String.format("%02d:%02d", minutes, seconds));
-
-                tvElapsed.setText(String.format("%02d:%02d",
-                        (int) (mPlayer.getCurrentPosition() / 1000) % 60,
-                        (int) ((mPlayer.getCurrentPosition() / (1000 * 60)) % 60)));
-            }*/
         }
     }
 
@@ -339,14 +339,7 @@ class EvaContentFragment : EvaBaseFragment(), SeekBar.OnSeekBarChangeListener {
         }
     }
 
-    override fun onDetach() {
-        evaContentChangesDisposable?.dispose()
-        evaContentMetadataChangesDisposable?.dispose()
-        super.onDetach()
-    }
-
     override fun onDestroy() {
-        fetchFromServerDisposable?.dispose()
         previousPlayerView = null
         realm.close()
 

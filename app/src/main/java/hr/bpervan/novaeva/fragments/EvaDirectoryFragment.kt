@@ -5,16 +5,18 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Parcel
 import android.os.Parcelable
-import android.support.v4.app.Fragment
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
+import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.CacheService
 import hr.bpervan.novaeva.NovaEvaApp
+import hr.bpervan.novaeva.model.OpenDirectoryEvent
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaContentMetadata
@@ -34,42 +36,63 @@ import kotlinx.android.synthetic.main.top_izbornik.view.*
 /**
  * Created by vpriscan on 08.10.17..
  */
-class EvaRecyclerFragment : Fragment() {
+class EvaDirectoryFragment : EvaBaseFragment() {
 
-    private val handler = Handler()
-    private var fetchFromServerDisposable: Disposable? = null
-    private var evaDirectoryChangesDisposable: Disposable? = null
+    companion object : EvaBaseFragment.EvaFragmentFactory<EvaDirectoryFragment, OpenDirectoryEvent> {
 
-    private lateinit var fragmentConfig: FragmentConfig
-    private lateinit var adapter: EvaRecyclerAdapter
-    private var elementsList: MutableList<TreeElementInfo> = mutableListOf()
+        private const val fragmentConfigKey = "fragmentConfig"
 
-    private var hasMore = true
-    private var loadingFromDb = true
-    private var fetchingFromServer = true
-
-    private lateinit var realm: Realm
-
-    companion object {
-
-        fun newInstance(directoryId: Long, directoryTitle: String, isSubDirectory: Boolean, themeId: Int): EvaRecyclerFragment {
-            return EvaRecyclerFragment().apply {
+        override fun newInstance(initializer: OpenDirectoryEvent): EvaDirectoryFragment {
+            return EvaDirectoryFragment().apply {
                 arguments = Bundle().apply {
-                    putParcelable("fragmentConfig", EvaRecyclerFragment.FragmentConfig(directoryId, directoryTitle, isSubDirectory, themeId))
+                    putParcelable(fragmentConfigKey, EvaDirectoryFragment.FragmentConfig(
+                            initializer.directoryMetadata.directoryId,
+                            initializer.directoryMetadata.title,
+                            initializer.themeId))
                 }
             }
         }
     }
 
+    private val handler = Handler()
+
+    private var fetchFromServerDisposable: Disposable? = null
+        set(value) {
+            field = safeReplaceDisposable(field, value)
+        }
+    private var evaDirectoryChangesDisposable: Disposable? = null
+        set(value) {
+            field = safeReplaceDisposable(field, value)
+        }
+
+    private lateinit var fragmentConfig: FragmentConfig
+    private lateinit var adapter: EvaRecyclerAdapter
+
+    private var elementsList: MutableList<TreeElementInfo> = mutableListOf()
+    private var hasMore = true
+    private var loadingFromDb = true
+
+    private var fetchingFromServer = true
+
+    private lateinit var realm: Realm
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val inState: Bundle = savedInstanceState ?: arguments!!
-        fragmentConfig = inState.getParcelable("fragmentConfig")
+        fragmentConfig = inState.getParcelable(fragmentConfigKey)
         realm = Realm.getInstance(RealmConfigProvider.evaDBConfig)
 
-        adapter = EvaRecyclerAdapter(elementsList, { loadingFromDb || fetchingFromServer })
+        adapter = EvaRecyclerAdapter(elementsList, { loadingFromDb || fetchingFromServer }, fragmentConfig.themeId)
         adapter.registerAdapterDataObserver(DataChangeLogger())
+
+        savedInstanceState ?: NovaEvaApp.defaultTracker
+                .send(HitBuilders.EventBuilder()
+                        .setCategory("Direktorij")
+                        .setAction("OtvorenDirektorij")
+                        .setLabel(fragmentConfig.directoryTitle)
+                        .setValue(fragmentConfig.directoryId)
+                        .build())
 
         createIfMissingAndSubscribeToEvaDirectoryUpdates()
 
@@ -87,7 +110,6 @@ class EvaRecyclerFragment : Fragment() {
     }
 
     private fun subscribeToDirectoryUpdates() {
-        evaDirectoryChangesDisposable?.dispose()
         evaDirectoryChangesDisposable = EvaDirectoryDbAdapter.subscribeToEvaDirectoryUpdatesAsync(
                 realm, fragmentConfig.directoryId, { evaDirectory ->
 
@@ -122,19 +144,16 @@ class EvaRecyclerFragment : Fragment() {
 
     class FragmentConfig(val directoryId: Long,
                          val directoryTitle: String,
-                         val isSubDirectory: Boolean,
                          val themeId: Int) : Parcelable {
 
         constructor(parcel: Parcel) : this(
                 parcel.readLong(),
                 parcel.readString(),
-                parcel.readByte() != 0.toByte(),
                 parcel.readInt())
 
         override fun writeToParcel(dest: Parcel, flags: Int) {
             dest.writeLong(directoryId)
             dest.writeString(directoryTitle)
-            dest.writeByte(if (isSubDirectory) 1.toByte() else 0.toByte())
             dest.writeInt(themeId)
         }
 
@@ -150,7 +169,6 @@ class EvaRecyclerFragment : Fragment() {
         outState.putParcelable("fragmentConfig", FragmentConfig(
                 fragmentConfig.directoryId,
                 fragmentConfig.directoryTitle,
-                fragmentConfig.isSubDirectory,
                 fragmentConfig.themeId
         ))
 
@@ -158,9 +176,14 @@ class EvaRecyclerFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-
-        return inflater.inflate(R.layout.eva_directory, container, false).apply {
-            val infoText = if (fragmentConfig.isSubDirectory) "NALAZITE SE U MAPI" else "NALAZITE SE U KATEGORIJI"
+        val inflaterToUse =
+                if (fragmentConfig.themeId != -1) {
+                    inflater.cloneInContext(ContextThemeWrapper(activity, fragmentConfig.themeId))
+                } else {
+                    inflater
+                }
+        return inflaterToUse.inflate(R.layout.eva_directory, container, false).apply {
+            val infoText = "NALAZITE SE U KATEGORIJI"
 
             evaDirectoryCollapsingBar.izbornikTop.izbornikTopNatpis.apply {
                 text = infoText
@@ -178,12 +201,6 @@ class EvaRecyclerFragment : Fragment() {
             recyclerView.itemAnimator = DefaultItemAnimator()
             recyclerView.adapter = adapter
             recyclerView.addOnScrollListener(EndlessScrollListener(linearLayoutManager))
-            //todo use this when new adapter class that uses two realmlists is created
-            //        EvaDirectoryDbAdapter.loadEvaDirectoryAsync(realm, fragmentConfig.directoryId) { evaDirectory ->
-            //            if (evaDirectory != null) {
-            //                recyclerView.adapter = createAdapter(evaDirectory.contentMetadataList, evaDirectory.subDirectoryMetadataList)
-            //            }
-            //        }
         }
     }
 
@@ -196,8 +213,7 @@ class EvaRecyclerFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        evaDirectoryChangesDisposable?.dispose()
-        fetchFromServerDisposable?.dispose()
+
         realm.close()
     }
 
@@ -245,7 +261,6 @@ class EvaRecyclerFragment : Fragment() {
         fetchingFromServer = true
         refreshLoadingCircleState()
 
-        fetchFromServerDisposable?.dispose()
         fetchFromServerDisposable = NovaEvaService.instance
                 .getDirectoryContent(fragmentConfig.directoryId, timestamp)
                 .subscribeAsync({ evaDirectoryDTO ->

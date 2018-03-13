@@ -22,6 +22,8 @@ open class EvaDirectoryMetadata(
 open class EvaContentMetadata(
         @PrimaryKey
         var contentId: Long = -1,
+        var directoryId: Long = -1,
+        var categoryId: Long = -1,
         var attachmentsIndicator: EvaAttachmentsIndicator? = null,
         var timestamp: Long = 0,
         var title: String = "",

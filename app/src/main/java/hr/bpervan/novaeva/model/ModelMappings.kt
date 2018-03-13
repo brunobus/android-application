@@ -10,7 +10,9 @@ fun EvaDirectoryMetadataDTO.toDatabaseModel(): EvaDirectoryMetadata =
         EvaDirectoryMetadata(directoryId, title ?: "")
 
 fun EvaContentMetadataDTO.toDatabaseModel(): EvaContentMetadata =
-        EvaContentMetadata(contentId, attachmentsIndicator?.toDatabaseModel(), datetime?.toLong() ?: 0, title ?: "", preview)
+        EvaContentMetadata(contentId, -1, -1,
+                attachmentsIndicator?.toDatabaseModel(),
+                datetime?.toLong() ?: 0, title ?: "", preview)
 
 fun EvaAttachmentsIndicatorDTO.toDatabaseModel(): EvaAttachmentsIndicator =
         EvaAttachmentsIndicator(hasVideo, hasDocuments, hasMusic, hasImages, hasText)

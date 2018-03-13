@@ -9,12 +9,15 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import hr.bpervan.novaeva.NovaEvaApp
+import hr.bpervan.novaeva.model.OpenContentEvent
+import hr.bpervan.novaeva.model.OpenDirectoryEvent
 import hr.bpervan.novaeva.RxEventBus
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaContentMetadata
 import hr.bpervan.novaeva.model.EvaDirectoryMetadata
 import hr.bpervan.novaeva.model.TreeElementInfo
 import hr.bpervan.novaeva.utilities.EvaTouchFeedback
+import hr.bpervan.novaeva.utilities.TransitionAnimation
 import kotlinx.android.synthetic.main.recycler_item_eva_content.view.*
 import kotlinx.android.synthetic.main.recycler_item_folder.view.*
 import java.text.SimpleDateFormat
@@ -24,7 +27,8 @@ import java.util.*
  * Created by vpriscan on 08.10.17..
  */
 class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
-                         val isLoadingSupplier: () -> Boolean = { false }) :
+                         val isLoadingSupplier: () -> Boolean = { false },
+                         val themeId: Int = -1) :
         RecyclerView.Adapter<EvaRecyclerAdapter.BindableViewHolder>() {
 
     companion object {
@@ -104,7 +108,7 @@ class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
 
             view.setOnTouchListener(EvaTouchFeedback(view, themeColorTrans))
             view.setOnClickListener {
-                RxEventBus.directoryOpenRequest.onNext(directoryInfo)
+                RxEventBus.openDirectory.onNext(OpenDirectoryEvent(directoryInfo, themeId, TransitionAnimation.RIGHTWARDS))
             }
         }
 
@@ -165,7 +169,7 @@ class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
             view.setOnTouchListener(EvaTouchFeedback(view, themeColorTrans))
 
             view.setOnClickListener {
-                RxEventBus.contentOpenRequest.onNext(contentInfo)
+                RxEventBus.openContent.onNext(OpenContentEvent(contentInfo, themeId, TransitionAnimation.RIGHTWARDS))
             }
         }
     }

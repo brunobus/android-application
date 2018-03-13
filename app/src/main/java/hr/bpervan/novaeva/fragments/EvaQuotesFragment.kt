@@ -2,6 +2,7 @@ package hr.bpervan.novaeva.fragments
 
 import android.os.Bundle
 import android.support.design.widget.Snackbar
+import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +11,6 @@ import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.actions.sendEmailIntent
 import hr.bpervan.novaeva.actions.shareIntent
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.EvaCategory
 import hr.bpervan.novaeva.services.NovaEvaService
 import hr.bpervan.novaeva.utilities.subscribeAsync
 import io.reactivex.disposables.Disposable
@@ -22,9 +22,16 @@ import kotlinx.android.synthetic.main.fragment_eva_quotes.view.*
  * Created by vpriscan on 04.12.17..
  */
 class EvaQuotesFragment : EvaBaseFragment() {
-    companion object {
-        fun newInstance(): EvaQuotesFragment {
-            return EvaQuotesFragment()
+    companion object :EvaFragmentFactory<EvaQuotesFragment, Long>{
+
+        val TAG: String = EvaQuotesFragment::class.java.canonicalName
+        private const val INITIAL_QUOTE_ID_KEY = "initialQuoteId"
+        override fun newInstance(initializer: Long): EvaQuotesFragment {
+            return EvaQuotesFragment().apply {
+                arguments = Bundle().apply {
+                    putLong(INITIAL_QUOTE_ID_KEY, initializer) //todo read
+                }
+            }
         }
     }
 
@@ -32,28 +39,27 @@ class EvaQuotesFragment : EvaBaseFragment() {
     private var contentData: String? = null
     private var contentId: Long = -1
 
-    private var loadRandomIzrekaDisposable: Disposable? = null
+    private var loadRandomQuoteDisposable: Disposable? = null
+        set(value) {
+            field = safeReplaceDisposable(field, value)
+        }
 
     private var showTools = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        retainInstance = true
 
         if (savedInstanceState != null) {
             contentTitle = savedInstanceState.getString("contentTitle")
             contentData = savedInstanceState.getString("contentData")
             contentId = savedInstanceState.getLong("contentId", -1L)
-        } else {
-            activity?.apply {
-                (application as NovaEvaApp).defaultTracker
-                        .send(HitBuilders.EventBuilder()
-                                .setCategory("Kategorije")
-                                .setAction("OtvorenaKategorija")
-                                .setLabel(EvaCategory.IZREKE.rawName)
-                                .build())
-            }
         }
+
+        savedInstanceState ?: NovaEvaApp.defaultTracker
+                .send(HitBuilders.EventBuilder()
+                        .setCategory("Izreke")
+                        .setAction("OtvoreneIzreke")
+                        .build())
 
         if (contentTitle == null || contentData == null || contentId == -1L) {
             fetchRandomQuote()
@@ -61,7 +67,10 @@ class EvaQuotesFragment : EvaBaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val izrekeView = inflater.inflate(R.layout.fragment_eva_quotes, container, false)
+        val ctw = ContextThemeWrapper(activity, R.style.IzrekeTheme)
+        val localInflater = inflater.cloneInContext(ctw)
+        val izrekeView = localInflater.inflate(R.layout.fragment_eva_quotes, container, false)
+        //todo izrekeView
 
         if (contentTitle != null && contentData != null && contentId != -1L) {
             applyContent(izrekeView)
@@ -112,20 +121,8 @@ class EvaQuotesFragment : EvaBaseFragment() {
         super.onSaveInstanceState(outState)
     }
 
-    override fun onDetach() {
-        loadRandomIzrekaDisposable?.dispose()
-        super.onDetach()
-    }
-
-    override fun onDestroy() {
-        loadRandomIzrekaDisposable?.dispose()
-        super.onDestroy()
-    }
-
     private fun fetchRandomQuote() {
-        loadRandomIzrekaDisposable?.dispose()
-
-        loadRandomIzrekaDisposable = NovaEvaService.instance
+        loadRandomQuoteDisposable = NovaEvaService.instance
                 .getRandomDirectoryContent(1)
                 .subscribeAsync({ directoryContent ->
                     if (directoryContent.contentMetadataList != null && directoryContent.contentMetadataList.isNotEmpty()) {

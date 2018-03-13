@@ -8,11 +8,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import hr.bpervan.novaeva.NovaEvaApp
+import hr.bpervan.novaeva.model.OpenPrayerCategoryEvent
 import hr.bpervan.novaeva.RxEventBus
 import hr.bpervan.novaeva.adapters.PrayerBookRecyclerAdapter.BindableViewHolder
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.PrayerCategory
 import hr.bpervan.novaeva.utilities.EvaTouchFeedback
+import hr.bpervan.novaeva.utilities.TransitionAnimation
 import kotlinx.android.synthetic.main.recycler_item_prayer_category.view.*
 
 class PrayerBookRecyclerAdapter(private val prayerCategoryList: List<PrayerCategory>) :
@@ -41,7 +43,7 @@ class PrayerBookRecyclerAdapter(private val prayerCategoryList: List<PrayerCateg
         holder.bindTo(prayerCategoryList[position])
     }
 
-    inner abstract class BindableViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+    abstract inner class BindableViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         abstract fun bindTo(t: Any)
     }
 
@@ -58,7 +60,7 @@ class PrayerBookRecyclerAdapter(private val prayerCategoryList: List<PrayerCateg
 
             view.setOnTouchListener(EvaTouchFeedback(view, themeColorTrans))
             view.setOnClickListener {
-                RxEventBus.prayerCategoryOpenRequest.onNext(prayerCategory)
+                RxEventBus.openPrayerCategory.onNext(OpenPrayerCategoryEvent(prayerCategory, TransitionAnimation.RIGHTWARDS))
             }
         }
     }

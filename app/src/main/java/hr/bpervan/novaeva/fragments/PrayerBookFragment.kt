@@ -4,9 +4,11 @@ import android.os.Bundle
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.PrayerBookRecyclerAdapter
 import hr.bpervan.novaeva.main.R
@@ -17,11 +19,11 @@ import kotlinx.android.synthetic.main.top_prayerbook.view.*
 /**
  * Created by vpriscan on 11.12.17..
  */
-class PrayerBookRecyclerFragment : EvaBaseFragment() {
+class PrayerBookFragment : EvaBaseFragment() {
 
-    companion object {
-        fun newInstance(): PrayerBookRecyclerFragment {
-            return PrayerBookRecyclerFragment()
+    companion object : EvaFragmentFactory<PrayerBookFragment, Unit> {
+        override fun newInstance(initializer: Unit): PrayerBookFragment {
+            return PrayerBookFragment()
         }
     }
 
@@ -30,13 +32,19 @@ class PrayerBookRecyclerFragment : EvaBaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        retainInstance = true
-
         adapter = PrayerBookRecyclerAdapter(PRAYER_CATEGORIES)
+
+        savedInstanceState ?: NovaEvaApp.defaultTracker
+                .send(HitBuilders.EventBuilder()
+                        .setCategory("Molitvenik")
+                        .setAction("OtvorenMolitvenik")
+                        .build())
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_prayers, container, false).apply {
+        val ctw = ContextThemeWrapper(activity, R.style.PrayersTheme)
+        val localInflater = inflater.cloneInContext(ctw)
+        return localInflater.inflate(R.layout.fragment_prayers, container, false).apply {
             val title = "Molitvenik"
 
             prayerArrow.visibility = View.INVISIBLE

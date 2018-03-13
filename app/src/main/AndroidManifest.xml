@@ -26,62 +26,22 @@
             </intent-filter>
         </receiver>
 
-        <service android:name="hr.bpervan.novaeva.services.AudioPlayerService">
-            <intent-filter>
-                <action android:name="android.intent.action.MEDIA_BUTTON"/>
-                <action android:name="android.media.AUDIO_BECOMING_NOISY"/>
-                <action android:name="android.media.browse.MediaBrowserService"/>
-            </intent-filter>
-        </service>
-
         <activity
-            android:name="hr.bpervan.novaeva.activities.DashboardActivity"
+            android:name="hr.bpervan.novaeva.activities.EvaActivity"
             android:label="@string/app_name"
             android:theme="@style/SplashTheme">
+
             <intent-filter android:label="@string/app_name">
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-        </activity>
 
-        <activity
-            android:name="hr.bpervan.novaeva.activities.PrayerBookActivity"
-            android:label="@string/title_activity_molitvenik"/>
-        <activity
-            android:name="hr.bpervan.novaeva.activities.EvaQuotesActivity"
-            android:label="@string/title_activity_izreke"/>
-        <activity
-            android:name="hr.bpervan.novaeva.activities.SearchActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
-            android:label="@string/title_activity_search"
-            android:noHistory="true"/>
-        <activity
-            android:name="hr.bpervan.novaeva.activities.ListEvaContentActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
-            android:label="@string/title_activity_lista_vijesti"/>
-        <activity
-            android:name="hr.bpervan.novaeva.activities.BookmarksActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
-            android:label="@string/title_activity_bookmarks"
-            android:noHistory="true"/>
-        <activity
-            android:name="hr.bpervan.novaeva.activities.BreviaryActivity"
-            android:label="@string/title_activity_brevijar_predizbor"
-            android:theme="@style/BreviaryTheme"/>
-        <activity
-            android:name="hr.bpervan.novaeva.activities.BreviaryContentActivity"
-            android:label="@string/title_activity_brevijar_detalji"
-            android:theme="@style/BreviaryTheme"/>
-        <activity
-            android:name="hr.bpervan.novaeva.activities.EvaContentActivity"
-            android:hardwareAccelerated="true"
-            android:label="@string/title_activity_vijest">
-            <intent-filter android:label="@string/app_name">
+            <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
 
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
-                <!-- Accepts URIs that begin with "http://www.example.com/gizmos” -->
+
                 <data
                     android:host="novaeva.com"
                     android:pathPrefix="/node"
@@ -89,12 +49,16 @@
                 <!-- note that the leading "/" is required for pathPrefix-->
             </intent-filter>
         </activity>
-        <!-- keyboardHidden -->
-        <activity
-            android:name="hr.bpervan.novaeva.activities.InfoActivity"
-            android:label="@string/title_activity_info"/>
 
-        <!--<service android:name="hr.bpervan.novaeva.services.AudioPlayerService"/>-->
+        <service
+            android:name="hr.bpervan.novaeva.services.AudioPlayerService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON"/>
+                <action android:name="android.media.AUDIO_BECOMING_NOISY"/>
+                <action android:name="android.media.browse.MediaBrowserService"/>
+            </intent-filter>
+        </service>
 
     </application>
 

@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <integer name="transition_anim_duration">250</integer>
+    <integer name="transition_anim_duration_short">150</integer>
+    <integer name="transition_anim_duration_long">400</integer>
     <item name="row_alpha" type="dimen" format="float">0.95</item>
 </resources>

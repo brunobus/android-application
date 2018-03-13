@@ -4,7 +4,6 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.app.Application
 import android.content.Context
-import android.content.Intent
 import android.graphics.Typeface
 import android.support.design.widget.Snackbar
 import android.util.Log
@@ -15,12 +14,12 @@ import android.widget.Toast
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.gms.analytics.GoogleAnalytics
 import com.google.android.gms.analytics.Tracker
-import hr.bpervan.novaeva.activities.DashboardActivity
-import hr.bpervan.novaeva.activities.SearchActivity
 import hr.bpervan.novaeva.main.BuildConfig
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.player.MyExoPlayerFactory
 import hr.bpervan.novaeva.utilities.ImageLoaderConfigurator
+import hr.bpervan.novaeva.utilities.LifecycleLogger
+import hr.bpervan.novaeva.utilities.TransitionAnimation
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.realm.Realm
 
@@ -28,12 +27,6 @@ import io.realm.Realm
  * Created by Branimir on 17.1.2015..
  */
 class NovaEvaApp : Application() {
-
-    lateinit var defaultTracker: Tracker
-
-    /*
-    exoplayer is here because both service and activities use it
-     */
 
     override fun onCreate() {
         super.onCreate()
@@ -66,6 +59,8 @@ class NovaEvaApp : Application() {
                     activeExoPlayer = it
                     RxEventBus.didSetActiveExoPlayer.onNext(it)
                 }
+
+        registerActivityLifecycleCallbacks(LifecycleLogger())
     }
 
     companion object {
@@ -75,6 +70,7 @@ class NovaEvaApp : Application() {
         var activeAudioTrackUri: String? = null
         lateinit var activeExoPlayer: ExoPlayer
         lateinit var preparedExoPlayer: ExoPlayer
+        lateinit var defaultTracker: Tracker
 
         private fun loadTypeface(resFile: String): Typeface? {
             Log.d("loadingTypeface", "loading typeface from $resFile")
@@ -98,22 +94,6 @@ class NovaEvaApp : Application() {
         }
         val openSansRegular: Typeface? by lazy {
             loadTypeface("opensans-regular.ttf")
-        }
-
-
-        //temp place for common activity navigation
-
-        fun goHome(context: Context) {
-            val i = Intent(context, DashboardActivity::class.java)
-            i.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-            context.startActivity(i)
-        }
-
-        fun goSearch(searchString: String, context: Context) {
-            val i = Intent(context, SearchActivity::class.java)
-            i.putExtra("searchString", searchString)
-            i.flags = Intent.FLAG_ACTIVITY_NO_HISTORY
-            context.startActivity(i)
         }
 
         fun showFetchErrorSnackbar(throwable: Throwable?, context: Context, holderView: View?) {
@@ -141,7 +121,7 @@ class NovaEvaApp : Application() {
             error.setView(tv)
 
             error.setPositiveButton(context.getString(R.string.try_again)) { _, _ -> onTryAgain() }
-            error.setNegativeButton(context.getString(R.string.go_back)) { _, _ -> NovaEvaApp.goHome(context) }
+            error.setNegativeButton(context.getString(R.string.go_back)) { _, _ -> RxEventBus.goHome.onNext(TransitionAnimation.LEFTWARDS) }
             error.show()
         }
     }
