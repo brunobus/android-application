@@ -40,15 +40,16 @@ class EvaDirectoryFragment : EvaBaseFragment() {
 
     companion object : EvaBaseFragment.EvaFragmentFactory<EvaDirectoryFragment, OpenDirectoryEvent> {
 
-        private const val fragmentConfigKey = "fragmentConfig"
+        private const val directoryIdKey = "directoryId"
+        private const val directoryTitleKey = "directoryTitle"
+        private const val themeIdKey = "themeId"
 
         override fun newInstance(initializer: OpenDirectoryEvent): EvaDirectoryFragment {
             return EvaDirectoryFragment().apply {
                 arguments = Bundle().apply {
-                    putParcelable(fragmentConfigKey, EvaDirectoryFragment.FragmentConfig(
-                            initializer.directoryMetadata.directoryId,
-                            initializer.directoryMetadata.title,
-                            initializer.themeId))
+                    putLong(directoryIdKey, initializer.directoryMetadata.directoryId)
+                    putString(directoryTitleKey, initializer.directoryMetadata.title)
+                    putInt(themeIdKey, initializer.themeId)
                 }
             }
         }
@@ -65,7 +66,10 @@ class EvaDirectoryFragment : EvaBaseFragment() {
             field = safeReplaceDisposable(field, value)
         }
 
-    private lateinit var fragmentConfig: FragmentConfig
+    private var directoryId: Long = -1
+    private lateinit var directoryTitle: String
+    private var themeId: Int = -1
+
     private lateinit var adapter: EvaRecyclerAdapter
 
     private var elementsList: MutableList<TreeElementInfo> = mutableListOf()
@@ -80,18 +84,21 @@ class EvaDirectoryFragment : EvaBaseFragment() {
         super.onCreate(savedInstanceState)
 
         val inState: Bundle = savedInstanceState ?: arguments!!
-        fragmentConfig = inState.getParcelable(fragmentConfigKey)
+        directoryId = inState.getLong(directoryIdKey)
+        directoryTitle = inState.getString(directoryTitleKey)
+        themeId = inState.getInt(themeIdKey)
+
         realm = Realm.getInstance(RealmConfigProvider.evaDBConfig)
 
-        adapter = EvaRecyclerAdapter(elementsList, { loadingFromDb || fetchingFromServer }, fragmentConfig.themeId)
+        adapter = EvaRecyclerAdapter(elementsList, { loadingFromDb || fetchingFromServer }, themeId)
         adapter.registerAdapterDataObserver(DataChangeLogger())
 
         savedInstanceState ?: NovaEvaApp.defaultTracker
                 .send(HitBuilders.EventBuilder()
                         .setCategory("Direktorij")
                         .setAction("OtvorenDirektorij")
-                        .setLabel(fragmentConfig.directoryTitle)
-                        .setValue(fragmentConfig.directoryId)
+                        .setLabel(directoryTitle)
+                        .setValue(directoryId)
                         .build())
 
         createIfMissingAndSubscribeToEvaDirectoryUpdates()
@@ -102,8 +109,8 @@ class EvaDirectoryFragment : EvaBaseFragment() {
     }
 
     private fun createIfMissingAndSubscribeToEvaDirectoryUpdates() {
-        EvaDirectoryDbAdapter.createIfMissingEvaDirectoryAsync(realm, fragmentConfig.directoryId, {
-            it.title = fragmentConfig.directoryTitle
+        EvaDirectoryDbAdapter.createIfMissingEvaDirectoryAsync(realm, directoryId, {
+            it.title = directoryTitle
         }) {
             subscribeToDirectoryUpdates()
         }
@@ -111,7 +118,7 @@ class EvaDirectoryFragment : EvaBaseFragment() {
 
     private fun subscribeToDirectoryUpdates() {
         evaDirectoryChangesDisposable = EvaDirectoryDbAdapter.subscribeToEvaDirectoryUpdatesAsync(
-                realm, fragmentConfig.directoryId, { evaDirectory ->
+                realm, directoryId, { evaDirectory ->
 
             elementsList.clear()
             elementsList.addAll(evaDirectory.contentMetadataList)
@@ -131,54 +138,18 @@ class EvaDirectoryFragment : EvaBaseFragment() {
         })
     }
 
-//    private fun createAdapter(contentMetadataList: RealmList<EvaContentMetadata>,
-//                              subDirectoryMetadataList: RealmList<EvaDirectoryMetadata>): EvaRecyclerAdapter {
-//        val infoText = if (fragmentConfig.isSubDirectory) "NALAZITE SE U MAPI" else "NALAZITE SE U KATEGORIJI"
-//
-//        //FIXME Create new adapter class that efficiently uses TWO OBSERVABLE REALMLISTS and has a header and loadingCircle
-//        adapter = EvaRecyclerAdapter(contentMetadataList,
-//                EvaRecyclerAdapter.HeaderData(fragmentConfig.directoryName, infoText), { loading })
-//        adapter.registerAdapterDataObserver(DataChangeLogger())
-//        return adapter
-//    }
-
-    class FragmentConfig(val directoryId: Long,
-                         val directoryTitle: String,
-                         val themeId: Int) : Parcelable {
-
-        constructor(parcel: Parcel) : this(
-                parcel.readLong(),
-                parcel.readString(),
-                parcel.readInt())
-
-        override fun writeToParcel(dest: Parcel, flags: Int) {
-            dest.writeLong(directoryId)
-            dest.writeString(directoryTitle)
-            dest.writeInt(themeId)
-        }
-
-        override fun describeContents(): Int = 0
-
-        companion object CREATOR : Parcelable.Creator<FragmentConfig> {
-            override fun createFromParcel(parcel: Parcel): FragmentConfig = FragmentConfig(parcel)
-            override fun newArray(size: Int): Array<FragmentConfig?> = arrayOfNulls(size)
-        }
-    }
-
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putParcelable("fragmentConfig", FragmentConfig(
-                fragmentConfig.directoryId,
-                fragmentConfig.directoryTitle,
-                fragmentConfig.themeId
-        ))
+        outState.putLong(directoryIdKey, directoryId)
+        outState.putString(directoryTitleKey, directoryTitle)
+        outState.putInt(themeIdKey, themeId)
 
         super.onSaveInstanceState(outState)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val inflaterToUse =
-                if (fragmentConfig.themeId != -1) {
-                    inflater.cloneInContext(ContextThemeWrapper(activity, fragmentConfig.themeId))
+                if (themeId != -1) {
+                    inflater.cloneInContext(ContextThemeWrapper(activity, themeId))
                 } else {
                     inflater
                 }
@@ -190,7 +161,7 @@ class EvaDirectoryFragment : EvaBaseFragment() {
                 typeface = NovaEvaApp.openSansBold
             }
             evaDirectoryCollapsingBar.izbornikTop.izbornikTopNazivKategorije.apply {
-                text = fragmentConfig.directoryTitle
+                text = directoryTitle
                 typeface = NovaEvaApp.openSansBold
             }
 
@@ -239,7 +210,7 @@ class EvaDirectoryFragment : EvaBaseFragment() {
                     fetchingFromServer = true
                     refreshLoadingCircleState()
 
-                    EvaDirectoryDbAdapter.loadEvaDirectoryAsync(realm, fragmentConfig.directoryId, { evaDirectory ->
+                    EvaDirectoryDbAdapter.loadEvaDirectoryAsync(realm, directoryId, { evaDirectory ->
                         if (evaDirectory != null) {
                             val oldestTimestamp = evaDirectory.contentMetadataList.sort(TIMESTAMP_FIELD, Sort.DESCENDING).lastOrNull()?.timestamp
                             fetchEvaDirectoryDataFromServer(oldestTimestamp)
@@ -262,12 +233,12 @@ class EvaDirectoryFragment : EvaBaseFragment() {
         refreshLoadingCircleState()
 
         fetchFromServerDisposable = NovaEvaService.instance
-                .getDirectoryContent(fragmentConfig.directoryId, timestamp)
+                .getDirectoryContent(directoryId, timestamp)
                 .subscribeAsync({ evaDirectoryDTO ->
                     loadingFromDb = true
                     fetchingFromServer = false
 
-                    CacheService.cache(realm, evaDirectoryDTO, fragmentConfig.directoryId)
+                    CacheService.cache(realm, evaDirectoryDTO, directoryId)
 
                     handler.postDelayed({
                         /*if there are no actual new changes from server, data in cache will not be "updated"

@@ -5,7 +5,6 @@
     android:id="@+id/appBar"
     android:layout_width="match_parent"
     android:layout_height="@dimen/app_bar_height"
-    android:fitsSystemWindows="true"
     android:theme="@style/AppTheme.AppBarOverlay"
     app:expanded="@bool/app_bar_expanded">
 
@@ -13,7 +12,6 @@
         android:id="@+id/collapsingToolbar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
         app:collapsedTitleTextAppearance="@style/NovaEva.TextAppearance.Title.Small"
         app:contentScrim="?attr/colorPrimary"
         app:expandedTitleMarginBottom="18dp"

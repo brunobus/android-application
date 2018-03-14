@@ -32,7 +32,6 @@ class EvaBookmarksFragment : EvaBaseFragment() {
         override fun newInstance(initializer: Unit): EvaBookmarksFragment {
             return EvaBookmarksFragment()
         }
-
     }
 
     private lateinit var adapter: EvaRecyclerAdapter

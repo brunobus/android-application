@@ -1,4 +1,4 @@
-<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="eva_floating_action_button" parent="Widget.Design.FloatingActionButton">
         <item name="android:layout_margin">0dp</item>
@@ -25,7 +25,6 @@
         <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
 
-    <!-- Application theme. -->
     <style name="default_fragment_root">
         <item name="android:background">@color/White</item>
     </style>
@@ -34,7 +33,8 @@
         <item name="android:background">@drawable/brevijar_backbrevijar</item>
     </style>
 
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <!-- Application theme. -->
+    <style name="AppThemeBase" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowBackground">@color/White</item>
         <item name="android:windowNoTitle">true</item>
         <item name="colorPrimary">@color/propovjedi</item>
@@ -47,35 +47,43 @@
         <item name="toolbarSrc">@drawable/toolbar_propovijedi</item>
     </style>
 
-    <style name="SplashTheme" parent="AppTheme">
+    <style name="AppTheme" parent="AppThemeBase"/>
+
+    <style name="SplashThemeBase" parent="AppTheme">
         <item name="android:windowBackground">@drawable/splash</item>
         <item name="colorPrimaryDark">@color/transparent</item>
     </style>
 
-    <style name="DashboardTheme" parent="AppTheme">
+    <style name="SplashTheme" parent="SplashThemeBase"/>
+
+    <style name="DashboardThemeBase" parent="AppTheme">
+        <item name="android:windowBackground">@drawable/background</item>
         <item name="colorPrimary">@color/novaEva</item>
         <item name="colorPrimaryDark">@color/transparent</item>
         <item name="colorAccent">@color/novaEvaDark</item>
-        <item name="android:navigationBarColor" tools:targetApi="lollipop">@color/transparent</item>
     </style>
 
-    <style name="PrayersTheme" parent="AppTheme">
+    <style name="DashboardTheme" parent="DashboardThemeBase"/>
+
+    <style name="PrayersThemeBase" parent="AppTheme">
         <item name="colorPrimary">@color/prayerbook</item>
         <item name="colorPrimaryDark">@color/prayerbookDark</item>
         <item name="colorAccent">@color/DimGray</item>
-        <item name="android:navigationBarColor" tools:targetApi="lollipop">@color/prayerbookDark
-        </item>
     </style>
 
-    <style name="BreviaryTheme" parent="AppTheme">
+    <style name="PrayersTheme" parent="PrayersThemeBase"/>
+
+    <style name="BreviaryThemeBase" parent="AppTheme">
+        <item name="android:windowBackground">@drawable/brevijar_backbrevijar</item>
         <item name="colorPrimary">@color/breviary</item>
         <item name="colorPrimaryDark">@color/transparent</item>
         <item name="colorAccent">@color/breviaryDark</item>
         <item name="contentTitleBarSrc">@drawable/content_titlebar_pjesmarica</item>
-        <item name="android:navigationBarColor" tools:targetApi="lollipop">@color/transparent</item>
     </style>
 
-    <style name="MultimedijaTheme" parent="AppTheme">
+    <style name="BreviaryTheme" parent="BreviaryThemeBase"/>
+
+    <style name="MultimedijaThemeBase" parent="AppTheme">
         <item name="colorPrimary">@color/multimedija</item>
         <item name="colorPrimaryDark">@color/multimedijaDark</item>
         <item name="colorAccent">@color/multimedijaDark</item>
@@ -84,10 +92,11 @@
         <item name="directoryHeaderSrc">@drawable/directory_header_multimedija</item>
         <item name="contentTitleBarSrc">@drawable/content_titlebar_multimedija</item>
         <item name="toolbarSrc">@drawable/toolbar_multimedija</item>
-        <item name="android:navigationBarColor" tools:targetApi="lollipop">@color/multimedija</item>
     </style>
 
-    <style name="AktualnoTheme" parent="AppTheme">
+    <style name="MultimedijaTheme" parent="MultimedijaThemeBase"/>
+
+    <style name="AktualnoThemeBase" parent="AppTheme">
         <item name="colorPrimary">@color/aktualno</item>
         <item name="colorPrimaryDark">@color/aktualnoDark</item>
         <item name="colorAccent">@color/aktualnoDark</item>
@@ -96,10 +105,11 @@
         <item name="directoryHeaderSrc">@drawable/directory_header_aktualno</item>
         <item name="contentTitleBarSrc">@drawable/content_titlebar_aktualno</item>
         <item name="toolbarSrc">@drawable/toolbar_aktualno</item>
-        <item name="android:navigationBarColor" tools:targetApi="lollipop">@color/aktualno</item>
     </style>
 
-    <style name="OdgovoriTheme" parent="AppTheme">
+    <style name="AktualnoTheme" parent="AktualnoThemeBase"/>
+
+    <style name="OdgovoriThemeBase" parent="AppTheme">
         <item name="colorPrimary">@color/odgovori</item>
         <item name="colorPrimaryDark">@color/odgovoriDark</item>
         <item name="colorAccent">@color/odgovoriDark</item>
@@ -108,10 +118,11 @@
         <item name="directoryHeaderSrc">@drawable/directory_header_odgovori</item>
         <item name="contentTitleBarSrc">@drawable/content_titlebar_odgovori</item>
         <item name="toolbarSrc">@drawable/toolbar_odgovori</item>
-        <item name="android:navigationBarColor" tools:targetApi="lollipop">@color/odgovori</item>
     </style>
 
-    <style name="PozivTheme" parent="AppTheme">
+    <style name="OdgovoriTheme" parent="OdgovoriThemeBase"/>
+
+    <style name="PozivThemeBase" parent="AppTheme">
         <item name="colorPrimary">@color/poziv</item>
         <item name="colorPrimaryDark">@color/pozivDark</item>
         <item name="colorAccent">@color/pozivDark</item>
@@ -120,10 +131,11 @@
         <item name="directoryHeaderSrc">@drawable/directory_header_poziv</item>
         <item name="contentTitleBarSrc">@drawable/content_titlebar_poziv</item>
         <item name="toolbarSrc">@drawable/toolbar_poziv</item>
-        <item name="android:navigationBarColor" tools:targetApi="lollipop">@color/poziv</item>
     </style>
 
-    <style name="EvandjeljeTheme" parent="AppTheme">
+    <style name="PozivTheme" parent="PozivThemeBase"/>
+
+    <style name="EvandjeljeThemeBase" parent="AppTheme">
         <item name="colorPrimary">@color/evandjelje</item>
         <item name="colorPrimaryDark">@color/evandjeljeDark</item>
         <item name="colorAccent">@color/evandjeljeDark</item>
@@ -132,10 +144,11 @@
         <item name="directoryHeaderSrc">@drawable/directory_header_evandjelje</item>
         <item name="contentTitleBarSrc">@drawable/content_titlebar_evandjelje</item>
         <item name="toolbarSrc">@drawable/toolbar_evandjelje</item>
-        <item name="android:navigationBarColor" tools:targetApi="lollipop">@color/evandjelje</item>
     </style>
 
-    <style name="PropovjediTheme" parent="AppTheme">
+    <style name="EvandjeljeTheme" parent="EvandjeljeThemeBase"/>
+
+    <style name="PropovjediThemeBase" parent="AppTheme">
         <item name="colorPrimary">@color/propovjedi</item>
         <item name="colorPrimaryDark">@color/propovjediDark</item>
         <item name="colorAccent">@color/propovjediDark</item>
@@ -144,19 +157,21 @@
         <item name="directoryHeaderSrc">@drawable/directory_header_propovijedi</item>
         <item name="contentTitleBarSrc">@drawable/content_titlebar_propovijedi</item>
         <item name="toolbarSrc">@drawable/toolbar_propovijedi</item>
-        <item name="android:navigationBarColor" tools:targetApi="lollipop">@color/propovjedi</item>
     </style>
 
-    <style name="IzrekeTheme" parent="AppTheme">
+    <style name="PropovjediTheme" parent="PropovjediThemeBase"/>
+
+    <style name="IzrekeThemeBase" parent="AppTheme">
         <item name="colorPrimary">@color/izreke</item>
         <item name="colorPrimaryDark">@color/izrekeDark</item>
         <item name="colorAccent">@color/izrekeDark</item>
         <item name="contentTitleBarSrc">@drawable/content_titlebar_izreke</item>
         <item name="toolbarSrc">@drawable/toolbar_izreke</item>
-        <item name="android:navigationBarColor" tools:targetApi="lollipop">@color/izreke</item>
     </style>
 
-    <style name="PjesmaricaTheme" parent="AppTheme">
+    <style name="IzrekeTheme" parent="IzrekeThemeBase"/>
+
+    <style name="PjesmaricaThemeBase" parent="AppTheme">
         <item name="colorPrimary">@color/pjesmarica</item>
         <item name="colorPrimaryDark">@color/pjesmaricaDark</item>
         <item name="colorAccent">@color/pjesmaricaDark</item>
@@ -165,10 +180,11 @@
         <item name="directoryHeaderSrc">@drawable/directory_header_pjesmarica</item>
         <item name="contentTitleBarSrc">@drawable/content_titlebar_pjesmarica</item>
         <item name="toolbarSrc">@drawable/toolbar_piesmarica</item>
-        <item name="android:navigationBarColor" tools:targetApi="lollipop">@color/pjesmarica</item>
     </style>
 
-    <style name="DuhovnostTheme" parent="AppTheme">
+    <style name="PjesmaricaTheme" parent="PjesmaricaThemeBase"/>
+
+    <style name="DuhovnostThemeBase" parent="AppTheme">
         <item name="colorPrimary">@color/duhovnost</item>
         <item name="colorPrimaryDark">@color/duhovnostDark</item>
         <item name="colorAccent">@color/duhovnostDark</item>
@@ -177,6 +193,8 @@
         <item name="directoryHeaderSrc">@drawable/directory_header_duhovnost</item>
         <item name="contentTitleBarSrc">@drawable/content_titlebar_duhovnost</item>
         <item name="toolbarSrc">@drawable/toolbar_duhovnost</item>
-        <item name="android:navigationBarColor" tools:targetApi="lollipop">@color/duhovnost</item>
     </style>
+
+    <style name="DuhovnostTheme" parent="DuhovnostThemeBase"/>
+
 </resources>

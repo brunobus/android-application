@@ -26,13 +26,13 @@ import com.google.android.exoplayer2.util.Util
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.CacheService
 import hr.bpervan.novaeva.NovaEvaApp
-import hr.bpervan.novaeva.model.OpenContentEvent
 import hr.bpervan.novaeva.RxEventBus
 import hr.bpervan.novaeva.actions.sendEmailIntent
 import hr.bpervan.novaeva.actions.shareIntent
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaCategory
 import hr.bpervan.novaeva.model.EvaContent
+import hr.bpervan.novaeva.model.OpenContentEvent
 import hr.bpervan.novaeva.services.AudioPlayerService
 import hr.bpervan.novaeva.services.NovaEvaService
 import hr.bpervan.novaeva.storage.EvaContentDbAdapter
@@ -42,6 +42,7 @@ import hr.bpervan.novaeva.utilities.subscribeAsync
 import io.reactivex.disposables.Disposable
 import io.realm.Realm
 import kotlinx.android.synthetic.main.collapsing_content_header.view.*
+import kotlinx.android.synthetic.main.fragment_eva_content.*
 import kotlinx.android.synthetic.main.fragment_eva_content.view.*
 import kotlinx.android.synthetic.main.toolbar_eva_content.view.*
 
@@ -113,13 +114,16 @@ class EvaContentFragment : EvaBaseFragment(), SeekBar.OnSeekBarChangeListener {
                         .setValue(contentId)
                         .build())
 
-        fetchContentFromServer(contentId)
+        if (savedInstanceState == null) {
+            fetchContentFromServer(contentId)
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putLong(CONTENT_ID_KEY, contentId)
         outState.putLong(CATEGORY_ID_KEY, categoryId)
         outState.putInt(THEME_ID_KEY, themeId)
+        vijestWebView?.saveState(outState)
 
         super.onSaveInstanceState(outState)
     }
@@ -276,6 +280,14 @@ class EvaContentFragment : EvaBaseFragment(), SeekBar.OnSeekBarChangeListener {
             }
 
             vijestWebView.settings.defaultFontSize = prefs.getInt("hr.bpervan.novaeva.velicinateksta", 14)
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        if (savedInstanceState != null) {
+            vijestWebView.restoreState(savedInstanceState)
         }
     }
 

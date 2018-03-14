@@ -4,19 +4,22 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
 import android.support.v4.app.FragmentTransaction
+import android.support.v4.content.ContextCompat
 import android.view.View
 import android.view.ViewGroup
-import hr.bpervan.novaeva.model.OpenContentEvent
 import hr.bpervan.novaeva.RxEventBus
 import hr.bpervan.novaeva.fragments.*
 import hr.bpervan.novaeva.main.R
+import hr.bpervan.novaeva.model.BackgroundType
 import hr.bpervan.novaeva.model.EvaContentMetadata
+import hr.bpervan.novaeva.model.OpenContentEvent
 import hr.bpervan.novaeva.utilities.TransitionAnimation
 import hr.bpervan.novaeva.utilities.TransitionAnimation.*
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
+import kotlinx.android.synthetic.main.eva_multi_fragment_frame.*
 
 /**
  *
@@ -44,10 +47,11 @@ class EvaActivity : EvaBaseActivity() {
         initContainers()
 
         if (savedInstanceState == null) {
+            openDashboardFragment()
+
             val contentId = intent.data?.lastPathSegment?.toLongOrNull() ?: -1L
-            when (contentId) {
-                -1L -> openDashboardFragment()
-                else -> openContentFragment(OpenContentEvent(
+            if (contentId != -1L) {
+                openContentFragment(OpenContentEvent(
                         EvaContentMetadata(contentId, 0, -1)))
             }
         }
@@ -190,10 +194,30 @@ class EvaActivity : EvaBaseActivity() {
                     popUtilityFragment()
                     supportFragmentManager.beginTransaction()
                             .setCustomAnimation(it)
-                            .replace(utilityContainerId, EvaBookmarksFragment)
-                            .addToBackStack(utilityFragmentTransactionName)
+                            .replace(primaryContainerId, EvaBookmarksFragment)
+                            .addToBackStack(null)
                             .commitAllowingStateLoss()
-                }
+                },
+
+                bus.replaceAppBackground
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe {
+                            //todo
+                            when (it.backgroundType) {
+                                BackgroundType.COLOR -> {
+                                    evaRoot?.setBackgroundColor(ContextCompat.getColor(this, it.resId))
+                                }
+                                BackgroundType.DRAWABLE -> {
+                                    evaRoot?.setBackgroundResource(it.resId)
+                                }
+                            }
+                        },
+
+                bus.replaceDashboardBackground
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe {
+                            //todo
+                        }
         )
     }
 

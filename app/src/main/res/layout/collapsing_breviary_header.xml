@@ -6,7 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="250dp"
     android:background="@color/transparent"
-    android:fitsSystemWindows="true"
     android:theme="@style/AppTheme.AppBarOverlay"
     app:expanded="@bool/app_bar_expanded">
 
@@ -14,7 +13,6 @@
         android:id="@+id/breviaryChooserCollapsingToolbar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
         app:layout_scrollFlags="scroll|exitUntilCollapsed"
         app:titleEnabled="false">
 

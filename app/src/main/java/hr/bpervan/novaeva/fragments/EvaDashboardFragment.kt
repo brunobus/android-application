@@ -7,12 +7,9 @@ import android.view.*
 import android.widget.EditText
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.NovaEvaApp
-import hr.bpervan.novaeva.model.OpenDirectoryEvent
-import hr.bpervan.novaeva.model.OpenQuotesEvent
 import hr.bpervan.novaeva.RxEventBus
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.EvaCategory
-import hr.bpervan.novaeva.model.EvaDirectoryMetadata
+import hr.bpervan.novaeva.model.*
 import hr.bpervan.novaeva.services.NovaEvaService
 import hr.bpervan.novaeva.utilities.ConnectionChecker
 import hr.bpervan.novaeva.utilities.TransitionAnimation
@@ -21,7 +18,7 @@ import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_dashboard.*
 
 /**
- *
+ * todo refactor
  */
 class EvaDashboardFragment : EvaBaseFragment(), View.OnClickListener {
     private val syncInterval = 90000L
@@ -69,6 +66,11 @@ class EvaDashboardFragment : EvaBaseFragment(), View.OnClickListener {
         val localInflater = inflater.cloneInContext(ctw)
         return localInflater.inflate(R.layout.activity_dashboard, container, false).apply {
             setBackgroundResource(R.drawable.background)
+
+            if (savedInstanceState == null) {
+                RxEventBus.replaceAppBackground.onNext(
+                        BackgroundReplaceEvent(R.color.WhiteSmoke, BackgroundType.COLOR))
+            }
         }
     }
 
@@ -88,9 +90,8 @@ class EvaDashboardFragment : EvaBaseFragment(), View.OnClickListener {
 
     //TODO: sredi ovo pod hitno
     private fun testAndSetRedDots() {
-        if (view == null) {
-            return
-        }
+        view ?: return
+
         if (prefs.getInt("vidjenoKategorija1", 0) == 0) {
             btnIzreke.setBackgroundResource(R.drawable.button_izreke_news)
         } else {
@@ -148,6 +149,7 @@ class EvaDashboardFragment : EvaBaseFragment(), View.OnClickListener {
                     NovaEvaService.instance
                             .getNewStuff()
                             .subscribeAsync({ indicators ->
+                                view ?: return@subscribeAsync
 
                                 checkLastNid(EvaCategory.DUHOVNOST, indicators.duhovnost)
                                 checkLastNid(EvaCategory.AKTUALNO, indicators.aktualno)

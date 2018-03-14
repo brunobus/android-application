@@ -10,7 +10,6 @@
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:fitsSystemWindows="true"
         android:keepScreenOn="true"
         app:layout_constraintBottom_toTopOf="@+id/btnObnovi"
         app:layout_constraintEnd_toEndOf="parent"
