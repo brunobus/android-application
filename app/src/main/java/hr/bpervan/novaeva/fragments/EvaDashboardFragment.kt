@@ -20,6 +20,7 @@ import kotlinx.android.synthetic.main.activity_dashboard.*
 /**
  * todo refactor
  */
+@Deprecated("Will soon be replaced with new dashboard")
 class EvaDashboardFragment : EvaBaseFragment(), View.OnClickListener {
     private val syncInterval = 90000L
 
@@ -92,47 +93,47 @@ class EvaDashboardFragment : EvaBaseFragment(), View.OnClickListener {
     private fun testAndSetRedDots() {
         view ?: return
 
-        if (prefs.getInt("vidjenoKategorija1", 0) == 0) {
+        if (prefs.getBoolean("newContentInCategory1", false)) {
             btnIzreke.setBackgroundResource(R.drawable.button_izreke_news)
         } else {
             btnIzreke.setBackgroundResource(R.drawable.button_izreke)
         }
-        if (prefs.getInt("vidjenoKategorija4", 0) == 0) {
+        if (prefs.getBoolean("newContentInCategory4", false)) {
             btnEvandjelje.setBackgroundResource(R.drawable.button_evandjelje_news)
         } else {
             btnEvandjelje.setBackgroundResource(R.drawable.button_evandjelje)
         }
-        if (prefs.getInt("vidjenoKategorija7", 0) == 0) {
+        if (prefs.getBoolean("newContentInCategory7", false)) {
             btnPropovjedi.setBackgroundResource(R.drawable.button_propovjedi_news)
         } else {
             btnPropovjedi.setBackgroundResource(R.drawable.button_propovjedi)
         }
-        if (prefs.getInt("vidjenoKategorija10", 0) == 0) {
+        if (prefs.getBoolean("newContentInCategory10", false)) {
             btnMultimedia.setBackgroundResource(R.drawable.button_multimedia_news)
         } else {
             btnMultimedia.setBackgroundResource(R.drawable.button_multimedia)
         }
-        if (prefs.getInt("vidjenoKategorija11", 0) == 0) {
+        if (prefs.getBoolean("newContentInCategory11", false)) {
             btnOdgovori.setBackgroundResource(R.drawable.button_odgovori_news)
         } else {
             btnOdgovori.setBackgroundResource(R.drawable.button_odgovori)
         }
-        if (prefs.getInt("vidjenoKategorija9", 0) == 0) {
+        if (prefs.getBoolean("newContentInCategory9", false)) {
             btnAktualno.setBackgroundResource(R.drawable.button_aktualno_news)
         } else {
             btnAktualno.setBackgroundResource(R.drawable.button_aktualno)
         }
-        if (prefs.getInt("vidjenoKategorija355", 0) == 0) {
+        if (prefs.getBoolean("newContentInCategory355", false)) {
             btnMp3.setBackgroundResource(R.drawable.button_mp3_news)
         } else {
             btnMp3.setBackgroundResource(R.drawable.button_mp3)
         }
-        if (prefs.getInt("vidjenoKategorija8", 0) == 0) {
+        if (prefs.getBoolean("newContentInCategory8", false)) {
             btnPoziv.setBackgroundResource(R.drawable.button_poziv_news)
         } else {
             btnPoziv.setBackgroundResource(R.drawable.button_poziv)
         }
-        if (prefs.getInt("vidjenoKategorija354", 0) == 0) {
+        if (prefs.getBoolean("newContentInCategory354", false)) {
             btnDuhovnost.setBackgroundResource(R.drawable.button_duhovnost_news)
         } else {
             btnDuhovnost.setBackgroundResource(R.drawable.button_duhovnost)
@@ -172,14 +173,17 @@ class EvaDashboardFragment : EvaBaseFragment(), View.OnClickListener {
         testAndSetRedDots()
     }
 
-    private fun checkLastNid(kategorija: EvaCategory, dobiveniZadnjiNid: Int?) {
-        if (dobiveniZadnjiNid == null) return
+    private fun checkLastNid(kategorija: EvaCategory, receivedLatestContentId: Int?) {
+        if (receivedLatestContentId == null) return
 
-        val kategorijaStr = kategorija.id.toString()
-        val spremljeniZadnjiNid = prefs.getInt(kategorijaStr, 0)
-        if (spremljeniZadnjiNid != dobiveniZadnjiNid) {
-            prefs.edit().putInt(kategorijaStr, dobiveniZadnjiNid).apply()
-            prefs.edit().putInt("vidjenoKategorija" + kategorijaStr, 0).apply()
+        val categoryId = kategorija.id.toString()
+        val savedLatestContentId = prefs.getInt(categoryId, 0)
+        if (savedLatestContentId != receivedLatestContentId) {
+
+            prefs.edit()
+                    .putInt(categoryId, receivedLatestContentId)
+                    .putBoolean("newContentInCategory$categoryId", true)
+                    .apply()
         }
     }
 

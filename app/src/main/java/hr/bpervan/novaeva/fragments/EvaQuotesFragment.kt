@@ -61,6 +61,8 @@ class EvaQuotesFragment : EvaBaseFragment() {
                         .setAction("OtvoreneIzreke")
                         .build())
 
+        prefs.edit().remove("newContentInCategory1").apply()
+
         if (contentTitle == null || contentData == null || contentId == -1L) {
             fetchRandomQuote()
         }

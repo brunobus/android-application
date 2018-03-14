@@ -101,6 +101,8 @@ class EvaDirectoryFragment : EvaBaseFragment() {
                         .setValue(directoryId)
                         .build())
 
+        prefs.edit().remove("newContentInCategory$directoryId").apply()
+
         createIfMissingAndSubscribeToEvaDirectoryUpdates()
 
         if (savedInstanceState == null) {
