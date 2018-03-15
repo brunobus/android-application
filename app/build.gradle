@@ -19,7 +19,7 @@ android {
         versionName "2.5"
     }
     buildTypes {
-        debug{
+        debug {
             shrinkResources false
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -51,7 +51,7 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     compile 'io.reactivex.rxjava2:rxjava:2.1.4'
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
-    compile 'io.realm:android-adapters:2.1.0'
+    compile 'io.realm:android-adapters:2.1.1'
 
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
     compile 'com.google.android.gms:play-services-analytics:11.8.0'

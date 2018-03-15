@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Bundle
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,9 +18,9 @@ import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaContentMetadata
 import hr.bpervan.novaeva.storage.EvaContentDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
+import io.reactivex.disposables.Disposable
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_bookmarks.*
-import kotlinx.android.synthetic.main.eva_recycler_view.view.*
 import java.util.*
 
 /**
@@ -33,6 +34,11 @@ class EvaBookmarksFragment : EvaBaseFragment() {
             return EvaBookmarksFragment()
         }
     }
+
+    private var loadBookmarksFromDbDisposable: Disposable? = null
+        set(value) {
+            field = safeReplaceDisposable(field, value)
+        }
 
     private lateinit var adapter: EvaRecyclerAdapter
     private var bookmarksList: MutableList<EvaContentMetadata> = ArrayList()
@@ -82,18 +88,20 @@ class EvaBookmarksFragment : EvaBaseFragment() {
             showSearchPopup()
         }
 
-        evaRecyclerView.evaRecyclerView.adapter = adapter
-        evaRecyclerView.evaRecyclerView.layoutManager = LinearLayoutManager(evaRecyclerView.context)
-        evaRecyclerView.evaRecyclerView.itemAnimator = DefaultItemAnimator()
+        val recyclerView = evaRecyclerView as RecyclerView
+
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager = LinearLayoutManager(recyclerView.context)
+        recyclerView.itemAnimator = DefaultItemAnimator()
     }
 
     private fun reloadBookmarksFromDb() {
         bookmarksList.clear()
-        EvaContentDbAdapter.loadManyEvaContentMetadata(realm, { it.bookmark }, {
-            bookmarksList.add(it)
-        }) {
-            adapter.notifyDataSetChanged()
-        }
+        loadBookmarksFromDbDisposable =
+                EvaContentDbAdapter.loadManyEvaContentMetadata(realm, { it.bookmark }) {
+                    bookmarksList.add(it)
+                    adapter.notifyDataSetChanged()
+                }
     }
 
 

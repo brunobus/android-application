@@ -47,6 +47,7 @@ class EvaDashboardFragment : EvaBaseFragment(), View.OnClickListener {
         fetchBreviaryImage()
     }
 
+    //todo reimplement in BreviaryChooserFragment
     private fun fetchBreviaryImage() {
 
         fetchBreviaryImageDisposable = NovaEvaService.instance
@@ -68,10 +69,8 @@ class EvaDashboardFragment : EvaBaseFragment(), View.OnClickListener {
         return localInflater.inflate(R.layout.activity_dashboard, container, false).apply {
             setBackgroundResource(R.drawable.background)
 
-            if (savedInstanceState == null) {
-                RxEventBus.replaceAppBackground.onNext(
-                        BackgroundReplaceEvent(R.color.WhiteSmoke, BackgroundType.COLOR))
-            }
+            savedInstanceState ?: RxEventBus.replaceAppBackground.onNext(
+                    BackgroundReplaceEvent(R.color.WhiteSmoke, BackgroundType.COLOR))
         }
     }
 

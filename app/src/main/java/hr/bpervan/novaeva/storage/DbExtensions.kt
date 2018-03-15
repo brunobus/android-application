@@ -2,7 +2,6 @@ package hr.bpervan.novaeva.storage
 
 import android.util.Log
 import io.reactivex.Flowable
-import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.realm.Realm
@@ -17,15 +16,16 @@ fun handleError(throwable: Throwable) {
 }
 
 fun <T : RealmObject> loadManyAsync(realm: Realm, tClazz: Class<T>, predicate: (T) -> Boolean,
-                                    subscriber: (T) -> Unit, onComplete: () -> Unit) {
-    realm.where(tClazz)
+                                    subscriber: (T) -> Unit): Disposable {
+    return realm.where(tClazz)
             .findAllAsync()
             .asFlowable()
+            .onBackpressureBuffer()
             .filter { it.isLoaded }
             .flatMap { Flowable.fromIterable(it) }
             .filter(predicate)
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(subscriber, ::handleError, onComplete)
+            .subscribe(subscriber, ::handleError)
 }
 
 fun <T : RealmObject> loadOne(realm: Realm, tClazz: Class<T>, field: String, value: Long): T? {
@@ -34,11 +34,12 @@ fun <T : RealmObject> loadOne(realm: Realm, tClazz: Class<T>, field: String, val
             .findFirst()
 }
 
-fun <T : RealmObject> loadOneAsync(realm: Realm, tClazz: Class<T>, field: String, value: Long, consumer: (T?) -> Unit) {
-    realm.where(tClazz)
+fun <T : RealmObject> loadOneAsync(realm: Realm, tClazz: Class<T>, field: String, value: Long, consumer: (T?) -> Unit): Disposable {
+    return realm.where(tClazz)
             .equalTo(field, value)
             .findFirstAsync()
             .asFlowable<T>()
+            .onBackpressureBuffer()
             .filter { it.isLoaded }
             .firstOrError()
             .observeOn(AndroidSchedulers.mainThread())
@@ -50,6 +51,7 @@ fun <T : RealmObject> subscribeToUpdatesAsync(realm: Realm, tClazz: Class<T>, fi
             .equalTo(field, value)
             .findFirstAsync()
             .asFlowable<T>()
+            .onBackpressureBuffer()
             .filter { it.isLoaded && it.isValid }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(consumer, ::handleError)
