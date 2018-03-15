@@ -31,9 +31,13 @@ object RxEventBus {
 
     //ux
     val replaceAppBackground = PublishSubject.create<BackgroundReplaceEvent>()!! //splash and transitions between fragments
-    val replaceDashboardBackground = PublishSubject.create<BackgroundReplaceEvent>()!!
+
+    val dashboardBackground = BehaviorSubject.create<BackgroundReplaceEvent>()!!
 
     //action
     val search = PublishSubject.create<String>()!!
+
+    //network
+    val networkConnection = PublishSubject.create<Unit>()
 }
 

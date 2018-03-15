@@ -211,12 +211,6 @@ class EvaActivity : EvaBaseActivity() {
                                     evaRoot?.setBackgroundResource(it.resId)
                                 }
                             }
-                        },
-
-                bus.replaceDashboardBackground
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe {
-                            //todo
                         }
         )
     }
@@ -225,7 +219,7 @@ class EvaActivity : EvaBaseActivity() {
         popAllFragments()
         supportFragmentManager.beginTransaction()
                 .setCustomAnimation(animation)
-                .replace(primaryContainerId, EvaDashboardFragment)
+                .replace(primaryContainerId, EvaDashboardFragment2)
                 .commitAllowingStateLoss()
     }
 

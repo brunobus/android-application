@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.app.Application
 import android.content.Context
+import android.content.IntentFilter
 import android.graphics.Typeface
 import android.support.design.widget.Snackbar
 import android.util.Log
@@ -17,6 +18,7 @@ import com.google.android.gms.analytics.Tracker
 import hr.bpervan.novaeva.main.BuildConfig
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.player.MyExoPlayerFactory
+import hr.bpervan.novaeva.receivers.ConnectionDetector
 import hr.bpervan.novaeva.utilities.ImageLoaderConfigurator
 import hr.bpervan.novaeva.utilities.LifecycleLogger
 import hr.bpervan.novaeva.utilities.TransitionAnimation
@@ -59,6 +61,12 @@ class NovaEvaApp : Application() {
                     activeExoPlayer = it
                     RxEventBus.didSetActiveExoPlayer.onNext(it)
                 }
+
+//        val filter = IntentFilter()
+//        filter.addAction("android.net.wifi.supplicant.CONNECTION_CHANGE")
+//        filter.addAction("android.net.wifi.STATE_CHANGE")
+//        filter.addAction("android.net.conn.CONNECTIVITY_CHANGE")
+//        registerReceiver(ConnectionDetector(), filter)
 
         registerActivityLifecycleCallbacks(LifecycleLogger())
     }
