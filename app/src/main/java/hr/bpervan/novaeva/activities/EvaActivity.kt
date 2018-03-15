@@ -4,17 +4,18 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
 import android.support.v4.app.FragmentTransaction
-import android.support.v4.content.ContextCompat
 import android.view.View
 import android.view.ViewGroup
 import hr.bpervan.novaeva.RxEventBus
 import hr.bpervan.novaeva.fragments.*
 import hr.bpervan.novaeva.main.R
+import hr.bpervan.novaeva.model.BackgroundReplaceEvent
 import hr.bpervan.novaeva.model.BackgroundType
 import hr.bpervan.novaeva.model.EvaContentMetadata
 import hr.bpervan.novaeva.model.OpenContentEvent
 import hr.bpervan.novaeva.utilities.TransitionAnimation
 import hr.bpervan.novaeva.utilities.TransitionAnimation.*
+import hr.bpervan.novaeva.utilities.setBackground
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -45,6 +46,8 @@ class EvaActivity : EvaBaseActivity() {
         setContentView(R.layout.eva_multi_fragment_frame)
 
         initContainers()
+
+        bus.dashboardBackground.onNext(BackgroundReplaceEvent(R.drawable.background, BackgroundType.DRAWABLE))
 
         if (savedInstanceState == null) {
             openDashboardFragment()
@@ -101,7 +104,7 @@ class EvaActivity : EvaBaseActivity() {
                 bus.search.subscribeToEvaEvent {
                     popUtilityFragment()
                     supportFragmentManager.beginTransaction()
-                            .setCustomAnimation(NONE)
+                            .setCustomAnimation(FADE)
                             .replace(primaryContainerId, EvaSearchFragment, it)
                             .addToBackStack(null)
                             .commitAllowingStateLoss()
@@ -199,23 +202,15 @@ class EvaActivity : EvaBaseActivity() {
                             .commitAllowingStateLoss()
                 },
 
-                bus.replaceAppBackground
+                bus.appBackground
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe {
-                            //todo
-                            when (it.backgroundType) {
-                                BackgroundType.COLOR -> {
-                                    evaRoot?.setBackgroundColor(ContextCompat.getColor(this, it.resId))
-                                }
-                                BackgroundType.DRAWABLE -> {
-                                    evaRoot?.setBackgroundResource(it.resId)
-                                }
-                            }
+                            evaRoot?.setBackground(it.backgroundType, it.resId)
                         }
         )
     }
 
-    private fun openDashboardFragment(animation: TransitionAnimation = NONE) {
+    private fun openDashboardFragment(animation: TransitionAnimation = FADE) {
         popAllFragments()
         supportFragmentManager.beginTransaction()
                 .setCustomAnimation(animation)
@@ -262,8 +257,9 @@ class EvaActivity : EvaBaseActivity() {
                 setCustomAnimations(R.anim.move_bottom_in, R.anim.move_top_out, R.anim.move_top_in, R.anim.move_bottom_out)
             DOWNWARDS ->
                 setCustomAnimations(R.anim.move_top_in, R.anim.move_bottom_out, R.anim.move_bottom_in, R.anim.move_top_out)
-            else /*TODO none/fade*/ ->
+            FADE ->
                 setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out)
+            else -> this
         }
     }
 

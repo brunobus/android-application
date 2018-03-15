@@ -69,7 +69,7 @@ class EvaDashboardFragment : EvaBaseFragment(), View.OnClickListener {
         return localInflater.inflate(R.layout.activity_dashboard, container, false).apply {
             setBackgroundResource(R.drawable.background)
 
-            savedInstanceState ?: RxEventBus.replaceAppBackground.onNext(
+            savedInstanceState ?: RxEventBus.appBackground.onNext(
                     BackgroundReplaceEvent(R.color.WhiteSmoke, BackgroundType.COLOR))
         }
     }
@@ -223,10 +223,10 @@ class EvaDashboardFragment : EvaBaseFragment(), View.OnClickListener {
     override fun onClick(v: View) {
 
         when (v.id) {
-            R.id.btnMolitvenik -> RxEventBus.openPrayerBook.onNext(TransitionAnimation.NONE)
-            R.id.btnInfo -> RxEventBus.openInfo.onNext(TransitionAnimation.NONE)
-            R.id.btnBookmarks -> RxEventBus.openBookmarks.onNext(TransitionAnimation.NONE)
-            R.id.btnBrevijar -> RxEventBus.openBreviaryChooser.onNext(TransitionAnimation.NONE)
+            R.id.btnMolitvenik -> RxEventBus.openPrayerBook.onNext(TransitionAnimation.FADE)
+            R.id.btnInfo -> RxEventBus.openInfo.onNext(TransitionAnimation.FADE)
+            R.id.btnBookmarks -> RxEventBus.openBookmarks.onNext(TransitionAnimation.FADE)
+            R.id.btnBrevijar -> RxEventBus.openBreviaryChooser.onNext(TransitionAnimation.FADE)
             R.id.btnIzreke -> RxEventBus.openQuotes.onNext(OpenQuotesEvent())
             R.id.btnEvandjelje -> RxEventBus.openDirectory.onNext(
                     OpenDirectoryEvent(

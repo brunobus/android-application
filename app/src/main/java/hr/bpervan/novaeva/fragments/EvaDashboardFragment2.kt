@@ -11,6 +11,9 @@ import hr.bpervan.novaeva.RxEventBus
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.*
 import hr.bpervan.novaeva.utilities.TransitionAnimation
+import hr.bpervan.novaeva.utilities.setBackground
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.eva_dashboard_v2.*
 
 /**
@@ -23,6 +26,11 @@ class EvaDashboardFragment2 : EvaBaseFragment() {
             return EvaDashboardFragment2()
         }
     }
+
+    private var dashboardBackgroundDisposable: Disposable? = null
+        set(value) {
+            field = safeReplaceDisposable(field, value)
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,34 +45,37 @@ class EvaDashboardFragment2 : EvaBaseFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val ctw = ContextThemeWrapper(activity, R.style.DashboardTheme)
         val localInflater = inflater.cloneInContext(ctw)
-        return localInflater.inflate(R.layout.eva_dashboard_v2, container, false).apply {
-            setBackgroundResource(R.drawable.background)
-
-            savedInstanceState ?: RxEventBus.replaceAppBackground.onNext(
-                    BackgroundReplaceEvent(R.color.WhiteSmoke, BackgroundType.COLOR))
-        }
+        return localInflater.inflate(R.layout.eva_dashboard_v2, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        NovaEvaApp.openSansRegular?.let { titleLineTitle.typeface = it }
-
         initUI()
+
+        dashboardBackgroundDisposable = RxEventBus.dashboardBackground
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    view.setBackground(it.backgroundType, it.resId)
+                    savedInstanceState ?: RxEventBus.appBackground.onNext(
+                            BackgroundReplaceEvent(R.color.WhiteSmoke, BackgroundType.COLOR))
+                }
     }
 
     private fun initUI() {
+        NovaEvaApp.openSansRegular?.let { titleLineTitle.typeface = it }
+
         btnBrevijar.setOnClickListener {
-            RxEventBus.openBreviaryChooser.onNext(TransitionAnimation.NONE)
+            RxEventBus.openBreviaryChooser.onNext(TransitionAnimation.FADE)
         }
         btnMolitvenik.setOnClickListener {
-            RxEventBus.openPrayerBook.onNext(TransitionAnimation.NONE)
+            RxEventBus.openPrayerBook.onNext(TransitionAnimation.FADE)
         }
         btnInfo.setOnClickListener {
-            RxEventBus.openInfo.onNext(TransitionAnimation.NONE)
+            RxEventBus.openInfo.onNext(TransitionAnimation.FADE)
         }
         btnBookmarks.setOnClickListener {
-            RxEventBus.openBookmarks.onNext(TransitionAnimation.NONE)
+            RxEventBus.openBookmarks.onNext(TransitionAnimation.FADE)
         }
         btnIzreke.setOnClickListener {
             RxEventBus.openQuotes.onNext(OpenQuotesEvent())
