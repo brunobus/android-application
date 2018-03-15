@@ -7,30 +7,13 @@
     android:background="?attr/directoryHeaderSrc">
 
     <TextView
-        android:id="@+id/izbornikTopNatpis"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="60dp"
-        android:layout_marginStart="60dp"
-        android:layout_marginTop="6dp"
-        android:text="NALAZITE SE U KATEGORIJI"
-        android:textColor="#ffffff"
-        android:textSize="12sp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/izbornikTopNazivKategorije"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
-
-    <TextView
         android:id="@+id/izbornikTopNazivKategorije"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="6dp"
+        android:layout_marginBottom="10dp"
         android:layout_marginLeft="60dp"
         android:layout_marginStart="60dp"
-        android:layout_marginTop="6dp"
+        android:layout_marginTop="10dp"
         android:text="KATEGORIJA"
         android:textColor="#ffffff"
         android:textSize="14sp"
@@ -38,6 +21,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/izbornikTopNatpis"/>
+        app:layout_constraintTop_toTopOf="parent"/>
 
 </android.support.constraint.ConstraintLayout>

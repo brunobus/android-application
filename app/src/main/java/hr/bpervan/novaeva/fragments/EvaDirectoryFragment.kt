@@ -152,12 +152,6 @@ class EvaDirectoryFragment : EvaBaseFragment() {
                     inflater
                 }
         return inflaterToUse.inflate(R.layout.eva_directory, container, false).apply {
-            val infoText = "NALAZITE SE U KATEGORIJI"
-
-            evaDirectoryCollapsingBar.izbornikTop.izbornikTopNatpis.apply {
-                text = infoText
-                typeface = NovaEvaApp.openSansBold
-            }
             evaDirectoryCollapsingBar.izbornikTop.izbornikTopNazivKategorije.apply {
                 text = directoryTitle
                 typeface = NovaEvaApp.openSansBold
