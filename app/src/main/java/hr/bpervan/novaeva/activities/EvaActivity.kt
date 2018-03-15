@@ -1,16 +1,17 @@
 package hr.bpervan.novaeva.activities
 
+import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
 import android.support.v4.app.FragmentTransaction
+import android.support.v4.content.ContextCompat
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import hr.bpervan.novaeva.RxEventBus
 import hr.bpervan.novaeva.fragments.*
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.BackgroundReplaceEvent
-import hr.bpervan.novaeva.model.BackgroundType
 import hr.bpervan.novaeva.model.EvaContentMetadata
 import hr.bpervan.novaeva.model.OpenContentEvent
 import hr.bpervan.novaeva.utilities.TransitionAnimation
@@ -20,7 +21,6 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
-import kotlinx.android.synthetic.main.eva_multi_fragment_frame.*
 
 /**
  *
@@ -46,8 +46,6 @@ class EvaActivity : EvaBaseActivity() {
         setContentView(R.layout.eva_multi_fragment_frame)
 
         initContainers()
-
-        bus.dashboardBackground.onNext(BackgroundReplaceEvent(R.drawable.background, BackgroundType.DRAWABLE))
 
         if (savedInstanceState == null) {
             openDashboardFragment()
@@ -205,7 +203,17 @@ class EvaActivity : EvaBaseActivity() {
                 bus.appBackground
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe {
-                            evaRoot?.setBackground(it.backgroundType, it.resId)
+                            window?.setBackground(it.backgroundType, it.resId)
+                        },
+
+                bus.navigationAndStatusBarColor
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                val color = ContextCompat.getColor(this, it)
+                                window?.navigationBarColor = color
+                                window?.statusBarColor = color
+                            }
                         }
         )
     }

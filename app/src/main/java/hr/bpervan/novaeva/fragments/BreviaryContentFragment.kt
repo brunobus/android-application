@@ -8,7 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.NovaEvaApp
+import hr.bpervan.novaeva.RxEventBus
 import hr.bpervan.novaeva.main.R
+import hr.bpervan.novaeva.model.BackgroundReplaceEvent
+import hr.bpervan.novaeva.model.BackgroundType
 import hr.bpervan.novaeva.services.NovaEvaService
 import hr.bpervan.novaeva.utilities.ImageLoaderConfigurator
 import hr.bpervan.novaeva.utilities.subscribeAsync
@@ -77,13 +80,14 @@ class BreviaryContentFragment : EvaBaseFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val ctw = ContextThemeWrapper(activity, R.style.BreviaryTheme)
         val localInflater = inflater.cloneInContext(ctw)
-        return localInflater.inflate(R.layout.eva_simple_content, container, false).apply {
-            setBackgroundResource(R.drawable.brevijar_backbrevijar)
-        }
+        return localInflater.inflate(R.layout.eva_simple_content, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        RxEventBus.appBackground.onNext(BackgroundReplaceEvent(R.drawable.brevijar_backbrevijar, BackgroundType.DRAWABLE))
+        RxEventBus.navigationAndStatusBarColor.onNext(R.color.Transparent)
 
         initUI(savedInstanceState)
     }

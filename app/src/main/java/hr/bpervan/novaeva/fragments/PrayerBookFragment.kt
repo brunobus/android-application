@@ -10,8 +10,11 @@ import android.view.View
 import android.view.ViewGroup
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.NovaEvaApp
+import hr.bpervan.novaeva.RxEventBus
 import hr.bpervan.novaeva.adapters.PrayerBookRecyclerAdapter
 import hr.bpervan.novaeva.main.R
+import hr.bpervan.novaeva.model.BackgroundReplaceEvent
+import hr.bpervan.novaeva.model.BackgroundType
 import hr.bpervan.novaeva.model.PRAYER_CATEGORIES
 import kotlinx.android.synthetic.main.fragment_prayers.view.*
 import kotlinx.android.synthetic.main.top_prayerbook.view.*
@@ -59,5 +62,12 @@ class PrayerBookFragment : EvaBaseFragment() {
             recyclerView.itemAnimator = DefaultItemAnimator()
             recyclerView.adapter = adapter
         }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        RxEventBus.appBackground.onNext(BackgroundReplaceEvent(R.color.WhiteSmoke, BackgroundType.COLOR))
+        RxEventBus.navigationAndStatusBarColor.onNext(R.color.Black)
     }
 }

@@ -29,8 +29,8 @@ object RxEventBus {
     val openCalendar = PublishSubject.create<TransitionAnimation>()!!
     val openBookmarks = PublishSubject.create<TransitionAnimation>()!!
 
-    val appBackground = BehaviorSubject.create<BackgroundReplaceEvent>()!! //splash and transitions between fragments
-    val dashboardBackground = BehaviorSubject.create<BackgroundReplaceEvent>()!!
+    val appBackground = BehaviorSubject.create<BackgroundReplaceEvent>()!!
+    val navigationAndStatusBarColor = BehaviorSubject.create<Int>()!!
 
     //action
     val search = PublishSubject.create<String>()!!

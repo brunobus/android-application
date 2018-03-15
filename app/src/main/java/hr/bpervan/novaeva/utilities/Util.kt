@@ -1,7 +1,8 @@
 package hr.bpervan.novaeva.utilities
 
+import android.graphics.drawable.ColorDrawable
 import android.support.v4.content.ContextCompat
-import android.view.View
+import android.view.Window
 import hr.bpervan.novaeva.model.BackgroundType
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -19,13 +20,13 @@ inline fun <T> MutableList<T>.addIfNoneExistingMatch(toAdd: T, predicate: (exist
     if (none { predicate(it) }) add(toAdd)
 }
 
-fun View.setBackground(backgroundType: BackgroundType, resId: Int) {
+fun Window.setBackground(backgroundType: BackgroundType, resId: Int) {
     when (backgroundType) {
         BackgroundType.COLOR -> {
-            setBackgroundColor(ContextCompat.getColor(context, resId))
+            setBackgroundDrawable(ColorDrawable(ContextCompat.getColor(context, resId)))
         }
         BackgroundType.DRAWABLE -> {
-            setBackgroundResource(resId)
+            setBackgroundDrawableResource(resId)
         }
     }
 }

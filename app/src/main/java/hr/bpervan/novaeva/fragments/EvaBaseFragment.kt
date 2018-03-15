@@ -2,7 +2,11 @@ package hr.bpervan.novaeva.fragments
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import com.nostra13.universalimageloader.core.ImageLoader
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable

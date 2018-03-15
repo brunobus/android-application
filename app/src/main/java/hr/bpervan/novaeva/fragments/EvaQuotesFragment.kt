@@ -8,9 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.NovaEvaApp
+import hr.bpervan.novaeva.RxEventBus
 import hr.bpervan.novaeva.actions.sendEmailIntent
 import hr.bpervan.novaeva.actions.shareIntent
 import hr.bpervan.novaeva.main.R
+import hr.bpervan.novaeva.model.BackgroundReplaceEvent
+import hr.bpervan.novaeva.model.BackgroundType
 import hr.bpervan.novaeva.services.NovaEvaService
 import hr.bpervan.novaeva.utilities.subscribeAsync
 import io.reactivex.disposables.Disposable
@@ -71,38 +74,45 @@ class EvaQuotesFragment : EvaBaseFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val ctw = ContextThemeWrapper(activity, R.style.IzrekeTheme)
         val localInflater = inflater.cloneInContext(ctw)
-        val izrekeView = localInflater.inflate(R.layout.fragment_eva_quotes, container, false)
-        //todo izrekeView
+        val quotesView = localInflater.inflate(R.layout.fragment_eva_quotes, container, false)
+        //todo quotesView move
 
         if (contentTitle != null && contentData != null && contentId != -1L) {
-            applyContent(izrekeView)
+            applyContent(quotesView)
         }
 
-        applyFakeActionBarVisibility(izrekeView)
+        applyFakeActionBarVisibility(quotesView)
 
-        izrekeView.btnToggleActionBar.setOnClickListener {
+        quotesView.btnToggleActionBar.setOnClickListener {
             showTools = !showTools
-            applyFakeActionBarVisibility(izrekeView)
+            applyFakeActionBarVisibility(quotesView)
         }
 
-        izrekeView.btnObnovi.setOnClickListener {
+        quotesView.btnObnovi.setOnClickListener {
             fetchRandomQuote()
         }
 
-        izrekeView.options.btnShare.setOnClickListener {
+        quotesView.options.btnShare.setOnClickListener {
             context?.let {
                 shareIntent(it, "http://novaeva.com/node/$contentId")
             }
         }
-        izrekeView.options.btnMail.setOnClickListener {
+        quotesView.options.btnMail.setOnClickListener {
             context?.let {
                 sendEmailIntent(it, contentTitle!!, "http://novaeva.com/node/$contentId")
             }
         }
 
-        izrekeView.webText.settings.defaultFontSize = prefs.getInt("hr.bpervan.novaeva.velicinateksta", 14)
+        quotesView.webText.settings.defaultFontSize = prefs.getInt("hr.bpervan.novaeva.velicinateksta", 14)
 
-        return izrekeView
+        return quotesView
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        RxEventBus.appBackground.onNext(BackgroundReplaceEvent(R.color.WhiteSmoke, BackgroundType.COLOR))
+        RxEventBus.navigationAndStatusBarColor.onNext(R.color.Black)
     }
 
     private fun applyFakeActionBarVisibility(view: View) {

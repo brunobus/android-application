@@ -5,7 +5,7 @@
     android:id="@+id/appBar"
     android:layout_width="match_parent"
     android:layout_height="250dp"
-    android:background="@color/transparent"
+    android:background="@color/Transparent"
     android:theme="@style/AppTheme.AppBarOverlay"
     app:expanded="@bool/app_bar_expanded">
 

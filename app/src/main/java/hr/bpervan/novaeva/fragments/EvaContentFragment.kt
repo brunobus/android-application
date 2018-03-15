@@ -30,9 +30,7 @@ import hr.bpervan.novaeva.RxEventBus
 import hr.bpervan.novaeva.actions.sendEmailIntent
 import hr.bpervan.novaeva.actions.shareIntent
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.EvaCategory
-import hr.bpervan.novaeva.model.EvaContent
-import hr.bpervan.novaeva.model.OpenContentEvent
+import hr.bpervan.novaeva.model.*
 import hr.bpervan.novaeva.services.AudioPlayerService
 import hr.bpervan.novaeva.services.NovaEvaService
 import hr.bpervan.novaeva.storage.EvaContentDbAdapter
@@ -285,6 +283,9 @@ class EvaContentFragment : EvaBaseFragment(), SeekBar.OnSeekBarChangeListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        RxEventBus.appBackground.onNext(BackgroundReplaceEvent(R.color.WhiteSmoke, BackgroundType.COLOR))
+        RxEventBus.navigationAndStatusBarColor.onNext(R.color.Black)
 
         if (savedInstanceState != null) {
             vijestWebView.restoreState(savedInstanceState)

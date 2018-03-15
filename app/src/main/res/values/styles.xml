@@ -25,14 +25,6 @@
         <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
 
-    <style name="default_fragment_root">
-        <item name="android:background">@color/White</item>
-    </style>
-
-    <style name="breviary_fragment_root">
-        <item name="android:background">@drawable/brevijar_backbrevijar</item>
-    </style>
-
     <!-- Application theme. -->
     <style name="AppThemeBase" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowBackground">@color/White</item>
@@ -51,15 +43,14 @@
 
     <style name="SplashThemeBase" parent="AppTheme">
         <item name="android:windowBackground">@drawable/splash</item>
-        <item name="colorPrimaryDark">@color/transparent</item>
+        <item name="colorPrimaryDark">@color/Transparent</item>
     </style>
 
     <style name="SplashTheme" parent="SplashThemeBase"/>
 
     <style name="DashboardThemeBase" parent="AppTheme">
-        <item name="android:windowBackground">@drawable/background</item>
         <item name="colorPrimary">@color/novaEva</item>
-        <item name="colorPrimaryDark">@color/transparent</item>
+        <item name="colorPrimaryDark">@color/Transparent</item>
         <item name="colorAccent">@color/novaEvaDark</item>
     </style>
 
@@ -74,9 +65,8 @@
     <style name="PrayersTheme" parent="PrayersThemeBase"/>
 
     <style name="BreviaryThemeBase" parent="AppTheme">
-        <item name="android:windowBackground">@drawable/brevijar_backbrevijar</item>
         <item name="colorPrimary">@color/breviary</item>
-        <item name="colorPrimaryDark">@color/transparent</item>
+        <item name="colorPrimaryDark">@color/Transparent</item>
         <item name="colorAccent">@color/breviaryDark</item>
         <item name="contentTitleBarSrc">@drawable/content_titlebar_pjesmarica</item>
     </style>

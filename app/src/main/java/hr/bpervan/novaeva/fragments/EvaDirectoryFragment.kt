@@ -3,8 +3,6 @@ package hr.bpervan.novaeva.fragments
 import android.content.res.Configuration
 import android.os.Bundle
 import android.os.Handler
-import android.os.Parcel
-import android.os.Parcelable
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -16,12 +14,10 @@ import android.view.ViewGroup
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.CacheService
 import hr.bpervan.novaeva.NovaEvaApp
-import hr.bpervan.novaeva.model.OpenDirectoryEvent
+import hr.bpervan.novaeva.RxEventBus
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.EvaContentMetadata
-import hr.bpervan.novaeva.model.TIMESTAMP_FIELD
-import hr.bpervan.novaeva.model.TreeElementInfo
+import hr.bpervan.novaeva.model.*
 import hr.bpervan.novaeva.services.NovaEvaService
 import hr.bpervan.novaeva.storage.EvaDirectoryDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
@@ -175,6 +171,13 @@ class EvaDirectoryFragment : EvaBaseFragment() {
             recyclerView.adapter = adapter
             recyclerView.addOnScrollListener(EndlessScrollListener(linearLayoutManager))
         }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        RxEventBus.appBackground.onNext(BackgroundReplaceEvent(R.color.WhiteSmoke, BackgroundType.COLOR))
+        RxEventBus.navigationAndStatusBarColor.onNext(R.color.Black)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration?) {

@@ -12,8 +12,11 @@ import android.view.ViewGroup
 import android.widget.EditText
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.NovaEvaApp
+import hr.bpervan.novaeva.RxEventBus
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
+import hr.bpervan.novaeva.model.BackgroundReplaceEvent
+import hr.bpervan.novaeva.model.BackgroundType
 import hr.bpervan.novaeva.model.EvaContentMetadata
 import hr.bpervan.novaeva.model.toDatabaseModel
 import hr.bpervan.novaeva.services.NovaEvaService
@@ -83,6 +86,9 @@ class EvaSearchFragment : EvaBaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         initUI()
+
+        RxEventBus.appBackground.onNext(BackgroundReplaceEvent(R.color.WhiteSmoke, BackgroundType.COLOR))
+        RxEventBus.navigationAndStatusBarColor.onNext(R.color.Black)
     }
 
     private fun initUI() {
