@@ -133,6 +133,7 @@
     <color name="LightSkyBlue">#87CEFA</color>
     <color name="SkyBlue">#87CEEB</color>
     <color name="DarkGray">#808080</color>
+    <color name="VeryDarkGray">#252525</color>
     <color name="Olive">#808000</color>
     <color name="Purple">#800080</color>
     <color name="Maroon">#800000</color>

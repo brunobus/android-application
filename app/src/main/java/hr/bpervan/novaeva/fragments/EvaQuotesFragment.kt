@@ -8,24 +8,23 @@ import android.view.View
 import android.view.ViewGroup
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.NovaEvaApp
-import hr.bpervan.novaeva.RxEventBus
 import hr.bpervan.novaeva.actions.sendEmailIntent
 import hr.bpervan.novaeva.actions.shareIntent
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.BackgroundReplaceEvent
-import hr.bpervan.novaeva.model.BackgroundType
+import hr.bpervan.novaeva.model.EvaContextType
 import hr.bpervan.novaeva.services.NovaEvaService
 import hr.bpervan.novaeva.utilities.subscribeAsync
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.collapsing_content_header.view.*
+import kotlinx.android.synthetic.main.fragment_eva_quotes.*
 import kotlinx.android.synthetic.main.toolbar_eva_quotes.view.*
-import kotlinx.android.synthetic.main.fragment_eva_quotes.view.*
 
 /**
  * Created by vpriscan on 04.12.17..
  */
 class EvaQuotesFragment : EvaBaseFragment() {
-    companion object :EvaFragmentFactory<EvaQuotesFragment, Long>{
+
+    companion object : EvaFragmentFactory<EvaQuotesFragment, Long> {
 
         val TAG: String = EvaQuotesFragment::class.java.canonicalName
         private const val INITIAL_QUOTE_ID_KEY = "initialQuoteId"
@@ -37,6 +36,8 @@ class EvaQuotesFragment : EvaBaseFragment() {
             }
         }
     }
+
+    override val evaContextType = EvaContextType.CONTENT
 
     private var contentTitle: String? = null
     private var contentData: String? = null
@@ -74,54 +75,52 @@ class EvaQuotesFragment : EvaBaseFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val ctw = ContextThemeWrapper(activity, R.style.IzrekeTheme)
         val localInflater = inflater.cloneInContext(ctw)
-        val quotesView = localInflater.inflate(R.layout.fragment_eva_quotes, container, false)
-        //todo quotesView move
-
-        if (contentTitle != null && contentData != null && contentId != -1L) {
-            applyContent(quotesView)
-        }
-
-        applyFakeActionBarVisibility(quotesView)
-
-        quotesView.btnToggleActionBar.setOnClickListener {
-            showTools = !showTools
-            applyFakeActionBarVisibility(quotesView)
-        }
-
-        quotesView.btnObnovi.setOnClickListener {
-            fetchRandomQuote()
-        }
-
-        quotesView.options.btnShare.setOnClickListener {
-            context?.let {
-                shareIntent(it, "http://novaeva.com/node/$contentId")
-            }
-        }
-        quotesView.options.btnMail.setOnClickListener {
-            context?.let {
-                sendEmailIntent(it, contentTitle!!, "http://novaeva.com/node/$contentId")
-            }
-        }
-
-        quotesView.webText.settings.defaultFontSize = prefs.getInt("hr.bpervan.novaeva.velicinateksta", 14)
-
-        return quotesView
+        return localInflater.inflate(R.layout.fragment_eva_quotes, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        RxEventBus.appBackground.onNext(BackgroundReplaceEvent(R.color.WhiteSmoke, BackgroundType.COLOR))
-        RxEventBus.navigationAndStatusBarColor.onNext(R.color.Black)
+        initUI()
     }
 
-    private fun applyFakeActionBarVisibility(view: View) {
+    private fun initUI() {
+        if (contentTitle != null && contentData != null && contentId != -1L) {
+            applyContent()
+        }
+
+        applyFakeActionBarVisibility()
+
+        btnToggleActionBar.setOnClickListener {
+            showTools = !showTools
+            applyFakeActionBarVisibility()
+        }
+
+        btnObnovi.setOnClickListener {
+            fetchRandomQuote()
+        }
+
+        options.btnShare.setOnClickListener {
+            context?.let { ctx ->
+                shareIntent(ctx, "http://novaeva.com/node/$contentId")
+            }
+        }
+        options.btnMail.setOnClickListener {
+            context?.let { ctx ->
+                sendEmailIntent(ctx, contentTitle!!, "http://novaeva.com/node/$contentId")
+            }
+        }
+
+        webText.settings.defaultFontSize = prefs.getInt("hr.bpervan.novaeva.velicinateksta", 14)
+    }
+
+    private fun applyFakeActionBarVisibility() {
         if (showTools) {
-            view.options.visibility = View.VISIBLE
-            view.btnToggleActionBar.setImageResource(R.drawable.action_button_toolbar_hide)
+            options.visibility = View.VISIBLE
+            btnToggleActionBar.setImageResource(R.drawable.action_button_toolbar_hide)
         } else {
-            view.options.visibility = View.GONE
-            view.btnToggleActionBar.setImageResource(R.drawable.action_button_toolbar_show)
+            options.visibility = View.GONE
+            btnToggleActionBar.setImageResource(R.drawable.action_button_toolbar_show)
         }
     }
 
@@ -144,9 +143,7 @@ class EvaQuotesFragment : EvaBaseFragment() {
                         contentData = contentInfo.text
                         contentId = contentInfo.contentId
 
-                        view?.let {
-                            applyContent(it)
-                        }
+                        applyContent()
                     }
                 }) {
                     view?.let { view ->
@@ -155,8 +152,9 @@ class EvaQuotesFragment : EvaBaseFragment() {
                 }
     }
 
-    private fun applyContent(izrekeView: View) {
-        izrekeView.evaCollapsingBar.collapsingToolbar.title = contentTitle ?: ""
-        izrekeView.webText.loadDataWithBaseURL(null, contentData, "text/html", "utf-8", "")
+    private fun applyContent() {
+        view ?: return
+        evaCollapsingBar.collapsingToolbar.title = contentTitle ?: ""
+        webText.loadDataWithBaseURL(null, contentData, "text/html", "utf-8", "")
     }
 }

@@ -8,10 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.NovaEvaApp
-import hr.bpervan.novaeva.RxEventBus
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.BackgroundReplaceEvent
-import hr.bpervan.novaeva.model.BackgroundType
+import hr.bpervan.novaeva.model.EvaContextType
 import hr.bpervan.novaeva.services.NovaEvaService
 import hr.bpervan.novaeva.utilities.ImageLoaderConfigurator
 import hr.bpervan.novaeva.utilities.subscribeAsync
@@ -35,6 +33,8 @@ class BreviaryContentFragment : EvaBaseFragment() {
             }
         }
     }
+
+    override val evaContextType = EvaContextType.CONTENT
 
     private var breviaryId: Int = -1
     private lateinit var breviaryName: String
@@ -85,9 +85,6 @@ class BreviaryContentFragment : EvaBaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        RxEventBus.appBackground.onNext(BackgroundReplaceEvent(R.drawable.brevijar_backbrevijar, BackgroundType.DRAWABLE))
-        RxEventBus.navigationAndStatusBarColor.onNext(R.color.Transparent)
 
         initUI(savedInstanceState)
     }

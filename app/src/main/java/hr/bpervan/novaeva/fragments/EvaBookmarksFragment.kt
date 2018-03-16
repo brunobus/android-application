@@ -15,8 +15,7 @@ import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.RxEventBus
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.BackgroundReplaceEvent
-import hr.bpervan.novaeva.model.BackgroundType
+import hr.bpervan.novaeva.model.EvaContextType
 import hr.bpervan.novaeva.model.EvaContentMetadata
 import hr.bpervan.novaeva.storage.EvaContentDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
@@ -37,6 +36,8 @@ class EvaBookmarksFragment : EvaBaseFragment() {
         }
     }
 
+    override val evaContextType = EvaContextType.CONTENT
+
     private var loadBookmarksFromDbDisposable: Disposable? = null
         set(value) {
             field = safeReplaceDisposable(field, value)
@@ -45,20 +46,20 @@ class EvaBookmarksFragment : EvaBaseFragment() {
     private lateinit var adapter: EvaRecyclerAdapter
     private var bookmarksList: MutableList<EvaContentMetadata> = ArrayList()
 
-    private val realm: Realm by lazy {
-        Realm.getInstance(RealmConfigProvider.evaDBConfig)
-    }
+    private lateinit var realm: Realm
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        adapter = EvaRecyclerAdapter(bookmarksList)
 
         savedInstanceState ?: NovaEvaApp.defaultTracker
                 .send(HitBuilders.EventBuilder()
                         .setCategory("Zabiljeske")
                         .setAction("OtvoreneZabiljeske")
                         .build())
+
+        realm = Realm.getInstance(RealmConfigProvider.evaDBConfig)
+
+        adapter = EvaRecyclerAdapter(bookmarksList)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -67,9 +68,6 @@ class EvaBookmarksFragment : EvaBaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        RxEventBus.appBackground.onNext(BackgroundReplaceEvent(R.color.WhiteSmoke, BackgroundType.COLOR))
-        RxEventBus.navigationAndStatusBarColor.onNext(R.color.Black)
 
         initUI()
     }

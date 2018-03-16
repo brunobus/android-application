@@ -1,26 +1,27 @@
 package hr.bpervan.novaeva.activities
 
-import android.os.Build
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
 import android.support.v4.app.FragmentTransaction
-import android.support.v4.content.ContextCompat
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
+import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.RxEventBus
 import hr.bpervan.novaeva.fragments.*
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaContentMetadata
 import hr.bpervan.novaeva.model.OpenContentEvent
+import hr.bpervan.novaeva.services.NovaEvaService
 import hr.bpervan.novaeva.utilities.TransitionAnimation
 import hr.bpervan.novaeva.utilities.TransitionAnimation.*
-import hr.bpervan.novaeva.utilities.setBackground
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
+import hr.bpervan.novaeva.utilities.subscribeAsync
+import hr.bpervan.novaeva.utilities.subscribeThrottled
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
+import io.reactivex.subjects.PublishSubject
 
 /**
  *
@@ -30,6 +31,9 @@ class EvaActivity : EvaBaseActivity() {
     companion object {
         const val utilityFragmentTransactionName = "utility"
     }
+
+    private val dashboardBackgroundUrlSubject = PublishSubject.create<String>()
+    private val breviaryImageUrlSubject = PublishSubject.create<String>()
 
     private var primaryContainerId: Int = -1
     private var utilityContainerId: Int = -1
@@ -86,20 +90,14 @@ class EvaActivity : EvaBaseActivity() {
         }
     }
 
-    private fun <T> Observable<T>.subscribeToEvaEvent(onNext: (T) -> Unit): Disposable {
-        return this.throttleFirst(500, java.util.concurrent.TimeUnit.MILLISECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(onNext)
-    }
-
     override fun onStart() {
         super.onStart()
 
         disposables.addAll(
-                bus.goHome.subscribeToEvaEvent(::openDashboardFragment),
-                bus.openContent.subscribeToEvaEvent(::openContentFragment),
+                bus.goHome.subscribeThrottled(::openDashboardFragment),
+                bus.openContent.subscribeThrottled(::openContentFragment),
 
-                bus.search.subscribeToEvaEvent {
+                bus.search.subscribeThrottled {
                     popUtilityFragment()
                     supportFragmentManager.beginTransaction()
                             .setCustomAnimation(FADE)
@@ -107,7 +105,7 @@ class EvaActivity : EvaBaseActivity() {
                             .addToBackStack(null)
                             .commitAllowingStateLoss()
                 },
-                bus.openDirectory.subscribeToEvaEvent {
+                bus.openDirectory.subscribeThrottled {
                     popUtilityFragment()
 
                     supportFragmentManager.beginTransaction()
@@ -116,7 +114,7 @@ class EvaActivity : EvaBaseActivity() {
                             .addToBackStack(null)
                             .commitAllowingStateLoss()
                 },
-                bus.openQuotes.subscribeToEvaEvent {
+                bus.openQuotes.subscribeThrottled {
                     popUtilityFragment()
 
                     supportFragmentManager.beginTransaction()
@@ -125,7 +123,7 @@ class EvaActivity : EvaBaseActivity() {
                             .addToBackStack(null)
                             .commitAllowingStateLoss()
                 },
-                bus.openBreviaryChooser.subscribeToEvaEvent {
+                bus.openBreviaryChooser.subscribeThrottled {
                     popUtilityFragment()
 
                     supportFragmentManager.beginTransaction()
@@ -134,7 +132,7 @@ class EvaActivity : EvaBaseActivity() {
                             .addToBackStack(null)
                             .commitAllowingStateLoss()
                 },
-                bus.openBreviaryContent.subscribeToEvaEvent {
+                bus.openBreviaryContent.subscribeThrottled {
                     popUtilityFragment()
 
                     supportFragmentManager.beginTransaction()
@@ -144,7 +142,7 @@ class EvaActivity : EvaBaseActivity() {
                             .commitAllowingStateLoss()
                 },
 
-                bus.openInfo.subscribeToEvaEvent {
+                bus.openInfo.subscribeThrottled {
                     popUtilityFragment()
 
                     supportFragmentManager.beginTransaction()
@@ -154,11 +152,11 @@ class EvaActivity : EvaBaseActivity() {
                             .commitAllowingStateLoss()
                 },
 
-                bus.openSettingsDrawer.subscribeToEvaEvent {
+                bus.openSettingsDrawer.subscribeThrottled {
                     //todo
                 },
 
-                bus.openPrayerBook.subscribeToEvaEvent {
+                bus.openPrayerBook.subscribeThrottled {
                     popUtilityFragment()
                     supportFragmentManager.beginTransaction()
                             .setCustomAnimation(it)
@@ -167,7 +165,7 @@ class EvaActivity : EvaBaseActivity() {
                             .commitAllowingStateLoss()
                 },
 
-                bus.openPrayerCategory.subscribeToEvaEvent {
+                bus.openPrayerCategory.subscribeThrottled {
                     popUtilityFragment()
 
                     supportFragmentManager.beginTransaction()
@@ -177,11 +175,11 @@ class EvaActivity : EvaBaseActivity() {
                             .commitAllowingStateLoss()
                 },
 
-                bus.openRadio.subscribeToEvaEvent {
+                bus.openRadio.subscribeThrottled {
                     //todo
                 },
 
-                bus.openCalendar.subscribeToEvaEvent {
+                bus.openCalendar.subscribeThrottled {
 
                     popUtilityFragment()
                     supportFragmentManager.beginTransaction()
@@ -191,7 +189,7 @@ class EvaActivity : EvaBaseActivity() {
                             .commitAllowingStateLoss()
                 },
 
-                bus.openBookmarks.subscribeToEvaEvent {
+                bus.openBookmarks.subscribeThrottled {
                     popUtilityFragment()
                     supportFragmentManager.beginTransaction()
                             .setCustomAnimation(it)
@@ -200,22 +198,48 @@ class EvaActivity : EvaBaseActivity() {
                             .commitAllowingStateLoss()
                 },
 
-                bus.appBackground
-                        .observeOn(AndroidSchedulers.mainThread())
+                dashboardBackgroundUrlSubject
+                        .distinctUntilChanged()
                         .subscribe {
-                            window?.setBackground(it.backgroundType, it.resId)
+                            NovaEvaApp.imageLoader.loadImage(it, object : SimpleImageLoadingListener() {
+                                override fun onLoadingComplete(imageUri: String, view: View?, loadedImage: Bitmap) {
+                                    val drawable = BitmapDrawable(resources, loadedImage)
+                                    RxEventBus.changeDashboardBackground.onNext(drawable)
+                                }
+                            })
                         },
 
-                bus.navigationAndStatusBarColor
-                        .observeOn(AndroidSchedulers.mainThread())
+                breviaryImageUrlSubject
+                        .distinctUntilChanged()
                         .subscribe {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                val color = ContextCompat.getColor(this, it)
-                                window?.navigationBarColor = color
-                                window?.statusBarColor = color
-                            }
-                        }
+                            NovaEvaApp.prefs.edit().putString("hr.bpervan.novaeva.brevijarheaderimage", it).apply()
+                        },
+
+                bus.connectedToNetwork.subscribe {
+                    fetchBreviaryImageUrl()
+                    fetchDashboardBackgroundUrl()
+                }
         )
+
+        fetchBreviaryImageUrl()
+        fetchDashboardBackgroundUrl()
+    }
+
+    private fun fetchBreviaryImageUrl() {
+        NovaEvaService.instance
+                .getDirectoryContent(546, null)
+                .subscribeAsync({ directoryContent ->
+                    val image = directoryContent.image?.size640 ?: directoryContent.image?.size640
+                    if (image != null) {
+                        breviaryImageUrlSubject.onNext(image)
+                    }
+                }, onError = {})
+    }
+
+    private fun fetchDashboardBackgroundUrl() {
+        NovaEvaService.instance
+                .getDashboardBackground(RxEventBus.changeEvaTheme.value)
+                .subscribeAsync(dashboardBackgroundUrlSubject::onNext, onError = {})
     }
 
     private fun openDashboardFragment(animation: TransitionAnimation = FADE) {

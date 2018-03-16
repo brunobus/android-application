@@ -5,8 +5,11 @@ import android.app.AlertDialog
 import android.app.Application
 import android.content.Context
 import android.content.IntentFilter
+import android.content.SharedPreferences
 import android.graphics.Typeface
+import android.graphics.drawable.Drawable
 import android.support.design.widget.Snackbar
+import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.util.TypedValue
 import android.view.View
@@ -15,8 +18,10 @@ import android.widget.Toast
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.gms.analytics.GoogleAnalytics
 import com.google.android.gms.analytics.Tracker
+import com.nostra13.universalimageloader.core.ImageLoader
 import hr.bpervan.novaeva.main.BuildConfig
 import hr.bpervan.novaeva.main.R
+import hr.bpervan.novaeva.model.EvaTheme
 import hr.bpervan.novaeva.player.MyExoPlayerFactory
 import hr.bpervan.novaeva.receivers.ConnectionDetector
 import hr.bpervan.novaeva.utilities.ImageLoaderConfigurator
@@ -62,16 +67,23 @@ class NovaEvaApp : Application() {
                     RxEventBus.didSetActiveExoPlayer.onNext(it)
                 }
 
-//        val filter = IntentFilter()
-//        filter.addAction("android.net.wifi.supplicant.CONNECTION_CHANGE")
-//        filter.addAction("android.net.wifi.STATE_CHANGE")
-//        filter.addAction("android.net.conn.CONNECTIVITY_CHANGE")
-//        registerReceiver(ConnectionDetector(), filter)
+        RxEventBus.changeEvaTheme
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    prefs.edit().putString(evaThemeKey, it.toString()).apply()
+                }
+
+        val filter = IntentFilter()
+        filter.addAction("android.net.wifi.supplicant.CONNECTION_CHANGE")
+        filter.addAction("android.net.wifi.STATE_CHANGE")
+        filter.addAction("android.net.conn.CONNECTIVITY_CHANGE")
+        registerReceiver(ConnectionDetector(), filter)
 
         registerActivityLifecycleCallbacks(LifecycleLogger())
     }
 
     companion object {
+        private const val evaThemeKey = "EVA_THEME"
         private const val NOVA_EVA_TRACKER_ID = "UA-40344870-1"
         var instance: NovaEvaApp? = null
 
@@ -79,6 +91,14 @@ class NovaEvaApp : Application() {
         lateinit var activeExoPlayer: ExoPlayer
         lateinit var preparedExoPlayer: ExoPlayer
         lateinit var defaultTracker: Tracker
+
+        val imageLoader: ImageLoader by lazy {
+            ImageLoader.getInstance()
+        }
+
+        val prefs: SharedPreferences by lazy {
+            instance!!.getSharedPreferences("hr.bpervan.novaeva", Context.MODE_PRIVATE)
+        }
 
         private fun loadTypeface(resFile: String): Typeface? {
             Log.d("loadingTypeface", "loading typeface from $resFile")
@@ -131,6 +151,19 @@ class NovaEvaApp : Application() {
             error.setPositiveButton(context.getString(R.string.try_again)) { _, _ -> onTryAgain() }
             error.setNegativeButton(context.getString(R.string.go_back)) { _, _ -> RxEventBus.goHome.onNext(TransitionAnimation.LEFTWARDS) }
             error.show()
+        }
+
+        fun getDefaultAppBackground(): Drawable {
+            return ContextCompat.getDrawable(NovaEvaApp.instance!!, R.drawable.background)!!
+        }
+
+        fun getDefaultEvaTheme(): EvaTheme {
+            return try {
+                val evaThemeString = prefs.getString(evaThemeKey, EvaTheme.DEFAULT.toString())
+                EvaTheme.valueOf(evaThemeString)
+            } catch (iae: IllegalArgumentException) {
+                EvaTheme.DEFAULT
+            }
         }
     }
 }

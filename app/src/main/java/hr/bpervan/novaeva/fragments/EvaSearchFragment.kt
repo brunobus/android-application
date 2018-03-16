@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Bundle
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
@@ -12,11 +13,9 @@ import android.view.ViewGroup
 import android.widget.EditText
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.NovaEvaApp
-import hr.bpervan.novaeva.RxEventBus
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.BackgroundReplaceEvent
-import hr.bpervan.novaeva.model.BackgroundType
+import hr.bpervan.novaeva.model.EvaContextType
 import hr.bpervan.novaeva.model.EvaContentMetadata
 import hr.bpervan.novaeva.model.toDatabaseModel
 import hr.bpervan.novaeva.services.NovaEvaService
@@ -43,6 +42,8 @@ class EvaSearchFragment : EvaBaseFragment() {
             }
         }
     }
+
+    override val evaContextType = EvaContextType.CONTENT
 
     private var searchForContentDisposable: Disposable? = null
         set(value) {
@@ -86,18 +87,15 @@ class EvaSearchFragment : EvaBaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         initUI()
-
-        RxEventBus.appBackground.onNext(BackgroundReplaceEvent(R.color.WhiteSmoke, BackgroundType.COLOR))
-        RxEventBus.navigationAndStatusBarColor.onNext(R.color.Black)
     }
 
     private fun initUI() {
 //        btnSearch.setOnClickListener(this)
 
-        //todo make this nicer
-        evaRecyclerView.evaRecyclerView.adapter = adapter
-        evaRecyclerView.evaRecyclerView.layoutManager = LinearLayoutManager(evaRecyclerView.evaRecyclerView.context)
-        evaRecyclerView.evaRecyclerView.itemAnimator = DefaultItemAnimator()
+        val recyclerView = evaRecyclerView as RecyclerView
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager = LinearLayoutManager(evaRecyclerView.evaRecyclerView.context)
+        recyclerView.itemAnimator = DefaultItemAnimator()
     }
 
     private fun showSearchPopup() {

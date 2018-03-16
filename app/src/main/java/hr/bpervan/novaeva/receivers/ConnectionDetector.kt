@@ -16,7 +16,7 @@ class ConnectionDetector : BroadcastReceiver() {
         val networkInfo: NetworkInfo? = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO)
         networkInfo ?: return
         if (networkInfo.state == NetworkInfo.State.CONNECTED) {
-            RxEventBus.networkConnection.onNext(Unit)
+            RxEventBus.connectedToNetwork.onNext(Unit)
         }
     }
 }

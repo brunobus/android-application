@@ -9,8 +9,7 @@ import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.RxEventBus
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.BackgroundReplaceEvent
-import hr.bpervan.novaeva.model.BackgroundType
+import hr.bpervan.novaeva.model.EvaContextType
 import hr.bpervan.novaeva.model.OpenBreviaryContentEvent
 import hr.bpervan.novaeva.utilities.ImageLoaderConfigurator
 import hr.bpervan.novaeva.utilities.TransitionAnimation
@@ -30,6 +29,8 @@ class BreviaryChooserFragment : EvaBaseFragment() {
         }
     }
 
+    override val evaContextType = EvaContextType.BREVIARY
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -41,7 +42,6 @@ class BreviaryChooserFragment : EvaBaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-
         val ctw = ContextThemeWrapper(activity, R.style.BreviaryTheme)
         val localInflater = inflater.cloneInContext(ctw)
         return localInflater.inflate(R.layout.activity_breviary, container, false)
@@ -49,9 +49,6 @@ class BreviaryChooserFragment : EvaBaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        RxEventBus.appBackground.onNext(BackgroundReplaceEvent(R.drawable.brevijar_backbrevijar, BackgroundType.DRAWABLE))
-        RxEventBus.navigationAndStatusBarColor.onNext(R.color.Transparent)
 
         initUI()
     }

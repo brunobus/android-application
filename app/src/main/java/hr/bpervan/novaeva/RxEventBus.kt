@@ -1,5 +1,6 @@
 package hr.bpervan.novaeva
 
+import android.graphics.drawable.Drawable
 import com.google.android.exoplayer2.ExoPlayer
 import hr.bpervan.novaeva.model.*
 import hr.bpervan.novaeva.utilities.TransitionAnimation
@@ -29,13 +30,18 @@ object RxEventBus {
     val openCalendar = PublishSubject.create<TransitionAnimation>()!!
     val openBookmarks = PublishSubject.create<TransitionAnimation>()!!
 
-    val appBackground = BehaviorSubject.create<BackgroundReplaceEvent>()!!
-    val navigationAndStatusBarColor = BehaviorSubject.create<Int>()!!
+    //themes
+    val changeDashboardBackground: BehaviorSubject<Drawable> by lazy {
+        BehaviorSubject.createDefault(NovaEvaApp.getDefaultAppBackground())
+    }
+    val changeEvaTheme: BehaviorSubject<EvaTheme> by lazy {
+        BehaviorSubject.createDefault(NovaEvaApp.getDefaultEvaTheme())
+    }
 
     //action
     val search = PublishSubject.create<String>()!!
 
     //network
-    val networkConnection = PublishSubject.create<Unit>()!!
+    val connectedToNetwork = PublishSubject.create<Unit>()!!
 }
 

@@ -11,7 +11,6 @@ import android.support.v4.app.TaskStackBuilder;
 import org.json.JSONObject;
 
 import hr.bpervan.novaeva.main.R;
-import hr.bpervan.novaeva.utilities.ConnectionChecker;
 
 @Deprecated
 public class NewsPullReceiver extends BroadcastReceiver{

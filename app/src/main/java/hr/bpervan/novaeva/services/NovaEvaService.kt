@@ -32,6 +32,9 @@ interface NovaEvaService {
     @GET("json?api=2&indicators=1")
     fun getNewStuff(): Single<EvaIndicatorsDTO>
 
+    @GET("api3/test/background")
+    fun getDashboardBackground(@Query("theme") theme: EvaTheme): Single<String>
+
     companion object {
         val instance by lazy {
             create()

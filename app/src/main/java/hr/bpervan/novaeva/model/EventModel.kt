@@ -21,8 +21,3 @@ data class OpenQuotesEvent(val quoteId: Long = -1,
 data class OpenBreviaryContentEvent(val breviaryId: Int,
                                     val animation: TransitionAnimation = TransitionAnimation.FADE)
 
-enum class BackgroundType {
-    DRAWABLE, COLOR
-}
-
-data class BackgroundReplaceEvent(val resId: Int, val backgroundType: BackgroundType)

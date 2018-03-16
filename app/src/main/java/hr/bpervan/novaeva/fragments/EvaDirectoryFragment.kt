@@ -14,7 +14,6 @@ import android.view.ViewGroup
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.cache.CacheService
 import hr.bpervan.novaeva.NovaEvaApp
-import hr.bpervan.novaeva.RxEventBus
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.*
@@ -51,6 +50,8 @@ class EvaDirectoryFragment : EvaBaseFragment() {
         }
     }
 
+    override val evaContextType = EvaContextType.CONTENT
+
     private val handler = Handler()
 
     private var fetchFromServerDisposable: Disposable? = null
@@ -74,9 +75,7 @@ class EvaDirectoryFragment : EvaBaseFragment() {
 
     private var fetchingFromServer = true
 
-    private val realm: Realm by lazy {
-        Realm.getInstance(RealmConfigProvider.evaDBConfig)
-    }
+    private lateinit var realm: Realm
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,6 +95,8 @@ class EvaDirectoryFragment : EvaBaseFragment() {
                         .setLabel(directoryTitle)
                         .setValue(directoryId)
                         .build())
+
+        realm = Realm.getInstance(RealmConfigProvider.evaDBConfig)
 
         prefs.edit().remove("newContentInCategory$directoryId").apply()
 
@@ -156,9 +157,6 @@ class EvaDirectoryFragment : EvaBaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        RxEventBus.appBackground.onNext(BackgroundReplaceEvent(R.color.WhiteSmoke, BackgroundType.COLOR))
-        RxEventBus.navigationAndStatusBarColor.onNext(R.color.Black)
 
         initUI()
     }

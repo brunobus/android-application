@@ -11,7 +11,7 @@ import hr.bpervan.novaeva.RxEventBus
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.*
 import hr.bpervan.novaeva.utilities.TransitionAnimation
-import io.reactivex.disposables.Disposable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.eva_dashboard_v2.*
 
 /**
@@ -25,10 +25,7 @@ class EvaDashboardFragment2 : EvaBaseFragment() {
         }
     }
 
-    private var dashboardBackgroundDisposable: Disposable? = null
-        set(value) {
-            field = safeReplaceDisposable(field, value)
-        }
+    override val evaContextType = EvaContextType.DASHBOARD
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,11 +47,7 @@ class EvaDashboardFragment2 : EvaBaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        RxEventBus.appBackground.onNext(BackgroundReplaceEvent(R.drawable.background, BackgroundType.DRAWABLE))
-        RxEventBus.navigationAndStatusBarColor.onNext(R.color.Transparent)
-
         initUI()
-
     }
 
     private fun initUI() {
@@ -123,5 +116,11 @@ class EvaDashboardFragment2 : EvaBaseFragment() {
                             EvaCategory.EVANDJELJE.rawName),
                     R.style.EvandjeljeTheme))
         }
+
+        baseDisposables.add(RxEventBus.changeDashboardBackground
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    activity?.window?.setBackgroundDrawable(it)
+                })
     }
 }
