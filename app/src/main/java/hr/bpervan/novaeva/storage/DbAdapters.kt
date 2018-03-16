@@ -25,6 +25,7 @@ object EvaDirectoryDbAdapter {
     fun subscribeToEvaDirectoryUpdatesAsync(realm: Realm, directoryId: Long, directoryConsumer: (EvaDirectory) -> Unit): Disposable =
             subscribeToUpdatesAsync(realm, EvaDirectory::class.java, DIRECTORY_ID_FIELD, directoryId, directoryConsumer)
 
+    //todo fix leak?
     fun createIfMissingEvaDirectoryAsync(realm: Realm, directoryId: Long,
                                          valuesApplier: (EvaDirectoryMetadata) -> Unit = {},
                                          onSuccess: () -> Unit = {}) {

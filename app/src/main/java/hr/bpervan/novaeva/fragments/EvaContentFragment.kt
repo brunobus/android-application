@@ -24,7 +24,7 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import com.google.android.gms.analytics.HitBuilders
-import hr.bpervan.novaeva.CacheService
+import hr.bpervan.novaeva.cache.CacheService
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.RxEventBus
 import hr.bpervan.novaeva.actions.sendEmailIntent

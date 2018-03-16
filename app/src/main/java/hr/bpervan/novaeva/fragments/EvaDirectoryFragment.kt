@@ -12,7 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.google.android.gms.analytics.HitBuilders
-import hr.bpervan.novaeva.CacheService
+import hr.bpervan.novaeva.cache.CacheService
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.RxEventBus
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
@@ -25,8 +25,8 @@ import hr.bpervan.novaeva.utilities.subscribeAsync
 import io.reactivex.disposables.Disposable
 import io.realm.Realm
 import io.realm.Sort
-import kotlinx.android.synthetic.main.eva_directory.view.*
 import kotlinx.android.synthetic.main.collapsing_directory_header.view.*
+import kotlinx.android.synthetic.main.eva_directory.*
 import kotlinx.android.synthetic.main.top_izbornik.view.*
 
 /**
@@ -74,7 +74,9 @@ class EvaDirectoryFragment : EvaBaseFragment() {
 
     private var fetchingFromServer = true
 
-    private lateinit var realm: Realm
+    private val realm: Realm by lazy {
+        Realm.getInstance(RealmConfigProvider.evaDBConfig)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -83,8 +85,6 @@ class EvaDirectoryFragment : EvaBaseFragment() {
         directoryId = inState.getLong(directoryIdKey)
         directoryTitle = inState.getString(directoryTitleKey)
         themeId = inState.getInt(themeIdKey)
-
-        realm = Realm.getInstance(RealmConfigProvider.evaDBConfig)
 
         adapter = EvaRecyclerAdapter(elementsList, { loadingFromDb || fetchingFromServer }, themeId)
         adapter.registerAdapterDataObserver(DataChangeLogger())
@@ -151,20 +151,7 @@ class EvaDirectoryFragment : EvaBaseFragment() {
                 } else {
                     inflater
                 }
-        return inflaterToUse.inflate(R.layout.eva_directory, container, false).apply {
-            evaDirectoryCollapsingBar.izbornikTop.izbornikTopNazivKategorije.apply {
-                text = directoryTitle
-                typeface = NovaEvaApp.openSansBold
-            }
-
-            val recyclerView = evaRecyclerView as RecyclerView
-
-            val linearLayoutManager = LinearLayoutManager(context)
-            recyclerView.layoutManager = linearLayoutManager
-            recyclerView.itemAnimator = DefaultItemAnimator()
-            recyclerView.adapter = adapter
-            recyclerView.addOnScrollListener(EndlessScrollListener(linearLayoutManager))
-        }
+        return inflaterToUse.inflate(R.layout.eva_directory, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -172,6 +159,23 @@ class EvaDirectoryFragment : EvaBaseFragment() {
 
         RxEventBus.appBackground.onNext(BackgroundReplaceEvent(R.color.WhiteSmoke, BackgroundType.COLOR))
         RxEventBus.navigationAndStatusBarColor.onNext(R.color.Black)
+
+        initUI()
+    }
+
+    private fun initUI() {
+        evaDirectoryCollapsingBar.izbornikTop.izbornikTopNazivKategorije.apply {
+            text = directoryTitle
+            typeface = NovaEvaApp.openSansBold
+        }
+
+        val recyclerView = evaRecyclerView as RecyclerView
+
+        val linearLayoutManager = LinearLayoutManager(context)
+        recyclerView.layoutManager = linearLayoutManager
+        recyclerView.itemAnimator = DefaultItemAnimator()
+        recyclerView.adapter = adapter
+        recyclerView.addOnScrollListener(EndlessScrollListener(linearLayoutManager))
     }
 
     override fun onConfigurationChanged(newConfig: Configuration?) {
