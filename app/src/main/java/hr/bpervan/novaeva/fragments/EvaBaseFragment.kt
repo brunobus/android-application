@@ -5,14 +5,14 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.view.View
 import com.nostra13.universalimageloader.core.ImageLoader
-import hr.bpervan.novaeva.*
+import hr.bpervan.novaeva.NovaEvaApp
+import hr.bpervan.novaeva.RxEventBus
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.EvaContextType
-import hr.bpervan.novaeva.model.EvaContextType.*
 import hr.bpervan.novaeva.model.EvaTheme
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -33,8 +33,6 @@ abstract class EvaBaseFragment : Fragment() {
 
     protected val imageLoader: ImageLoader
         get() = NovaEvaApp.imageLoader
-
-    abstract val evaContextType: EvaContextType
 
     interface EvaFragmentFactory<out T : Fragment, in K> {
         val tag: String
@@ -77,48 +75,46 @@ abstract class EvaBaseFragment : Fragment() {
         return newDisposable
     }
 
-    //todo
+    protected open fun provideNavBarColorId(evaTheme: EvaTheme): Int {
+        return R.color.Black
+    }
+
+    protected open fun provideStatusBarColorId(evaTheme: EvaTheme): Int {
+        return R.color.VeryDarkGray
+    }
+
+    protected open fun provideFragmentBackgroundDrawable(evaTheme: EvaTheme): Drawable? {
+        val activity = activity ?: return null
+        return when (evaTheme) {
+            EvaTheme.DEFAULT -> ColorDrawable(ContextCompat.getColor(activity, R.color.White))
+            EvaTheme.NIGHT -> ColorDrawable(ContextCompat.getColor(activity, R.color.VeryDarkGray))
+        }
+    }
+
+    protected open fun provideWindowBackgroundDrawable(evaTheme: EvaTheme): Drawable? {
+        val activity = activity ?: return null
+        return ContextCompat.getDrawable(activity, R.drawable.background)
+    }
+
     private fun applyEvaTheme(evaTheme: EvaTheme) {
         val activity = activity ?: return
 
-        val backgroundDrawable: Drawable?
-        val statusBarColorId: Int
-        val navBarColorId: Int
+        val windowBackground: Drawable? = provideWindowBackgroundDrawable(evaTheme)
+        val fragmentBackground: Drawable? = provideFragmentBackgroundDrawable(evaTheme)
+        val statusBarColorId: Int = provideStatusBarColorId(evaTheme)
+        val navBarColorId: Int = provideNavBarColorId(evaTheme)
 
-        when (evaContextType) {
-            CONTENT -> {
-                when (evaTheme) {
-                    EvaTheme.DEFAULT -> {
-                        backgroundDrawable = ColorDrawable(ContextCompat.getColor(activity, R.color.White))
-                        statusBarColorId = R.color.VeryDarkGray
-                        navBarColorId = R.color.Black
-                    }
-                    EvaTheme.NIGHT -> {
-                        backgroundDrawable = ColorDrawable(ContextCompat.getColor(activity, R.color.VeryDarkGray))
-                        statusBarColorId = R.color.VeryDarkGray
-                        navBarColorId = R.color.Black
-                    }
-                }
-            }
-            BREVIARY -> {
-                backgroundDrawable = ContextCompat.getDrawable(activity, R.drawable.brevijar_backbrevijar)!!
-                statusBarColorId = R.color.Transparent
-                navBarColorId = R.color.Transparent
-            }
-            DASHBOARD -> {
-                backgroundDrawable = null
-                statusBarColorId = R.color.Transparent
-                navBarColorId = R.color.Transparent
-            }
+        if (windowBackground != null) {
+            activity.window?.setBackgroundDrawable(windowBackground)
         }
 
-        if (backgroundDrawable != null) {
-            activity.window?.setBackgroundDrawable(backgroundDrawable)
+        if (fragmentBackground != null) {
+            view?.background = fragmentBackground
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             val statusBarColor = ContextCompat.getColor(activity, statusBarColorId)
-            activity.window?.navigationBarColor = statusBarColor
+            activity.window?.statusBarColor = statusBarColor
 
             val navBarColor = ContextCompat.getColor(activity, navBarColorId)
             activity.window?.navigationBarColor = navBarColor

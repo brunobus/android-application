@@ -64,7 +64,6 @@ class EvaContentFragment : EvaBaseFragment(), SeekBar.OnSeekBarChangeListener {
         }
     }
 
-    override val evaContextType = EvaContextType.CONTENT
 
     private var exoPlayer: ExoPlayer? = null
     private val evaPlayerEventListener = EvaPlayerEventListener()

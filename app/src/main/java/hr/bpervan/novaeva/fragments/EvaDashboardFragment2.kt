@@ -1,5 +1,6 @@
 package hr.bpervan.novaeva.fragments
 
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
@@ -24,8 +25,6 @@ class EvaDashboardFragment2 : EvaBaseFragment() {
             return EvaDashboardFragment2()
         }
     }
-
-    override val evaContextType = EvaContextType.DASHBOARD
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -123,4 +122,10 @@ class EvaDashboardFragment2 : EvaBaseFragment() {
                     activity?.window?.setBackgroundDrawable(it)
                 })
     }
+
+    override fun provideNavBarColorId(evaTheme: EvaTheme): Int = R.color.Transparent
+
+    override fun provideStatusBarColorId(evaTheme: EvaTheme): Int = R.color.Transparent
+
+    override fun provideFragmentBackgroundDrawable(evaTheme: EvaTheme): Drawable? = null
 }

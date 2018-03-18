@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import hr.bpervan.novaeva.model.EvaContextType
 
 /**
  *
@@ -17,7 +16,6 @@ class EvaCalendarFragment : EvaBaseFragment() {
         }
     }
 
-    override val evaContextType = EvaContextType.CONTENT
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return super.onCreateView(inflater, container, savedInstanceState)

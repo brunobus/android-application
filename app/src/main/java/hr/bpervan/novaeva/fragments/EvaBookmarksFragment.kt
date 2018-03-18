@@ -15,7 +15,6 @@ import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.RxEventBus
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.EvaContextType
 import hr.bpervan.novaeva.model.EvaContentMetadata
 import hr.bpervan.novaeva.storage.EvaContentDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
@@ -36,7 +35,6 @@ class EvaBookmarksFragment : EvaBaseFragment() {
         }
     }
 
-    override val evaContextType = EvaContextType.CONTENT
 
     private var loadBookmarksFromDbDisposable: Disposable? = null
         set(value) {

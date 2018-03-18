@@ -11,7 +11,6 @@ import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.PrayerCategoryRecyclerAdapter
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.EvaContextType
 import hr.bpervan.novaeva.model.PRAYER_CATEGORIES
 import hr.bpervan.novaeva.model.PrayerCategory
 import kotlinx.android.synthetic.main.fragment_prayers.*
@@ -32,7 +31,6 @@ class PrayerListFragment : EvaBaseFragment() {
         }
     }
 
-    override val evaContextType = EvaContextType.CONTENT
 
     private lateinit var prayerCategory: PrayerCategory
 

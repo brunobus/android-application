@@ -15,7 +15,6 @@ import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.EvaContextType
 import hr.bpervan.novaeva.model.EvaContentMetadata
 import hr.bpervan.novaeva.model.toDatabaseModel
 import hr.bpervan.novaeva.services.NovaEvaService
@@ -43,7 +42,6 @@ class EvaSearchFragment : EvaBaseFragment() {
         }
     }
 
-    override val evaContextType = EvaContextType.CONTENT
 
     private var searchForContentDisposable: Disposable? = null
         set(value) {

@@ -1,6 +1,8 @@
 package hr.bpervan.novaeva.fragments
 
+import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
@@ -9,7 +11,7 @@ import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.RxEventBus
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.EvaContextType
+import hr.bpervan.novaeva.model.EvaTheme
 import hr.bpervan.novaeva.model.OpenBreviaryContentEvent
 import hr.bpervan.novaeva.utilities.ImageLoaderConfigurator
 import hr.bpervan.novaeva.utilities.TransitionAnimation
@@ -28,8 +30,6 @@ class BreviaryChooserFragment : EvaBaseFragment() {
             return BreviaryChooserFragment()
         }
     }
-
-    override val evaContextType = EvaContextType.BREVIARY
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,5 +88,16 @@ class BreviaryChooserFragment : EvaBaseFragment() {
         override fun onClick(v: View?) {
             RxEventBus.openBreviaryContent.onNext(OpenBreviaryContentEvent(breviaryId, TransitionAnimation.FADE))
         }
+    }
+
+    override fun provideNavBarColorId(evaTheme: EvaTheme): Int = R.color.Transparent
+
+    override fun provideStatusBarColorId(evaTheme: EvaTheme): Int = R.color.Transparent
+
+    override fun provideFragmentBackgroundDrawable(evaTheme: EvaTheme): Drawable? = null
+
+    override fun provideWindowBackgroundDrawable(evaTheme: EvaTheme): Drawable? {
+        val activity = activity ?: return null
+        return ContextCompat.getDrawable(activity, R.drawable.brevijar_backbrevijar)
     }
 }

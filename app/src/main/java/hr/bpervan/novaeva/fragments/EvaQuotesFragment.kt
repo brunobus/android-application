@@ -11,7 +11,6 @@ import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.actions.sendEmailIntent
 import hr.bpervan.novaeva.actions.shareIntent
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.EvaContextType
 import hr.bpervan.novaeva.services.NovaEvaService
 import hr.bpervan.novaeva.utilities.subscribeAsync
 import io.reactivex.disposables.Disposable
@@ -37,7 +36,6 @@ class EvaQuotesFragment : EvaBaseFragment() {
         }
     }
 
-    override val evaContextType = EvaContextType.CONTENT
 
     private var contentTitle: String? = null
     private var contentData: String? = null

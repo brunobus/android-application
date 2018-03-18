@@ -50,7 +50,6 @@ class EvaDirectoryFragment : EvaBaseFragment() {
         }
     }
 
-    override val evaContextType = EvaContextType.CONTENT
 
     private val handler = Handler()
 
