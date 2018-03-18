@@ -18,11 +18,11 @@ import kotlinx.android.synthetic.main.eva_dashboard_v2.*
 /**
  *
  */
-class EvaDashboardFragment2 : EvaBaseFragment() {
-    companion object : EvaFragmentFactory<EvaDashboardFragment2, Unit> {
+class EvaDashboardFragment : EvaBaseFragment() {
+    companion object : EvaFragmentFactory<EvaDashboardFragment, Unit> {
 
-        override fun newInstance(initializer: Unit): EvaDashboardFragment2 {
-            return EvaDashboardFragment2()
+        override fun newInstance(initializer: Unit): EvaDashboardFragment {
+            return EvaDashboardFragment()
         }
     }
 

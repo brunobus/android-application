@@ -246,7 +246,7 @@ class EvaActivity : EvaBaseActivity() {
         popAllFragments()
         supportFragmentManager.beginTransaction()
                 .setCustomAnimation(animation)
-                .replace(primaryContainerId, EvaDashboardFragment2)
+                .replace(primaryContainerId, EvaDashboardFragment)
                 .commitAllowingStateLoss()
     }
 
