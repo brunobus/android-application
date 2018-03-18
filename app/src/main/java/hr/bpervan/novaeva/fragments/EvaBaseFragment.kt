@@ -92,8 +92,7 @@ abstract class EvaBaseFragment : Fragment() {
     }
 
     protected open fun provideWindowBackgroundDrawable(evaTheme: EvaTheme): Drawable? {
-        val activity = activity ?: return null
-        return ContextCompat.getDrawable(activity, R.drawable.background)
+        return null
     }
 
     private fun applyEvaTheme(evaTheme: EvaTheme) {

@@ -22,7 +22,6 @@ class EvaInfoFragment : EvaBaseFragment() {
         }
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

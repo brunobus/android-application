@@ -149,7 +149,7 @@ class NovaEvaApp : Application() {
             error.setView(tv)
 
             error.setPositiveButton(context.getString(R.string.try_again)) { _, _ -> onTryAgain() }
-            error.setNegativeButton(context.getString(R.string.go_back)) { _, _ -> RxEventBus.goHome.onNext(TransitionAnimation.LEFTWARDS) }
+            error.setNegativeButton(context.getString(R.string.go_back)) { _, _ -> RxEventBus.goHome.onNext(TransitionAnimation.RIGHTWARDS) }
             error.show()
         }
 

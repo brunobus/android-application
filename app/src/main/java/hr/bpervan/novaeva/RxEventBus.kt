@@ -12,23 +12,23 @@ import io.reactivex.subjects.PublishSubject
  */
 object RxEventBus {
     //internal
-    val setActiveExoPlayer = PublishSubject.create<ExoPlayer>()!!
-    val didSetActiveExoPlayer = BehaviorSubject.create<ExoPlayer>()!!
+    val setActiveExoPlayer = PublishSubject.create<ExoPlayer>()
+    val didSetActiveExoPlayer = BehaviorSubject.create<ExoPlayer>()
 
     //navigation
-    val goHome = PublishSubject.create<TransitionAnimation>()!!
-    val openContent = PublishSubject.create<OpenContentEvent>()!!
-    val openDirectory = PublishSubject.create<OpenDirectoryEvent>()!!
-    val openQuotes = PublishSubject.create<OpenQuotesEvent>()!!
-    val openBreviaryChooser = PublishSubject.create<TransitionAnimation>()!!
-    val openBreviaryContent = PublishSubject.create<OpenBreviaryContentEvent>()!!
-    val openInfo = PublishSubject.create<TransitionAnimation>()!!
-    val openSettingsDrawer = PublishSubject.create<TransitionAnimation>()!!
-    val openPrayerBook = PublishSubject.create<TransitionAnimation>()!!
-    val openPrayerCategory = PublishSubject.create<OpenPrayerCategoryEvent>()!!
-    val openRadio = PublishSubject.create<TransitionAnimation>()!!
-    val openCalendar = PublishSubject.create<TransitionAnimation>()!!
-    val openBookmarks = PublishSubject.create<TransitionAnimation>()!!
+    val goHome = PublishSubject.create<TransitionAnimation>()
+    val openContent = PublishSubject.create<OpenContentEvent>()
+    val openDirectory = PublishSubject.create<OpenDirectoryEvent>()
+    val openQuotes = PublishSubject.create<OpenQuotesEvent>()
+    val openBreviaryChooser = PublishSubject.create<TransitionAnimation>()
+    val openBreviaryContent = PublishSubject.create<OpenBreviaryContentEvent>()
+    val openInfo = PublishSubject.create<TransitionAnimation>()
+    val openOptionsDrawer = PublishSubject.create<Unit>()
+    val openPrayerBook = PublishSubject.create<TransitionAnimation>()
+    val openPrayerCategory = PublishSubject.create<OpenPrayerCategoryEvent>()
+    val openRadio = PublishSubject.create<TransitionAnimation>()
+    val openCalendar = PublishSubject.create<TransitionAnimation>()
+    val openBookmarks = PublishSubject.create<TransitionAnimation>()
 
     //themes
     val changeDashboardBackground: BehaviorSubject<Drawable> by lazy {
@@ -39,9 +39,9 @@ object RxEventBus {
     }
 
     //action
-    val search = PublishSubject.create<String>()!!
+    val search = PublishSubject.create<String>()
 
     //network
-    val connectedToNetwork = PublishSubject.create<Unit>()!!
+    val connectedToNetwork = PublishSubject.create<Unit>()
 }
 

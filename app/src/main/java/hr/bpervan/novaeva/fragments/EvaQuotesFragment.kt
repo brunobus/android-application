@@ -87,13 +87,6 @@ class EvaQuotesFragment : EvaBaseFragment() {
             applyContent()
         }
 
-        applyFakeActionBarVisibility()
-
-        btnToggleActionBar.setOnClickListener {
-            showTools = !showTools
-            applyFakeActionBarVisibility()
-        }
-
         btnObnovi.setOnClickListener {
             fetchRandomQuote()
         }
@@ -110,16 +103,6 @@ class EvaQuotesFragment : EvaBaseFragment() {
         }
 
         webText.settings.defaultFontSize = prefs.getInt("hr.bpervan.novaeva.velicinateksta", 14)
-    }
-
-    private fun applyFakeActionBarVisibility() {
-        if (showTools) {
-            options.visibility = View.VISIBLE
-            btnToggleActionBar.setImageResource(R.drawable.action_button_toolbar_hide)
-        } else {
-            options.visibility = View.GONE
-            btnToggleActionBar.setImageResource(R.drawable.action_button_toolbar_show)
-        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

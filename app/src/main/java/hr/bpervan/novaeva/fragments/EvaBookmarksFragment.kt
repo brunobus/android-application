@@ -85,10 +85,6 @@ class EvaBookmarksFragment : EvaBaseFragment() {
 
     private fun initUI() {
 
-        btnSearch.setOnClickListener {
-            showSearchPopup()
-        }
-
         val recyclerView = evaRecyclerView as RecyclerView
 
         recyclerView.adapter = adapter

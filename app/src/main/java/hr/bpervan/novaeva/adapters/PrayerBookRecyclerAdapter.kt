@@ -60,7 +60,7 @@ class PrayerBookRecyclerAdapter(private val prayerCategoryList: List<PrayerCateg
 
             view.setOnTouchListener(EvaTouchFeedback(view, themeColorTrans))
             view.setOnClickListener {
-                RxEventBus.openPrayerCategory.onNext(OpenPrayerCategoryEvent(prayerCategory, TransitionAnimation.RIGHTWARDS))
+                RxEventBus.openPrayerCategory.onNext(OpenPrayerCategoryEvent(prayerCategory, TransitionAnimation.LEFTWARDS))
             }
         }
     }

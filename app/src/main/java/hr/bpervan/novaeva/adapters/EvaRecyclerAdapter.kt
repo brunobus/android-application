@@ -108,7 +108,7 @@ class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
 
             view.setOnTouchListener(EvaTouchFeedback(view, themeColorTrans))
             view.setOnClickListener {
-                RxEventBus.openDirectory.onNext(OpenDirectoryEvent(directoryInfo, themeId, TransitionAnimation.RIGHTWARDS))
+                RxEventBus.openDirectory.onNext(OpenDirectoryEvent(directoryInfo, themeId, TransitionAnimation.LEFTWARDS))
             }
         }
 
@@ -169,7 +169,7 @@ class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
             view.setOnTouchListener(EvaTouchFeedback(view, themeColorTrans))
 
             view.setOnClickListener {
-                RxEventBus.openContent.onNext(OpenContentEvent(contentInfo, themeId, TransitionAnimation.RIGHTWARDS))
+                RxEventBus.openContent.onNext(OpenContentEvent(contentInfo, themeId, TransitionAnimation.LEFTWARDS))
             }
         }
     }

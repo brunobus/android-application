@@ -261,13 +261,6 @@ class EvaContentFragment : EvaBaseFragment(), SeekBar.OnSeekBarChangeListener {
             }
         }
 
-        applyFakeActionBarVisibility()
-
-        btnToggleActionBar.setOnClickListener {
-            showTools = !showTools
-            applyFakeActionBarVisibility()
-        }
-
         options.btnSearch.setOnClickListener {
             showSearchPopup()
         }
@@ -295,18 +288,6 @@ class EvaContentFragment : EvaBaseFragment(), SeekBar.OnSeekBarChangeListener {
         super.onDestroyView()
         player_view?.player = null
         exoPlayer?.removeListener(evaPlayerEventListener)
-    }
-
-    private fun applyFakeActionBarVisibility() {
-        view ?: return
-
-        if (showTools) {
-            options.visibility = View.VISIBLE
-            btnToggleActionBar.setImageResource(R.drawable.action_button_toolbar_hide)
-        } else {
-            options.visibility = View.GONE
-            btnToggleActionBar.setImageResource(R.drawable.action_button_toolbar_show)
-        }
     }
 
     private fun prepareAudioStream(context: Context, audioUri: String) {

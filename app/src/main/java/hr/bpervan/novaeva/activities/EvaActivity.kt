@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
 import android.support.v4.app.FragmentTransaction
+import android.support.v4.view.GravityCompat
 import android.view.View
 import android.view.ViewGroup
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
@@ -22,24 +23,19 @@ import hr.bpervan.novaeva.utilities.subscribeAsync
 import hr.bpervan.novaeva.utilities.subscribeThrottled
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.PublishSubject
+import kotlinx.android.synthetic.main.eva_main_layout.*
 
 /**
  *
  */
 class EvaActivity : EvaBaseActivity() {
 
-    companion object {
-        const val utilityFragmentTransactionName = "utility"
-    }
-
     private val dashboardBackgroundUrlSubject = PublishSubject.create<String>()
     private val breviaryImageUrlSubject = PublishSubject.create<String>()
 
-    private var primaryContainerId: Int = -1
-    private var utilityContainerId: Int = -1
+    private var mainContainerId: Int = -1
 
-    private lateinit var primaryContainer: ViewGroup
-    private lateinit var utilityContainer: ViewGroup
+    private lateinit var mainContainer: ViewGroup
 
     private val bus = RxEventBus
     private val disposables = CompositeDisposable()
@@ -47,9 +43,9 @@ class EvaActivity : EvaBaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.eva_multi_fragment_frame)
+        setContentView(R.layout.eva_main_layout)
 
-        initContainers()
+        initGui()
 
         if (savedInstanceState == null) {
             openDashboardFragment()
@@ -62,18 +58,20 @@ class EvaActivity : EvaBaseActivity() {
         }
     }
 
-    private fun initContainers() {
-        primaryContainerId = R.id.evaFragmentFrameA
-        utilityContainerId = R.id.evaFragmentFrameC
+    private fun initGui() {
+        mainContainerId = R.id.evaMainFragmentFrame
 
-        primaryContainer = findViewById(primaryContainerId)
-        utilityContainer = findViewById(utilityContainerId)
+        mainContainer = findViewById(mainContainerId)
 
-        primaryContainer.let {
+        mainContainer.let {
             it.setOnHierarchyChangeListener(EvaHierarchyChangeListener(it))
         }
-        utilityContainer.let {
-            it.setOnHierarchyChangeListener(EvaHierarchyChangeListener(it))
+
+        btnRadio.setOnClickListener {
+
+        }
+        btnOptions.setOnClickListener {
+            bus.openOptionsDrawer.onNext(Unit)
         }
     }
 
@@ -98,79 +96,78 @@ class EvaActivity : EvaBaseActivity() {
                 bus.openContent.subscribeThrottled(::openContentFragment),
 
                 bus.search.subscribeThrottled {
-                    popUtilityFragment()
+
                     supportFragmentManager.beginTransaction()
                             .setCustomAnimation(FADE)
-                            .replace(primaryContainerId, EvaSearchFragment, it)
+                            .replace(mainContainerId, EvaSearchFragment, it)
                             .addToBackStack(null)
                             .commitAllowingStateLoss()
                 },
                 bus.openDirectory.subscribeThrottled {
-                    popUtilityFragment()
+
 
                     supportFragmentManager.beginTransaction()
                             .setCustomAnimation(it.animation)
-                            .replace(primaryContainerId, EvaDirectoryFragment, it)
+                            .replace(mainContainerId, EvaDirectoryFragment, it)
                             .addToBackStack(null)
                             .commitAllowingStateLoss()
                 },
                 bus.openQuotes.subscribeThrottled {
-                    popUtilityFragment()
+
 
                     supportFragmentManager.beginTransaction()
                             .setCustomAnimation(it.animation)
-                            .replace(primaryContainerId, EvaQuotesFragment, it.quoteId)
+                            .replace(mainContainerId, EvaQuotesFragment, it.quoteId)
                             .addToBackStack(null)
                             .commitAllowingStateLoss()
                 },
                 bus.openBreviaryChooser.subscribeThrottled {
-                    popUtilityFragment()
+
 
                     supportFragmentManager.beginTransaction()
                             .setCustomAnimation(it)
-                            .replace(primaryContainerId, BreviaryChooserFragment)
+                            .replace(mainContainerId, BreviaryChooserFragment)
                             .addToBackStack(null)
                             .commitAllowingStateLoss()
                 },
                 bus.openBreviaryContent.subscribeThrottled {
-                    popUtilityFragment()
+
 
                     supportFragmentManager.beginTransaction()
                             .setCustomAnimation(it.animation)
-                            .replace(primaryContainerId, BreviaryContentFragment, it.breviaryId)
+                            .replace(mainContainerId, BreviaryContentFragment, it.breviaryId)
                             .addToBackStack(null)
                             .commitAllowingStateLoss()
                 },
 
                 bus.openInfo.subscribeThrottled {
-                    popUtilityFragment()
+
 
                     supportFragmentManager.beginTransaction()
                             .setCustomAnimation(it)
-                            .replace(primaryContainerId, EvaInfoFragment)
+                            .replace(mainContainerId, EvaInfoFragment)
                             .addToBackStack(null)
                             .commitAllowingStateLoss()
                 },
 
-                bus.openSettingsDrawer.subscribeThrottled {
-                    //todo
+                bus.openOptionsDrawer.subscribeThrottled {
+                    evaRoot.openDrawer(GravityCompat.END)
                 },
 
                 bus.openPrayerBook.subscribeThrottled {
-                    popUtilityFragment()
+
                     supportFragmentManager.beginTransaction()
                             .setCustomAnimation(it)
-                            .replace(primaryContainerId, PrayerBookFragment)
+                            .replace(mainContainerId, PrayerBookFragment)
                             .addToBackStack(null)
                             .commitAllowingStateLoss()
                 },
 
                 bus.openPrayerCategory.subscribeThrottled {
-                    popUtilityFragment()
 
                     supportFragmentManager.beginTransaction()
                             .setCustomAnimation(it.animation)
-                            .replace(primaryContainerId, PrayerListFragment, it.prayerCategory.id)
+                            .replace(mainContainerId, PrayerListFragment, it.prayerCategory.id)
                             .addToBackStack(null)
                             .commitAllowingStateLoss()
                 },
@@ -181,19 +178,19 @@ class EvaActivity : EvaBaseActivity() {
 
                 bus.openCalendar.subscribeThrottled {
 
-                    popUtilityFragment()
+
                     supportFragmentManager.beginTransaction()
                             .setCustomAnimation(it)
-                            .replace(primaryContainerId, EvaCalendarFragment)
+                            .replace(mainContainerId, EvaCalendarFragment)
                             .addToBackStack(null)
                             .commitAllowingStateLoss()
                 },
 
                 bus.openBookmarks.subscribeThrottled {
-                    popUtilityFragment()
+
                     supportFragmentManager.beginTransaction()
                             .setCustomAnimation(it)
-                            .replace(primaryContainerId, EvaBookmarksFragment)
+                            .replace(mainContainerId, EvaBookmarksFragment)
                             .addToBackStack(null)
                             .commitAllowingStateLoss()
                 },
@@ -238,7 +235,7 @@ class EvaActivity : EvaBaseActivity() {
 
     private fun fetchDashboardBackgroundUrl() {
         NovaEvaService.instance
-                .getDashboardBackground(RxEventBus.changeEvaTheme.value)
+                .getDashboardBackground(RxEventBus.changeEvaTheme.value!!)
                 .subscribeAsync(dashboardBackgroundUrlSubject::onNext, onError = {})
     }
 
@@ -246,15 +243,15 @@ class EvaActivity : EvaBaseActivity() {
         popAllFragments()
         supportFragmentManager.beginTransaction()
                 .setCustomAnimation(animation)
-                .replace(primaryContainerId, EvaDashboardFragment)
+                .replace(mainContainerId, EvaDashboardFragment)
                 .commitAllowingStateLoss()
     }
 
     private fun openContentFragment(request: OpenContentEvent) {
-        popUtilityFragment()
+
         supportFragmentManager.beginTransaction()
                 .setCustomAnimation(request.animation)
-                .replace(primaryContainerId, EvaContentFragment, request)
+                .replace(mainContainerId, EvaContentFragment, request)
                 .addToBackStack(null)
                 .commitAllowingStateLoss()
     }
@@ -273,17 +270,11 @@ class EvaActivity : EvaBaseActivity() {
         supportFragmentManager.popBackStackImmediate(null, POP_BACK_STACK_INCLUSIVE)
     }
 
-    private fun popUtilityFragment() {
-        if (utilityContainer.childCount > 0) {
-            supportFragmentManager.popBackStackImmediate(utilityFragmentTransactionName, POP_BACK_STACK_INCLUSIVE)
-        }
-    }
-
     private fun FragmentTransaction.setCustomAnimation(animation: TransitionAnimation): FragmentTransaction {
         return when (animation) {
-            RIGHTWARDS ->
-                setCustomAnimations(R.anim.move_right_in, R.anim.move_left_out, R.anim.move_left_in, R.anim.move_right_out)
             LEFTWARDS ->
+                setCustomAnimations(R.anim.move_right_in, R.anim.move_left_out, R.anim.move_left_in, R.anim.move_right_out)
+            RIGHTWARDS ->
                 setCustomAnimations(R.anim.move_left_in, R.anim.move_right_out, R.anim.move_right_in, R.anim.move_left_out)
             UPWARDS ->
                 setCustomAnimations(R.anim.move_bottom_in, R.anim.move_top_out, R.anim.move_top_in, R.anim.move_bottom_out)
@@ -306,18 +297,5 @@ class EvaActivity : EvaBaseActivity() {
             evaFragmentFactory: EvaBaseFragment.EvaFragmentFactory<T, K>,
             fragmentInitializer: K): FragmentTransaction {
         return this.replace(containerViewId, evaFragmentFactory.newInstance(fragmentInitializer), evaFragmentFactory.tag)
-    }
-
-    private fun <T : Fragment, K> FragmentTransaction.add(
-            containerViewId: Int,
-            evaFragmentFactory: EvaBaseFragment.EvaFragmentFactory<T, K>,
-            initializer: K): FragmentTransaction {
-        return this.replace(containerViewId, evaFragmentFactory.newInstance(initializer), evaFragmentFactory.tag)
-    }
-
-    private fun <T : Fragment> FragmentTransaction.add(
-            containerViewId: Int,
-            evaFragmentFactory: EvaBaseFragment.EvaFragmentFactory<T, Unit>): FragmentTransaction {
-        return this.replace(containerViewId, evaFragmentFactory.newInstance(Unit), evaFragmentFactory.tag)
     }
 }
