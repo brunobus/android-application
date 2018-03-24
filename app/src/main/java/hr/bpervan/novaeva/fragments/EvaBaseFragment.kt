@@ -17,6 +17,7 @@ import hr.bpervan.novaeva.model.EvaTheme
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
+import kotlinx.android.synthetic.main.fragment_prayers.*
 
 /**
  * Created by vpriscan on 26.11.17..
@@ -43,6 +44,10 @@ abstract class EvaBaseFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        optionsBtn?.setOnClickListener {
+            RxEventBus.openOptionsDrawer.onNext(Unit)
+        }
 
         baseDisposables.add(RxEventBus.changeEvaTheme
                 .observeOn(AndroidSchedulers.mainThread())
