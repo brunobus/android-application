@@ -22,7 +22,7 @@ object RxEventBus {
     val openOptionsDrawer = PublishSubject.create<Unit>()
     val openPrayerBook = PublishSubject.create<TransitionAnimation>()
     val openPrayerCategory = PublishSubject.create<OpenPrayerCategoryEvent>()
-    val openRadio = PublishSubject.create<TransitionAnimation>()
+    val openRadio = PublishSubject.create<Unit>()
     val openCalendar = PublishSubject.create<TransitionAnimation>()
     val openBookmarks = PublishSubject.create<TransitionAnimation>()
 

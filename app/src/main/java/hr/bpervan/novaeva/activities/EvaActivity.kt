@@ -91,102 +91,61 @@ class EvaActivity : EvaBaseActivity() {
 
                 bus.search.subscribeThrottled {
 
-                    supportFragmentManager.beginTransaction()
-                            .setCustomAnimation(FADE)
-                            .replace(mainContainerId, EvaSearchFragment, it)
-                            .addToBackStack(null)
-                            .commitAllowingStateLoss()
+                    addToBackStack(mainContainerId, EvaSearchFragment, it, FADE)
+
                 },
                 bus.openDirectory.subscribeThrottled {
 
+                    addToBackStack(mainContainerId, EvaDirectoryFragment, it, it.animation)
 
-                    supportFragmentManager.beginTransaction()
-                            .setCustomAnimation(it.animation)
-                            .replace(mainContainerId, EvaDirectoryFragment, it)
-                            .addToBackStack(null)
-                            .commitAllowingStateLoss()
                 },
                 bus.openQuotes.subscribeThrottled {
 
+                    addToBackStack(mainContainerId, EvaQuotesFragment, it.quoteId, it.animation)
 
-                    supportFragmentManager.beginTransaction()
-                            .setCustomAnimation(it.animation)
-                            .replace(mainContainerId, EvaQuotesFragment, it.quoteId)
-                            .addToBackStack(null)
-                            .commitAllowingStateLoss()
                 },
                 bus.openBreviaryChooser.subscribeThrottled {
 
-
-                    supportFragmentManager.beginTransaction()
-                            .setCustomAnimation(it)
-                            .replace(mainContainerId, BreviaryChooserFragment)
-                            .addToBackStack(null)
-                            .commitAllowingStateLoss()
+                    addToBackStack(mainContainerId, BreviaryChooserFragment, it)
                 },
                 bus.openBreviaryContent.subscribeThrottled {
 
-
-                    supportFragmentManager.beginTransaction()
-                            .setCustomAnimation(it.animation)
-                            .replace(mainContainerId, BreviaryContentFragment, it.breviaryId)
-                            .addToBackStack(null)
-                            .commitAllowingStateLoss()
+                    addToBackStack(mainContainerId, BreviaryContentFragment, it.breviaryId, it.animation)
                 },
 
                 bus.openInfo.subscribeThrottled {
 
-
-                    supportFragmentManager.beginTransaction()
-                            .setCustomAnimation(it)
-                            .replace(mainContainerId, EvaInfoFragment)
-                            .addToBackStack(null)
-                            .commitAllowingStateLoss()
+                    addToBackStack(mainContainerId, EvaInfoFragment, it)
                 },
 
                 bus.openOptionsDrawer.subscribeThrottled {
+
                     evaRoot.openDrawer(GravityCompat.END)
                 },
 
                 bus.openPrayerBook.subscribeThrottled {
 
-                    supportFragmentManager.beginTransaction()
-                            .setCustomAnimation(it)
-                            .replace(mainContainerId, PrayerBookFragment)
-                            .addToBackStack(null)
-                            .commitAllowingStateLoss()
+                    addToBackStack(mainContainerId, PrayerBookFragment, it)
                 },
 
                 bus.openPrayerCategory.subscribeThrottled {
 
-                    supportFragmentManager.beginTransaction()
-                            .setCustomAnimation(it.animation)
-                            .replace(mainContainerId, PrayerListFragment, it.prayerCategory.id)
-                            .addToBackStack(null)
-                            .commitAllowingStateLoss()
+                    addToBackStack(mainContainerId, PrayerListFragment, it.prayerCategory.id, it.animation)
                 },
 
                 bus.openRadio.subscribeThrottled {
-                    //todo
+
+                    addToBackStack(mainContainerId, RadioFragment, FADE)
                 },
 
                 bus.openCalendar.subscribeThrottled {
 
-
-                    supportFragmentManager.beginTransaction()
-                            .setCustomAnimation(it)
-                            .replace(mainContainerId, EvaCalendarFragment)
-                            .addToBackStack(null)
-                            .commitAllowingStateLoss()
+                    addToBackStack(mainContainerId, EvaCalendarFragment, it)
                 },
 
                 bus.openBookmarks.subscribeThrottled {
 
-                    supportFragmentManager.beginTransaction()
-                            .setCustomAnimation(it)
-                            .replace(mainContainerId, EvaBookmarksFragment)
-                            .addToBackStack(null)
-                            .commitAllowingStateLoss()
+                    addToBackStack(mainContainerId, EvaBookmarksFragment, it)
                 },
 
                 dashboardBackgroundUrlSubject
@@ -235,6 +194,7 @@ class EvaActivity : EvaBaseActivity() {
 
     private fun openDashboardFragment(animation: TransitionAnimation = FADE) {
         popAllFragments()
+
         supportFragmentManager.beginTransaction()
                 .setCustomAnimation(animation)
                 .replace(mainContainerId, EvaDashboardFragment)
@@ -243,11 +203,7 @@ class EvaActivity : EvaBaseActivity() {
 
     private fun openContentFragment(request: OpenContentEvent) {
 
-        supportFragmentManager.beginTransaction()
-                .setCustomAnimation(request.animation)
-                .replace(mainContainerId, EvaContentFragment, request)
-                .addToBackStack(null)
-                .commitAllowingStateLoss()
+        addToBackStack(mainContainerId, EvaContentFragment, request, request.animation)
     }
 
     override fun onStop() {
@@ -280,16 +236,34 @@ class EvaActivity : EvaBaseActivity() {
         }
     }
 
-    private fun <T : Fragment> FragmentTransaction.replace(
-            containerViewId: Int,
-            evaFragmentFactory: EvaBaseFragment.EvaFragmentFactory<T, Unit>): FragmentTransaction {
-        return this.replace(containerViewId, evaFragmentFactory.newInstance(Unit), evaFragmentFactory.tag)
-    }
-
     private fun <T : Fragment, K> FragmentTransaction.replace(
             containerViewId: Int,
             evaFragmentFactory: EvaBaseFragment.EvaFragmentFactory<T, K>,
             fragmentInitializer: K): FragmentTransaction {
         return this.replace(containerViewId, evaFragmentFactory.newInstance(fragmentInitializer), evaFragmentFactory.tag)
+    }
+
+    private fun <T : Fragment> FragmentTransaction.replace(
+            containerViewId: Int,
+            evaFragmentFactory: EvaBaseFragment.EvaFragmentFactory<T, Unit>): FragmentTransaction {
+        return this.replace(containerViewId, evaFragmentFactory, Unit)
+    }
+
+    private fun <T : Fragment, K> addToBackStack(
+            containerViewId: Int,
+            evaFragmentFactory: EvaBaseFragment.EvaFragmentFactory<T, K>,
+            fragmentInitializer: K, animation: TransitionAnimation = NONE) {
+
+        supportFragmentManager.beginTransaction()
+                .setCustomAnimation(animation)
+                .replace(containerViewId, evaFragmentFactory, fragmentInitializer)
+                .addToBackStack(null)
+                .commitAllowingStateLoss()
+    }
+
+    private fun <T : Fragment> addToBackStack(
+            containerViewId: Int,
+            evaFragmentFactory: EvaBaseFragment.EvaFragmentFactory<T, Unit>, animation: TransitionAnimation = NONE) {
+        return addToBackStack(containerViewId, evaFragmentFactory, Unit, animation)
     }
 }

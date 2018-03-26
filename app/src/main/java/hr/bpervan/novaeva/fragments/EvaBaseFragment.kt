@@ -5,7 +5,6 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.view.View
@@ -47,6 +46,10 @@ abstract class EvaBaseFragment : Fragment() {
 
         optionsBtn?.setOnClickListener {
             RxEventBus.openOptionsDrawer.onNext(Unit)
+        }
+
+        radioBtn?.setOnClickListener {
+            RxEventBus.openRadio.onNext(Unit)
         }
 
         baseDisposables.add(RxEventBus.changeEvaTheme

@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/appBar"
     android:layout_width="match_parent"
-    android:layout_height="52dp"
+    android:layout_height="@dimen/app_bar_height"
     android:theme="@style/AppTheme.AppBarOverlay"
     app:expanded="@bool/app_bar_expanded">
 

@@ -2,5 +2,6 @@
 <resources>
 
     <bool name="app_bar_expanded">false</bool>
+    <dimen name="app_bar_height">52dp</dimen>
 
 </resources>

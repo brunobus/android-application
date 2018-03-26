@@ -18,12 +18,14 @@ import hr.bpervan.novaeva.utilities.EvaTouchFeedback
 import kotlinx.android.synthetic.main.recycler_item_prayer.view.*
 import net.cachapa.expandablelayout.ExpandableLayout
 
+import hr.bpervan.novaeva.adapters.PrayerCategoryRecyclerAdapter.PrayerViewHolder
+
 
 /**
  * Created by vpriscan on 03.01.18..
  */
 class PrayerCategoryRecyclerAdapter(private val prayerCategory: PrayerCategory) :
-        RecyclerView.Adapter<PrayerCategoryRecyclerAdapter.PrayerViewHolder>() {
+        RecyclerView.Adapter<PrayerViewHolder>() {
 
     override fun getItemCount(): Int = prayerCategory.prayerList.size
 

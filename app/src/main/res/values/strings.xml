@@ -50,5 +50,6 @@
     <string name="dummyDesc"/>
     <string name="pause">Pauziraj</string>
     <string name="play">Pokreni</string>
+    <string name="radio_stations">Radio stanice</string>
 
 </resources>
