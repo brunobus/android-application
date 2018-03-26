@@ -16,7 +16,6 @@ import hr.bpervan.novaeva.utilities.subscribeAsync
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.collapsing_content_header.view.*
 import kotlinx.android.synthetic.main.fragment_eva_quotes.*
-import kotlinx.android.synthetic.main.toolbar_eva_quotes.view.*
 
 /**
  * Created by vpriscan on 04.12.17..
@@ -91,16 +90,17 @@ class EvaQuotesFragment : EvaBaseFragment() {
             fetchRandomQuote()
         }
 
-        options.btnShare.setOnClickListener {
-            context?.let { ctx ->
-                shareIntent(ctx, "http://novaeva.com/node/$contentId")
-            }
-        }
-        options.btnMail.setOnClickListener {
-            context?.let { ctx ->
-                sendEmailIntent(ctx, contentTitle!!, "http://novaeva.com/node/$contentId")
-            }
-        }
+        //todo move to options drawer
+//        options.btnShare.setOnClickListener {
+//            context?.let { ctx ->
+//                shareIntent(ctx, "http://novaeva.com/node/$contentId")
+//            }
+//        }
+//        options.btnMail.setOnClickListener {
+//            context?.let { ctx ->
+//                sendEmailIntent(ctx, contentTitle!!, "http://novaeva.com/node/$contentId")
+//            }
+//        }
 
         webText.settings.defaultFontSize = prefs.getInt("hr.bpervan.novaeva.velicinateksta", 14)
     }

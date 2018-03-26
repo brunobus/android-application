@@ -42,26 +42,15 @@
 
     </android.support.design.widget.CoordinatorLayout>
 
-    <include
-        android:id="@+id/options"
-        layout="@layout/toolbar_eva_quotes"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
-
     <ImageView
         android:id="@+id/btnObnovi"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/options"
         android:layout_marginBottom="5dp"
         android:layout_marginTop="5dp"
         android:contentDescription="@string/dummyDesc"
         android:src="@drawable/button_obnovi"
-        app:layout_constraintBottom_toTopOf="@+id/options"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         />

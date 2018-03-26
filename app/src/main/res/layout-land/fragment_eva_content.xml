@@ -113,16 +113,6 @@
 
     </android.support.design.widget.CoordinatorLayout>
 
-    <include
-        android:id="@+id/options"
-        layout="@layout/toolbar_eva_content"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
-
     <ImageView
         android:id="@+id/btnPoziv"
         android:layout_width="wrap_content"
@@ -131,7 +121,7 @@
         android:contentDescription="@string/dummyDesc"
         android:src="@drawable/button_razmisljam_o_pozivu"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/options"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
 

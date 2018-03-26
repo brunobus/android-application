@@ -41,7 +41,6 @@ import io.reactivex.disposables.Disposable
 import io.realm.Realm
 import kotlinx.android.synthetic.main.collapsing_content_header.view.*
 import kotlinx.android.synthetic.main.fragment_eva_content.*
-import kotlinx.android.synthetic.main.toolbar_eva_content.view.*
 
 /**
  * Created by vpriscan on 04.12.17..
@@ -136,9 +135,10 @@ class EvaContentFragment : EvaBaseFragment(), SeekBar.OnSeekBarChangeListener {
         view ?: return
 
         evaContentMetadataChangesDisposable = EvaContentDbAdapter.subscribeToEvaContentMetadataUpdatesAsync(realm, contentId) { evaContentMetadata ->
-            options.btnBookmark.setImageResource(
-                    if (evaContentMetadata.bookmark) R.drawable.action_button_bookmarked
-                    else R.drawable.action_button_bookmark)
+            //todo move to options drawer
+//            options.btnBookmark.setImageResource(
+//                    if (evaContentMetadata.bookmark) R.drawable.action_button_bookmarked
+//                    else R.drawable.action_button_bookmark)
         }
 
         evaContentChangesDisposable = EvaContentDbAdapter.subscribeToEvaContentUpdatesAsync(realm, contentId) { evaContent ->
@@ -262,25 +262,26 @@ class EvaContentFragment : EvaBaseFragment(), SeekBar.OnSeekBarChangeListener {
             }
         }
 
-        options.btnSearch.setOnClickListener {
-            showSearchPopup()
-        }
-        options.btnBookmark.setOnClickListener {
-            evaContent?.let { evaContent ->
-                val evaContentMetadata = evaContent.contentMetadata!!
-                EvaContentDbAdapter.updateEvaContentMetadataAsync(realm, evaContentMetadata.contentId) {
-                    it.bookmark = !it.bookmark
-                }
-            }
-        }
-
-        options.btnShare.setOnClickListener {
-            shareIntent(ctx, "http://novaeva.com/node/$contentId")
-        }
-
-        options.btnMail.setOnClickListener {
-            sendEmailIntent(ctx, evaContent!!.contentMetadata!!.title, "http://novaeva.com/node/$contentId")
-        }
+        //todo move to options drawer
+//        options.btnSearch.setOnClickListener {
+//            showSearchPopup()
+//        }
+//        options.btnBookmark.setOnClickListener {
+//            evaContent?.let { evaContent ->
+//                val evaContentMetadata = evaContent.contentMetadata!!
+//                EvaContentDbAdapter.updateEvaContentMetadataAsync(realm, evaContentMetadata.contentId) {
+//                    it.bookmark = !it.bookmark
+//                }
+//            }
+//        }
+//
+//        options.btnShare.setOnClickListener {
+//            shareIntent(ctx, "http://novaeva.com/node/$contentId")
+//        }
+//
+//        options.btnMail.setOnClickListener {
+//            sendEmailIntent(ctx, evaContent!!.contentMetadata!!.title, "http://novaeva.com/node/$contentId")
+//        }
 
         vijestWebView.settings.defaultFontSize = prefs.getInt("hr.bpervan.novaeva.velicinateksta", 14)
     }

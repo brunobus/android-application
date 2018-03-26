@@ -2,12 +2,13 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/evaSimpleContentConstraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:keepScreenOn="true">
 
     <android.support.design.widget.CoordinatorLayout
-        android:id="@+id/evaSimpleContent"
+        android:id="@+id/evaSimpleContentCoordinator"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
