@@ -2,14 +2,14 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:animateLayoutChanges="true"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:keepScreenOn="true">
 
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:keepScreenOn="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -39,11 +39,11 @@
                     android:layout_below="@+id/imgLink"
                     android:layout_marginTop="5dp"
                     android:focusable="true"
-                    android:visibility="gone"
                     android:padding="20dp"
-                    app:shutter_background_color="?attr/colorPrimary"
-                    app:show_timeout="-1"
+                    android:visibility="gone"
                     app:hide_on_touch="false"
+                    app:show_timeout="-1"
+                    app:shutter_background_color="?attr/colorPrimary"
                     app:use_artwork="false"
                     app:use_controller="true"/>
 
@@ -136,10 +136,10 @@
 
     <include
         android:id="@+id/radioBtn"
-        layout="@layout/radio_button" />
+        layout="@layout/radio_button"/>
 
     <include
         android:id="@+id/optionsBtn"
-        layout="@layout/options_button" />
+        layout="@layout/options_button"/>
 </android.support.constraint.ConstraintLayout>
 
