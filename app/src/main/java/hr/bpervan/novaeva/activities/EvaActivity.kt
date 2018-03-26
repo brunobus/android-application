@@ -67,12 +67,6 @@ class EvaActivity : EvaBaseActivity() {
             it.setOnHierarchyChangeListener(EvaHierarchyChangeListener(it))
         }
 
-        btnRadio.setOnClickListener {
-
-        }
-        btnOptions.setOnClickListener {
-            bus.openOptionsDrawer.onNext(Unit)
-        }
     }
 
     private inner class EvaHierarchyChangeListener(private val targetView: ViewGroup)

@@ -135,4 +135,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
 
+    <include
+        android:id="@+id/radioBtn"
+        layout="@layout/radio_button" />
+
+    <include
+        android:id="@+id/optionsBtn"
+        layout="@layout/options_button" />
 </android.support.constraint.ConstraintLayout>
