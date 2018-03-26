@@ -29,6 +29,8 @@ class PrayerCategoryRecyclerAdapter(private val prayerCategory: PrayerCategory) 
 
     override fun getItemCount(): Int = prayerCategory.prayerList.size
 
+    private var expandedItemPos: Int = RecyclerView.NO_POSITION
+
     private var themeColorTrans: Int = 0
 
     private var recyclerView: RecyclerView? = null
@@ -80,10 +82,21 @@ class PrayerCategoryRecyclerAdapter(private val prayerCategory: PrayerCategory) 
 
         override fun onClick(v: View?) {
 
-            if (expandableLayout.isExpanded) {
+            if (adapterPosition == expandedItemPos) {
                 expandableLayout.collapse()
+                expandedItemPos = RecyclerView.NO_POSITION
             } else {
+                collapseCurrentlyExpandedViewHolder()
                 expandableLayout.expand()
+                expandedItemPos = adapterPosition
+            }
+        }
+
+        private fun collapseCurrentlyExpandedViewHolder() {
+            if (expandedItemPos != RecyclerView.NO_POSITION) {
+                val currentlyExpandedViewHolder =
+                        recyclerView?.findViewHolderForAdapterPosition(expandedItemPos) as? PrayerViewHolder
+                currentlyExpandedViewHolder?.expandableLayout?.collapse()
             }
         }
     }
