@@ -231,7 +231,7 @@ class EvaActivity : EvaBaseActivity() {
             DOWNWARDS ->
                 setCustomAnimations(R.anim.move_top_in, R.anim.move_bottom_out, R.anim.move_bottom_in, R.anim.move_top_out)
             FADE ->
-                setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out)
+                setCustomAnimations(R.anim.fade_in, R.anim.nothing, R.anim.fade_in, R.anim.nothing)
             else -> this
         }
     }
