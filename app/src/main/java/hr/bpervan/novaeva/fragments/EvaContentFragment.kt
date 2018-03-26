@@ -23,13 +23,14 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import com.google.android.gms.analytics.HitBuilders
-import hr.bpervan.novaeva.cache.CacheService
 import hr.bpervan.novaeva.NovaEvaApp
-import hr.bpervan.novaeva.RxEventBus
 import hr.bpervan.novaeva.actions.sendEmailIntent
 import hr.bpervan.novaeva.actions.shareIntent
+import hr.bpervan.novaeva.cache.CacheService
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.*
+import hr.bpervan.novaeva.model.EvaCategory
+import hr.bpervan.novaeva.model.EvaContent
+import hr.bpervan.novaeva.model.OpenContentEvent
 import hr.bpervan.novaeva.services.AudioPlayerService
 import hr.bpervan.novaeva.services.NovaEvaService
 import hr.bpervan.novaeva.storage.EvaContentDbAdapter
@@ -288,6 +289,7 @@ class EvaContentFragment : EvaBaseFragment(), SeekBar.OnSeekBarChangeListener {
         super.onDestroyView()
         player_view?.player = null
         exoPlayer?.removeListener(evaPlayerEventListener)
+        exoPlayer = null
     }
 
     private fun prepareAudioStream(context: Context, audioUri: String) {
@@ -300,17 +302,9 @@ class EvaContentFragment : EvaBaseFragment(), SeekBar.OnSeekBarChangeListener {
 
 //        val factory = ExtractorMediaSource.Factory(dataSourceFactory).setCustomCacheKey(audioUri)
 //        val mediaSource = factory.createMediaSource(streamingUri)
-        val mediaSource = ExtractorMediaSource(streamingUri, dataSourceFactory, DefaultExtractorsFactory(), Handler(), null, audioUri)
 
-        val exoPlayer: ExoPlayer =
-                if (NovaEvaApp.activeAudioTrackUri == audioUri) {
-                    NovaEvaApp.activeExoPlayer
-                } else {
-                    NovaEvaApp.preparedExoPlayer
-                }
-
-        if (exoPlayer.playbackState == Player.STATE_IDLE) {
-            exoPlayer.prepare(mediaSource)
+        val exoPlayer = NovaEvaApp.evaPlayer.prepareIfNeededAndGetPlayer(audioUri) {
+            ExtractorMediaSource(streamingUri, dataSourceFactory, DefaultExtractorsFactory(), Handler(), null, audioUri)
         }
 
         this.exoPlayer?.removeListener(evaPlayerEventListener)
@@ -325,9 +319,8 @@ class EvaContentFragment : EvaBaseFragment(), SeekBar.OnSeekBarChangeListener {
             if ((playbackState == Player.STATE_READY)) {
                 if (playWhenReady) {
                     exoPlayer?.let {
-                        RxEventBus.setActiveExoPlayer.onNext(it)
-                        NovaEvaApp.activeAudioTrackUri = evaContent?.audioURL
-
+                        NovaEvaApp.evaPlayer.currentAudioTrackUri = evaContent?.audioURL
+                        NovaEvaApp.evaPlayer.currentPlayer = it
                         context?.startService(Intent(context, AudioPlayerService::class.java))
                     }
                 }

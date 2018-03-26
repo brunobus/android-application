@@ -15,14 +15,13 @@ import android.util.TypedValue
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
-import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.gms.analytics.GoogleAnalytics
 import com.google.android.gms.analytics.Tracker
 import com.nostra13.universalimageloader.core.ImageLoader
 import hr.bpervan.novaeva.main.BuildConfig
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaTheme
-import hr.bpervan.novaeva.player.MyExoPlayerFactory
+import hr.bpervan.novaeva.player.EvaPlayer
 import hr.bpervan.novaeva.receivers.ConnectionDetector
 import hr.bpervan.novaeva.utilities.ImageLoaderConfigurator
 import hr.bpervan.novaeva.utilities.LifecycleLogger
@@ -51,22 +50,6 @@ class NovaEvaApp : Application() {
             enableAdvertisingIdCollection(false)
         }
 
-        activeExoPlayer = MyExoPlayerFactory.createDefaultExoPlayer(this)
-        preparedExoPlayer = MyExoPlayerFactory.createDefaultExoPlayer(this)
-
-        RxEventBus.didSetActiveExoPlayer.onNext(activeExoPlayer)
-
-        RxEventBus.setActiveExoPlayer
-                .observeOn(AndroidSchedulers.mainThread())
-                .filter({ it != activeExoPlayer })
-                .subscribe {
-                    activeExoPlayer.playWhenReady = false
-                    activeExoPlayer.stop()
-                    preparedExoPlayer = activeExoPlayer
-                    activeExoPlayer = it
-                    RxEventBus.didSetActiveExoPlayer.onNext(it)
-                }
-
         RxEventBus.changeEvaTheme
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
@@ -87,9 +70,10 @@ class NovaEvaApp : Application() {
         private const val NOVA_EVA_TRACKER_ID = "UA-40344870-1"
         var instance: NovaEvaApp? = null
 
-        var activeAudioTrackUri: String? = null
-        lateinit var activeExoPlayer: ExoPlayer
-        lateinit var preparedExoPlayer: ExoPlayer
+        val evaPlayer: EvaPlayer by lazy {
+            EvaPlayer(instance!!)
+        }
+
         lateinit var defaultTracker: Tracker
 
         val imageLoader: ImageLoader by lazy {

@@ -14,11 +14,10 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.media.session.MediaButtonReceiver
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
-import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ext.mediasession.DefaultPlaybackController
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
-import hr.bpervan.novaeva.RxEventBus
+import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
 
 typealias MediaStyleCompat = android.support.v4.media.app.NotificationCompat.MediaStyle
@@ -36,8 +35,6 @@ class AudioPlayerService : Service() {
     private lateinit var mediaSessionConnector: MediaSessionConnector
     private val playerEventListener = EvaServicePlayerEventListener()
 
-    private var activeExoPlayer: ExoPlayer? = null
-
     private lateinit var audioManager: AudioManager
     private lateinit var novaEvaBitmap: Bitmap
 
@@ -54,15 +51,14 @@ class AudioPlayerService : Service() {
 
         mediaSessionConnector = MediaSessionConnector(mediaSession, EvaPlaybackController())
 
-        RxEventBus.didSetActiveExoPlayer
-                .filter { it != activeExoPlayer }
-                .subscribe {
-                    activeExoPlayer?.removeListener(playerEventListener)
-                    activeExoPlayer = it
-                    playerEventListener.onPlayerStateChanged(it.playWhenReady, it.playbackState)
-                    it.addListener(playerEventListener)
-                    mediaSessionConnector.setPlayer(it, null)
-                }
+        NovaEvaApp.evaPlayer.currentPlayerChange.subscribe {
+            it.oldPlayer.removeListener(playerEventListener)
+            val newPlayer = it.newPlayer
+
+            playerEventListener.onPlayerStateChanged(newPlayer.playWhenReady, newPlayer.playbackState)
+            newPlayer.addListener(playerEventListener)
+            mediaSessionConnector.setPlayer(newPlayer, null)
+        }
     }
 
     private inner class EvaServicePlayerEventListener : Player.DefaultEventListener() {
@@ -86,17 +82,21 @@ class AudioPlayerService : Service() {
         }
     }
 
+    private fun getCurrentPlayer(): Player? {
+        return NovaEvaApp.evaPlayer.currentPlayerChange.value?.newPlayer
+    }
+
     private inner class EvaPlaybackController : DefaultPlaybackController() {
 
         val audioFocusChangeListener = AudioManager.OnAudioFocusChangeListener {
             when (it) {
                 AudioManager.AUDIOFOCUS_GAIN -> {
-                    activeExoPlayer?.playWhenReady = true
+                    getCurrentPlayer()?.playWhenReady = true
                 }
                 AudioManager.AUDIOFOCUS_LOSS,
                 AudioManager.AUDIOFOCUS_LOSS_TRANSIENT,
                 AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
-                    activeExoPlayer?.playWhenReady = false
+                    getCurrentPlayer()?.playWhenReady = false
                 }
             }
         }
@@ -139,15 +139,14 @@ class AudioPlayerService : Service() {
             playPauseString = getString(R.string.play)
         }
 
+        val contentText = NovaEvaApp.evaPlayer.currentAudioTrackUri
+
         return NotificationCompat.Builder(context, "novaEvaChannel")
                 .setLargeIcon(novaEvaBitmap)
                 .setSmallIcon(R.drawable.ic_launcher)
                 .setContentTitle("Nova Eva")
-                .setContentText("Reprodukcija zvuka")
-//                .setSubText("sub text")
+                .setContentText(contentText)
                 .setContentIntent(controller.sessionActivity) //todo set
-//                .setDeleteIntent(MediaButtonReceiver.buildMediaButtonPendingIntent(context,
-//                        PlaybackStateCompat.ACTION_STOP))
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setColor(ContextCompat.getColor(context, R.color.novaEva))
                 .addAction(NotificationCompat.Action(playPauseIcon, playPauseString,

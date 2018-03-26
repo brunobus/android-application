@@ -1,7 +1,6 @@
 package hr.bpervan.novaeva
 
 import android.graphics.drawable.Drawable
-import com.google.android.exoplayer2.ExoPlayer
 import hr.bpervan.novaeva.model.*
 import hr.bpervan.novaeva.utilities.TransitionAnimation
 import io.reactivex.subjects.BehaviorSubject
@@ -11,9 +10,6 @@ import io.reactivex.subjects.PublishSubject
  *
  */
 object RxEventBus {
-    //internal
-    val setActiveExoPlayer = PublishSubject.create<ExoPlayer>()
-    val didSetActiveExoPlayer = BehaviorSubject.create<ExoPlayer>()
 
     //navigation
     val goHome = PublishSubject.create<TransitionAnimation>()
