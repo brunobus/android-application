@@ -257,9 +257,7 @@ class EvaDirectoryFragment : EvaBaseFragment() {
                         fetchingFromServer = false
                         refreshLoadingCircleState()
                     }, 2000)
-                    context?.let { ctx ->
-                        NovaEvaApp.showFetchErrorSnackbar(it, ctx, view)
-                    }
+                    NovaEvaApp.showFetchErrorSnackbar(it, context, view)
                 }
     }
 }

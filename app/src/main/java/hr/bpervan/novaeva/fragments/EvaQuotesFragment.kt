@@ -13,6 +13,7 @@ import hr.bpervan.novaeva.actions.shareIntent
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.services.NovaEvaService
 import hr.bpervan.novaeva.utilities.subscribeAsync
+import hr.bpervan.novaeva.views.loadHtmlText
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.collapsing_content_header.view.*
 import kotlinx.android.synthetic.main.fragment_eva_quotes.*
@@ -102,7 +103,6 @@ class EvaQuotesFragment : EvaBaseFragment() {
 //            }
 //        }
 
-        webText.settings.defaultFontSize = prefs.getInt("hr.bpervan.novaeva.velicinateksta", 14)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -136,6 +136,6 @@ class EvaQuotesFragment : EvaBaseFragment() {
     private fun applyContent() {
         view ?: return
         evaCollapsingBar.collapsingToolbar.title = contentTitle ?: ""
-        webText.loadDataWithBaseURL(null, contentData, "text/html", "utf-8", "")
+        webText.loadHtmlText(contentData)
     }
 }

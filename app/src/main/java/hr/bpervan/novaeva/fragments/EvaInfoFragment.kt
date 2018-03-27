@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
+import hr.bpervan.novaeva.views.applyEvaConfiguration
 import kotlinx.android.synthetic.main.collapsing_content_header.view.*
 import kotlinx.android.synthetic.main.eva_simple_content.*
 
@@ -46,8 +47,8 @@ class EvaInfoFragment : EvaBaseFragment() {
 
     private fun initUI() {
 
-        webView.settings.builtInZoomControls = true
-        webView.settings.displayZoomControls = false
+        webView.applyEvaConfiguration(prefs)
+        
         webView.loadUrl("file:///android_asset/info.htm")
 
         evaCollapsingBar.collapsingToolbar.title = "Nova Eva info"

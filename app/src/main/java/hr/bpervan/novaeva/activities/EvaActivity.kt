@@ -22,16 +22,12 @@ import hr.bpervan.novaeva.utilities.TransitionAnimation.*
 import hr.bpervan.novaeva.utilities.subscribeAsync
 import hr.bpervan.novaeva.utilities.subscribeThrottled
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.eva_main_layout.*
 
 /**
  *
  */
 class EvaActivity : EvaBaseActivity() {
-
-    private val dashboardBackgroundUrlSubject = PublishSubject.create<String>()
-    private val breviaryImageUrlSubject = PublishSubject.create<String>()
 
     private var mainContainerId: Int = -1
 
@@ -92,22 +88,23 @@ class EvaActivity : EvaBaseActivity() {
                 bus.search.subscribeThrottled {
 
                     addToBackStack(mainContainerId, EvaSearchFragment, it, FADE)
-
                 },
+
                 bus.openDirectory.subscribeThrottled {
 
                     addToBackStack(mainContainerId, EvaDirectoryFragment, it, it.animation)
-
                 },
+
                 bus.openQuotes.subscribeThrottled {
 
                     addToBackStack(mainContainerId, EvaQuotesFragment, it.quoteId, it.animation)
-
                 },
+
                 bus.openBreviaryChooser.subscribeThrottled {
 
                     addToBackStack(mainContainerId, BreviaryChooserFragment, it)
                 },
+
                 bus.openBreviaryContent.subscribeThrottled {
 
                     addToBackStack(mainContainerId, BreviaryContentFragment, it.breviaryId, it.animation)
@@ -148,40 +145,23 @@ class EvaActivity : EvaBaseActivity() {
                     addToBackStack(mainContainerId, EvaBookmarksFragment, it)
                 },
 
-                dashboardBackgroundUrlSubject
-                        .distinctUntilChanged()
-                        .subscribe {
-                            NovaEvaApp.imageLoader.loadImage(it, object : SimpleImageLoadingListener() {
-                                override fun onLoadingComplete(imageUri: String, view: View?, loadedImage: Bitmap) {
-                                    val drawable = BitmapDrawable(resources, loadedImage)
-                                    RxEventBus.changeDashboardBackground.onNext(drawable)
-                                }
-                            })
-                        },
-
-                breviaryImageUrlSubject
-                        .distinctUntilChanged()
-                        .subscribe {
-                            NovaEvaApp.prefs.edit().putString("hr.bpervan.novaeva.brevijarheaderimage", it).apply()
-                        },
-
                 bus.connectedToNetwork.subscribe {
-                    fetchBreviaryImageUrl()
+                    fetchBreviaryCoverUrl()
                     fetchDashboardBackgroundUrl()
                 }
         )
 
-        fetchBreviaryImageUrl()
+        fetchBreviaryCoverUrl()
         fetchDashboardBackgroundUrl()
     }
 
-    private fun fetchBreviaryImageUrl() {
+    private fun fetchBreviaryCoverUrl() {
         NovaEvaService.instance
                 .getDirectoryContent(546, null)
                 .subscribeAsync({ directoryContent ->
                     val image = directoryContent.image?.size640 ?: directoryContent.image?.size640
                     if (image != null) {
-                        breviaryImageUrlSubject.onNext(image)
+                        NovaEvaApp.prefs.edit().putString("hr.bpervan.novaeva.brevijarheaderimage", image).apply()
                     }
                 }, onError = {})
     }
@@ -189,7 +169,14 @@ class EvaActivity : EvaBaseActivity() {
     private fun fetchDashboardBackgroundUrl() {
         NovaEvaService.instance
                 .getDashboardBackground(RxEventBus.changeEvaTheme.value!!)
-                .subscribeAsync(dashboardBackgroundUrlSubject::onNext, onError = {})
+                .subscribeAsync({ url ->
+                    NovaEvaApp.imageLoader.loadImage(url, object : SimpleImageLoadingListener() {
+                        override fun onLoadingComplete(imageUri: String, view: View?, loadedImage: Bitmap) {
+                            val drawable = BitmapDrawable(resources, loadedImage)
+                            RxEventBus.changeDashboardBackground.onNext(drawable)
+                        }
+                    })
+                }, onError = {})
     }
 
     private fun openDashboardFragment(animation: TransitionAnimation = FADE) {

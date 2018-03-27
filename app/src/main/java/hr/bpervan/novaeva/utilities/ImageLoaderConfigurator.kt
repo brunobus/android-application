@@ -28,22 +28,22 @@ object ImageLoaderConfigurator {
                 .diskCacheFileNameGenerator(HashCodeFileNameGenerator()) // default
                 .imageDownloader(BaseImageDownloader(context)) // default
                 .imageDecoder(BaseImageDecoder(true)) // default
-                .defaultDisplayImageOptions(DisplayImageOptions.createSimple()) // default
+                .defaultDisplayImageOptions(createEvaDisplayImageOptions()) // default
                 .writeDebugLogs()
                 .build()
 
         ImageLoader.getInstance().init(config)
     }
 
-    fun createDefaultDisplayImageOptions(cacheOnDisk: Boolean): DisplayImageOptions {
+    private fun createEvaDisplayImageOptions(): DisplayImageOptions {
 
         return DisplayImageOptions.Builder()
-                .resetViewBeforeLoading(false)  // default
-                .cacheInMemory(true) // default
-                .cacheOnDisk(cacheOnDisk) // default
-                .considerExifParams(false) // default
-                .imageScaleType(ImageScaleType.IN_SAMPLE_POWER_OF_2) // default
-                .bitmapConfig(Bitmap.Config.ARGB_8888) // default
+                .resetViewBeforeLoading(false)
+                .cacheInMemory(true)
+                .cacheOnDisk(false)
+                .considerExifParams(false)
+                .imageScaleType(ImageScaleType.IN_SAMPLE_POWER_OF_2)
+                .bitmapConfig(Bitmap.Config.ARGB_8888)
                 .build()
     }
 }

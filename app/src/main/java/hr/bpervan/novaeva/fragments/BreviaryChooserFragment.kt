@@ -67,7 +67,7 @@ class BreviaryChooserFragment : EvaBaseFragment() {
         val headerUrl = prefs.getString("hr.bpervan.novaeva.brevijarheaderimage", null)
 
         if (headerUrl != null && breviaryCoverImage != null) {
-            imageLoader.displayImage(headerUrl, breviaryCoverImage, ImageLoaderConfigurator.createDefaultDisplayImageOptions(true))
+            imageLoader.displayImage(headerUrl, breviaryCoverImage)
         }
 
         btnJucerJutarnja.setOnClickListener(BreviaryClickListener(1))

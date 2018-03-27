@@ -115,7 +115,6 @@ class EvaDashboardFragment : EvaBaseFragment() {
                             EvaCategory.EVANDJELJE.rawName),
                     R.style.EvandjeljeTheme))
         }
-
         baseDisposables.add(RxEventBus.changeDashboardBackground
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {

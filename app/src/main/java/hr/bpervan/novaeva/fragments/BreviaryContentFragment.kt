@@ -13,9 +13,11 @@ import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaTheme
 import hr.bpervan.novaeva.services.NovaEvaService
-import hr.bpervan.novaeva.utilities.ImageLoaderConfigurator
 import hr.bpervan.novaeva.utilities.subscribeAsync
-import io.reactivex.disposables.Disposable
+import hr.bpervan.novaeva.views.applyEvaConfiguration
+import hr.bpervan.novaeva.views.loadHtmlText
+import io.reactivex.rxkotlin.plusAssign
+import io.reactivex.subjects.BehaviorSubject
 import kotlinx.android.synthetic.main.collapsing_content_header.view.*
 import kotlinx.android.synthetic.main.eva_simple_content.*
 
@@ -36,17 +38,9 @@ class BreviaryContentFragment : EvaBaseFragment() {
         }
     }
 
-
     private var breviaryId: Int = -1
     private lateinit var breviaryName: String
     private var coverImageUrl: String? = null
-
-    private var breviaryText: String? = null
-
-    private var loadBreviaryDisposable: Disposable? = null
-        set(value) {
-            field = safeReplaceDisposable(field, value)
-        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,15 +61,13 @@ class BreviaryContentFragment : EvaBaseFragment() {
             else -> "Sutra, Povečerje"
         }
 
-        savedInstanceState ?: savedInstanceState ?: NovaEvaApp.defaultTracker
+        savedInstanceState ?: NovaEvaApp.defaultTracker
                 .send(HitBuilders.EventBuilder()
                         .setCategory("Brevijar")
                         .setAction("OtvorenBrevijar")
                         .setLabel(breviaryName)
                         .setValue(breviaryId.toLong())
                         .build())
-
-        fetchBreviary()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -87,37 +79,25 @@ class BreviaryContentFragment : EvaBaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initUI(savedInstanceState)
+        initUI()
     }
 
-    private fun initUI(savedInstanceState: Bundle?) {
-        if (savedInstanceState != null) {
-            webView.restoreState(savedInstanceState)
-        } else {
-            webView.apply {
-                settings.builtInZoomControls = true
-                settings.displayZoomControls = false
-                setOnLongClickListener { true }
-                isLongClickable = false
-            }
-            if (breviaryText != null) {
-                loadBreviary()
-            }
-        }
+    private fun initUI() {
+        fetchBreviary()
+
+        webView.applyEvaConfiguration(prefs)
 
         evaCollapsingBar.collapsingToolbar.title = breviaryName
 
         val coverImageView = evaCollapsingBar.coverImage
 
         if (coverImageUrl != null && coverImageView != null) {
-            imageLoader.displayImage(coverImageUrl, coverImageView, ImageLoaderConfigurator.createDefaultDisplayImageOptions(true))
+            imageLoader.displayImage(coverImageUrl, coverImageView)
         }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putInt(BREVIARY_ID_KEY, breviaryId)
-
-        webView.saveState(outState)
 
         super.onSaveInstanceState(outState)
     }
@@ -125,23 +105,15 @@ class BreviaryContentFragment : EvaBaseFragment() {
     private fun fetchBreviary() {
         Log.d("fetchingBreviary", "fetching breviary: " + breviaryId)
 
-
-        loadBreviaryDisposable = NovaEvaService.instance
+        baseDisposables += NovaEvaService.instance
                 .getBreviary(breviaryId.toString())
                 .subscribeAsync({ breviary ->
                     view ?: return@subscribeAsync
 
-                    breviaryText = breviary.text
-                    loadBreviary()
+                    webView.loadHtmlText(breviary.text)
                 }) {
-                    context?.let { ctx ->
-                        NovaEvaApp.showFetchErrorSnackbar(it, ctx, view)
-                    }
+                    NovaEvaApp.showFetchErrorSnackbar(it, context, view)
                 }
-    }
-
-    private fun loadBreviary() {
-        webView.loadDataWithBaseURL(null, breviaryText, "text/html", "utf-8", "")
     }
 
     override fun provideNavBarColorId(evaTheme: EvaTheme): Int = R.color.Transparent

@@ -10,9 +10,6 @@ import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.WebSettings
-import android.webkit.WebView
-import android.webkit.WebViewClient
 import android.widget.EditText
 import android.widget.SeekBar
 import com.google.android.exoplayer2.ExoPlayer
@@ -25,7 +22,6 @@ import com.google.android.exoplayer2.util.Util
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.actions.sendEmailIntent
-import hr.bpervan.novaeva.actions.shareIntent
 import hr.bpervan.novaeva.cache.CacheService
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaCategory
@@ -35,8 +31,9 @@ import hr.bpervan.novaeva.services.AudioPlayerService
 import hr.bpervan.novaeva.services.NovaEvaService
 import hr.bpervan.novaeva.storage.EvaContentDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
-import hr.bpervan.novaeva.utilities.ImageLoaderConfigurator
 import hr.bpervan.novaeva.utilities.subscribeAsync
+import hr.bpervan.novaeva.views.applyEvaConfiguration
+import hr.bpervan.novaeva.views.loadHtmlText
 import io.reactivex.disposables.Disposable
 import io.realm.Realm
 import kotlinx.android.synthetic.main.collapsing_content_header.view.*
@@ -150,18 +147,16 @@ class EvaContentFragment : EvaBaseFragment(), SeekBar.OnSeekBarChangeListener {
 
             if (coverImageInfo != null) {
                 if (coverImageView != null) {
-                    imageLoader.displayImage(coverImageInfo.url, coverImageView,
-                            ImageLoaderConfigurator.createDefaultDisplayImageOptions(false))
+                    imageLoader.displayImage(coverImageInfo.url, coverImageView)
                 }
             } else {
-                //todo
+                //TODO bring back category headers
 //                val url = prefs.getString("hr.bpervan.novaeva.categoryheader." + contentData.contentMetadata!!.directoryId, null)
 //                if (url != null && headerImage != null) {
-//                    imageLoader.displayImage(url, headerImage, ImageLoaderConfigurator.createDefaultDisplayImageOptions(true))
+//                    imageLoader.displayImage(url, headerImage)
 //                }
             }
-            vijestWebView.reload()
-            vijestWebView.loadDataWithBaseURL(null, evaContent.text, "text/html", "utf-8", null)
+            vijestWebView.loadHtmlText(evaContent.text)
 
             evaContent.audioURL?.let { audioUrl ->
                 imgMp3.setImageResource(R.drawable.vijest_ind_mp3_active)
@@ -202,9 +197,7 @@ class EvaContentFragment : EvaBaseFragment(), SeekBar.OnSeekBarChangeListener {
                 .subscribeAsync({ contentDataDTO ->
                     CacheService.cache(realm, contentDataDTO)
                 }) {
-                    context?.let { ctx ->
-                        NovaEvaApp.showFetchErrorSnackbar(it, ctx, view)
-                    }
+                    NovaEvaApp.showFetchErrorSnackbar(it, context, view)
                 }
     }
 
@@ -235,23 +228,8 @@ class EvaContentFragment : EvaBaseFragment(), SeekBar.OnSeekBarChangeListener {
 
         createIfMissingAndSubscribeToEvaContentUpdates()
 
-        vijestWebView.settings.builtInZoomControls = true
-        vijestWebView.settings.displayZoomControls = false
-
-        vijestWebView.isFocusable = false
-        vijestWebView.webViewClient = object : WebViewClient() {
-            override fun shouldOverrideUrlLoading(webView: WebView, url: String): Boolean {
-                webView.reload()
-                webView.loadDataWithBaseURL(null, evaContent?.text, "text/html", "utf-8", null)
-                return false
-            }
-        }
-
-        vijestWebView.settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.SINGLE_COLUMN
-
-        /* Prevent C/P */
-        vijestWebView.setOnLongClickListener { true }
-        vijestWebView.isLongClickable = false
+        vijestWebView.applyEvaConfiguration(prefs)
+        vijestWebView.loadHtmlText(evaContent?.text)
 
         /** Is this 'Duhovni poziv' or 'Odgovori' category?  */
         if (categoryId == EvaCategory.POZIV.id.toLong()) {
@@ -282,8 +260,6 @@ class EvaContentFragment : EvaBaseFragment(), SeekBar.OnSeekBarChangeListener {
 //        options.btnMail.setOnClickListener {
 //            sendEmailIntent(ctx, evaContent!!.contentMetadata!!.title, "http://novaeva.com/node/$contentId")
 //        }
-
-        vijestWebView.settings.defaultFontSize = prefs.getInt("hr.bpervan.novaeva.velicinateksta", 14)
     }
 
     override fun onDestroyView() {
