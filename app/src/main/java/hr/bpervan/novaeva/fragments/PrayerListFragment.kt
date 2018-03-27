@@ -13,6 +13,7 @@ import hr.bpervan.novaeva.adapters.PrayerCategoryRecyclerAdapter
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.PRAYER_CATEGORIES
 import hr.bpervan.novaeva.model.PrayerCategory
+import hr.bpervan.novaeva.views.onLayoutComplete
 import kotlinx.android.synthetic.main.fragment_prayers.*
 import kotlinx.android.synthetic.main.top_prayerbook.*
 
@@ -21,6 +22,7 @@ class PrayerListFragment : EvaBaseFragment() {
     companion object : EvaFragmentFactory<PrayerListFragment, Int> {
 
         private const val prayerCategoryIdKey = "prayerCategoryId"
+        private const val expandedItemKey = "expandedItem"
 
         override fun newInstance(initializer: Int): PrayerListFragment {
             return PrayerListFragment().apply {
@@ -31,14 +33,16 @@ class PrayerListFragment : EvaBaseFragment() {
         }
     }
 
-
     private lateinit var prayerCategory: PrayerCategory
+    private lateinit var adapter: PrayerCategoryRecyclerAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val inState = savedInstanceState ?: arguments!!
         prayerCategory = PRAYER_CATEGORIES.first { it.id == inState.getInt(prayerCategoryIdKey) }
+
+        adapter = PrayerCategoryRecyclerAdapter(prayerCategory)
 
         savedInstanceState ?: NovaEvaApp.defaultTracker.send(
                 HitBuilders.EventBuilder()
@@ -51,7 +55,8 @@ class PrayerListFragment : EvaBaseFragment() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putInt("prayerCategoryId", prayerCategory.id)
+        outState.putInt(prayerCategoryIdKey, prayerCategory.id)
+        outState.putInt(expandedItemKey, adapter.expandedItemPos)
         super.onSaveInstanceState(outState)
     }
 
@@ -64,15 +69,20 @@ class PrayerListFragment : EvaBaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initUI()
-    }
-
-    private fun initUI() {
         val recyclerView = evaRecyclerView as RecyclerView
         recyclerView.layoutManager = LinearLayoutManager(context)
-        recyclerView.adapter = PrayerCategoryRecyclerAdapter(prayerCategory)
+        recyclerView.adapter = adapter
 
         prayerTitleTextView.text = prayerCategory.title
         prayerTitleTextView.typeface = NovaEvaApp.openSansBold
+
+        if (savedInstanceState != null) {
+            val savedExpandedItemPos = savedInstanceState.getInt(expandedItemKey, RecyclerView.NO_POSITION)
+            if (savedExpandedItemPos != RecyclerView.NO_POSITION) {
+                recyclerView.onLayoutComplete {
+                    adapter.expandedItemPos = savedExpandedItemPos
+                }
+            }
+        }
     }
 }

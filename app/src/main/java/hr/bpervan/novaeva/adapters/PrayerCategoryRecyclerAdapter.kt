@@ -29,7 +29,14 @@ class PrayerCategoryRecyclerAdapter(private val prayerCategory: PrayerCategory) 
 
     override fun getItemCount(): Int = prayerCategory.prayerList.size
 
-    private var expandedItemPos: Int = RecyclerView.NO_POSITION
+    var expandedItemPos: Int = RecyclerView.NO_POSITION
+        set(newValue) {
+            val oldValue = field
+            field = newValue
+
+            collapseHolderAtPosition(oldValue)
+            expandHolderAtPosition(newValue)
+        }
 
     private var themeColorTrans: Int = 0
 
@@ -57,7 +64,7 @@ class PrayerCategoryRecyclerAdapter(private val prayerCategory: PrayerCategory) 
     }
 
     inner class PrayerViewHolder(val view: View) : RecyclerView.ViewHolder(view), View.OnClickListener {
-        private val expandableLayout: ExpandableLayout = view.expandableLayout
+        val expandableLayout: ExpandableLayout = view.expandableLayout
         private val prayerTitle: TextView = view.prayerTitleTextView
         private val prayerContent: WebView = view.prayerContentView
 
@@ -68,7 +75,6 @@ class PrayerCategoryRecyclerAdapter(private val prayerCategory: PrayerCategory) 
         }
 
         fun bindTo(prayer: Prayer) {
-
             prayerTitle.text = prayer.title
             prayerContent.loadUrl(PRAYERS_ASSETS_DIR_PATH + prayerCategory.directoryName + "/" + prayer.fileName)
 
@@ -81,23 +87,24 @@ class PrayerCategoryRecyclerAdapter(private val prayerCategory: PrayerCategory) 
         }
 
         override fun onClick(v: View?) {
-
-            if (adapterPosition == expandedItemPos) {
-                expandableLayout.collapse()
-                expandedItemPos = RecyclerView.NO_POSITION
-            } else {
-                collapseCurrentlyExpandedViewHolder()
-                expandableLayout.expand()
-                expandedItemPos = adapterPosition
-            }
+            expandedItemPos = if (adapterPosition != expandedItemPos) adapterPosition else RecyclerView.NO_POSITION
         }
 
-        private fun collapseCurrentlyExpandedViewHolder() {
-            if (expandedItemPos != RecyclerView.NO_POSITION) {
-                val currentlyExpandedViewHolder =
-                        recyclerView?.findViewHolderForAdapterPosition(expandedItemPos) as? PrayerViewHolder
-                currentlyExpandedViewHolder?.expandableLayout?.collapse()
-            }
+    }
+
+    private fun collapseHolderAtPosition(position: Int) {
+        if (position != RecyclerView.NO_POSITION) {
+            val currentlyExpandedViewHolder =
+                    recyclerView?.findViewHolderForAdapterPosition(position) as? PrayerViewHolder
+            currentlyExpandedViewHolder?.expandableLayout?.collapse()
+        }
+    }
+
+    private fun expandHolderAtPosition(position: Int) {
+        if (position != RecyclerView.NO_POSITION) {
+            val currentlyExpandedViewHolder =
+                    recyclerView?.findViewHolderForAdapterPosition(position) as? PrayerViewHolder
+            currentlyExpandedViewHolder?.expandableLayout?.expand()
         }
     }
 }
