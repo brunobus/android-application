@@ -7,8 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.NovaEvaApp
+import hr.bpervan.novaeva.SCROLL_PERCENT_KEY
 import hr.bpervan.novaeva.main.R
+import hr.bpervan.novaeva.views.afterLoadAndLayoutComplete
 import hr.bpervan.novaeva.views.applyEvaConfiguration
+import hr.bpervan.novaeva.views.calcScrollYAbsolute
+import hr.bpervan.novaeva.views.calcScrollYPercent
 import kotlinx.android.synthetic.main.collapsing_content_header.view.*
 import kotlinx.android.synthetic.main.eva_simple_content.*
 
@@ -42,13 +46,25 @@ class EvaInfoFragment : EvaBaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val savedScrollPercent = savedInstanceState?.getFloat(SCROLL_PERCENT_KEY, 0f) ?: 0f
+        if (savedScrollPercent > 0) {
+            webView.afterLoadAndLayoutComplete {
+                simpleContentScrollView.scrollY = calcScrollYAbsolute(savedScrollPercent, webView.height)
+            }
+        }
+
         initUI()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putFloat(SCROLL_PERCENT_KEY, simpleContentScrollView.calcScrollYPercent(webView.height))
+        super.onSaveInstanceState(outState)
     }
 
     private fun initUI() {
 
         webView.applyEvaConfiguration(prefs)
-        
+
         webView.loadUrl("file:///android_asset/info.htm")
 
         evaCollapsingBar.collapsingToolbar.title = "Nova Eva info"

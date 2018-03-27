@@ -128,8 +128,8 @@ abstract class EvaBaseFragment : Fragment() {
             activity.window?.navigationBarColor = navBarColor
         }
     }
-}
 
-private operator fun CompositeDisposable.minusAssign(oldDisposable: Disposable) {
-    remove(oldDisposable)
+    private operator fun CompositeDisposable.minusAssign(oldDisposable: Disposable) {
+        remove(oldDisposable)
+    }
 }

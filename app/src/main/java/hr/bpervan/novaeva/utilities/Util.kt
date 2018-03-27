@@ -1,18 +1,12 @@
 package hr.bpervan.novaeva.utilities
 
-import android.content.res.Resources
+import android.graphics.Bitmap
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
-import android.support.v4.content.ContextCompat
-import android.util.Log
-import android.util.TypedValue
-import android.view.Window
+import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import android.graphics.Bitmap
-import io.reactivex.Observable
 
 
 /**

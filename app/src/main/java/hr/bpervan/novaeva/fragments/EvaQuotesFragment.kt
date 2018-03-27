@@ -1,15 +1,12 @@
 package hr.bpervan.novaeva.fragments
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.NovaEvaApp
-import hr.bpervan.novaeva.actions.sendEmailIntent
-import hr.bpervan.novaeva.actions.shareIntent
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.services.NovaEvaService
 import hr.bpervan.novaeva.utilities.subscribeAsync
@@ -25,36 +22,35 @@ class EvaQuotesFragment : EvaBaseFragment() {
 
     companion object : EvaFragmentFactory<EvaQuotesFragment, Long> {
 
-        val TAG: String = EvaQuotesFragment::class.java.canonicalName
-        private const val INITIAL_QUOTE_ID_KEY = "initialQuoteId"
+        private const val QUOTE_ID_KEY = "quoteId"
+        private const val QUOTE_TITLE_KEY = "quoteTitle"
+        private const val QUOTE_DATA_KEY = "quoteData"
+
         override fun newInstance(initializer: Long): EvaQuotesFragment {
             return EvaQuotesFragment().apply {
                 arguments = Bundle().apply {
-                    putLong(INITIAL_QUOTE_ID_KEY, initializer) //todo read
+                    putLong(QUOTE_ID_KEY, initializer)
                 }
             }
         }
     }
 
-
-    private var contentTitle: String? = null
-    private var contentData: String? = null
-    private var contentId: Long = -1
+    private var quoteTitle: String? = null
+    private var quoteData: String? = null
+    private var quoteId: Long = -1
 
     private var loadRandomQuoteDisposable: Disposable? = null
         set(value) {
             field = safeReplaceDisposable(field, value)
         }
 
-    private var showTools = false
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         if (savedInstanceState != null) {
-            contentTitle = savedInstanceState.getString("contentTitle")
-            contentData = savedInstanceState.getString("contentData")
-            contentId = savedInstanceState.getLong("contentId", -1L)
+            quoteId = savedInstanceState.getLong(QUOTE_ID_KEY, -1L)
+            quoteTitle = savedInstanceState.getString(QUOTE_TITLE_KEY)
+            quoteData = savedInstanceState.getString(QUOTE_DATA_KEY)
         }
 
         savedInstanceState ?: NovaEvaApp.defaultTracker
@@ -64,10 +60,6 @@ class EvaQuotesFragment : EvaBaseFragment() {
                         .build())
 
         prefs.edit().remove("newContentInCategory1").apply()
-
-        if (contentTitle == null || contentData == null || contentId == -1L) {
-            fetchRandomQuote()
-        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -79,13 +71,17 @@ class EvaQuotesFragment : EvaBaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        if (quoteTitle == null || quoteData == null || quoteId == -1L) {
+            fetchRandomQuote()
+        } else {
+            showQuote()
+        }
+
         initUI()
     }
 
     private fun initUI() {
-        if (contentTitle != null && contentData != null && contentId != -1L) {
-            applyContent()
-        }
+        val ctx = context ?: return
 
         btnObnovi.setOnClickListener {
             fetchRandomQuote()
@@ -93,22 +89,18 @@ class EvaQuotesFragment : EvaBaseFragment() {
 
         //todo move to options drawer
 //        options.btnShare.setOnClickListener {
-//            context?.let { ctx ->
-//                shareIntent(ctx, "http://novaeva.com/node/$contentId")
-//            }
+//            shareIntent(ctx, "http://novaeva.com/node/$contentId")
 //        }
 //        options.btnMail.setOnClickListener {
-//            context?.let { ctx ->
-//                sendEmailIntent(ctx, contentTitle!!, "http://novaeva.com/node/$contentId")
-//            }
+//            sendEmailIntent(ctx, quoteTitle!!, "http://novaeva.com/node/$contentId")
 //        }
 
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putString("contentTitle", contentTitle)
-        outState.putString("contentData", contentData)
-        outState.putLong("contentId", contentId)
+        outState.putString(QUOTE_TITLE_KEY, quoteTitle)
+        outState.putString(QUOTE_DATA_KEY, quoteData)
+        outState.putLong(QUOTE_ID_KEY, quoteId)
 
         super.onSaveInstanceState(outState)
     }
@@ -117,25 +109,24 @@ class EvaQuotesFragment : EvaBaseFragment() {
         loadRandomQuoteDisposable = NovaEvaService.instance
                 .getRandomDirectoryContent(1)
                 .subscribeAsync({ directoryContent ->
-                    if (directoryContent.contentMetadataList != null && directoryContent.contentMetadataList.isNotEmpty()) {
-                        val contentInfo = directoryContent.contentMetadataList[0]
+                    val contentMetadataList = directoryContent.contentMetadataList
+                    if (contentMetadataList != null && contentMetadataList.isNotEmpty()) {
+                        val quoteInfo = contentMetadataList[0]
 
-                        contentTitle = contentInfo.title
-                        contentData = contentInfo.text
-                        contentId = contentInfo.contentId
+                        quoteTitle = quoteInfo.title
+                        quoteData = quoteInfo.text
+                        quoteId = quoteInfo.contentId
 
-                        applyContent()
+                        showQuote()
                     }
                 }) {
-                    view?.let { view ->
-                        Snackbar.make(view, "Internetska veza nije dostupna", Snackbar.LENGTH_SHORT).show()
-                    }
+                    NovaEvaApp.showNetworkUnavailableSnackbar(it, context, view)
                 }
     }
 
-    private fun applyContent() {
+    private fun showQuote() {
         view ?: return
-        evaCollapsingBar.collapsingToolbar.title = contentTitle ?: ""
-        webText.loadHtmlText(contentData)
+        evaCollapsingBar.collapsingToolbar.title = quoteTitle ?: ""
+        webText.loadHtmlText(quoteData)
     }
 }

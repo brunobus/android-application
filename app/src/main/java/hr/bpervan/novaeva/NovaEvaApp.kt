@@ -112,13 +112,23 @@ class NovaEvaApp : Application() {
 
             if (throwable != null) Log.e("evaError", throwable.message, throwable)
 
-            context?:return
-            holderView?:return
+            context ?: return
+            holderView ?: return
             Snackbar.make(holderView, context.getString(R.string.error_fetching_data), Snackbar.LENGTH_LONG).show()
         }
 
-        fun showNetworkUnavailableToast(context: Context) {
+        fun showNetworkUnavailableToast(throwable: Throwable?, context: Context?) {
+            if (throwable != null) Log.e("evaError", throwable.message, throwable)
+            context ?: return
             Toast.makeText(context, context.getString(R.string.network_unavailable), Toast.LENGTH_LONG).show()
+        }
+
+        fun showNetworkUnavailableSnackbar(throwable: Throwable?, context: Context?, holderView: View?) {
+            if (throwable != null) Log.e("evaError", throwable.message, throwable)
+
+            context ?: return
+            holderView ?: return
+            Snackbar.make(holderView, context.getString(R.string.network_unavailable), Snackbar.LENGTH_SHORT).show()
         }
 
         inline fun showFetchErrorDialog(throwable: Throwable?, context: Activity, crossinline onTryAgain: () -> Unit) {

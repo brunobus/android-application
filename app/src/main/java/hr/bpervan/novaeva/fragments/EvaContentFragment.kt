@@ -1,6 +1,5 @@
 package hr.bpervan.novaeva.fragments
 
-import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -10,8 +9,6 @@ import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.SeekBar
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
@@ -21,6 +18,7 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.NovaEvaApp
+import hr.bpervan.novaeva.SCROLL_PERCENT_KEY
 import hr.bpervan.novaeva.actions.sendEmailIntent
 import hr.bpervan.novaeva.cache.CacheService
 import hr.bpervan.novaeva.main.R
@@ -32,8 +30,7 @@ import hr.bpervan.novaeva.services.NovaEvaService
 import hr.bpervan.novaeva.storage.EvaContentDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
 import hr.bpervan.novaeva.utilities.subscribeAsync
-import hr.bpervan.novaeva.views.applyEvaConfiguration
-import hr.bpervan.novaeva.views.loadHtmlText
+import hr.bpervan.novaeva.views.*
 import io.reactivex.disposables.Disposable
 import io.realm.Realm
 import kotlinx.android.synthetic.main.collapsing_content_header.view.*
@@ -42,7 +39,7 @@ import kotlinx.android.synthetic.main.fragment_eva_content.*
 /**
  * Created by vpriscan on 04.12.17..
  */
-class EvaContentFragment : EvaBaseFragment(), SeekBar.OnSeekBarChangeListener {
+class EvaContentFragment : EvaBaseFragment() {
 
     companion object : EvaFragmentFactory<EvaContentFragment, OpenContentEvent> {
 
@@ -86,8 +83,6 @@ class EvaContentFragment : EvaBaseFragment(), SeekBar.OnSeekBarChangeListener {
             field = safeReplaceDisposable(field, value)
         }
 
-    private var showTools = false
-
     private var themeId = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -117,7 +112,7 @@ class EvaContentFragment : EvaBaseFragment(), SeekBar.OnSeekBarChangeListener {
         outState.putLong(CONTENT_ID_KEY, contentId)
         outState.putLong(CATEGORY_ID_KEY, categoryId)
         outState.putInt(THEME_ID_KEY, themeId)
-        vijestWebView?.saveState(outState)
+        outState.putFloat(SCROLL_PERCENT_KEY, scrollView.calcScrollYPercent(scrollView.getChildAt(0).height))
 
         super.onSaveInstanceState(outState)
     }
@@ -214,14 +209,17 @@ class EvaContentFragment : EvaBaseFragment(), SeekBar.OnSeekBarChangeListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initUI(savedInstanceState)
-    }
-
-    private fun initUI(savedInstanceState: Bundle?) {
-        if (savedInstanceState != null) {
-            vijestWebView.restoreState(savedInstanceState)
+        val savedScrollPercent = savedInstanceState?.getFloat(SCROLL_PERCENT_KEY, 0f) ?: 0f
+        if (savedScrollPercent > 0) {
+            vijestWebView.afterLoadAndLayoutComplete {
+                scrollView.scrollY = calcScrollYAbsolute(savedScrollPercent, scrollView.getChildAt(0).height)
+            }
         }
 
+        initUI()
+    }
+
+    private fun initUI() {
         val ctx = context ?: return
 
         loadingCircle.visibility = View.VISIBLE
@@ -308,30 +306,5 @@ class EvaContentFragment : EvaBaseFragment(), SeekBar.OnSeekBarChangeListener {
     override fun onDestroy() {
         realm.close()
         super.onDestroy()
-    }
-
-    private fun showSearchPopup() {
-        val searchBuilder = AlertDialog.Builder(context)
-        searchBuilder.setTitle("Pretraga")
-        val et = EditText(context)
-        searchBuilder.setView(et)
-        searchBuilder.setPositiveButton("Pretraži") { _, _ ->
-            val search = et.text.toString()
-            /*todo only search content text*/
-        }
-        searchBuilder.setNegativeButton("Odustani") { _, _ -> }
-        searchBuilder.show()
-    }
-
-    override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-        /**/
-    }
-
-    override fun onStartTrackingTouch(seekBar: SeekBar?) {
-        /**/
-    }
-
-    override fun onStopTrackingTouch(seekBar: SeekBar?) {
-        /**/
     }
 }
