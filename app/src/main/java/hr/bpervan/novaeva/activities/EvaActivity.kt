@@ -22,6 +22,7 @@ import hr.bpervan.novaeva.utilities.TransitionAnimation.*
 import hr.bpervan.novaeva.utilities.subscribeAsync
 import hr.bpervan.novaeva.utilities.subscribeThrottled
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.eva_main_layout.*
 
 /**
@@ -81,75 +82,61 @@ class EvaActivity : EvaBaseActivity() {
     override fun onStart() {
         super.onStart()
 
-        disposables.addAll(
-                bus.goHome.subscribeThrottled(::openDashboardFragment),
-                bus.openContent.subscribeThrottled(::openContentFragment),
+        disposables += bus.goHome.subscribeThrottled(::openDashboardFragment)
+        disposables += bus.openContent.subscribeThrottled(::openContentFragment)
 
-                bus.search.subscribeThrottled {
+        disposables += bus.search.subscribeThrottled {
+            addToBackStack(mainContainerId, EvaSearchFragment, it, FADE)
+        }
 
-                    addToBackStack(mainContainerId, EvaSearchFragment, it, FADE)
-                },
+        disposables += bus.openDirectory.subscribeThrottled {
+            addToBackStack(mainContainerId, EvaDirectoryFragment, it, it.animation)
+        }
 
-                bus.openDirectory.subscribeThrottled {
+        disposables += bus.openQuotes.subscribeThrottled {
+            addToBackStack(mainContainerId, EvaQuotesFragment, it.quoteId, it.animation)
+        }
 
-                    addToBackStack(mainContainerId, EvaDirectoryFragment, it, it.animation)
-                },
+        disposables += bus.openBreviaryChooser.subscribeThrottled {
+            addToBackStack(mainContainerId, BreviaryChooserFragment, it)
+        }
 
-                bus.openQuotes.subscribeThrottled {
+        disposables += bus.openBreviaryContent.subscribeThrottled {
+            addToBackStack(mainContainerId, BreviaryContentFragment, it.breviaryId, it.animation)
+        }
 
-                    addToBackStack(mainContainerId, EvaQuotesFragment, it.quoteId, it.animation)
-                },
+        disposables += bus.openInfo.subscribeThrottled {
+            addToBackStack(mainContainerId, EvaInfoFragment, it)
+        }
 
-                bus.openBreviaryChooser.subscribeThrottled {
+        disposables += bus.openOptionsDrawer.subscribeThrottled {
+            evaRoot.openDrawer(GravityCompat.END)
+        }
 
-                    addToBackStack(mainContainerId, BreviaryChooserFragment, it)
-                },
+        disposables += bus.openPrayerBook.subscribeThrottled {
+            addToBackStack(mainContainerId, PrayerBookFragment, it)
+        }
 
-                bus.openBreviaryContent.subscribeThrottled {
+        disposables += bus.openPrayerCategory.subscribeThrottled {
+            addToBackStack(mainContainerId, PrayerListFragment, it.prayerCategory.id, it.animation)
+        }
 
-                    addToBackStack(mainContainerId, BreviaryContentFragment, it.breviaryId, it.animation)
-                },
+        disposables += bus.openRadio.subscribeThrottled {
+            addToBackStack(mainContainerId, RadioFragment, FADE)
+        }
 
-                bus.openInfo.subscribeThrottled {
+        disposables += bus.openCalendar.subscribeThrottled {
+            addToBackStack(mainContainerId, EvaCalendarFragment, it)
+        }
 
-                    addToBackStack(mainContainerId, EvaInfoFragment, it)
-                },
+        disposables += bus.openBookmarks.subscribeThrottled {
+            addToBackStack(mainContainerId, EvaBookmarksFragment, it)
+        }
 
-                bus.openOptionsDrawer.subscribeThrottled {
-
-                    evaRoot.openDrawer(GravityCompat.END)
-                },
-
-                bus.openPrayerBook.subscribeThrottled {
-
-                    addToBackStack(mainContainerId, PrayerBookFragment, it)
-                },
-
-                bus.openPrayerCategory.subscribeThrottled {
-
-                    addToBackStack(mainContainerId, PrayerListFragment, it.prayerCategory.id, it.animation)
-                },
-
-                bus.openRadio.subscribeThrottled {
-
-                    addToBackStack(mainContainerId, RadioFragment, FADE)
-                },
-
-                bus.openCalendar.subscribeThrottled {
-
-                    addToBackStack(mainContainerId, EvaCalendarFragment, it)
-                },
-
-                bus.openBookmarks.subscribeThrottled {
-
-                    addToBackStack(mainContainerId, EvaBookmarksFragment, it)
-                },
-
-                bus.connectedToNetwork.subscribe {
-                    fetchBreviaryCoverUrl()
-                    fetchDashboardBackgroundUrl()
-                }
-        )
+        disposables += bus.connectedToNetwork.subscribe {
+            fetchBreviaryCoverUrl()
+            fetchDashboardBackgroundUrl()
+        }
 
         fetchBreviaryCoverUrl()
         fetchDashboardBackgroundUrl()

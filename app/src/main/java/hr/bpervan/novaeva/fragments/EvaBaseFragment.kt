@@ -16,6 +16,7 @@ import hr.bpervan.novaeva.model.EvaTheme
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
+import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.fragment_prayers.*
 
 /**
@@ -52,9 +53,9 @@ abstract class EvaBaseFragment : Fragment() {
             RxEventBus.openRadio.onNext(Unit)
         }
 
-        baseDisposables.add(RxEventBus.changeEvaTheme
+        baseDisposables += RxEventBus.changeEvaTheme
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::applyEvaTheme))
+                .subscribe(this::applyEvaTheme)
     }
 
     override fun onDestroyView() {
@@ -74,11 +75,11 @@ abstract class EvaBaseFragment : Fragment() {
 
     protected fun safeReplaceDisposable(oldDisposable: Disposable?, newDisposable: Disposable?): Disposable? {
         if (oldDisposable != null) {
-            baseDisposables.remove(oldDisposable)
+            baseDisposables -= oldDisposable
             oldDisposable.dispose() //do not rely on baseDisposables.remove()
         }
         if (newDisposable != null && !newDisposable.isDisposed) {
-            baseDisposables.add(newDisposable)
+            baseDisposables += newDisposable
         }
         return newDisposable
     }
@@ -127,4 +128,8 @@ abstract class EvaBaseFragment : Fragment() {
             activity.window?.navigationBarColor = navBarColor
         }
     }
+}
+
+private operator fun CompositeDisposable.minusAssign(oldDisposable: Disposable) {
+    remove(oldDisposable)
 }

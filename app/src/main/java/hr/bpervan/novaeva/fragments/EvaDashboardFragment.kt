@@ -13,6 +13,7 @@ import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.*
 import hr.bpervan.novaeva.utilities.TransitionAnimation
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.eva_dashboard_v2.*
 
 /**
@@ -115,11 +116,11 @@ class EvaDashboardFragment : EvaBaseFragment() {
                             EvaCategory.EVANDJELJE.rawName),
                     R.style.EvandjeljeTheme))
         }
-        baseDisposables.add(RxEventBus.changeDashboardBackground
+        baseDisposables += RxEventBus.changeDashboardBackground
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     activity?.window?.setBackgroundDrawable(it)
-                })
+                }
     }
 
     override fun provideNavBarColorId(evaTheme: EvaTheme): Int = R.color.Transparent
