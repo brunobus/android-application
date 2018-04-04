@@ -1,0 +1,173 @@
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <ImageView
+        android:id="@+id/silkyLight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/silkylight"
+        android:contentDescription="@string/dummyDesc" />
+
+    <ImageView
+        android:id="@+id/btnMp3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/btnEvandjelje"
+        android:layout_alignTop="@+id/btnEvandjelje"
+        android:layout_marginRight="94dp"
+        android:layout_marginTop="53dp"
+        android:background="@drawable/button_mp3"
+        android:contentDescription="@string/dummyDesc" />
+
+    <ImageView
+        android:id="@+id/btnMultimedia"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/btnEvandjelje"
+        android:layout_alignRight="@+id/btnEvandjelje"
+        android:layout_marginBottom="53dp"
+        android:layout_marginRight="94dp"
+        android:background="@drawable/button_multimedia"
+        android:contentDescription="@string/dummyDesc" />
+
+    <ImageView
+        android:id="@+id/btnPropovjedi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/btnEvandjelje"
+        android:layout_alignLeft="@+id/btnEvandjelje"
+        android:layout_marginBottom="53dp"
+        android:layout_marginLeft="94dp"
+        android:background="@drawable/button_propovjedi"
+        android:contentDescription="@string/dummyDesc" />
+
+    <ImageView
+        android:id="@+id/btnAktualno"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/btnEvandjelje"
+        android:layout_alignTop="@+id/btnEvandjelje"
+        android:layout_marginLeft="94dp"
+        android:layout_marginTop="53dp"
+        android:background="@drawable/button_aktualno"
+        android:contentDescription="@string/dummyDesc" />
+
+    <ImageView
+        android:id="@+id/btnPoziv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/btnEvandjelje"
+        android:layout_alignTop="@+id/btnEvandjelje"
+        android:layout_marginLeft="53dp"
+        android:layout_marginTop="94dp"
+        android:background="@drawable/button_poziv"
+        android:contentDescription="@string/dummyDesc" />
+
+    <ImageView
+        android:id="@+id/btnOdgovori"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/btnEvandjelje"
+        android:layout_alignTop="@+id/btnEvandjelje"
+        android:layout_marginRight="53dp"
+        android:layout_marginTop="94dp"
+        android:background="@drawable/button_odgovori"
+        android:contentDescription="@string/dummyDesc" />
+
+    <ImageView
+        android:id="@+id/btnIzreke"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/btnEvandjelje"
+        android:layout_alignLeft="@+id/btnEvandjelje"
+        android:layout_marginBottom="94dp"
+        android:layout_marginLeft="53dp"
+        android:background="@drawable/button_izreke"
+        android:contentDescription="@string/dummyDesc" />
+
+    <ImageView
+        android:id="@+id/btnDuhovnost"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/btnEvandjelje"
+        android:layout_alignRight="@+id/btnEvandjelje"
+        android:layout_marginBottom="94dp"
+        android:layout_marginRight="53dp"
+        android:background="@drawable/button_duhovnost"
+        android:contentDescription="@string/dummyDesc" />
+
+    <ImageView
+        android:id="@+id/btnEvandjelje"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="140dp"
+        android:background="@drawable/button_evandjelje"
+        android:contentDescription="@string/dummyDesc" />
+
+    <ImageView
+        android:id="@+id/btnMolitvenik"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="20dp"
+        android:contentDescription="@string/dummyDesc"
+        android:src="@drawable/button_molitvenik" />
+
+    <ImageView
+        android:id="@+id/btnBrevijar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="20dp"
+        android:layout_marginRight="15dp"
+        android:contentDescription="@string/dummyDesc"
+        android:src="@drawable/button_brevijar" />
+
+    <ImageView
+        android:id="@+id/btnBookmarks"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="35dp"
+        android:contentDescription="@string/dummyDesc"
+        android:src="@drawable/button_bookmarks" />
+
+    <TextView
+        android:id="@+id/titleLineTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="130dp"
+        android:background="@drawable/titleline"
+        android:gravity="center"
+        android:text="@string/NovaEvaTitleLineLand"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#FFFFFF" />
+
+</RelativeLayout>
+
+
+    <include
+        android:id="@+id/radioBtn"
+        layout="@layout/radio_button" />
+
+    <include
+        android:id="@+id/optionsBtn"
+        layout="@layout/options_button" />
+
+</android.support.constraint.ConstraintLayout>

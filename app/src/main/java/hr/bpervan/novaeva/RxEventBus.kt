@@ -11,6 +11,8 @@ import io.reactivex.subjects.PublishSubject
  */
 object RxEventBus {
 
+    val playRadioStream = PublishSubject.create<RadioStation>()
+
     //navigation
     val goHome = PublishSubject.create<TransitionAnimation>()
     val openContent = PublishSubject.create<OpenContentEvent>()

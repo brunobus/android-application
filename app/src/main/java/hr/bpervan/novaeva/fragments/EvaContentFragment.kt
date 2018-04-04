@@ -10,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
@@ -25,7 +24,7 @@ import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaCategory
 import hr.bpervan.novaeva.model.EvaContent
 import hr.bpervan.novaeva.model.OpenContentEvent
-import hr.bpervan.novaeva.services.AudioPlayerService
+import hr.bpervan.novaeva.player.EvaPlayerEventListener
 import hr.bpervan.novaeva.services.NovaEvaService
 import hr.bpervan.novaeva.storage.EvaContentDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
@@ -60,7 +59,7 @@ class EvaContentFragment : EvaBaseFragment() {
 
 
     private var exoPlayer: ExoPlayer? = null
-    private val evaPlayerEventListener = EvaPlayerEventListener()
+    private val evaPlayerEventListener = EvaPlayerEventListener({ context }, { exoPlayer }, { evaContent?.audioURL })
 
     private lateinit var realm: Realm
 
@@ -156,7 +155,7 @@ class EvaContentFragment : EvaBaseFragment() {
             evaContent.audioURL?.let { audioUrl ->
                 imgMp3.setImageResource(R.drawable.vijest_ind_mp3_active)
                 if (audioUrl != this.evaContent?.audioURL) {
-                    prepareAudioStream(context!!, audioUrl)
+                    prepareAudioStream(context!!, audioUrl, false)
                 }
                 exoPlayer?.let { player ->
                     player_view?.let { playerView ->
@@ -267,7 +266,7 @@ class EvaContentFragment : EvaBaseFragment() {
         exoPlayer = null
     }
 
-    private fun prepareAudioStream(context: Context, audioUri: String) {
+    private fun prepareAudioStream(context: Context, audioUri: String, playWhenReady: Boolean) {
 
         val streamingUri = Uri.parse(audioUri)
 
@@ -286,21 +285,8 @@ class EvaContentFragment : EvaBaseFragment() {
         exoPlayer.removeListener(evaPlayerEventListener)
         exoPlayer.addListener(evaPlayerEventListener)
         this.exoPlayer = exoPlayer
-    }
 
-    private inner class EvaPlayerEventListener : Player.DefaultEventListener() {
-
-        override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-            if ((playbackState == Player.STATE_READY)) {
-                if (playWhenReady) {
-                    exoPlayer?.let {
-                        NovaEvaApp.evaPlayer.currentAudioTrackUri = evaContent?.audioURL
-                        NovaEvaApp.evaPlayer.currentPlayer = it
-                        context?.startService(Intent(context, AudioPlayerService::class.java))
-                    }
-                }
-            }
-        }
+        exoPlayer.playWhenReady = playWhenReady
     }
 
     override fun onDestroy() {

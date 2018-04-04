@@ -9,7 +9,8 @@ enum class EvaCategory(val id: Int, val rawName: String) {
     PROPOVIJEDI(7, "Propovijedi"),
     POZIV(8, "Poziv"),
     ODGOVORI(11, "Odgovori"),
-    PJESMARICA(355, "Pjesmarica");
+    PJESMARICA(355, "Pjesmarica"),
+    RADIO(473, "Radio");
 
     val rawNameVertical = rawName.vertical()
 }
@@ -211,6 +212,17 @@ val PRAYER_CATEGORIES: List<PrayerCategory> = listOf(
                 Prayer("", "")))
 )
 
-val PRAYERS_ASSETS_DIR_PATH = "file:///android_asset/Molitve/"
+const val PRAYERS_ASSETS_DIR_PATH = "file:///android_asset/Molitve/"
 
 private fun String.vertical() = this.asSequence().joinToString(separator = "\n")
+
+class RadioStation(val name: String, val streamUris: List<String>)
+
+val TEMP_RADIO_STATIONS = listOf(
+        RadioStation("AIR1", listOf("http://emf.streamguys1.com/sa010_mp3_high_web")),
+        RadioStation("Radio Marija Njemačka", listOf("http://dreamsiteradiocp.com:8114/")),
+        RadioStation("Radio Marija SAD", listOf("http://dreamsiteradiocp4.com:8006/")),
+        RadioStation("Radio Marija Srbija", listOf("http://dreamsiteradiocp.com:8012/")),
+        RadioStation("Radio MIR Međugorje", listOf("http://85.25.135.86:23565/")),
+        RadioStation("Narodni radio", listOf("http://live.narodni.hr:8063/"))
+)

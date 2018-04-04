@@ -14,7 +14,7 @@ import hr.bpervan.novaeva.model.*
 import hr.bpervan.novaeva.utilities.TransitionAnimation
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
-import kotlinx.android.synthetic.main.eva_dashboard_v2.*
+import kotlinx.android.synthetic.main.fragment_dashboard.*
 
 /**
  *
@@ -41,7 +41,7 @@ class EvaDashboardFragment : EvaBaseFragment() {
 
         val ctw = ContextThemeWrapper(activity, R.style.DashboardTheme)
         val localInflater = inflater.cloneInContext(ctw)
-        return localInflater.inflate(R.layout.eva_dashboard_v2, container, false)
+        return localInflater.inflate(R.layout.fragment_dashboard, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -58,9 +58,6 @@ class EvaDashboardFragment : EvaBaseFragment() {
         }
         btnMolitvenik.setOnClickListener {
             RxEventBus.openPrayerBook.onNext(TransitionAnimation.FADE)
-        }
-        btnInfo.setOnClickListener {
-            RxEventBus.openInfo.onNext(TransitionAnimation.FADE)
         }
         btnBookmarks.setOnClickListener {
             RxEventBus.openBookmarks.onNext(TransitionAnimation.FADE)

@@ -1,33 +1,53 @@
 package hr.bpervan.novaeva.adapters
 
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import hr.bpervan.novaeva.RxEventBus
 
 import hr.bpervan.novaeva.adapters.RadioStationsAdapter.RadioStationViewHolder
 import hr.bpervan.novaeva.main.R
+import hr.bpervan.novaeva.model.RadioStation
+import hr.bpervan.novaeva.utilities.EvaTouchFeedback
+import kotlinx.android.synthetic.main.recycler_item_radio_station.view.*
 
 /**
  *
  */
-class RadioStationsAdapter() : RecyclerView.Adapter<RadioStationViewHolder>() {
+class RadioStationsAdapter(private val radioStations: List<RadioStation>) : RecyclerView.Adapter<RadioStationViewHolder>() {
 
-    override fun getItemCount() = 10
+    override fun getItemCount() = radioStations.size
+
+    private var touchFeedbackColor: Int = 0
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+
+        touchFeedbackColor = ContextCompat.getColor(recyclerView.context, R.color.TranslucentGray)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RadioStationViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.recycler_item_folder, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.recycler_item_radio_station, parent, false)
+        view.background.mutate()
         return RadioStationViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: RadioStationViewHolder, position: Int) {
-        holder.bindTo("todo")
+        holder.bindTo(radioStations[position])
     }
 
     inner class RadioStationViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+        private val stationName: TextView = view.stationName
 
-        fun bindTo(todoMe: String) {
-
+        fun bindTo(radioStation: RadioStation) {
+            stationName.text = radioStation.name
+            view.setOnTouchListener(EvaTouchFeedback(view, touchFeedbackColor))
+            view.setOnClickListener {
+                RxEventBus.playRadioStream.onNext(radioStation)
+            }
         }
     }
 }
