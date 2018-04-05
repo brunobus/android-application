@@ -122,7 +122,7 @@ class EvaActivity : EvaBaseActivity() {
         }
 
         disposables += bus.openRadio.subscribeThrottled {
-            addToBackStack(mainContainerId, RadioFragment, FADE)
+            addToBackStack(mainContainerId, RadioFragment, RIGHTWARDS)
         }
 
         disposables += bus.openCalendar.subscribeThrottled {

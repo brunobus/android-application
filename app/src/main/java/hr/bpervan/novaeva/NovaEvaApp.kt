@@ -151,7 +151,7 @@ class NovaEvaApp : Application() {
         }
 
         fun getDefaultAppBackground(): Drawable {
-            return ContextCompat.getDrawable(NovaEvaApp.instance!!, R.drawable.background)!!
+            return ContextCompat.getDrawable(NovaEvaApp.instance!!, R.drawable.background_01)!!
         }
 
         fun getDefaultEvaTheme(): EvaTheme {

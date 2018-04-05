@@ -40,4 +40,12 @@
     <dimen name="title_size">18dp</dimen>
     <dimen name="title_bar_height">50dp</dimen>
 
+    <dimen name="eva_floating_button_margin_start">6dp</dimen>
+    <dimen name="eva_floating_button_margin_end">6dp</dimen>
+    <dimen name="eva_floating_button_margin_top">30dp</dimen>
+    <dimen name="eva_floating_button_margin_bottom">30dp</dimen>
+
+    <dimen name="eva_floating_button_size">40dp</dimen>
+    <dimen name="eva_floating_radio_button_width">60dp</dimen>
+
 </resources>

@@ -51,7 +51,6 @@ class EvaDashboardFragment : EvaBaseFragment() {
     }
 
     private fun initUI() {
-        NovaEvaApp.openSansRegular?.let { titleLineTitle.typeface = it }
 
         btnBrevijar.setOnClickListener {
             RxEventBus.openBreviaryChooser.onNext(TransitionAnimation.FADE)
@@ -65,7 +64,7 @@ class EvaDashboardFragment : EvaBaseFragment() {
         btnIzreke.setOnClickListener {
             RxEventBus.openQuotes.onNext(OpenQuotesEvent())
         }
-        btnMp3.setOnClickListener {
+        btnPjesmarica.setOnClickListener {
             RxEventBus.openDirectory.onNext(OpenDirectoryEvent(
                     EvaDirectoryMetadata(EvaCategory.PJESMARICA.id.toLong(),
                             EvaCategory.PJESMARICA.rawName),
@@ -95,7 +94,7 @@ class EvaDashboardFragment : EvaBaseFragment() {
                             EvaCategory.MULTIMEDIJA.rawName),
                     R.style.MultimedijaTheme))
         }
-        btnPropovjedi.setOnClickListener {
+        btnPropovijedi.setOnClickListener {
             RxEventBus.openDirectory.onNext(OpenDirectoryEvent(
                     EvaDirectoryMetadata(EvaCategory.PROPOVIJEDI.id.toLong(),
                             EvaCategory.PROPOVIJEDI.rawName),
@@ -107,7 +106,7 @@ class EvaDashboardFragment : EvaBaseFragment() {
                             EvaCategory.DUHOVNOST.rawName),
                     R.style.DuhovnostTheme))
         }
-        btnEvandjelje.setOnClickListener {
+        btnCalendar.setOnClickListener {
             RxEventBus.openDirectory.onNext(OpenDirectoryEvent(
                     EvaDirectoryMetadata(EvaCategory.EVANDJELJE.id.toLong(),
                             EvaCategory.EVANDJELJE.rawName),

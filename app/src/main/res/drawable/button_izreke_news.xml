@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/btn_01_news_over_izreke"
-          android:state_pressed="true" />
-    <item android:drawable="@drawable/btn_01_news_izreke"
-          android:state_focused="true" />
-    <item android:drawable="@drawable/btn_01_news_izreke" />
+    <item android:drawable="@drawable/layer_izreke_btn_press" android:state_pressed="true" />
+    <item android:drawable="@drawable/izreke_btn" />
 </selector>

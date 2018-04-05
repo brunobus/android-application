@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/btn_09_normal_over_evandjelje"
-          android:state_pressed="true" />
-    <item android:drawable="@drawable/btn_09_normal_evandjelje"
-          android:state_focused="true" />
-    <item android:drawable="@drawable/btn_09_normal_evandjelje" />
+    <item android:drawable="@drawable/dashboard_calendar_over_btn" android:state_pressed="true" />
+    <item android:drawable="@drawable/calendar_btn" />
 </selector>

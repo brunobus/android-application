@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/btn_08_news_over_duhovnost"
-          android:state_pressed="true" />
-    <item android:drawable="@drawable/btn_08_news_duhovnost"
-          android:state_focused="true" />
-    <item android:drawable="@drawable/btn_08_news_duhovnost" />
+    <item android:drawable="@drawable/layer_duhovnost_btn_press" android:state_pressed="true" />
+    <item android:drawable="@drawable/duhovnosti_btn" />
 </selector>
