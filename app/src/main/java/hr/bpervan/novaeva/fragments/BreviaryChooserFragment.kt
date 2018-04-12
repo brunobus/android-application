@@ -9,11 +9,10 @@ import android.view.View
 import android.view.ViewGroup
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.NovaEvaApp
-import hr.bpervan.novaeva.RxEventBus
+import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaTheme
 import hr.bpervan.novaeva.model.OpenBreviaryContentEvent
-import hr.bpervan.novaeva.utilities.ImageLoaderConfigurator
 import hr.bpervan.novaeva.utilities.TransitionAnimation
 import kotlinx.android.synthetic.main.activity_breviary.*
 import kotlinx.android.synthetic.main.collapsing_breviary_header.*
@@ -86,7 +85,7 @@ class BreviaryChooserFragment : EvaBaseFragment() {
     inner class BreviaryClickListener(private val breviaryId: Int) : View.OnClickListener {
 
         override fun onClick(v: View?) {
-            RxEventBus.openBreviaryContent.onNext(OpenBreviaryContentEvent(breviaryId, TransitionAnimation.FADE))
+            EventPipelines.openBreviaryContent.onNext(OpenBreviaryContentEvent(breviaryId, TransitionAnimation.FADE))
         }
     }
 

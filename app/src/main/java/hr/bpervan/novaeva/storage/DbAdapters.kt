@@ -2,9 +2,9 @@ package hr.bpervan.novaeva.storage
 
 import hr.bpervan.novaeva.model.*
 import hr.bpervan.novaeva.utilities.addIfNoneExistingMatch
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
-import io.realm.*
+import io.realm.Realm
+import io.realm.kotlin.where
 
 /**
  * Created by vpriscan on 19.10.17..
@@ -12,18 +12,21 @@ import io.realm.*
 
 object EvaDirectoryDbAdapter {
 
-    private fun loadEvaDirectoryMetadata(realm: Realm, directoryId: Long): EvaDirectoryMetadata? =
-            loadOne(realm, EvaDirectoryMetadata::class.java, DIRECTORY_ID_FIELD, directoryId)
-
-    private fun loadEvaDirectory(realm: Realm, directoryId: Long): EvaDirectory? =
-            loadOne(realm, EvaDirectory::class.java, DIRECTORY_ID_FIELD, directoryId)
-
-    fun loadEvaDirectoryAsync(realm: Realm, directoryId: Long, directoryConsumer: (EvaDirectory?) -> Unit) {
-        loadOneAsync(realm, EvaDirectory::class.java, DIRECTORY_ID_FIELD, directoryId, directoryConsumer)
+    private fun loadEvaDirectoryMetadata(realm: Realm, directoryId: Long): EvaDirectoryMetadata? {
+        return realm.where<EvaDirectoryMetadata>().equalTo(DIRECTORY_ID_FIELD, directoryId).findFirst()
     }
 
-    fun subscribeToEvaDirectoryUpdatesAsync(realm: Realm, directoryId: Long, directoryConsumer: (EvaDirectory) -> Unit): Disposable =
-            subscribeToUpdatesAsync(realm, EvaDirectory::class.java, DIRECTORY_ID_FIELD, directoryId, directoryConsumer)
+    private fun loadEvaDirectory(realm: Realm, directoryId: Long): EvaDirectory? {
+        return realm.where<EvaDirectory>().equalTo(DIRECTORY_ID_FIELD, directoryId).findFirst()
+    }
+
+    fun loadEvaDirectoryAsync(realm: Realm, directoryId: Long, directoryConsumer: (EvaDirectory?) -> Unit): Disposable? {
+        return realm.where<EvaDirectory>().loadOneAsync(DIRECTORY_ID_FIELD, directoryId, directoryConsumer)
+    }
+
+    fun subscribeToEvaDirectoryUpdatesAsync(realm: Realm, directoryId: Long, directoryConsumer: (EvaDirectory) -> Unit): Disposable? {
+        return realm.where<EvaDirectory>().subscribeToUpdatesAsync(DIRECTORY_ID_FIELD, directoryId, directoryConsumer)
+    }
 
     fun createIfMissingEvaDirectoryAsync(realm: Realm, directoryId: Long,
                                          valuesApplier: (EvaDirectoryMetadata) -> Unit = {},
@@ -40,8 +43,8 @@ object EvaDirectoryDbAdapter {
     }
 
     fun addOrUpdateEvaDirectoryAsync(realm: Realm, directoryId: Long,
-                                     newContentMetadataSupplier: () -> List<EvaContentMetadata>,
-                                     newSubDirectoryMetadataSupplier: () -> List<EvaDirectoryMetadata>,
+                                     newContentMetadata: List<EvaContentMetadata>,
+                                     newSubDirectoryMetadata: List<EvaDirectoryMetadata>,
                                      onSuccess: () -> Unit = {}) {
 
         realm.executeTransactionAsync({ realmInTrans ->
@@ -56,12 +59,10 @@ object EvaDirectoryDbAdapter {
                 EvaDirectory(directoryId, directoryMetadata)
             }
 
-            newContentMetadataSupplier().forEach {
-                var contentInDB = realmInTrans.where(it.javaClass).equalTo(CONTENT_ID_FIELD, it.contentId).findFirst()
-
-                var bookmark = contentInDB?.bookmark ?: false
-                it.bookmark = bookmark
-                realmInTrans.copyToRealmOrUpdate(it);
+            newContentMetadata.forEach {
+                val contentInDB = realmInTrans.where<EvaContentMetadata>().equalTo(CONTENT_ID_FIELD, it.contentId).findFirst()
+                it.bookmark = contentInDB?.bookmark ?: false
+                realmInTrans.copyToRealmOrUpdate(it)
 
                 evaDirectory.contentMetadataList.addIfNoneExistingMatch(it) { existing ->
                     it.contentId == existing.contentId
@@ -70,7 +71,7 @@ object EvaDirectoryDbAdapter {
 
             //val contentMetadataToAddManaged = realmInTrans.copyToRealmOrUpdate(newContentMetadataSupplier())
 
-            val subDirectoryMetadataToAddManaged = realmInTrans.copyToRealmOrUpdate(newSubDirectoryMetadataSupplier())
+            val subDirectoryMetadataToAddManaged = realmInTrans.copyToRealmOrUpdate(newSubDirectoryMetadata)
 
             //contentMetadataToAddManaged.forEach { candidate ->
             //    evaDirectory.contentMetadataList.addIfNoneExistingMatch(candidate) { existing ->
@@ -91,11 +92,11 @@ object EvaDirectoryDbAdapter {
 
 object EvaContentDbAdapter {
     private fun loadEvaContentMetadata(realm: Realm, contentId: Long): EvaContentMetadata? {
-        return loadOne(realm, EvaContentMetadata::class.java, CONTENT_ID_FIELD, contentId)
+        return realm.where<EvaContentMetadata>().equalTo(CONTENT_ID_FIELD, contentId).findFirst()
     }
 
     private fun loadEvaContent(realm: Realm, contentId: Long): EvaContent? {
-        return loadOne(realm, EvaContent::class.java, CONTENT_ID_FIELD, contentId)
+        return realm.where<EvaContent>().equalTo(CONTENT_ID_FIELD, contentId).findFirst()
     }
 
     fun createIfMissingEvaContentAsync(realm: Realm, contentId: Long,
@@ -112,16 +113,16 @@ object EvaContentDbAdapter {
         }, onSuccess)
     }
 
-    fun subscribeToEvaContentUpdatesAsync(realm: Realm, contentId: Long, contentConsumer: (EvaContent) -> Unit): Disposable {
-        return subscribeToUpdatesAsync(realm, EvaContent::class.java, CONTENT_ID_FIELD, contentId, contentConsumer)
+    fun subscribeToEvaContentUpdatesAsync(realm: Realm, contentId: Long, contentConsumer: (EvaContent) -> Unit): Disposable? {
+        return realm.where<EvaContent>().subscribeToUpdatesAsync(CONTENT_ID_FIELD, contentId, contentConsumer)
     }
 
     fun subscribeToEvaContentMetadataUpdatesAsync(realm: Realm, contentId: Long,
-                                                  contentMetadataConsumer: (EvaContentMetadata) -> Unit): Disposable {
-        return subscribeToUpdatesAsync(realm, EvaContentMetadata::class.java, CONTENT_ID_FIELD, contentId, contentMetadataConsumer)
+                                                  contentMetadataConsumer: (EvaContentMetadata) -> Unit): Disposable? {
+        return realm.where<EvaContentMetadata>().subscribeToUpdatesAsync(CONTENT_ID_FIELD, contentId, contentMetadataConsumer)
     }
 
-    fun addOrUpdateEvaContent(realm: Realm, evaContent: EvaContent) {
+    fun addOrUpdateEvaContentAsync(realm: Realm, evaContent: EvaContent) {
         realm.executeTransactionAsync { realmInTrans ->
             if (evaContent.contentMetadata == null) {
                 evaContent.contentMetadata =
@@ -138,7 +139,9 @@ object EvaContentDbAdapter {
     }
 
     fun loadManyEvaContentMetadata(realm: Realm, predicate: (EvaContentMetadata) -> Boolean,
-                                   subscriber: (EvaContentMetadata) -> Unit): Disposable {
-        return loadManyAsync(realm, EvaContentMetadata::class.java, predicate, subscriber)
+                                   subscriber: (EvaContentMetadata) -> Unit): Disposable? {
+        return realm
+                .where<EvaContentMetadata>()
+                .loadManyAsync(predicate, subscriber)
     }
 }

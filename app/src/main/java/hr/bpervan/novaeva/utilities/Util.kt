@@ -2,6 +2,7 @@ package hr.bpervan.novaeva.utilities
 
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.util.Log
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -13,8 +14,14 @@ import io.reactivex.schedulers.Schedulers
  * Created by vpriscan on 16.10.17..
  */
 
-fun <T> Single<T>.subscribeAsync(onSuccess: (T) -> Unit, onError: (Throwable) -> Unit): Disposable {
+fun <T> Single<T>.networkRequest(onSuccess: (T) -> Unit, onError: (Throwable) -> Unit): Disposable {
     return subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(onSuccess, onError)
+}
+
+fun <T> Single<T>.computationRequest(onSuccess: (T) -> Unit, onError: (Throwable) -> Unit): Disposable {
+    return subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(onSuccess, onError)
 }
@@ -27,6 +34,10 @@ fun <T> Observable<T>.subscribeThrottled(onNext: (T) -> Unit): Disposable {
 
 inline fun <T> MutableList<T>.addIfNoneExistingMatch(toAdd: T, predicate: (existingElement: T) -> Boolean) {
     if (none { predicate(it) }) add(toAdd)
+}
+
+fun logError(throwable: Throwable) {
+    Log.e("error", throwable.message, throwable)
 }
 
 fun isDarkColor(color: Int): Boolean {

@@ -11,7 +11,7 @@ import android.widget.TextView
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.model.OpenContentEvent
 import hr.bpervan.novaeva.model.OpenDirectoryEvent
-import hr.bpervan.novaeva.RxEventBus
+import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaContentMetadata
 import hr.bpervan.novaeva.model.EvaDirectoryMetadata
@@ -108,7 +108,7 @@ class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
 
             view.setOnTouchListener(EvaTouchFeedback(view, themeColorTrans))
             view.setOnClickListener {
-                RxEventBus.openDirectory.onNext(OpenDirectoryEvent(directoryInfo, themeId, TransitionAnimation.LEFTWARDS))
+                EventPipelines.openDirectory.onNext(OpenDirectoryEvent(directoryInfo, themeId, TransitionAnimation.LEFTWARDS))
             }
         }
 
@@ -169,7 +169,7 @@ class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
             view.setOnTouchListener(EvaTouchFeedback(view, themeColorTrans))
 
             view.setOnClickListener {
-                RxEventBus.openContent.onNext(OpenContentEvent(contentInfo, themeId, TransitionAnimation.LEFTWARDS))
+                EventPipelines.openContent.onNext(OpenContentEvent(contentInfo, themeId, TransitionAnimation.LEFTWARDS))
             }
         }
     }

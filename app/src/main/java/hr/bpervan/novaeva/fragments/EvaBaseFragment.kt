@@ -10,7 +10,7 @@ import android.support.v4.content.ContextCompat
 import android.view.View
 import com.nostra13.universalimageloader.core.ImageLoader
 import hr.bpervan.novaeva.NovaEvaApp
-import hr.bpervan.novaeva.RxEventBus
+import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaTheme
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -46,14 +46,14 @@ abstract class EvaBaseFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         optionsBtn?.setOnClickListener {
-            RxEventBus.openOptionsDrawer.onNext(Unit)
+            EventPipelines.openOptionsDrawer.onNext(Unit)
         }
 
         radioBtn?.setOnClickListener {
-            RxEventBus.openRadio.onNext(Unit)
+            EventPipelines.openRadio.onNext(Unit)
         }
 
-        baseDisposables += RxEventBus.changeEvaTheme
+        baseDisposables += EventPipelines.changeEvaTheme
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::applyEvaTheme)
     }

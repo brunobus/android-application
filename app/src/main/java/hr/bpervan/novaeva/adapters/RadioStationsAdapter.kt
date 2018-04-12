@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import hr.bpervan.novaeva.RxEventBus
+import hr.bpervan.novaeva.EventPipelines
 
 import hr.bpervan.novaeva.adapters.RadioStationsAdapter.RadioStationViewHolder
 import hr.bpervan.novaeva.main.R
@@ -46,7 +46,7 @@ class RadioStationsAdapter(private val radioStations: List<RadioStation>) : Recy
             stationName.text = radioStation.name
             view.setOnTouchListener(EvaTouchFeedback(view, touchFeedbackColor))
             view.setOnClickListener {
-                RxEventBus.playRadioStream.onNext(radioStation)
+                EventPipelines.playRadioStream.onNext(radioStation)
             }
         }
     }

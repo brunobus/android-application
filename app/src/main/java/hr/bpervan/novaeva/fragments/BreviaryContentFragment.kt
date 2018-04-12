@@ -12,8 +12,8 @@ import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.SCROLL_PERCENT_KEY
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaTheme
-import hr.bpervan.novaeva.services.NovaEvaService
-import hr.bpervan.novaeva.utilities.subscribeAsync
+import hr.bpervan.novaeva.services.novaEvaService
+import hr.bpervan.novaeva.utilities.networkRequest
 import hr.bpervan.novaeva.views.*
 import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.collapsing_content_header.view.*
@@ -121,10 +121,10 @@ class BreviaryContentFragment : EvaBaseFragment() {
 
     private fun fetchBreviary() {
 
-        baseDisposables += NovaEvaService.instance
+        baseDisposables += novaEvaService
                 .getBreviary(breviaryId.toString())
-                .subscribeAsync({ breviary ->
-                    view ?: return@subscribeAsync
+                .networkRequest({ breviary ->
+                    view ?: return@networkRequest
                     breviaryText = breviary.text ?: ""
                     showBreviary()
                 }) {

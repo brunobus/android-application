@@ -17,8 +17,8 @@ import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaContentMetadata
 import hr.bpervan.novaeva.model.toDatabaseModel
-import hr.bpervan.novaeva.services.NovaEvaService
-import hr.bpervan.novaeva.utilities.subscribeAsync
+import hr.bpervan.novaeva.services.novaEvaService
+import hr.bpervan.novaeva.utilities.networkRequest
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_search.*
 import kotlinx.android.synthetic.main.eva_recycler_view.view.*
@@ -30,7 +30,6 @@ import java.util.*
 class EvaSearchFragment : EvaBaseFragment() {
 
     companion object : EvaFragmentFactory<EvaSearchFragment, String> {
-
 
         private const val searchStringKey = "searchString"
         override fun newInstance(initializer: String): EvaSearchFragment {
@@ -120,9 +119,8 @@ class EvaSearchFragment : EvaBaseFragment() {
         searchResultList.clear()
         adapter.notifyDataSetChanged()
 
-        searchForContentDisposable = NovaEvaService.instance
-                .searchForContent(searchString)
-                .subscribeAsync({ searchResult ->
+        searchForContentDisposable = novaEvaService.searchForContent(searchString)
+                .networkRequest({ searchResult ->
                     if (searchResult.searchResultContentMetadataList != null
                             && !searchResult.searchResultContentMetadataList.isEmpty()) {
 

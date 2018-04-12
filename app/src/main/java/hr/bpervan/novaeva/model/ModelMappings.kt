@@ -26,7 +26,6 @@ fun EvaImageDTO.toDatabaseModel(): EvaImage?{
 
 fun EvaContentDTO.toDatabaseModel(): EvaContent {
     val attachmentsDb = attachments?.map { it.toDatabaseModel() }?.toTypedArray() ?: arrayOf()
-    // tricks with ifs :D
-    val image = if(images?.size == 0) null else images?.get(0)
+    val image = images?.firstOrNull()
     return EvaContent(contentId, null, text ?: "", null, RealmList(*attachmentsDb), image?.toDatabaseModel(), videoURL, audioURL)
 }

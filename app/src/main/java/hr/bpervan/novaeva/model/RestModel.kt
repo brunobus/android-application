@@ -3,6 +3,7 @@ package hr.bpervan.novaeva.model
 import com.google.gson.annotations.SerializedName
 
 data class EvaDirectoryDTO(
+        var directoryId: Long = -1,
         val image: EvaImageDTO? = null,
         val paket: Int = 0,
         @SerializedName("jos") val more: Int = 0,
@@ -44,8 +45,8 @@ data class EvaAttachmentsIndicatorDTO(
         @SerializedName("text") val hasText: Boolean = false)
 
 data class EvaContentDTO(
-        @SerializedName("nid") val contentId: Long = 0,
-        @SerializedName("cid") val directoryId: Long = 0,
+        @SerializedName("nid") val contentId: Long = -1,
+        @SerializedName("cid") val directoryId: Long = -1,
         @SerializedName("prilozi") val attachments: List<EvaAttachmentDTO>? = null,
         @SerializedName("image") val images: List<EvaImageDTO>? = null,
         @SerializedName("tekst") val text: String? = null,

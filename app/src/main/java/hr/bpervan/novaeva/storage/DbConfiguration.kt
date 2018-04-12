@@ -1,9 +1,6 @@
 package hr.bpervan.novaeva.storage
 
-import hr.bpervan.novaeva.model.EvaAttachmentsIndicator
-import hr.bpervan.novaeva.model.EvaContentMetadata
 import io.realm.RealmConfiguration
-import io.realm.annotations.RealmModule
 
 /**
  * Created by vpriscan on 19.10.17..

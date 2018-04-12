@@ -12,6 +12,8 @@ import retrofit2.http.Query
  * Created by Branimir on 28.4.2017..
  */
 
+val novaEvaService = NovaEvaService.instance
+
 interface NovaEvaService {
     @GET("json?api=2")
     fun getDirectoryContent(@Query("cid") directoryId: Long,

@@ -12,15 +12,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.google.android.gms.analytics.HitBuilders
-import hr.bpervan.novaeva.cache.CacheService
+import hr.bpervan.novaeva.cache.EvaCacheService
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.*
-import hr.bpervan.novaeva.services.NovaEvaService
+import hr.bpervan.novaeva.services.novaEvaService
 import hr.bpervan.novaeva.storage.EvaDirectoryDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
-import hr.bpervan.novaeva.utilities.subscribeAsync
+import hr.bpervan.novaeva.utilities.networkRequest
 import io.reactivex.disposables.Disposable
 import io.realm.Realm
 import io.realm.Sort
@@ -58,6 +58,11 @@ class EvaDirectoryFragment : EvaBaseFragment() {
             field = safeReplaceDisposable(field, value)
         }
     private var evaDirectoryChangesDisposable: Disposable? = null
+        set(value) {
+            field = safeReplaceDisposable(field, value)
+        }
+
+    private var loadEvaDirectoryDisposable: Disposable? = null
         set(value) {
             field = safeReplaceDisposable(field, value)
         }
@@ -210,9 +215,10 @@ class EvaDirectoryFragment : EvaBaseFragment() {
                     fetchingFromServer = true
                     refreshLoadingCircleState()
 
-                    EvaDirectoryDbAdapter.loadEvaDirectoryAsync(realm, directoryId, { evaDirectory ->
+                    loadEvaDirectoryDisposable = EvaDirectoryDbAdapter.loadEvaDirectoryAsync(realm, directoryId, { evaDirectory ->
                         if (evaDirectory != null) {
-                            val oldestTimestamp = evaDirectory.contentMetadataList.sort(TIMESTAMP_FIELD, Sort.DESCENDING).lastOrNull()?.timestamp
+                            val oldestTimestamp = evaDirectory.contentMetadataList.sort(TIMESTAMP_FIELD, Sort.DESCENDING)
+                                    .lastOrNull()?.timestamp
                             fetchEvaDirectoryDataFromServer(oldestTimestamp)
                         }
                     })
@@ -232,13 +238,14 @@ class EvaDirectoryFragment : EvaBaseFragment() {
         fetchingFromServer = true
         refreshLoadingCircleState()
 
-        fetchFromServerDisposable = NovaEvaService.instance
-                .getDirectoryContent(directoryId, timestamp)
-                .subscribeAsync({ evaDirectoryDTO ->
+        fetchFromServerDisposable = novaEvaService.getDirectoryContent(directoryId, timestamp)
+                .networkRequest({ evaDirectoryDTO ->
                     loadingFromDb = true
                     fetchingFromServer = false
 
-                    CacheService.cache(realm, evaDirectoryDTO, directoryId)
+                    evaDirectoryDTO.directoryId = directoryId //todo fix on server
+
+                    EvaCacheService.cache(realm, evaDirectoryDTO)
 
                     handler.postDelayed({
                         /*if there are no actual new changes from server, data in cache will not be "updated"

@@ -19,16 +19,16 @@ import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.SCROLL_PERCENT_KEY
 import hr.bpervan.novaeva.actions.sendEmailIntent
-import hr.bpervan.novaeva.cache.CacheService
+import hr.bpervan.novaeva.cache.EvaCacheService
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaCategory
 import hr.bpervan.novaeva.model.EvaContent
 import hr.bpervan.novaeva.model.OpenContentEvent
 import hr.bpervan.novaeva.player.EvaPlayerEventListener
-import hr.bpervan.novaeva.services.NovaEvaService
+import hr.bpervan.novaeva.services.novaEvaService
 import hr.bpervan.novaeva.storage.EvaContentDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
-import hr.bpervan.novaeva.utilities.subscribeAsync
+import hr.bpervan.novaeva.utilities.networkRequest
 import hr.bpervan.novaeva.views.*
 import io.reactivex.disposables.Disposable
 import io.realm.Realm
@@ -187,9 +187,9 @@ class EvaContentFragment : EvaBaseFragment() {
     }
 
     private fun fetchContentFromServer(contentId: Long) {
-        fetchFromServerDisposable = NovaEvaService.instance.getContentData(contentId)
-                .subscribeAsync({ contentDataDTO ->
-                    CacheService.cache(realm, contentDataDTO)
+        fetchFromServerDisposable = novaEvaService.getContentData(contentId)
+                .networkRequest({ contentDataDTO ->
+                    EvaCacheService.cache(realm, contentDataDTO)
                 }) {
                     NovaEvaApp.showFetchErrorSnackbar(it, context, view)
                 }

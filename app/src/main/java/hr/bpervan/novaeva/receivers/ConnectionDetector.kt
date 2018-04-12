@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.NetworkInfo
 import android.net.wifi.WifiManager
-import hr.bpervan.novaeva.RxEventBus
+import hr.bpervan.novaeva.EventPipelines
 
 /**
  *
@@ -16,7 +16,7 @@ class ConnectionDetector : BroadcastReceiver() {
         val networkInfo: NetworkInfo? = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO)
         networkInfo ?: return
         if (networkInfo.state == NetworkInfo.State.CONNECTED) {
-            RxEventBus.connectedToNetwork.onNext(Unit)
+            EventPipelines.connectedToNetwork.onNext(Unit)
         }
     }
 }

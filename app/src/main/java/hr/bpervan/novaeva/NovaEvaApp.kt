@@ -50,7 +50,7 @@ class NovaEvaApp : Application() {
             enableAdvertisingIdCollection(false)
         }
 
-        RxEventBus.changeEvaTheme
+        EventPipelines.changeEvaTheme
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     prefs.edit().putString(evaThemeKey, it.toString()).apply()
@@ -146,7 +146,7 @@ class NovaEvaApp : Application() {
             error.setView(tv)
 
             error.setPositiveButton(context.getString(R.string.try_again)) { _, _ -> onTryAgain() }
-            error.setNegativeButton(context.getString(R.string.go_back)) { _, _ -> RxEventBus.goHome.onNext(TransitionAnimation.RIGHTWARDS) }
+            error.setNegativeButton(context.getString(R.string.go_back)) { _, _ -> EventPipelines.goHome.onNext(TransitionAnimation.RIGHTWARDS) }
             error.show()
         }
 

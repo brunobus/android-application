@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.NovaEvaApp
-import hr.bpervan.novaeva.RxEventBus
+import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.*
 import hr.bpervan.novaeva.utilities.TransitionAnimation
@@ -53,66 +53,66 @@ class EvaDashboardFragment : EvaBaseFragment() {
     private fun initUI() {
 
         btnBrevijar.setOnClickListener {
-            RxEventBus.openBreviaryChooser.onNext(TransitionAnimation.FADE)
+            EventPipelines.openBreviaryChooser.onNext(TransitionAnimation.FADE)
         }
         btnMolitvenik.setOnClickListener {
-            RxEventBus.openPrayerBook.onNext(TransitionAnimation.FADE)
+            EventPipelines.openPrayerBook.onNext(TransitionAnimation.FADE)
         }
         btnBookmarks.setOnClickListener {
-            RxEventBus.openBookmarks.onNext(TransitionAnimation.FADE)
+            EventPipelines.openBookmarks.onNext(TransitionAnimation.FADE)
         }
         btnIzreke.setOnClickListener {
-            RxEventBus.openQuotes.onNext(OpenQuotesEvent())
+            EventPipelines.openQuotes.onNext(OpenQuotesEvent())
         }
         btnPjesmarica.setOnClickListener {
-            RxEventBus.openDirectory.onNext(OpenDirectoryEvent(
+            EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
                     EvaDirectoryMetadata(EvaCategory.PJESMARICA.id.toLong(),
                             EvaCategory.PJESMARICA.rawName),
                     R.style.PjesmaricaTheme))
         }
         btnAktualno.setOnClickListener {
-            RxEventBus.openDirectory.onNext(OpenDirectoryEvent(
+            EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
                     EvaDirectoryMetadata(EvaCategory.AKTUALNO.id.toLong(),
                             EvaCategory.AKTUALNO.rawName),
                     R.style.AktualnoTheme))
         }
         btnPoziv.setOnClickListener {
-            RxEventBus.openDirectory.onNext(OpenDirectoryEvent(
+            EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
                     EvaDirectoryMetadata(EvaCategory.POZIV.id.toLong(),
                             EvaCategory.POZIV.rawName),
                     R.style.PozivTheme))
         }
         btnOdgovori.setOnClickListener {
-            RxEventBus.openDirectory.onNext(OpenDirectoryEvent(
+            EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
                     EvaDirectoryMetadata(EvaCategory.ODGOVORI.id.toLong(),
                             EvaCategory.ODGOVORI.rawName),
                     R.style.OdgovoriTheme))
         }
         btnMultimedia.setOnClickListener {
-            RxEventBus.openDirectory.onNext(OpenDirectoryEvent(
+            EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
                     EvaDirectoryMetadata(EvaCategory.MULTIMEDIJA.id.toLong(),
                             EvaCategory.MULTIMEDIJA.rawName),
                     R.style.MultimedijaTheme))
         }
         btnPropovijedi.setOnClickListener {
-            RxEventBus.openDirectory.onNext(OpenDirectoryEvent(
+            EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
                     EvaDirectoryMetadata(EvaCategory.PROPOVIJEDI.id.toLong(),
                             EvaCategory.PROPOVIJEDI.rawName),
                     R.style.PropovjediTheme))
         }
         btnDuhovnost.setOnClickListener {
-            RxEventBus.openDirectory.onNext(OpenDirectoryEvent(
+            EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
                     EvaDirectoryMetadata(EvaCategory.DUHOVNOST.id.toLong(),
                             EvaCategory.DUHOVNOST.rawName),
                     R.style.DuhovnostTheme))
         }
         btnCalendar.setOnClickListener {
-            RxEventBus.openDirectory.onNext(OpenDirectoryEvent(
+            EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
                     EvaDirectoryMetadata(EvaCategory.EVANDJELJE.id.toLong(),
                             EvaCategory.EVANDJELJE.rawName),
                     R.style.EvandjeljeTheme))
         }
-        baseDisposables += RxEventBus.changeDashboardBackground
+        baseDisposables += EventPipelines.changeDashboardBackground
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     activity?.window?.setBackgroundDrawable(it)

@@ -8,8 +8,8 @@ import android.view.ViewGroup
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.services.NovaEvaService
-import hr.bpervan.novaeva.utilities.subscribeAsync
+import hr.bpervan.novaeva.services.novaEvaService
+import hr.bpervan.novaeva.utilities.networkRequest
 import hr.bpervan.novaeva.views.loadHtmlText
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.collapsing_content_header.view.*
@@ -106,9 +106,8 @@ class EvaQuotesFragment : EvaBaseFragment() {
     }
 
     private fun fetchRandomQuote() {
-        loadRandomQuoteDisposable = NovaEvaService.instance
-                .getRandomDirectoryContent(1)
-                .subscribeAsync({ directoryContent ->
+        loadRandomQuoteDisposable = novaEvaService.getRandomDirectoryContent(1)
+                .networkRequest({ directoryContent ->
                     val contentMetadataList = directoryContent.contentMetadataList
                     if (contentMetadataList != null && contentMetadataList.isNotEmpty()) {
                         val quoteInfo = contentMetadataList[0]

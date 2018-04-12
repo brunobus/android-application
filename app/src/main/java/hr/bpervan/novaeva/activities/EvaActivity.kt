@@ -11,15 +11,15 @@ import android.view.View
 import android.view.ViewGroup
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
 import hr.bpervan.novaeva.NovaEvaApp
-import hr.bpervan.novaeva.RxEventBus
+import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.fragments.*
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaContentMetadata
 import hr.bpervan.novaeva.model.OpenContentEvent
-import hr.bpervan.novaeva.services.NovaEvaService
+import hr.bpervan.novaeva.services.novaEvaService
 import hr.bpervan.novaeva.utilities.TransitionAnimation
 import hr.bpervan.novaeva.utilities.TransitionAnimation.*
-import hr.bpervan.novaeva.utilities.subscribeAsync
+import hr.bpervan.novaeva.utilities.networkRequest
 import hr.bpervan.novaeva.utilities.subscribeThrottled
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
@@ -34,7 +34,7 @@ class EvaActivity : EvaBaseActivity() {
 
     private lateinit var mainContainer: ViewGroup
 
-    private val bus = RxEventBus
+    private val bus = EventPipelines
     private val disposables = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -143,9 +143,8 @@ class EvaActivity : EvaBaseActivity() {
     }
 
     private fun fetchBreviaryCoverUrl() {
-        NovaEvaService.instance
-                .getDirectoryContent(546, null)
-                .subscribeAsync({ directoryContent ->
+        novaEvaService.getDirectoryContent(546, null)
+                .networkRequest({ directoryContent ->
                     val image = directoryContent.image?.size640 ?: directoryContent.image?.size640
                     if (image != null) {
                         NovaEvaApp.prefs.edit().putString("hr.bpervan.novaeva.brevijarheaderimage", image).apply()
@@ -154,13 +153,12 @@ class EvaActivity : EvaBaseActivity() {
     }
 
     private fun fetchDashboardBackgroundUrl() {
-        NovaEvaService.instance
-                .getDashboardBackground(RxEventBus.changeEvaTheme.value!!)
-                .subscribeAsync({ url ->
+        novaEvaService.getDashboardBackground(EventPipelines.changeEvaTheme.value!!)
+                .networkRequest({ url ->
                     NovaEvaApp.imageLoader.loadImage(url, object : SimpleImageLoadingListener() {
                         override fun onLoadingComplete(imageUri: String, view: View?, loadedImage: Bitmap) {
                             val drawable = BitmapDrawable(resources, loadedImage)
-                            RxEventBus.changeDashboardBackground.onNext(drawable)
+                            EventPipelines.changeDashboardBackground.onNext(drawable)
                         }
                     })
                 }, onError = {})

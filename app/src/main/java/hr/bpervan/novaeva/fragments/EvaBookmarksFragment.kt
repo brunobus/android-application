@@ -12,7 +12,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.NovaEvaApp
-import hr.bpervan.novaeva.RxEventBus
+import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaContentMetadata
@@ -110,7 +110,7 @@ class EvaBookmarksFragment : EvaBaseFragment() {
             searchBuilder.setView(et)
             searchBuilder.setPositiveButton("Pretrazi") { _, _ ->
                 val searchString = et.text.toString()
-                RxEventBus.search.onNext(searchString)
+                EventPipelines.search.onNext(searchString)
             }
             searchBuilder.setNegativeButton("Odustani") { _, _ -> }
 

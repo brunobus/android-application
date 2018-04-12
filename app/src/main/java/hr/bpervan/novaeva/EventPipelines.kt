@@ -9,7 +9,7 @@ import io.reactivex.subjects.PublishSubject
 /**
  *
  */
-object RxEventBus {
+object EventPipelines {
 
     val playRadioStream = PublishSubject.create<RadioStation>()
 

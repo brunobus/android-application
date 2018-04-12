@@ -19,7 +19,7 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.NovaEvaApp
-import hr.bpervan.novaeva.RxEventBus
+import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.adapters.RadioStationsAdapter
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.TEMP_RADIO_STATIONS
@@ -79,7 +79,7 @@ class RadioFragment : EvaBaseFragment() {
         recyclerView.itemAnimator = DefaultItemAnimator()
         recyclerView.adapter = adapter
 
-        baseDisposables += RxEventBus.playRadioStream.subscribe { radioStation ->
+        baseDisposables += EventPipelines.playRadioStream.subscribe { radioStation ->
             context?.let { context ->
                 val streamUri = radioStation.streamUris.firstOrNull()
                 if (streamUri != null) {
