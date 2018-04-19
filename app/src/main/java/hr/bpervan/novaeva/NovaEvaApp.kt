@@ -62,7 +62,9 @@ class NovaEvaApp : Application() {
         filter.addAction("android.net.conn.CONNECTIVITY_CHANGE")
         registerReceiver(ConnectionDetector(), filter)
 
-        registerActivityLifecycleCallbacks(LifecycleLogger())
+        if (BuildConfig.DEBUG) {
+            registerActivityLifecycleCallbacks(LifecycleLogger())
+        }
     }
 
     companion object {
