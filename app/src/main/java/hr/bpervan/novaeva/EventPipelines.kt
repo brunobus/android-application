@@ -28,11 +28,17 @@ object EventPipelines {
     val openCalendar = PublishSubject.create<TransitionAnimation>()
     val openBookmarks = PublishSubject.create<TransitionAnimation>()
 
+    //appearance
+    val changeWindowBackgroundDrawable = BehaviorSubject.create<Drawable>()
+    val changeFragmentBackgroundResource = BehaviorSubject.create<Int>()
+    val changeNavbarColor = BehaviorSubject.create<Int>()
+    val changeStatusbarColor = BehaviorSubject.create<Int>()
+
     //themes
-    val changeDashboardBackground: BehaviorSubject<Drawable> by lazy {
-        BehaviorSubject.createDefault(NovaEvaApp.getDefaultAppBackground())
+    val dashboardBackground: BehaviorSubject<Drawable> by lazy {
+        BehaviorSubject.createDefault(NovaEvaApp.defaultDashboardBackground)
     }
-    val changeEvaTheme: BehaviorSubject<EvaTheme> by lazy {
+    val evaTheme: BehaviorSubject<EvaTheme> by lazy {
         BehaviorSubject.createDefault(NovaEvaApp.getDefaultEvaTheme())
     }
 

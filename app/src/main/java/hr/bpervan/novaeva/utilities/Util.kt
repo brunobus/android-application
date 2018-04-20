@@ -8,6 +8,7 @@ import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 
 
 /**
@@ -26,10 +27,8 @@ fun <T> Single<T>.computationRequest(onSuccess: (T) -> Unit, onError: (Throwable
             .subscribe(onSuccess, onError)
 }
 
-fun <T> Observable<T>.subscribeThrottled(onNext: (T) -> Unit): Disposable {
-    return throttleFirst(500, java.util.concurrent.TimeUnit.MILLISECONDS)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(onNext)
+fun <T> Observable<T>.screenChangeThrottle(): Observable<T> {
+    return throttleFirst(500, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
 }
 
 inline fun <T> MutableList<T>.addIfNoneExistingMatch(toAdd: T, predicate: (existingElement: T) -> Boolean) {

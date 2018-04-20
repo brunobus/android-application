@@ -1,19 +1,12 @@
 package hr.bpervan.novaeva.fragments
 
 import android.content.SharedPreferences
-import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.Drawable
-import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
 import android.view.View
 import com.nostra13.universalimageloader.core.ImageLoader
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.EventPipelines
-import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.EvaTheme
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.plusAssign
@@ -45,6 +38,12 @@ abstract class EvaBaseFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        baseDisposables += EventPipelines.changeFragmentBackgroundResource
+                .distinctUntilChanged()
+                .subscribe {
+                    view.setBackgroundResource(it)
+                }
+
         optionsBtn?.setOnClickListener {
             EventPipelines.openOptionsDrawer.onNext(Unit)
         }
@@ -52,10 +51,6 @@ abstract class EvaBaseFragment : Fragment() {
         radioBtn?.setOnClickListener {
             EventPipelines.openRadio.onNext(Unit)
         }
-
-        baseDisposables += EventPipelines.changeEvaTheme
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::applyEvaTheme)
     }
 
     override fun onDestroyView() {
@@ -82,51 +77,6 @@ abstract class EvaBaseFragment : Fragment() {
             baseDisposables += newDisposable
         }
         return newDisposable
-    }
-
-    protected open fun provideNavBarColorId(evaTheme: EvaTheme): Int {
-        return R.color.Black
-    }
-
-    protected open fun provideStatusBarColorId(evaTheme: EvaTheme): Int {
-        return R.color.VeryDarkGray
-    }
-
-    protected open fun provideFragmentBackgroundDrawable(evaTheme: EvaTheme): Drawable? {
-        val activity = activity ?: return null
-        return when (evaTheme) {
-            EvaTheme.DEFAULT -> ColorDrawable(ContextCompat.getColor(activity, R.color.White))
-            EvaTheme.NIGHT -> ColorDrawable(ContextCompat.getColor(activity, R.color.VeryDarkGray))
-        }
-    }
-
-    protected open fun provideWindowBackgroundDrawable(evaTheme: EvaTheme): Drawable? {
-        return null
-    }
-
-    private fun applyEvaTheme(evaTheme: EvaTheme) {
-        val activity = activity ?: return
-
-        val windowBackground: Drawable? = provideWindowBackgroundDrawable(evaTheme)
-        val fragmentBackground: Drawable? = provideFragmentBackgroundDrawable(evaTheme)
-        val statusBarColorId: Int = provideStatusBarColorId(evaTheme)
-        val navBarColorId: Int = provideNavBarColorId(evaTheme)
-
-        if (windowBackground != null) {
-            activity.window?.setBackgroundDrawable(windowBackground)
-        }
-
-        if (fragmentBackground != null) {
-            view?.background = fragmentBackground
-        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            val statusBarColor = ContextCompat.getColor(activity, statusBarColorId)
-            activity.window?.statusBarColor = statusBarColor
-
-            val navBarColor = ContextCompat.getColor(activity, navBarColorId)
-            activity.window?.navigationBarColor = navBarColor
-        }
     }
 
     private operator fun CompositeDisposable.minusAssign(oldDisposable: Disposable) {

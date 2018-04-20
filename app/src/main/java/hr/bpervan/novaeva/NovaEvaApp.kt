@@ -50,7 +50,7 @@ class NovaEvaApp : Application() {
             enableAdvertisingIdCollection(false)
         }
 
-        EventPipelines.changeEvaTheme
+        EventPipelines.evaTheme
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     prefs.edit().putString(evaThemeKey, it.toString()).apply()
@@ -152,8 +152,12 @@ class NovaEvaApp : Application() {
             error.show()
         }
 
-        fun getDefaultAppBackground(): Drawable {
-            return ContextCompat.getDrawable(NovaEvaApp.instance!!, R.drawable.background_01)!!
+        val defaultDashboardBackground: Drawable by lazy {
+            ContextCompat.getDrawable(NovaEvaApp.instance!!, R.drawable.background_01)!!
+        }
+
+        val defaultBreviaryBackground: Drawable by lazy {
+            ContextCompat.getDrawable(NovaEvaApp.instance!!, R.drawable.brevijar_backbrevijar)!!
         }
 
         fun getDefaultEvaTheme(): EvaTheme {

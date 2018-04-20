@@ -2,16 +2,18 @@ package hr.bpervan.novaeva.activities
 
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
+import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
 import android.support.v4.app.FragmentTransaction
+import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
 import android.view.View
 import android.view.ViewGroup
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
-import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.EventPipelines
+import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.fragments.*
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaContentMetadata
@@ -20,10 +22,11 @@ import hr.bpervan.novaeva.services.novaEvaService
 import hr.bpervan.novaeva.utilities.TransitionAnimation
 import hr.bpervan.novaeva.utilities.TransitionAnimation.*
 import hr.bpervan.novaeva.utilities.networkRequest
-import hr.bpervan.novaeva.utilities.subscribeThrottled
+import hr.bpervan.novaeva.utilities.screenChangeThrottle
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.eva_main_layout.*
+import java.util.concurrent.TimeUnit
 
 /**
  *
@@ -82,61 +85,83 @@ class EvaActivity : EvaBaseActivity() {
     override fun onStart() {
         super.onStart()
 
-        disposables += bus.goHome.subscribeThrottled(::openDashboardFragment)
-        disposables += bus.openContent.subscribeThrottled(::openContentFragment)
+        disposables += bus.goHome.screenChangeThrottle().subscribe(::openDashboardFragment)
+        disposables += bus.openContent.screenChangeThrottle().subscribe(::openContentFragment)
 
-        disposables += bus.search.subscribeThrottled {
+        disposables += bus.search.screenChangeThrottle().subscribe {
             addToBackStack(mainContainerId, EvaSearchFragment, it, FADE)
         }
 
-        disposables += bus.openDirectory.subscribeThrottled {
+        disposables += bus.openDirectory.screenChangeThrottle().subscribe {
             addToBackStack(mainContainerId, EvaDirectoryFragment, it, it.animation)
         }
 
-        disposables += bus.openQuotes.subscribeThrottled {
+        disposables += bus.openQuotes.screenChangeThrottle().subscribe {
             addToBackStack(mainContainerId, EvaQuotesFragment, it.quoteId, it.animation)
         }
 
-        disposables += bus.openBreviaryChooser.subscribeThrottled {
+        disposables += bus.openBreviaryChooser.screenChangeThrottle().subscribe {
             addToBackStack(mainContainerId, BreviaryChooserFragment, it)
         }
 
-        disposables += bus.openBreviaryContent.subscribeThrottled {
+        disposables += bus.openBreviaryContent.screenChangeThrottle().subscribe {
             addToBackStack(mainContainerId, BreviaryContentFragment, it.breviaryId, it.animation)
         }
 
-        disposables += bus.openInfo.subscribeThrottled {
+        disposables += bus.openInfo.screenChangeThrottle().subscribe {
             addToBackStack(mainContainerId, EvaInfoFragment, it)
         }
 
-        disposables += bus.openOptionsDrawer.subscribeThrottled {
+        disposables += bus.openOptionsDrawer.screenChangeThrottle().subscribe {
             evaRoot.openDrawer(GravityCompat.END)
         }
 
-        disposables += bus.openPrayerBook.subscribeThrottled {
+        disposables += bus.openPrayerBook.screenChangeThrottle().subscribe {
             addToBackStack(mainContainerId, PrayerBookFragment, it)
         }
 
-        disposables += bus.openPrayerCategory.subscribeThrottled {
+        disposables += bus.openPrayerCategory.screenChangeThrottle().subscribe {
             addToBackStack(mainContainerId, PrayerListFragment, it.prayerCategory.id, it.animation)
         }
 
-        disposables += bus.openRadio.subscribeThrottled {
+        disposables += bus.openRadio.screenChangeThrottle().subscribe {
             addToBackStack(mainContainerId, RadioFragment, RIGHTWARDS)
         }
 
-        disposables += bus.openCalendar.subscribeThrottled {
+        disposables += bus.openCalendar.screenChangeThrottle().subscribe {
             addToBackStack(mainContainerId, EvaCalendarFragment, it)
         }
 
-        disposables += bus.openBookmarks.subscribeThrottled {
+        disposables += bus.openBookmarks.screenChangeThrottle().subscribe {
             addToBackStack(mainContainerId, EvaBookmarksFragment, it)
         }
 
-        disposables += bus.connectedToNetwork.subscribe {
-            fetchBreviaryCoverUrl()
-            fetchDashboardBackgroundUrl()
+        disposables += bus.changeWindowBackgroundDrawable
+                .distinctUntilChanged()
+                .subscribe {
+                    window?.setBackgroundDrawable(it)
+                }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            disposables += bus.changeNavbarColor
+                    .distinctUntilChanged()
+                    .subscribe {
+                        window?.navigationBarColor = ContextCompat.getColor(this, it)
+                    }
+
+            disposables += bus.changeStatusbarColor
+                    .distinctUntilChanged()
+                    .subscribe {
+                        window?.statusBarColor = ContextCompat.getColor(this, it)
+                    }
         }
+
+        disposables += bus.connectedToNetwork
+                .throttleWithTimeout(10, TimeUnit.SECONDS)
+                .subscribe {
+                    fetchBreviaryCoverUrl()
+                    fetchDashboardBackgroundUrl()
+                }
 
         fetchBreviaryCoverUrl()
         fetchDashboardBackgroundUrl()
@@ -153,12 +178,11 @@ class EvaActivity : EvaBaseActivity() {
     }
 
     private fun fetchDashboardBackgroundUrl() {
-        novaEvaService.getDashboardBackground(EventPipelines.changeEvaTheme.value!!)
+        novaEvaService.getDashboardBackground(EventPipelines.evaTheme.value!!)
                 .networkRequest({ url ->
                     NovaEvaApp.imageLoader.loadImage(url, object : SimpleImageLoadingListener() {
                         override fun onLoadingComplete(imageUri: String, view: View?, loadedImage: Bitmap) {
-                            val drawable = BitmapDrawable(resources, loadedImage)
-                            EventPipelines.changeDashboardBackground.onNext(drawable)
+                            EventPipelines.dashboardBackground.onNext(BitmapDrawable(resources, loadedImage))
                         }
                     })
                 }, onError = {})

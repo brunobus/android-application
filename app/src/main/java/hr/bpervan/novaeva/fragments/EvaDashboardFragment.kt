@@ -1,6 +1,5 @@
 package hr.bpervan.novaeva.fragments
 
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
@@ -12,7 +11,6 @@ import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.*
 import hr.bpervan.novaeva.utilities.TransitionAnimation
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 
@@ -47,10 +45,14 @@ class EvaDashboardFragment : EvaBaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initUI()
-    }
+        EventPipelines.changeNavbarColor.onNext(R.color.Transparent)
+        EventPipelines.changeStatusbarColor.onNext(R.color.Transparent)
+        EventPipelines.changeFragmentBackgroundResource.onNext(R.color.Transparent)
 
-    private fun initUI() {
+        baseDisposables += EventPipelines.dashboardBackground.subscribe {
+            EventPipelines.changeWindowBackgroundDrawable.onNext(it)
+        }
+
 
         btnBrevijar.setOnClickListener {
             EventPipelines.openBreviaryChooser.onNext(TransitionAnimation.FADE)
@@ -112,16 +114,5 @@ class EvaDashboardFragment : EvaBaseFragment() {
                             EvaCategory.EVANDJELJE.rawName),
                     R.style.EvandjeljeTheme))
         }
-        baseDisposables += EventPipelines.changeDashboardBackground
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    activity?.window?.setBackgroundDrawable(it)
-                }
     }
-
-    override fun provideNavBarColorId(evaTheme: EvaTheme): Int = R.color.Transparent
-
-    override fun provideStatusBarColorId(evaTheme: EvaTheme): Int = R.color.Transparent
-
-    override fun provideFragmentBackgroundDrawable(evaTheme: EvaTheme): Drawable? = null
 }

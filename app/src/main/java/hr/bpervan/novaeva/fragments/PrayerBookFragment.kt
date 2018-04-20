@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.google.android.gms.analytics.HitBuilders
+import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.PrayerBookRecyclerAdapter
 import hr.bpervan.novaeva.main.R
@@ -50,6 +51,10 @@ class PrayerBookFragment : EvaBaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        EventPipelines.changeNavbarColor.onNext(R.color.Black)
+        EventPipelines.changeStatusbarColor.onNext(R.color.VeryDarkGray)
+        EventPipelines.changeFragmentBackgroundResource.onNext(R.color.White)
 
         initUI()
     }

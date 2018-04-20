@@ -67,6 +67,10 @@ class EvaBookmarksFragment : EvaBaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        EventPipelines.changeNavbarColor.onNext(R.color.Black)
+        EventPipelines.changeStatusbarColor.onNext(R.color.VeryDarkGray)
+        EventPipelines.changeFragmentBackgroundResource.onNext(R.color.White)
+
         initUI()
     }
 

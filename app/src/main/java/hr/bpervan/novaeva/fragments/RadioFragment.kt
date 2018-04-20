@@ -66,6 +66,19 @@ class RadioFragment : EvaBaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        EventPipelines.changeNavbarColor.onNext(R.color.Black)
+        EventPipelines.changeStatusbarColor.onNext(R.color.VeryDarkGray)
+        EventPipelines.changeFragmentBackgroundResource.onNext(R.color.White)
+
+        baseDisposables += EventPipelines.playRadioStream.subscribe { radioStation ->
+            context?.let { context ->
+                val streamUri = radioStation.streamUris.firstOrNull()
+                if (streamUri != null) {
+                    prepareAudioStream(context, streamUri, true)
+                }
+            }
+        }
+
         initUI()
     }
 
@@ -79,14 +92,6 @@ class RadioFragment : EvaBaseFragment() {
         recyclerView.itemAnimator = DefaultItemAnimator()
         recyclerView.adapter = adapter
 
-        baseDisposables += EventPipelines.playRadioStream.subscribe { radioStation ->
-            context?.let { context ->
-                val streamUri = radioStation.streamUris.firstOrNull()
-                if (streamUri != null) {
-                    prepareAudioStream(context, streamUri, true)
-                }
-            }
-        }
     }
 
     override fun onDestroyView() {
