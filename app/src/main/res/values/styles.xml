@@ -19,6 +19,11 @@
 
     <style name="eva_loading_circle" parent="Widget.AppCompat.ProgressBar"/>
 
+    <style name="eva_fragment">
+        <item name="android:keepScreenOn">true</item>
+        <item name="android:layout_margin">0dp</item>
+    </style>
+
     <!--
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.

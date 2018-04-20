@@ -19,4 +19,9 @@
         <item name="android:statusBarColor">@color/Transparent</item>
     </style>
 
+    <style name="eva_fragment">
+        <item name="android:keepScreenOn">true</item>
+        <item name="android:layout_margin">0dp</item>
+    </style>
+
 </resources>
