@@ -40,16 +40,15 @@
 
     <!-- Application theme. -->
     <style name="AppThemeBase" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:windowBackground">@color/White</item>
+        <item name="android:windowBackground">@drawable/background_01</item>
         <item name="android:windowNoTitle">true</item>
-        <item name="colorPrimary">@color/propovjedi</item>
+        <item name="colorPrimary">@color/novaEva</item>
         <item name="colorPrimaryDark">@color/Black</item>
-        <item name="colorAccent">@color/propovjedi</item>
+        <item name="colorAccent">@color/novaEvaDark</item>
         <item name="listItemContentSrc">@drawable/list_row_content_propovijedi</item>
         <item name="listItemFolderSrc">@drawable/list_row_folder_propovijedi</item>
         <item name="directoryHeaderSrc">@drawable/directory_header_default</item>
         <item name="contentTitleBarSrc">@drawable/content_titlebar_propovijedi</item>
-        <item name="toolbarSrc">@drawable/toolbar_propovijedi</item>
     </style>
 
     <style name="AppTheme" parent="AppThemeBase"/>
@@ -94,7 +93,7 @@
         <item name="listItemFolderSrc">@drawable/list_row_folder_multimedija</item>
         <item name="directoryHeaderSrc">@drawable/directory_header_multimedija</item>
         <item name="contentTitleBarSrc">@drawable/content_titlebar_multimedija</item>
-        <item name="toolbarSrc">@drawable/toolbar_multimedija</item>
+
     </style>
 
     <style name="MultimedijaTheme" parent="MultimedijaThemeBase"/>
@@ -107,7 +106,7 @@
         <item name="listItemFolderSrc">@drawable/list_row_folder_aktualno</item>
         <item name="directoryHeaderSrc">@drawable/directory_header_aktualno</item>
         <item name="contentTitleBarSrc">@drawable/content_titlebar_aktualno</item>
-        <item name="toolbarSrc">@drawable/toolbar_aktualno</item>
+
     </style>
 
     <style name="AktualnoTheme" parent="AktualnoThemeBase"/>
@@ -120,7 +119,7 @@
         <item name="listItemFolderSrc">@drawable/list_row_folder_odgovori</item>
         <item name="directoryHeaderSrc">@drawable/directory_header_odgovori</item>
         <item name="contentTitleBarSrc">@drawable/content_titlebar_odgovori</item>
-        <item name="toolbarSrc">@drawable/toolbar_odgovori</item>
+
     </style>
 
     <style name="OdgovoriTheme" parent="OdgovoriThemeBase"/>
@@ -133,7 +132,7 @@
         <item name="listItemFolderSrc">@drawable/list_row_folder_poziv</item>
         <item name="directoryHeaderSrc">@drawable/directory_header_poziv</item>
         <item name="contentTitleBarSrc">@drawable/content_titlebar_poziv</item>
-        <item name="toolbarSrc">@drawable/toolbar_poziv</item>
+
     </style>
 
     <style name="PozivTheme" parent="PozivThemeBase"/>
@@ -146,7 +145,7 @@
         <item name="listItemFolderSrc">@drawable/list_row_folder_evandjelje</item>
         <item name="directoryHeaderSrc">@drawable/directory_header_evandjelje</item>
         <item name="contentTitleBarSrc">@drawable/content_titlebar_evandjelje</item>
-        <item name="toolbarSrc">@drawable/toolbar_evandjelje</item>
+
     </style>
 
     <style name="EvandjeljeTheme" parent="EvandjeljeThemeBase"/>
@@ -159,7 +158,7 @@
         <item name="listItemFolderSrc">@drawable/list_row_folder_propovijedi</item>
         <item name="directoryHeaderSrc">@drawable/directory_header_propovijedi</item>
         <item name="contentTitleBarSrc">@drawable/content_titlebar_propovijedi</item>
-        <item name="toolbarSrc">@drawable/toolbar_propovijedi</item>
+
     </style>
 
     <style name="PropovjediTheme" parent="PropovjediThemeBase"/>
@@ -169,7 +168,7 @@
         <item name="colorPrimaryDark">@color/izrekeDark</item>
         <item name="colorAccent">@color/izrekeDark</item>
         <item name="contentTitleBarSrc">@drawable/content_titlebar_izreke</item>
-        <item name="toolbarSrc">@drawable/toolbar_izreke</item>
+
     </style>
 
     <style name="IzrekeTheme" parent="IzrekeThemeBase"/>
@@ -182,7 +181,7 @@
         <item name="listItemFolderSrc">@drawable/list_row_folder_pjesmarica</item>
         <item name="directoryHeaderSrc">@drawable/directory_header_pjesmarica</item>
         <item name="contentTitleBarSrc">@drawable/content_titlebar_pjesmarica</item>
-        <item name="toolbarSrc">@drawable/toolbar_piesmarica</item>
+
     </style>
 
     <style name="PjesmaricaTheme" parent="PjesmaricaThemeBase"/>
@@ -195,7 +194,7 @@
         <item name="listItemFolderSrc">@drawable/list_row_folder_duhovnost</item>
         <item name="directoryHeaderSrc">@drawable/directory_header_duhovnost</item>
         <item name="contentTitleBarSrc">@drawable/content_titlebar_duhovnost</item>
-        <item name="toolbarSrc">@drawable/toolbar_duhovnost</item>
+
     </style>
 
     <style name="DuhovnostTheme" parent="DuhovnostThemeBase"/>

@@ -10,8 +10,8 @@
     </style>
 
     <style name="AppTheme" parent="AppThemeBase">
-        <item name="android:navigationBarColor">@color/Black</item>
-        <item name="android:statusBarColor">@color/Black</item>
+        <item name="android:navigationBarColor">@color/Transparent</item>
+        <item name="android:statusBarColor">@color/Transparent</item>
     </style>
 
     <style name="SplashTheme" parent="SplashThemeBase">

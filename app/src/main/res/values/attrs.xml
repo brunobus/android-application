@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <attr name="toolbarSrc" format="reference"/>
     <attr name="listItemContentSrc" format="reference"/>
     <attr name="listItemFolderSrc" format="reference"/>
     <attr name="directoryHeaderSrc" format="reference"/>
