@@ -15,7 +15,7 @@ import hr.bpervan.novaeva.utilities.networkRequest
 import hr.bpervan.novaeva.views.*
 import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.collapsing_content_header.view.*
-import kotlinx.android.synthetic.main.eva_simple_content.*
+import kotlinx.android.synthetic.main.fragment_simple_content.*
 
 /**
  * Created by vpriscan on 26.11.17..
@@ -75,7 +75,7 @@ class BreviaryContentFragment : EvaBaseFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val ctw = ContextThemeWrapper(activity, R.style.BreviaryTheme)
         val localInflater = inflater.cloneInContext(ctw)
-        return localInflater.inflate(R.layout.eva_simple_content, container, false)
+        return localInflater.inflate(R.layout.fragment_simple_content, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

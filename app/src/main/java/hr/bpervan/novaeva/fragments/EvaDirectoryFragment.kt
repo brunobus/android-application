@@ -26,7 +26,7 @@ import io.reactivex.disposables.Disposable
 import io.realm.Realm
 import io.realm.Sort
 import kotlinx.android.synthetic.main.collapsing_directory_header.view.*
-import kotlinx.android.synthetic.main.eva_directory.*
+import kotlinx.android.synthetic.main.fragment_directory_contents.*
 import kotlinx.android.synthetic.main.top_izbornik.view.*
 
 /**
@@ -157,7 +157,7 @@ class EvaDirectoryFragment : EvaBaseFragment() {
                 } else {
                     inflater
                 }
-        return inflaterToUse.inflate(R.layout.eva_directory, container, false)
+        return inflaterToUse.inflate(R.layout.fragment_directory_contents, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -20,7 +20,7 @@ import hr.bpervan.novaeva.storage.EvaContentDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
 import io.reactivex.disposables.Disposable
 import io.realm.Realm
-import kotlinx.android.synthetic.main.activity_bookmarks.*
+import kotlinx.android.synthetic.main.fragment_bookmarks.*
 import java.util.*
 
 /**
@@ -61,7 +61,7 @@ class EvaBookmarksFragment : EvaBaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.activity_bookmarks, container, false)
+        return inflater.inflate(R.layout.fragment_bookmarks, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -11,7 +11,7 @@ import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.OpenBreviaryContentEvent
 import hr.bpervan.novaeva.utilities.TransitionAnimation
-import kotlinx.android.synthetic.main.activity_breviary.*
+import kotlinx.android.synthetic.main.fragment_breviary_chooser.*
 import kotlinx.android.synthetic.main.collapsing_breviary_header.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -40,7 +40,7 @@ class BreviaryChooserFragment : EvaBaseFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val ctw = ContextThemeWrapper(activity, R.style.BreviaryTheme)
         val localInflater = inflater.cloneInContext(ctw)
-        return localInflater.inflate(R.layout.activity_breviary, container, false)
+        return localInflater.inflate(R.layout.fragment_breviary_chooser, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

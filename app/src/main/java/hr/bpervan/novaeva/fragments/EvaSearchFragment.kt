@@ -21,7 +21,7 @@ import hr.bpervan.novaeva.model.toDatabaseModel
 import hr.bpervan.novaeva.services.novaEvaService
 import hr.bpervan.novaeva.utilities.networkRequest
 import io.reactivex.disposables.Disposable
-import kotlinx.android.synthetic.main.activity_search.*
+import kotlinx.android.synthetic.main.fragment_search.*
 import kotlinx.android.synthetic.main.eva_recycler_view.view.*
 import java.util.*
 
@@ -78,7 +78,7 @@ class EvaSearchFragment : EvaBaseFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val ctw = ContextThemeWrapper(activity, R.style.AppTheme)
         val localInflater = inflater.cloneInContext(ctw)
-        return localInflater.inflate(R.layout.activity_search, container, false)
+        return localInflater.inflate(R.layout.fragment_search, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

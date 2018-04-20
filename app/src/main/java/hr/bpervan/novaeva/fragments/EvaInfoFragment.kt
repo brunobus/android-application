@@ -15,7 +15,7 @@ import hr.bpervan.novaeva.views.applyEvaConfiguration
 import hr.bpervan.novaeva.views.calcScrollYAbsolute
 import hr.bpervan.novaeva.views.calcScrollYPercent
 import kotlinx.android.synthetic.main.collapsing_content_header.view.*
-import kotlinx.android.synthetic.main.eva_simple_content.*
+import kotlinx.android.synthetic.main.fragment_simple_content.*
 
 /**
  *
@@ -41,7 +41,7 @@ class EvaInfoFragment : EvaBaseFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val ctw = ContextThemeWrapper(activity, R.style.AppTheme)
         val localInflater = inflater.cloneInContext(ctw)
-        return localInflater.inflate(R.layout.eva_simple_content, container, false)
+        return localInflater.inflate(R.layout.fragment_simple_content, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -25,7 +25,7 @@ import hr.bpervan.novaeva.utilities.networkRequest
 import hr.bpervan.novaeva.utilities.screenChangeThrottle
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
-import kotlinx.android.synthetic.main.eva_main_layout.*
+import kotlinx.android.synthetic.main.activity_eva_main.*
 import java.util.concurrent.TimeUnit
 
 /**
@@ -43,7 +43,7 @@ class EvaActivity : EvaBaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.eva_main_layout)
+        setContentView(R.layout.activity_eva_main)
 
         initGui()
 
