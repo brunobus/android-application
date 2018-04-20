@@ -68,7 +68,7 @@ class RadioFragment : EvaBaseFragment() {
 
         EventPipelines.changeNavbarColor.onNext(R.color.Black)
         EventPipelines.changeStatusbarColor.onNext(R.color.VeryDarkGray)
-        EventPipelines.changeFragmentBackgroundResource.onNext(R.color.White)
+        EventPipelines.changeFragmentBackgroundResource.onNext(R.drawable.radio_background)
 
         baseDisposables += EventPipelines.playRadioStream.subscribe { radioStation ->
             context?.let { context ->
