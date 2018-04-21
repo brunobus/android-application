@@ -8,7 +8,9 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
 import android.support.v4.app.FragmentTransaction
 import android.support.v4.content.ContextCompat
+import android.support.v4.view.GestureDetectorCompat
 import android.support.v4.view.GravityCompat
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
@@ -19,6 +21,7 @@ import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaContentMetadata
 import hr.bpervan.novaeva.model.OpenContentEvent
 import hr.bpervan.novaeva.services.novaEvaService
+import hr.bpervan.novaeva.utilities.SwipeGestureListener
 import hr.bpervan.novaeva.utilities.TransitionAnimation
 import hr.bpervan.novaeva.utilities.TransitionAnimation.*
 import hr.bpervan.novaeva.utilities.networkRequest
@@ -40,6 +43,8 @@ class EvaActivity : EvaBaseActivity() {
     private val bus = EventPipelines
     private val disposables = CompositeDisposable()
 
+    private lateinit var gestureDetector: GestureDetectorCompat
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -54,6 +59,29 @@ class EvaActivity : EvaBaseActivity() {
             if (contentId != -1L) {
                 openContentFragment(OpenContentEvent(
                         EvaContentMetadata(contentId, 0, -1)))
+            }
+        }
+
+        gestureDetector = GestureDetectorCompat(this, SwipeLeftToRightGestureListener())
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        return if (gestureDetector.onTouchEvent(ev)) {
+            true
+        } else {
+            super.dispatchTouchEvent(ev)
+        }
+    }
+
+    inner class SwipeLeftToRightGestureListener : SwipeGestureListener() {
+        override fun onSwipeRight(): Boolean {
+            return if (supportFragmentManager.backStackEntryCount > 0
+                    && !evaRoot.isDrawerOpen(GravityCompat.END)) {
+                onBackPressed()
+                true
+            } else {
+                /*drawer already listens for swipe right gesture, don't consume the event here*/
+                false
             }
         }
     }
@@ -186,6 +214,14 @@ class EvaActivity : EvaBaseActivity() {
                         }
                     })
                 }, onError = {})
+    }
+
+    override fun onBackPressed() {
+        if (evaRoot.isDrawerOpen(GravityCompat.END)) {
+            evaRoot.closeDrawer(GravityCompat.END)
+        } else {
+            super.onBackPressed()
+        }
     }
 
     private fun openDashboardFragment(animation: TransitionAnimation = FADE) {

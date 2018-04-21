@@ -9,13 +9,13 @@ import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import hr.bpervan.novaeva.defaultTextSize
-import hr.bpervan.novaeva.textSizePrefKey
+import hr.bpervan.novaeva.TEXT_SIZE_KEY
 
 /**
  *
  */
 fun WebView.applyEvaConfiguration(prefs: SharedPreferences) {
-    settings.defaultFontSize = prefs.getInt(textSizePrefKey, defaultTextSize)
+    settings.defaultFontSize = prefs.getInt(TEXT_SIZE_KEY, defaultTextSize)
     settings.builtInZoomControls = false
     settings.displayZoomControls = false
     settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.SINGLE_COLUMN
