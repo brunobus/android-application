@@ -2,6 +2,7 @@ package hr.bpervan.novaeva.player
 
 import android.content.Context
 import android.content.Intent
+import android.support.v4.content.ContextCompat
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.Player
 import hr.bpervan.novaeva.NovaEvaApp
@@ -23,7 +24,7 @@ class EvaPlayerEventListener(
                 NovaEvaApp.evaPlayer.currentAudioTrackUri = currentAudioUriSupplier()
                 NovaEvaApp.evaPlayer.currentPlayer = exoPlayer
                 val ctx = contextSupplier() ?: return
-                ctx.startService(Intent(ctx, AudioPlayerService::class.java))
+                ContextCompat.startForegroundService(ctx, Intent(ctx, AudioPlayerService::class.java))
             }
         }
     }

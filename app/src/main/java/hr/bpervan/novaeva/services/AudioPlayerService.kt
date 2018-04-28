@@ -1,6 +1,9 @@
 package hr.bpervan.novaeva.services
 
+import android.annotation.SuppressLint
 import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.Service
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -8,6 +11,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.AudioManager
+import android.os.Build
 import android.os.IBinder
 import android.support.v4.app.NotificationCompat
 import android.support.v4.content.ContextCompat
@@ -66,10 +70,30 @@ class AudioPlayerService : Service() {
             if (playbackState == Player.STATE_READY) {
                 val notification = buildNotification(this@AudioPlayerService, mediaSession, playWhenReady)
                 startForeground(33313331, notification)
+                if (!playWhenReady) {
+                    stopForeground(false)
+                }
             } else {
                 stopForeground(true)
             }
         }
+    }
+
+    @SuppressLint("NewApi")
+    private fun createNotificationChannel(): String {
+        val channelId = "nova_eva_audio_player_service"
+        val channelName = "Nova Eva Audio Player Service"
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_LOW)
+            channel.enableLights(false)
+            channel.setShowBadge(false)
+            channel.enableVibration(false)
+            channel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+            val service = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            service.createNotificationChannel(channel)
+        }
+        return channelId
     }
 
     /**
@@ -128,27 +152,21 @@ class AudioPlayerService : Service() {
                                   playing: Boolean): Notification {
         val controller = mediaSession.controller
 
-        val playPauseIcon: Int
-        val playPauseString: String
-
-        if (playing) {
-            playPauseIcon = R.drawable.exo_controls_pause
-            playPauseString = getString(R.string.pause)
-        } else {
-            playPauseIcon = R.drawable.exo_controls_play
-            playPauseString = getString(R.string.play)
-        }
+        val playPauseIcon = if (playing) R.drawable.exo_controls_pause else R.drawable.exo_controls_play
+        val playPauseString = if (playing) getString(R.string.pause) else getString(R.string.play)
 
         val contentText = NovaEvaApp.evaPlayer.currentAudioTrackUri
 
-        return NotificationCompat.Builder(context, "novaEvaChannel")
+        return NotificationCompat.Builder(context, createNotificationChannel())
                 .setLargeIcon(novaEvaBitmap)
-                .setSmallIcon(R.drawable.ic_launcher)
+                .setSmallIcon(R.drawable.notification_icon)
+                .setBadgeIconType(NotificationCompat.BADGE_ICON_NONE)
                 .setContentTitle("Nova Eva")
                 .setContentText(contentText)
                 .setContentIntent(controller.sessionActivity) //todo set
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setColor(ContextCompat.getColor(context, R.color.novaEva))
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .addAction(NotificationCompat.Action(playPauseIcon, playPauseString,
                         MediaButtonReceiver.buildMediaButtonPendingIntent(context,
                                 PlaybackStateCompat.ACTION_PLAY_PAUSE)))
