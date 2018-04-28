@@ -127,8 +127,8 @@
         android:id="@+id/radioBtn"
         style="@style/eva_custom_floating_button"
         layout="@layout/radio_button"
-        android:layout_width="@dimen/eva_floating_radio_button_width"
-        android:layout_height="@dimen/eva_floating_button_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
 
@@ -136,8 +136,8 @@
         android:id="@+id/optionsBtn"
         style="@style/eva_custom_floating_button"
         layout="@layout/options_button"
-        android:layout_width="@dimen/eva_floating_button_size"
-        android:layout_height="@dimen/eva_floating_button_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 

@@ -45,9 +45,4 @@
     <dimen name="eva_floating_button_margin_top">30dp</dimen>
     <dimen name="eva_floating_button_margin_bottom">30dp</dimen>
 
-    <dimen name="eva_floating_button_size">40dp</dimen>
-    <dimen name="eva_floating_radio_button_width">60dp</dimen>
-
-    <dimen name="eva_circle_segment_height">38dp</dimen>
-
 </resources>
