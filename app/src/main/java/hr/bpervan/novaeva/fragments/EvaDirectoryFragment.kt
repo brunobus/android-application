@@ -11,6 +11,9 @@ import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.edit
+import androidx.core.os.bundleOf
+import androidx.core.os.postDelayed
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.cache.EvaCacheService
@@ -42,11 +45,11 @@ class EvaDirectoryFragment : EvaBaseFragment() {
 
         override fun newInstance(initializer: OpenDirectoryEvent): EvaDirectoryFragment {
             return EvaDirectoryFragment().apply {
-                arguments = Bundle().apply {
-                    putLong(directoryIdKey, initializer.directoryMetadata.directoryId)
-                    putString(directoryTitleKey, initializer.directoryMetadata.title)
-                    putInt(themeIdKey, initializer.themeId)
-                }
+                arguments = bundleOf(
+                        directoryIdKey to initializer.directoryMetadata.directoryId,
+                        directoryTitleKey to initializer.directoryMetadata.title,
+                        themeIdKey to initializer.themeId
+                )
             }
         }
     }
@@ -103,7 +106,9 @@ class EvaDirectoryFragment : EvaBaseFragment() {
 
         realm = Realm.getInstance(RealmConfigProvider.evaDBConfig)
 
-        prefs.edit().remove("newContentInCategory$directoryId").apply()
+        prefs.edit {
+            remove("newContentInCategory$directoryId")
+        }
 
         createIfMissingAndSubscribeToEvaDirectoryUpdates()
 
@@ -252,7 +257,7 @@ class EvaDirectoryFragment : EvaBaseFragment() {
 
                     EvaCacheService.cache(realm, evaDirectoryDTO)
 
-                    handler.postDelayed({
+                    handler.postDelayed(4000) {
                         /*if there are no actual new changes from server, data in cache will not be "updated"
                         and on update callback (in subscribeToDirectoryUpdates) will not be called,
                         resulting in progress circle spinning forever
@@ -260,15 +265,15 @@ class EvaDirectoryFragment : EvaBaseFragment() {
                         */
                         loadingFromDb = false
                         refreshLoadingCircleState()
-                    }, 4000)
+                    }
 
                     hasMore = evaDirectoryDTO.more > 0
 
                 }) {
-                    handler.postDelayed({
+                    handler.postDelayed(2000) {
                         fetchingFromServer = false
                         refreshLoadingCircleState()
-                    }, 2000)
+                    }
                     NovaEvaApp.showFetchErrorSnackbar(it, context, view)
                 }
     }

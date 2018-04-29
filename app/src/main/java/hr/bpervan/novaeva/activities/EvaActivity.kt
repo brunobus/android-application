@@ -13,6 +13,9 @@ import android.support.v4.view.GravityCompat
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.edit
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
@@ -90,23 +93,18 @@ class EvaActivity : EvaBaseActivity() {
         mainContainerId = R.id.evaMainFragmentFrame
 
         mainContainer = findViewById(mainContainerId)
-
-        mainContainer.let {
-            it.setOnHierarchyChangeListener(EvaHierarchyChangeListener(it))
-        }
-
     }
 
     private inner class EvaHierarchyChangeListener(private val targetView: ViewGroup)
         : ViewGroup.OnHierarchyChangeListener {
         override fun onChildViewRemoved(parent: View?, child: View?) {
             if (targetView.childCount == 0) {
-                targetView.visibility = View.GONE
+                targetView.isGone = true
             }
         }
 
         override fun onChildViewAdded(parent: View?, child: View?) {
-            targetView.visibility = View.VISIBLE
+            targetView.isVisible = true
         }
     }
 
@@ -200,7 +198,9 @@ class EvaActivity : EvaBaseActivity() {
                 .networkRequest({ directoryContent ->
                     val image = directoryContent.image?.size640 ?: directoryContent.image?.size640
                     if (image != null) {
-                        NovaEvaApp.prefs.edit().putString("hr.bpervan.novaeva.brevijarheaderimage", image).apply()
+                        NovaEvaApp.prefs.edit {
+                            putString("hr.bpervan.novaeva.brevijarheaderimage", image)
+                        }
                     }
                 }, onError = {})
     }

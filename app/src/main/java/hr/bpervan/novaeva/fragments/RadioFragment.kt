@@ -11,6 +11,7 @@ import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.net.toUri
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.ExtractorMediaSource
@@ -102,7 +103,7 @@ class RadioFragment : EvaBaseFragment() {
 
     private fun prepareAudioStream(context: Context, audioUri: String, playWhenReady: Boolean) {
 
-        val streamingUri = Uri.parse(audioUri)
+        val streamingUri = audioUri.toUri()
 
         val dataSourceFactory = DefaultDataSourceFactory(context,
                 Util.getUserAgent(context, resources.getString(R.string.app_name)),

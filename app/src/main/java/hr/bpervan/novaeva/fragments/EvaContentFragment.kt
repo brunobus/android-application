@@ -2,13 +2,16 @@ package hr.bpervan.novaeva.fragments
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.net.toUri
+import androidx.core.os.bundleOf
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.ExtractorMediaSource
@@ -49,11 +52,11 @@ class EvaContentFragment : EvaBaseFragment() {
 
         override fun newInstance(initializer: OpenContentEvent): EvaContentFragment {
             return EvaContentFragment().apply {
-                arguments = Bundle().apply {
-                    putLong(CONTENT_ID_KEY, initializer.contentMetadata.contentId)
-                    putLong(CATEGORY_ID_KEY, initializer.contentMetadata.categoryId)
-                    putInt(THEME_ID_KEY, initializer.themeId)
-                }
+                arguments = bundleOf(
+                        CONTENT_ID_KEY to initializer.contentMetadata.contentId,
+                        CATEGORY_ID_KEY to initializer.contentMetadata.categoryId,
+                        THEME_ID_KEY to initializer.themeId
+                )
             }
         }
     }
@@ -160,7 +163,7 @@ class EvaContentFragment : EvaBaseFragment() {
                 }
                 exoPlayer?.let { player ->
                     player_view?.let { playerView ->
-                        playerView.visibility = View.VISIBLE
+                        playerView.isVisible = true
                         playerView.requestFocus()
                         playerView.player = player
                     }
@@ -170,18 +173,18 @@ class EvaContentFragment : EvaBaseFragment() {
             evaContent.videoURL?.let { videoUrl ->
                 imgLink.setImageResource(R.drawable.vijest_ind_www_active)
                 imgLink.setOnClickListener {
-                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(videoUrl)))
+                    startActivity(Intent(Intent.ACTION_VIEW, videoUrl.toUri()))
                 }
             }
             if (evaContent.attachments.isNotEmpty()) {
                 imgText.setImageResource(R.drawable.vijest_ind_txt_active)
                 imgText.setOnClickListener {
-                    startActivity(Intent.createChooser(Intent(Intent.ACTION_VIEW, Uri.parse(evaContent.attachments[0]!!.url)),
+                    startActivity(Intent.createChooser(Intent(Intent.ACTION_VIEW, evaContent.attachments[0]!!.url.toUri()),
                             "Otvaranje dokumenta " + evaContent.attachments[0]!!.name))
                 }
             }
 
-            loadingCircle.visibility = View.GONE
+            loadingCircle.isGone = true
 
             this.evaContent = evaContent
         }
@@ -226,7 +229,7 @@ class EvaContentFragment : EvaBaseFragment() {
     private fun initUI() {
         val ctx = context ?: return
 
-        loadingCircle.visibility = View.VISIBLE
+        loadingCircle.isVisible = true
 
         createIfMissingAndSubscribeToEvaContentUpdates()
 
@@ -235,7 +238,7 @@ class EvaContentFragment : EvaBaseFragment() {
 
         /** Is this 'Duhovni poziv' or 'Odgovori' category?  */
         if (categoryId == EvaCategory.POZIV.id.toLong()) {
-            btnPoziv.visibility = View.VISIBLE
+            btnPoziv.isVisible = true
             btnPoziv.setOnClickListener {
                 val text = "Hvaljen Isus i Marija, javljam Vam se jer razmišljam o duhovnom pozivu."
                 sendEmailIntent(ctx, "Duhovni poziv", text, arrayOf("duhovnipoziv@gmail.com"))
@@ -273,7 +276,7 @@ class EvaContentFragment : EvaBaseFragment() {
 
     private fun prepareAudioStream(context: Context, audioUri: String, playWhenReady: Boolean) {
 
-        val streamingUri = Uri.parse(audioUri)
+        val streamingUri = audioUri.toUri()
 
         val dataSourceFactory = DefaultDataSourceFactory(context,
                 Util.getUserAgent(context, resources.getString(R.string.app_name)),

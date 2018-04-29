@@ -5,6 +5,8 @@ import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.edit
+import androidx.core.os.bundleOf
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
@@ -29,9 +31,7 @@ class EvaQuotesFragment : EvaBaseFragment() {
 
         override fun newInstance(initializer: Long): EvaQuotesFragment {
             return EvaQuotesFragment().apply {
-                arguments = Bundle().apply {
-                    putLong(QUOTE_ID_KEY, initializer)
-                }
+                arguments = bundleOf(QUOTE_ID_KEY to initializer)
             }
         }
     }
@@ -60,7 +60,9 @@ class EvaQuotesFragment : EvaBaseFragment() {
                         .setAction("OtvoreneIzreke")
                         .build())
 
-        prefs.edit().remove("newContentInCategory1").apply()
+        prefs.edit {
+            remove("newContentInCategory1")
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

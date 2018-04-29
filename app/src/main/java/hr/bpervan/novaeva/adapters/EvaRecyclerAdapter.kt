@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.view.isVisible
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.model.OpenContentEvent
 import hr.bpervan.novaeva.model.OpenDirectoryEvent
@@ -157,9 +158,9 @@ class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
             val yearHourMinute: String = yearHourMinuteFormat.format(datetime)
 
             contentInfo.attachmentsIndicator.let {
-                imgHasTxt.visibility = if (it != null && it.hasDocuments) View.VISIBLE else View.GONE
-                imgHasLink.visibility = if (it != null && it.hasVideo) View.VISIBLE else View.GONE
-                imgHasAudio.visibility = if (it != null && it.hasMusic) View.VISIBLE else View.GONE
+                imgHasTxt.isVisible = it?.hasDocuments ?: false
+                imgHasLink.isVisible = it?.hasVideo ?: false
+                imgHasAudio.isVisible = it?.hasMusic ?: false
             }
 
             tvGodinaSatMinuta.text = yearHourMinute

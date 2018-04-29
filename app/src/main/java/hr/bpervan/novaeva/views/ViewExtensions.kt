@@ -1,6 +1,8 @@
 package hr.bpervan.novaeva.views
 
 import android.content.SharedPreferences
+import android.support.annotation.StringRes
+import android.support.design.widget.Snackbar
 import android.support.v4.view.ViewCompat
 import android.support.v4.widget.NestedScrollView
 import android.view.View
@@ -69,4 +71,8 @@ fun WebView.afterLoadAndLayoutComplete(action: () -> Unit) {
             webViewClient = null
         }
     }
+}
+
+fun View.snackbar(@StringRes resId: Int, duration: Int = Snackbar.LENGTH_SHORT) {
+    Snackbar.make(this, resId, duration).show()
 }

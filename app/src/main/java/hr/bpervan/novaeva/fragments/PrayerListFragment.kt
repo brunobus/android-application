@@ -7,6 +7,7 @@ import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
@@ -27,9 +28,7 @@ class PrayerListFragment : EvaBaseFragment() {
 
         override fun newInstance(initializer: Int): PrayerListFragment {
             return PrayerListFragment().apply {
-                arguments = Bundle().apply {
-                    putInt(prayerCategoryIdKey, initializer)
-                }
+                arguments = bundleOf(prayerCategoryIdKey to initializer)
             }
         }
     }

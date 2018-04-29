@@ -15,6 +15,8 @@ import android.util.TypedValue
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.edit
+import androidx.core.widget.toast
 import com.google.android.gms.analytics.GoogleAnalytics
 import com.google.android.gms.analytics.Tracker
 import com.nostra13.universalimageloader.core.ImageLoader
@@ -26,6 +28,7 @@ import hr.bpervan.novaeva.receivers.ConnectionDetector
 import hr.bpervan.novaeva.utilities.ImageLoaderConfigurator
 import hr.bpervan.novaeva.utilities.LifecycleLogger
 import hr.bpervan.novaeva.utilities.TransitionAnimation
+import hr.bpervan.novaeva.views.snackbar
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.realm.Realm
 
@@ -53,7 +56,9 @@ class NovaEvaApp : Application() {
         EventPipelines.evaTheme
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    prefs.edit().putString(evaThemeKey, it.toString()).apply()
+                    prefs.edit {
+                        putString(evaThemeKey, it.toString())
+                    }
                 }
 
         val filter = IntentFilter()
@@ -111,26 +116,18 @@ class NovaEvaApp : Application() {
         }
 
         fun showFetchErrorSnackbar(throwable: Throwable?, context: Context?, holderView: View?) {
-
             if (throwable != null) Log.e("evaError", throwable.message, throwable)
-
-            context ?: return
-            holderView ?: return
-            Snackbar.make(holderView, context.getString(R.string.error_fetching_data), Snackbar.LENGTH_LONG).show()
+            holderView?.snackbar(R.string.error_fetching_data, Snackbar.LENGTH_LONG)
         }
 
         fun showNetworkUnavailableToast(throwable: Throwable?, context: Context?) {
             if (throwable != null) Log.e("evaError", throwable.message, throwable)
-            context ?: return
-            Toast.makeText(context, context.getString(R.string.network_unavailable), Toast.LENGTH_LONG).show()
+            context?.toast(R.string.network_unavailable, Toast.LENGTH_LONG)
         }
 
         fun showNetworkUnavailableSnackbar(throwable: Throwable?, context: Context?, holderView: View?) {
             if (throwable != null) Log.e("evaError", throwable.message, throwable)
-
-            context ?: return
-            holderView ?: return
-            Snackbar.make(holderView, context.getString(R.string.network_unavailable), Snackbar.LENGTH_SHORT).show()
+            holderView?.snackbar(R.string.network_unavailable, Snackbar.LENGTH_SHORT)
         }
 
         inline fun showFetchErrorDialog(throwable: Throwable?, context: Activity, crossinline onTryAgain: () -> Unit) {

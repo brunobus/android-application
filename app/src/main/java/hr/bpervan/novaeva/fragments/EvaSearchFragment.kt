@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import androidx.core.os.bundleOf
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
@@ -35,9 +36,7 @@ class EvaSearchFragment : EvaBaseFragment() {
         private const val searchStringKey = "searchString"
         override fun newInstance(initializer: String): EvaSearchFragment {
             return EvaSearchFragment().apply {
-                arguments = Bundle().apply {
-                    putString(searchStringKey, initializer)
-                }
+                arguments = bundleOf(searchStringKey to initializer)
             }
         }
     }

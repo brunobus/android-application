@@ -8,6 +8,7 @@ import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isInvisible
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
@@ -62,7 +63,7 @@ class PrayerBookFragment : EvaBaseFragment() {
     private fun initUI() {
         val title = "Molitvenik"
 
-        prayerArrow.visibility = View.INVISIBLE
+        prayerArrow.isInvisible = true
         prayerTitleTextView.apply {
             text = title
             typeface = NovaEvaApp.openSansBold

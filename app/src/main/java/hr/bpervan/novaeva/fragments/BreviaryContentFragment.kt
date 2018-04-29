@@ -5,6 +5,7 @@ import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
@@ -27,9 +28,7 @@ class BreviaryContentFragment : EvaBaseFragment() {
         private const val BREVIARY_ID_KEY = "breviaryId"
         override fun newInstance(initializer: Int): BreviaryContentFragment {
             return BreviaryContentFragment().apply {
-                arguments = Bundle().apply {
-                    putInt(BREVIARY_ID_KEY, initializer)
-                }
+                arguments = bundleOf(BREVIARY_ID_KEY to initializer)
             }
         }
 

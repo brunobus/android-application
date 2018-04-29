@@ -3,6 +3,7 @@ package hr.bpervan.novaeva.utilities
 import android.graphics.PorterDuff
 import android.view.MotionEvent
 import android.view.View
+import androidx.core.view.postDelayed
 
 class EvaTouchFeedback(val view: View, val touchColor: Int) : View.OnTouchListener {
     private val waitScrollTimeout = 200L
@@ -13,11 +14,11 @@ class EvaTouchFeedback(val view: View, val touchColor: Int) : View.OnTouchListen
     override fun onTouch(v: View, event: MotionEvent): Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                view.postDelayed({
+                view.postDelayed(waitScrollTimeout) {
                     if (!cancelDelayedJob) {
                         setThemedColorFilter(view)
                     }
-                }, waitScrollTimeout)
+                }
                 cancelDelayedJob = false
             }
             MotionEvent.ACTION_CANCEL -> {
@@ -27,9 +28,9 @@ class EvaTouchFeedback(val view: View, val touchColor: Int) : View.OnTouchListen
             MotionEvent.ACTION_UP -> {
                 cancelDelayedJob = true
                 setThemedColorFilter(view)
-                view.postDelayed({
+                view.postDelayed(afterClickReleaseTimeout) {
                     view.background.clearColorFilter()
-                }, afterClickReleaseTimeout)
+                }
                 view.performClick()
             }
         }
