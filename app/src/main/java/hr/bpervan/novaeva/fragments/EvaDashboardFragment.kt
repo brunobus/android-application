@@ -10,8 +10,8 @@ import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.*
-import hr.bpervan.novaeva.utilities.TransitionAnimation
-import io.reactivex.rxkotlin.plusAssign
+import hr.bpervan.novaeva.util.TransitionAnimation
+import hr.bpervan.novaeva.util.plusAssign
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 
 /**

@@ -5,11 +5,12 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.View
 import com.nostra13.universalimageloader.core.ImageLoader
-import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.EventPipelines
+import hr.bpervan.novaeva.NovaEvaApp
+import hr.bpervan.novaeva.util.minusAssign
+import hr.bpervan.novaeva.util.plusAssign
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
-import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.fragment_prayers.*
 
 /**
@@ -77,9 +78,5 @@ abstract class EvaBaseFragment : Fragment() {
             baseDisposables += newDisposable
         }
         return newDisposable
-    }
-
-    private operator fun CompositeDisposable.minusAssign(oldDisposable: Disposable) {
-        remove(oldDisposable)
     }
 }

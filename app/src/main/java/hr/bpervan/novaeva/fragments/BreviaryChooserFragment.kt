@@ -10,7 +10,7 @@ import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.OpenBreviaryContentEvent
-import hr.bpervan.novaeva.utilities.TransitionAnimation
+import hr.bpervan.novaeva.util.TransitionAnimation
 import kotlinx.android.synthetic.main.fragment_breviary_chooser.*
 import kotlinx.android.synthetic.main.collapsing_breviary_header.*
 import java.text.SimpleDateFormat

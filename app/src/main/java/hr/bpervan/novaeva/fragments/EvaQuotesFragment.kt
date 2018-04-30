@@ -1,6 +1,7 @@
 package hr.bpervan.novaeva.fragments
 
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
@@ -12,8 +13,9 @@ import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.services.novaEvaService
-import hr.bpervan.novaeva.utilities.networkRequest
+import hr.bpervan.novaeva.util.networkRequest
 import hr.bpervan.novaeva.views.loadHtmlText
+import hr.bpervan.novaeva.views.snackbar
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.collapsing_content_header.view.*
 import kotlinx.android.synthetic.main.fragment_eva_quotes.*
@@ -125,9 +127,9 @@ class EvaQuotesFragment : EvaBaseFragment() {
 
                         showQuote()
                     }
-                }) {
-                    NovaEvaApp.showNetworkUnavailableSnackbar(it, view)
-                }
+                }, onError = {
+                    view?.snackbar(R.string.network_unavailable, Snackbar.LENGTH_SHORT)
+                })
     }
 
     private fun showQuote() {

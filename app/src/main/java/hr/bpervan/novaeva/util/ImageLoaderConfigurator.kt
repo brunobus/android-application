@@ -1,4 +1,4 @@
-package hr.bpervan.novaeva.utilities
+package hr.bpervan.novaeva.util
 
 import android.content.Context
 import android.graphics.Bitmap

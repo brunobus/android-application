@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
-import hr.bpervan.novaeva.SCROLL_PERCENT_KEY
+import hr.bpervan.novaeva.util.SCROLL_PERCENT_KEY
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.views.afterLoadAndLayoutComplete
 import hr.bpervan.novaeva.views.applyEvaConfiguration

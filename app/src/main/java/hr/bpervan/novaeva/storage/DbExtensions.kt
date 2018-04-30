@@ -1,6 +1,6 @@
 package hr.bpervan.novaeva.storage
 
-import hr.bpervan.novaeva.utilities.logError
+import hr.bpervan.novaeva.util.logError
 import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable

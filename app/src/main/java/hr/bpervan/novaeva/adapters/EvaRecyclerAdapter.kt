@@ -17,8 +17,8 @@ import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaContentMetadata
 import hr.bpervan.novaeva.model.EvaDirectoryMetadata
 import hr.bpervan.novaeva.model.TreeElementInfo
-import hr.bpervan.novaeva.utilities.EvaTouchFeedback
-import hr.bpervan.novaeva.utilities.TransitionAnimation
+import hr.bpervan.novaeva.util.EvaTouchFeedback
+import hr.bpervan.novaeva.util.TransitionAnimation
 import kotlinx.android.synthetic.main.recycler_item_eva_content.view.*
 import kotlinx.android.synthetic.main.recycler_item_folder.view.*
 import java.text.SimpleDateFormat

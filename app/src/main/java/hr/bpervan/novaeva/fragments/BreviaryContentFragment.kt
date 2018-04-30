@@ -1,6 +1,7 @@
 package hr.bpervan.novaeva.fragments
 
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
@@ -9,12 +10,12 @@ import androidx.core.os.bundleOf
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
-import hr.bpervan.novaeva.SCROLL_PERCENT_KEY
+import hr.bpervan.novaeva.util.SCROLL_PERCENT_KEY
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.services.novaEvaService
-import hr.bpervan.novaeva.utilities.networkRequest
+import hr.bpervan.novaeva.util.networkRequest
+import hr.bpervan.novaeva.util.plusAssign
 import hr.bpervan.novaeva.views.*
-import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.collapsing_content_header.view.*
 import kotlinx.android.synthetic.main.fragment_simple_content.*
 
@@ -129,9 +130,9 @@ class BreviaryContentFragment : EvaBaseFragment() {
                     view ?: return@networkRequest
                     breviaryText = breviary.text ?: ""
                     showBreviary()
-                }) {
-                    NovaEvaApp.showFetchErrorSnackbar(it, view)
-                }
+                }, onError = {
+                    view?.snackbar(R.string.error_fetching_data, Snackbar.LENGTH_LONG)
+                })
     }
 
     private fun showBreviary() {

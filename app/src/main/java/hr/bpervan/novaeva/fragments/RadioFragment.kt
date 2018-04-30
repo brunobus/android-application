@@ -3,6 +3,7 @@ package hr.bpervan.novaeva.fragments
 import android.content.Context
 import android.os.Bundle
 import android.os.Handler
+import android.support.design.widget.Snackbar
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -26,9 +27,10 @@ import hr.bpervan.novaeva.model.EvaContentMetadata
 import hr.bpervan.novaeva.model.toDatabaseModel
 import hr.bpervan.novaeva.player.EvaPlayerEventListener
 import hr.bpervan.novaeva.services.novaEvaService
-import hr.bpervan.novaeva.utilities.networkRequest
+import hr.bpervan.novaeva.util.networkRequest
+import hr.bpervan.novaeva.util.plusAssign
+import hr.bpervan.novaeva.views.snackbar
 import io.reactivex.disposables.Disposable
-import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.collapsing_content_header.view.*
 import kotlinx.android.synthetic.main.fragment_radio.*
 
@@ -96,9 +98,7 @@ class RadioFragment : EvaBaseFragment() {
                     if (coverImageInfo != null && coverImageView != null) {
                         imageLoader.displayImage(coverImageInfo.url, coverImageView)
                     }
-                }) {
-                    /*nothing*/
-                }
+                }, onError = {})
             }
         }
 
@@ -149,9 +149,11 @@ class RadioFragment : EvaBaseFragment() {
     private fun fetchRadioStationsFromServer(timestamp: Long? = null) {
         fetchFromServerDisposable = novaEvaService.getDirectoryContent(EvaCategory.RADIO.id.toLong(), timestamp, 1000)
                 .networkRequest({ evaDirectoryDTO ->
-                    evaDirectoryDTO.contentMetadataList.map { it.toDatabaseModel() }
-                }) {
-                    NovaEvaApp.showFetchErrorSnackbar(it, view)
-                }
+                    radioStationList.clear()
+                    radioStationList.addAll(evaDirectoryDTO.contentMetadataList.map { it.toDatabaseModel() })
+                    adapter.notifyDataSetChanged()
+                }, onError = {
+                    view?.snackbar(R.string.error_fetching_data, Snackbar.LENGTH_LONG)
+                })
     }
 }

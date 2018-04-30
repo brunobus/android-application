@@ -1,4 +1,4 @@
-package hr.bpervan.novaeva.cache
+package hr.bpervan.novaeva.util
 
 import hr.bpervan.novaeva.model.*
 import hr.bpervan.novaeva.storage.EvaContentDbAdapter
@@ -8,7 +8,7 @@ import io.realm.Realm
 /**
  * Created by vpriscan on 26.10.17..
  */
-object EvaCacheService {
+object EvaCache {
 
     fun cache(realm: Realm, evaContentDTO: EvaContentDTO) {
         EvaContentDbAdapter.addOrUpdateEvaContentAsync(realm, evaContentDTO.toDatabaseModel())
@@ -16,7 +16,7 @@ object EvaCacheService {
 
     fun cache(realm: Realm, evaDirectoryDTO: EvaDirectoryDTO) {
         EvaDirectoryDbAdapter.addOrUpdateEvaDirectoryAsync(realm, evaDirectoryDTO.directoryId,
-                evaDirectoryDTO.contentMetadataList?.map { it.toDatabaseModel() } ?: listOf(),
-                evaDirectoryDTO.subDirectoryMetadataList?.map { it.toDatabaseModel() } ?: listOf())
+                evaDirectoryDTO.contentMetadataList.map { it.toDatabaseModel() },
+                evaDirectoryDTO.subDirectoryMetadataList.map { it.toDatabaseModel() })
     }
 }

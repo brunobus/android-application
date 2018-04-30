@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.support.design.widget.Snackbar
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
@@ -21,9 +22,9 @@ import com.google.android.exoplayer2.util.Util
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
-import hr.bpervan.novaeva.SCROLL_PERCENT_KEY
-import hr.bpervan.novaeva.actions.sendEmailIntent
-import hr.bpervan.novaeva.cache.EvaCacheService
+import hr.bpervan.novaeva.util.SCROLL_PERCENT_KEY
+import hr.bpervan.novaeva.util.sendEmailIntent
+import hr.bpervan.novaeva.util.EvaCache
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaCategory
 import hr.bpervan.novaeva.model.EvaContent
@@ -32,7 +33,7 @@ import hr.bpervan.novaeva.player.EvaPlayerEventListener
 import hr.bpervan.novaeva.services.novaEvaService
 import hr.bpervan.novaeva.storage.EvaContentDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
-import hr.bpervan.novaeva.utilities.networkRequest
+import hr.bpervan.novaeva.util.networkRequest
 import hr.bpervan.novaeva.views.*
 import io.reactivex.disposables.Disposable
 import io.realm.Realm
@@ -193,10 +194,10 @@ class EvaContentFragment : EvaBaseFragment() {
     private fun fetchContentFromServer(contentId: Long) {
         fetchFromServerDisposable = novaEvaService.getContentData(contentId)
                 .networkRequest({ contentDataDTO ->
-                    EvaCacheService.cache(realm, contentDataDTO)
-                }) {
-                    NovaEvaApp.showFetchErrorSnackbar(it, view)
-                }
+                    EvaCache.cache(realm, contentDataDTO)
+                }, onError = {
+                    view?.snackbar(R.string.error_fetching_data, Snackbar.LENGTH_LONG)
+                })
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

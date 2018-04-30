@@ -1,7 +1,5 @@
 package hr.bpervan.novaeva.activities
 
-import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -16,7 +14,6 @@ import android.view.ViewGroup
 import androidx.core.content.edit
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
-import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.fragments.*
@@ -24,13 +21,9 @@ import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaContentMetadata
 import hr.bpervan.novaeva.model.OpenContentEvent
 import hr.bpervan.novaeva.services.novaEvaService
-import hr.bpervan.novaeva.utilities.SwipeGestureListener
-import hr.bpervan.novaeva.utilities.TransitionAnimation
-import hr.bpervan.novaeva.utilities.TransitionAnimation.*
-import hr.bpervan.novaeva.utilities.networkRequest
-import hr.bpervan.novaeva.utilities.screenChangeThrottle
+import hr.bpervan.novaeva.util.*
+import hr.bpervan.novaeva.util.TransitionAnimation.*
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.activity_eva_main.*
 import java.util.concurrent.TimeUnit
 

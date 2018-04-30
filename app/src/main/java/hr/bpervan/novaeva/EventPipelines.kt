@@ -2,7 +2,8 @@ package hr.bpervan.novaeva
 
 import android.graphics.drawable.Drawable
 import hr.bpervan.novaeva.model.*
-import hr.bpervan.novaeva.utilities.TransitionAnimation
+import hr.bpervan.novaeva.util.EvaTheme
+import hr.bpervan.novaeva.util.TransitionAnimation
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 

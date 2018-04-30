@@ -3,6 +3,7 @@ package hr.bpervan.novaeva.fragments
 import android.content.res.Configuration
 import android.os.Bundle
 import android.os.Handler
+import android.support.design.widget.Snackbar
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -16,7 +17,7 @@ import androidx.core.os.bundleOf
 import androidx.core.os.postDelayed
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.EventPipelines
-import hr.bpervan.novaeva.cache.EvaCacheService
+import hr.bpervan.novaeva.util.EvaCache
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
@@ -24,7 +25,8 @@ import hr.bpervan.novaeva.model.*
 import hr.bpervan.novaeva.services.novaEvaService
 import hr.bpervan.novaeva.storage.EvaDirectoryDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
-import hr.bpervan.novaeva.utilities.networkRequest
+import hr.bpervan.novaeva.util.networkRequest
+import hr.bpervan.novaeva.views.snackbar
 import io.reactivex.disposables.Disposable
 import io.realm.Realm
 import io.realm.Sort
@@ -254,7 +256,7 @@ class EvaDirectoryFragment : EvaBaseFragment() {
 
                     evaDirectoryDTO.directoryId = directoryId //todo fix on server
 
-                    EvaCacheService.cache(realm, evaDirectoryDTO)
+                    EvaCache.cache(realm, evaDirectoryDTO)
 
                     handler.postDelayed(4000) {
                         /*if there are no actual new changes from server, data in cache will not be "updated"
@@ -268,12 +270,13 @@ class EvaDirectoryFragment : EvaBaseFragment() {
 
                     hasMore = evaDirectoryDTO.more > 0
 
-                }) {
+                }, onError = {
                     handler.postDelayed(2000) {
                         fetchingFromServer = false
                         refreshLoadingCircleState()
+
+                        view?.snackbar(R.string.error_fetching_data, Snackbar.LENGTH_LONG)
                     }
-                    NovaEvaApp.showFetchErrorSnackbar(it, view)
-                }
+                })
     }
 }

@@ -15,12 +15,13 @@ import androidx.core.os.bundleOf
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
+import hr.bpervan.novaeva.util.showFetchErrorDialog
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaContentMetadata
 import hr.bpervan.novaeva.model.toDatabaseModel
 import hr.bpervan.novaeva.services.novaEvaService
-import hr.bpervan.novaeva.utilities.networkRequest
+import hr.bpervan.novaeva.util.networkRequest
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.fragment_search.*
 import kotlinx.android.synthetic.main.eva_recycler_view.view.*
@@ -125,9 +126,7 @@ class EvaSearchFragment : EvaBaseFragment() {
 
         searchForContentDisposable = novaEvaService.searchForContent(searchString)
                 .networkRequest({ searchResult ->
-                    if (searchResult.searchResultContentMetadataList != null
-                            && !searchResult.searchResultContentMetadataList.isEmpty()) {
-
+                    if (!searchResult.searchResultContentMetadataList.isEmpty()) {
                         searchResultList.addAll(
                                 searchResult.searchResultContentMetadataList.map { it.toDatabaseModel() })
 
@@ -135,11 +134,11 @@ class EvaSearchFragment : EvaBaseFragment() {
                     } else {
                         showEmptyListInfo()
                     }
-                }) {
+                }, onError = {
                     activity?.let { activity ->
-                        NovaEvaApp.showFetchErrorDialog(it, activity) { searchForContent(searchString) }
+                        showFetchErrorDialog(it, activity) { searchForContent(searchString) }
                     }
-                }
+                })
     }
 
     private fun showEmptyListInfo() {

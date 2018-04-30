@@ -10,8 +10,8 @@ import android.view.ViewTreeObserver
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import hr.bpervan.novaeva.defaultTextSize
-import hr.bpervan.novaeva.TEXT_SIZE_KEY
+import hr.bpervan.novaeva.util.defaultTextSize
+import hr.bpervan.novaeva.util.TEXT_SIZE_KEY
 
 /**
  *

@@ -1,6 +1,6 @@
 package hr.bpervan.novaeva.model
 
-import hr.bpervan.novaeva.utilities.TransitionAnimation
+import hr.bpervan.novaeva.util.TransitionAnimation
 
 /**
  *

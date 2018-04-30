@@ -11,7 +11,7 @@ import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.adapters.RadioStationsAdapter.RadioStationViewHolder
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaContentMetadata
-import hr.bpervan.novaeva.utilities.EvaTouchFeedback
+import hr.bpervan.novaeva.util.EvaTouchFeedback
 import kotlinx.android.synthetic.main.recycler_item_radio_station.view.*
 
 /**

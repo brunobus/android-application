@@ -1,7 +1,7 @@
 package hr.bpervan.novaeva.storage
 
 import hr.bpervan.novaeva.model.*
-import hr.bpervan.novaeva.utilities.addIfNoneExistingMatch
+import hr.bpervan.novaeva.util.addIfNoneExistingMatch
 import io.reactivex.disposables.Disposable
 import io.realm.Realm
 import io.realm.kotlin.where

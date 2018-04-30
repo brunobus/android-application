@@ -20,4 +20,7 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
+-keep class hr.bpervan.novaeva.model.** {
+  *;
+}
 -ignorewarnings

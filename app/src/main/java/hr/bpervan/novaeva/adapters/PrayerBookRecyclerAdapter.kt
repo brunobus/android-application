@@ -13,8 +13,8 @@ import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.adapters.PrayerBookRecyclerAdapter.PrayerCategoryViewHolder
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.PrayerCategory
-import hr.bpervan.novaeva.utilities.EvaTouchFeedback
-import hr.bpervan.novaeva.utilities.TransitionAnimation
+import hr.bpervan.novaeva.util.EvaTouchFeedback
+import hr.bpervan.novaeva.util.TransitionAnimation
 import kotlinx.android.synthetic.main.recycler_item_prayer_category.view.*
 
 class PrayerBookRecyclerAdapter(private val prayerCategoryList: List<PrayerCategory>) :

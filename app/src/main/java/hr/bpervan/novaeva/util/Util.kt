@@ -1,4 +1,4 @@
-package hr.bpervan.novaeva.utilities
+package hr.bpervan.novaeva.util
 
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -6,6 +6,7 @@ import android.util.Log
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
@@ -18,12 +19,9 @@ import java.util.concurrent.TimeUnit
 fun <T> Single<T>.networkRequest(onSuccess: (T) -> Unit, onError: (Throwable) -> Unit): Disposable {
     return subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(onSuccess, onError)
-}
-
-fun <T> Single<T>.computationRequest(onSuccess: (T) -> Unit, onError: (Throwable) -> Unit): Disposable {
-    return subscribeOn(Schedulers.computation())
-            .observeOn(AndroidSchedulers.mainThread())
+            .doOnError {
+                Log.e("evaNetworkError", it.message, it)
+            }
             .subscribe(onSuccess, onError)
 }
 
@@ -33,6 +31,14 @@ fun <T> Observable<T>.screenChangeThrottle(): Observable<T> {
 
 inline fun <T> MutableList<T>.addIfNoneExistingMatch(toAdd: T, predicate: (existingElement: T) -> Boolean) {
     if (none { predicate(it) }) add(toAdd)
+}
+
+operator fun CompositeDisposable.minusAssign(oldDisposable: Disposable) {
+    remove(oldDisposable)
+}
+
+operator fun CompositeDisposable.plusAssign(oldDisposable: Disposable) {
+    add(oldDisposable)
 }
 
 fun logError(throwable: Throwable) {

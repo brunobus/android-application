@@ -1,34 +1,24 @@
 package hr.bpervan.novaeva
 
-import android.app.Activity
-import android.app.AlertDialog
 import android.app.Application
 import android.content.Context
 import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
-import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
 import android.util.Log
-import android.util.TypedValue
-import android.view.View
-import android.widget.TextView
-import android.widget.Toast
 import androidx.core.content.edit
-import androidx.core.widget.toast
 import com.google.android.gms.analytics.GoogleAnalytics
 import com.google.android.gms.analytics.Tracker
 import com.nostra13.universalimageloader.core.ImageLoader
 import hr.bpervan.novaeva.main.BuildConfig
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.EvaTheme
+import hr.bpervan.novaeva.util.EvaTheme
 import hr.bpervan.novaeva.player.EvaPlayer
 import hr.bpervan.novaeva.receivers.ConnectionDetector
-import hr.bpervan.novaeva.utilities.ImageLoaderConfigurator
-import hr.bpervan.novaeva.utilities.LifecycleLogger
-import hr.bpervan.novaeva.utilities.TransitionAnimation
-import hr.bpervan.novaeva.views.snackbar
+import hr.bpervan.novaeva.util.ImageLoaderConfigurator
+import hr.bpervan.novaeva.util.LifecycleLogger
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.realm.Realm
 
@@ -100,8 +90,6 @@ class NovaEvaApp : Application() {
             }
         }
 
-        //public static final properties
-
         val openSansBold: Typeface? by lazy {
             loadTypeface("opensans-bold.ttf")
         }
@@ -113,40 +101,6 @@ class NovaEvaApp : Application() {
         }
         val openSansRegular: Typeface? by lazy {
             loadTypeface("opensans-regular.ttf")
-        }
-
-        fun showFetchErrorSnackbar(throwable: Throwable?, view: View?) {
-            if (throwable != null) Log.e("evaError", throwable.message, throwable)
-            view?.snackbar(R.string.error_fetching_data, Snackbar.LENGTH_LONG)
-        }
-
-        fun showNetworkUnavailableToast(throwable: Throwable?, context: Context?) {
-            if (throwable != null) Log.e("evaError", throwable.message, throwable)
-            context?.toast(R.string.network_unavailable, Toast.LENGTH_LONG)
-        }
-
-        fun showNetworkUnavailableSnackbar(throwable: Throwable?, view: View?) {
-            if (throwable != null) Log.e("evaError", throwable.message, throwable)
-            view?.snackbar(R.string.network_unavailable, Snackbar.LENGTH_SHORT)
-        }
-
-        inline fun showFetchErrorDialog(throwable: Throwable?, context: Activity, crossinline onTryAgain: () -> Unit) {
-            if (throwable != null) Log.e("evaError", throwable.message, throwable)
-
-            val error = AlertDialog.Builder(context)
-            error.setTitle(context.getString(R.string.error))
-
-            val tv = TextView(context)
-            tv.text = context.getString(R.string.error_fetching_data)
-
-            NovaEvaApp.openSansRegular?.let { tv.typeface = it }
-
-            tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
-            error.setView(tv)
-
-            error.setPositiveButton(context.getString(R.string.try_again)) { _, _ -> onTryAgain() }
-            error.setNegativeButton(context.getString(R.string.go_back)) { _, _ -> EventPipelines.goHome.onNext(TransitionAnimation.RIGHTWARDS) }
-            error.show()
         }
 
         val defaultDashboardBackground: Drawable by lazy {

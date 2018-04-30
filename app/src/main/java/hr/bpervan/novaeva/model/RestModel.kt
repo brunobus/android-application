@@ -8,14 +8,23 @@ import com.google.gson.annotations.SerializedName
  */
 class EvaDirectoryDTO {
     var directoryId: Long = 0
+
     val image: EvaImageDTO? = null
+
     val paket: Int = 0
+
     @SerializedName("jos")
     val more: Int = 0
+
     @SerializedName("subcat")
-    val subDirectoryMetadataList: List<EvaDirectoryMetadataDTO> = emptyList()
+    private val _subDirectoryMetadataList: List<EvaDirectoryMetadataDTO>? = null
+    val subDirectoryMetadataList: List<EvaDirectoryMetadataDTO>
+        get() = _subDirectoryMetadataList ?: emptyList()
+
     @SerializedName("vijesti")
-    val contentMetadataList: List<EvaContentMetadataDTO> = emptyList()
+    private val _contentMetadataList: List<EvaContentMetadataDTO>? = null
+    val contentMetadataList: List<EvaContentMetadataDTO>
+        get() = _contentMetadataList ?: emptyList()
 }
 
 class EvaDirectoryMetadataDTO {
@@ -70,12 +79,20 @@ class EvaAttachmentsIndicatorDTO {
 class EvaContentDTO {
     @SerializedName("nid")
     val contentId: Long = 0
+
     @SerializedName("cid")
     val directoryId: Long = 0
+
     @SerializedName("prilozi")
-    val attachments: List<EvaAttachmentDTO> = emptyList()
+    private val _attachments: List<EvaAttachmentDTO>? = null
+    val attachments: List<EvaAttachmentDTO>
+        get() = _attachments ?: emptyList()
+
     @SerializedName("image")
-    val images: List<EvaImageDTO> = emptyList()
+    private val _images: List<EvaImageDTO>? = null
+    val images: List<EvaImageDTO>
+        get() = _images ?: emptyList()
+
     @SerializedName("tekst")
     val text: String? = null
     @SerializedName("naslov")
@@ -110,8 +127,11 @@ class EvaBreviaryDTO {
 
 class EvaSearchResultDTO {
     val paket: Int = 0
+
     @SerializedName("vijesti")
-    val searchResultContentMetadataList: List<EvaContentMetadataDTO> = emptyList()
+    private val _searchResultContentMetadataList: List<EvaContentMetadataDTO>? = null
+    val searchResultContentMetadataList: List<EvaContentMetadataDTO>
+        get() = _searchResultContentMetadataList ?: emptyList()
 }
 
 class EvaIndicatorsDTO {

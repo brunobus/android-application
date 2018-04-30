@@ -1,4 +1,4 @@
-package hr.bpervan.novaeva
+package hr.bpervan.novaeva.util
 
 /**
  *
