@@ -17,7 +17,8 @@ val novaEvaService = NovaEvaService.instance
 interface NovaEvaService {
     @GET("json?api=2")
     fun getDirectoryContent(@Query("cid") directoryId: Long,
-                            @Query("date") date: Long? = null): Single<EvaDirectoryDTO>
+                            @Query("date") date: Long? = null,
+                            @Query("items") items: Long = 20): Single<EvaDirectoryDTO>
 
     @GET("json?api=2&rand=1")
     fun getRandomDirectoryContent(@Query("cid") directoryId: Long): Single<EvaDirectoryDTO>
@@ -34,8 +35,8 @@ interface NovaEvaService {
     @GET("json?api=2&indicators=1")
     fun getNewStuff(): Single<EvaIndicatorsDTO>
 
-    @GET("api3/test/background")
-    fun getDashboardBackground(@Query("theme") theme: EvaTheme): Single<String>
+//    @GET("api3/test/background")
+//    fun getDashboardBackground(@Query("theme") theme: EvaTheme): Single<String>
 
     companion object {
         val instance by lazy {

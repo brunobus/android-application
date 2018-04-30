@@ -1,7 +1,6 @@
 package hr.bpervan.novaeva.fragments
 
 import android.content.Context
-import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.support.v7.widget.DefaultItemAnimator
@@ -13,18 +12,22 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.net.toUri
 import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
-import com.google.android.exoplayer2.source.ExtractorMediaSource
+import com.google.android.exoplayer2.source.hls.HlsMediaSource
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import com.google.android.gms.analytics.HitBuilders
-import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.EventPipelines
+import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.RadioStationsAdapter
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.TEMP_RADIO_STATIONS
+import hr.bpervan.novaeva.model.EvaCategory
+import hr.bpervan.novaeva.model.EvaContentMetadata
+import hr.bpervan.novaeva.model.toDatabaseModel
 import hr.bpervan.novaeva.player.EvaPlayerEventListener
+import hr.bpervan.novaeva.services.novaEvaService
+import hr.bpervan.novaeva.utilities.networkRequest
+import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.plusAssign
 import kotlinx.android.synthetic.main.collapsing_content_header.view.*
 import kotlinx.android.synthetic.main.fragment_radio.*
@@ -40,7 +43,14 @@ class RadioFragment : EvaBaseFragment() {
         }
     }
 
+    private var fetchFromServerDisposable: Disposable? = null
+        set(value) {
+            field = safeReplaceDisposable(field, value)
+        }
+
     private lateinit var adapter: RadioStationsAdapter
+
+    private val radioStationList: MutableList<EvaContentMetadata> = mutableListOf()
     private var selectedRadioStation: String? = null
 
     private var exoPlayer: ExoPlayer? = null
@@ -49,13 +59,15 @@ class RadioFragment : EvaBaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        adapter = RadioStationsAdapter(TEMP_RADIO_STATIONS)
+        adapter = RadioStationsAdapter(radioStationList)
 
         savedInstanceState ?: NovaEvaApp.defaultTracker
                 .send(HitBuilders.EventBuilder()
                         .setCategory("Radio")
                         .setAction("OtvorenRadioIzbornik")
                         .build())
+
+        fetchRadioStationsFromServer()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -71,11 +83,21 @@ class RadioFragment : EvaBaseFragment() {
         EventPipelines.changeStatusbarColor.onNext(R.color.VeryDarkGray)
         EventPipelines.changeFragmentBackgroundResource.onNext(R.drawable.radio_background)
 
-        baseDisposables += EventPipelines.playRadioStream.subscribe { radioStation ->
+        baseDisposables += EventPipelines.chooseRadioStation.subscribe { radioStation ->
             context?.let { context ->
-                val streamUri = radioStation.streamUris.firstOrNull()
-                if (streamUri != null) {
-                    prepareAudioStream(context, streamUri, true)
+                fetchFromServerDisposable = novaEvaService.getContentData(radioStation.contentId).networkRequest({ radioStationDetailsDto ->
+                    val radioStationDetails = radioStationDetailsDto.toDatabaseModel()
+
+                    prepareRadioStream(context, radioStationDetails.audioURL!!, true)
+
+                    val coverImageInfo = radioStationDetails.image
+                    val coverImageView = collapsingRadioHeader.coverImage
+
+                    if (coverImageInfo != null && coverImageView != null) {
+                        imageLoader.displayImage(coverImageInfo.url, coverImageView)
+                    }
+                }) {
+                    /*nothing*/
                 }
             }
         }
@@ -101,19 +123,19 @@ class RadioFragment : EvaBaseFragment() {
         exoPlayer = null
     }
 
-    private fun prepareAudioStream(context: Context, audioUri: String, playWhenReady: Boolean) {
+    private val handler = Handler()
 
-        val streamingUri = audioUri.toUri()
+    private fun prepareRadioStream(context: Context, playlistUri: String, playWhenReady: Boolean) {
 
         val dataSourceFactory = DefaultDataSourceFactory(context,
                 Util.getUserAgent(context, resources.getString(R.string.app_name)),
                 DefaultBandwidthMeter())
 
-//        val factory = ExtractorMediaSource.Factory(dataSourceFactory).setCustomCacheKey(audioUri)
+//        val factory = ExtractorMediaSource.Factory(dataSourceFactory).setCustomCacheKey(playlistUri)
 //        val mediaSource = factory.createMediaSource(streamingUri)
 
-        val exoPlayer = NovaEvaApp.evaPlayer.prepareIfNeededAndGetPlayer(audioUri) {
-            ExtractorMediaSource(streamingUri, dataSourceFactory, DefaultExtractorsFactory(), Handler(), null, audioUri)
+        val exoPlayer = NovaEvaApp.evaPlayer.prepareIfNeededAndGetPlayer(playlistUri) {
+            HlsMediaSource(playlistUri.toUri(), dataSourceFactory, handler, null)
         }
 
         this.exoPlayer?.removeListener(evaPlayerEventListener)
@@ -122,5 +144,14 @@ class RadioFragment : EvaBaseFragment() {
         this.exoPlayer = exoPlayer
 
         exoPlayer.playWhenReady = playWhenReady
+    }
+
+    private fun fetchRadioStationsFromServer(timestamp: Long? = null) {
+        fetchFromServerDisposable = novaEvaService.getDirectoryContent(EvaCategory.RADIO.id.toLong(), timestamp, 1000)
+                .networkRequest({ evaDirectoryDTO ->
+                    evaDirectoryDTO.contentMetadataList.map { it.toDatabaseModel() }
+                }) {
+                    NovaEvaApp.showFetchErrorSnackbar(it, view)
+                }
     }
 }

@@ -11,7 +11,7 @@ import android.webkit.WebView
 import android.widget.TextView
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.PRAYERS_ASSETS_DIR_PATH
+import hr.bpervan.novaeva.PRAYERS_ASSETS_DIR_PATH
 import hr.bpervan.novaeva.model.Prayer
 import hr.bpervan.novaeva.model.PrayerCategory
 import hr.bpervan.novaeva.utilities.EvaTouchFeedback

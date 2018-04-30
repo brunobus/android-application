@@ -195,7 +195,7 @@ class EvaContentFragment : EvaBaseFragment() {
                 .networkRequest({ contentDataDTO ->
                     EvaCacheService.cache(realm, contentDataDTO)
                 }) {
-                    NovaEvaApp.showFetchErrorSnackbar(it, context, view)
+                    NovaEvaApp.showFetchErrorSnackbar(it, view)
                 }
     }
 
@@ -237,7 +237,7 @@ class EvaContentFragment : EvaBaseFragment() {
         vijestWebView.loadHtmlText(evaContent?.text)
 
         /** Is this 'Duhovni poziv' or 'Odgovori' category?  */
-        if (categoryId == EvaCategory.POZIV.id.toLong()) {
+        if (categoryId == EvaCategory.VOCATION.id.toLong()) {
             btnPoziv.isVisible = true
             btnPoziv.setOnClickListener {
                 val text = "Hvaljen Isus i Marija, javljam Vam se jer razmišljam o duhovnom pozivu."

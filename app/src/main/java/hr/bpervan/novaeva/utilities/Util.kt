@@ -53,3 +53,5 @@ fun isDarkBitmap(bitmap: Bitmap): Boolean {
 
     return darkPixels >= darkThreshold
 }
+
+fun String.vertical() = this.asSequence().joinToString(separator = "\n")

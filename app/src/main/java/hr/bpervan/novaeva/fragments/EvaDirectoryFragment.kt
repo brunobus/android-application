@@ -77,11 +77,10 @@ class EvaDirectoryFragment : EvaBaseFragment() {
 
     private lateinit var adapter: EvaRecyclerAdapter
 
-    private var elementsList: MutableList<TreeElementInfo> = mutableListOf()
+    private val elementsList: MutableList<TreeElementInfo> = mutableListOf()
     private var hasMore = true
-    private var loadingFromDb = true
-
     private var fetchingFromServer = true
+    private var loadingFromDb = true
 
     private lateinit var realm: Realm
 
@@ -274,7 +273,7 @@ class EvaDirectoryFragment : EvaBaseFragment() {
                         fetchingFromServer = false
                         refreshLoadingCircleState()
                     }
-                    NovaEvaApp.showFetchErrorSnackbar(it, context, view)
+                    NovaEvaApp.showFetchErrorSnackbar(it, view)
                 }
     }
 }

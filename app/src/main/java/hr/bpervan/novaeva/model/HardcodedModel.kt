@@ -1,35 +1,17 @@
 package hr.bpervan.novaeva.model
 
-enum class EvaCategory(val id: Int, val rawName: String) {
-    DUHOVNOST(354, "Duhovnost"),
-    AKTUALNO(9, "Aktualno"),
-    IZREKE(1, "Izreke"),
-    MULTIMEDIJA(10, "Multimedija"),
-    EVANDJELJE(4, "Evanđelje"),
-    PROPOVIJEDI(7, "Propovijedi"),
-    POZIV(8, "Poziv"),
-    ODGOVORI(11, "Odgovori"),
-    PJESMARICA(355, "Pjesmarica"),
-    RADIO(473, "Radio");
-
-    val rawNameVertical = rawName.vertical()
+enum class EvaCategory(val id: Int) {
+    SPIRITUALITY(354),
+    TRENDING(9),
+    QUOTES(1),
+    MULTIMEDIA(10),
+    GOSPEL(4),
+    SERMONS(7),
+    VOCATION(8),
+    ANSWERS(11),
+    SONGBOOK(355),
+    RADIO(473)
 }
-
-enum class LocalCategory(val rawName: String) {
-    BREVIJAR("Brevijar"),
-    MOLITVENIK("Molitvenik"),
-    INFO("Informacije"),
-    BOOKMARKS("Zabilješke");
-
-    val rawNameVertical = rawName.vertical()
-}
-
-class Prayer(val title: String, val fileName: String)
-
-class PrayerCategory(val id: Int,
-                     val title: String,
-                     val directoryName: String,
-                     val prayerList: List<Prayer>)
 
 //todo move to server
 val PRAYER_CATEGORIES: List<PrayerCategory> = listOf(
@@ -212,17 +194,13 @@ val PRAYER_CATEGORIES: List<PrayerCategory> = listOf(
                 Prayer("", "")))
 )
 
-const val PRAYERS_ASSETS_DIR_PATH = "file:///android_asset/Molitve/"
+/**
+ *
+ */
 
-private fun String.vertical() = this.asSequence().joinToString(separator = "\n")
+class Prayer(val title: String, val fileName: String)
 
-class RadioStation(val name: String, val streamUris: List<String>)
-
-val TEMP_RADIO_STATIONS = listOf(
-        RadioStation("AIR1", listOf("http://emf.streamguys1.com/sa010_mp3_high_web")),
-        RadioStation("Radio Marija Njemačka", listOf("http://dreamsiteradiocp.com:8114/")),
-        RadioStation("Radio Marija SAD", listOf("http://dreamsiteradiocp4.com:8006/")),
-        RadioStation("Radio Marija Srbija", listOf("http://dreamsiteradiocp.com:8012/")),
-        RadioStation("Radio MIR Međugorje", listOf("http://85.25.135.86:23565/")),
-        RadioStation("Narodni radio", listOf("http://live.narodni.hr:8063/"))
-)
+class PrayerCategory(val id: Int,
+                     val title: String,
+                     val directoryName: String,
+                     val prayerList: List<Prayer>)

@@ -11,7 +11,7 @@ import io.reactivex.subjects.PublishSubject
  */
 object EventPipelines {
 
-    val playRadioStream = PublishSubject.create<RadioStation>()
+    val chooseRadioStation = PublishSubject.create<EvaContentMetadata>()
 
     //navigation
     val goHome = PublishSubject.create<TransitionAnimation>()

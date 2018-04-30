@@ -126,7 +126,7 @@ class EvaQuotesFragment : EvaBaseFragment() {
                         showQuote()
                     }
                 }) {
-                    NovaEvaApp.showNetworkUnavailableSnackbar(it, context, view)
+                    NovaEvaApp.showNetworkUnavailableSnackbar(it, view)
                 }
     }
 

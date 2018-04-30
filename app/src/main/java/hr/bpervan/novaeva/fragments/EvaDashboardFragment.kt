@@ -68,50 +68,42 @@ class EvaDashboardFragment : EvaBaseFragment() {
         }
         btnPjesmarica.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
-                    EvaDirectoryMetadata(EvaCategory.PJESMARICA.id.toLong(),
-                            EvaCategory.PJESMARICA.rawName),
+                    EvaDirectoryMetadata(EvaCategory.SONGBOOK.id.toLong(), getString(R.string.songbook)),
                     R.style.PjesmaricaTheme))
         }
         btnAktualno.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
-                    EvaDirectoryMetadata(EvaCategory.AKTUALNO.id.toLong(),
-                            EvaCategory.AKTUALNO.rawName),
+                    EvaDirectoryMetadata(EvaCategory.TRENDING.id.toLong(), getString(R.string.trending)),
                     R.style.AktualnoTheme))
         }
         btnPoziv.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
-                    EvaDirectoryMetadata(EvaCategory.POZIV.id.toLong(),
-                            EvaCategory.POZIV.rawName),
+                    EvaDirectoryMetadata(EvaCategory.VOCATION.id.toLong(), getString(R.string.vocation)),
                     R.style.PozivTheme))
         }
         btnOdgovori.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
-                    EvaDirectoryMetadata(EvaCategory.ODGOVORI.id.toLong(),
-                            EvaCategory.ODGOVORI.rawName),
+                    EvaDirectoryMetadata(EvaCategory.ANSWERS.id.toLong(), getString(R.string.answers)),
                     R.style.OdgovoriTheme))
         }
         btnMultimedia.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
-                    EvaDirectoryMetadata(EvaCategory.MULTIMEDIJA.id.toLong(),
-                            EvaCategory.MULTIMEDIJA.rawName),
+                    EvaDirectoryMetadata(EvaCategory.MULTIMEDIA.id.toLong(), getString(R.string.multimedia)),
                     R.style.MultimedijaTheme))
         }
         btnPropovijedi.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
-                    EvaDirectoryMetadata(EvaCategory.PROPOVIJEDI.id.toLong(),
-                            EvaCategory.PROPOVIJEDI.rawName),
+                    EvaDirectoryMetadata(EvaCategory.SERMONS.id.toLong(), getString(R.string.sermons)),
                     R.style.PropovjediTheme))
         }
         btnDuhovnost.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
-                    EvaDirectoryMetadata(EvaCategory.DUHOVNOST.id.toLong(),
-                            EvaCategory.DUHOVNOST.rawName),
+                    EvaDirectoryMetadata(EvaCategory.SPIRITUALITY.id.toLong(), getString(R.string.spirituality)),
                     R.style.DuhovnostTheme))
         }
         btnCalendar.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
-                    EvaDirectoryMetadata(EvaCategory.EVANDJELJE.id.toLong(),
-                            EvaCategory.EVANDJELJE.rawName),
+                    EvaDirectoryMetadata(EvaCategory.GOSPEL.id.toLong(), getString(R.string.gospel)),
                     R.style.EvandjeljeTheme))
         }
     }

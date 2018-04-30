@@ -130,7 +130,7 @@ class BreviaryContentFragment : EvaBaseFragment() {
                     breviaryText = breviary.text ?: ""
                     showBreviary()
                 }) {
-                    NovaEvaApp.showFetchErrorSnackbar(it, context, view)
+                    NovaEvaApp.showFetchErrorSnackbar(it, view)
                 }
     }
 

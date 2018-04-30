@@ -206,14 +206,14 @@ class EvaActivity : EvaBaseActivity() {
     }
 
     private fun fetchDashboardBackgroundUrl() {
-        novaEvaService.getDashboardBackground(EventPipelines.evaTheme.value!!)
-                .networkRequest({ url ->
-                    NovaEvaApp.imageLoader.loadImage(url, object : SimpleImageLoadingListener() {
-                        override fun onLoadingComplete(imageUri: String, view: View?, loadedImage: Bitmap) {
-                            EventPipelines.dashboardBackground.onNext(BitmapDrawable(resources, loadedImage))
-                        }
-                    })
-                }, onError = {})
+//        novaEvaService.getDashboardBackground(EventPipelines.evaTheme.value!!)
+//                .networkRequest({ url ->
+//                    NovaEvaApp.imageLoader.loadImage(url, object : SimpleImageLoadingListener() {
+//                        override fun onLoadingComplete(imageUri: String, view: View?, loadedImage: Bitmap) {
+//                            EventPipelines.dashboardBackground.onNext(BitmapDrawable(resources, loadedImage))
+//                        }
+//                    })
+//                }, onError = {})
     }
 
     override fun onBackPressed() {

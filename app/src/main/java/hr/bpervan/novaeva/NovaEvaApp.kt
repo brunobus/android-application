@@ -115,9 +115,9 @@ class NovaEvaApp : Application() {
             loadTypeface("opensans-regular.ttf")
         }
 
-        fun showFetchErrorSnackbar(throwable: Throwable?, context: Context?, holderView: View?) {
+        fun showFetchErrorSnackbar(throwable: Throwable?, view: View?) {
             if (throwable != null) Log.e("evaError", throwable.message, throwable)
-            holderView?.snackbar(R.string.error_fetching_data, Snackbar.LENGTH_LONG)
+            view?.snackbar(R.string.error_fetching_data, Snackbar.LENGTH_LONG)
         }
 
         fun showNetworkUnavailableToast(throwable: Throwable?, context: Context?) {
@@ -125,9 +125,9 @@ class NovaEvaApp : Application() {
             context?.toast(R.string.network_unavailable, Toast.LENGTH_LONG)
         }
 
-        fun showNetworkUnavailableSnackbar(throwable: Throwable?, context: Context?, holderView: View?) {
+        fun showNetworkUnavailableSnackbar(throwable: Throwable?, view: View?) {
             if (throwable != null) Log.e("evaError", throwable.message, throwable)
-            holderView?.snackbar(R.string.network_unavailable, Snackbar.LENGTH_SHORT)
+            view?.snackbar(R.string.network_unavailable, Snackbar.LENGTH_SHORT)
         }
 
         inline fun showFetchErrorDialog(throwable: Throwable?, context: Activity, crossinline onTryAgain: () -> Unit) {

@@ -195,7 +195,7 @@
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
         android:paddingStart="5dp"
-        android:text="@string/life_call"
+        android:text="@string/vocation"
         android:textAllCaps="false"
         android:textColor="@color/White"
         app:layout_constraintBottom_toTopOf="@+id/horizontalScreenGuideline"

@@ -10,14 +10,15 @@ import hr.bpervan.novaeva.EventPipelines
 
 import hr.bpervan.novaeva.adapters.RadioStationsAdapter.RadioStationViewHolder
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.RadioStation
+import hr.bpervan.novaeva.model.EvaContentMetadata
 import hr.bpervan.novaeva.utilities.EvaTouchFeedback
 import kotlinx.android.synthetic.main.recycler_item_radio_station.view.*
 
 /**
  *
  */
-class RadioStationsAdapter(private val radioStations: List<RadioStation>) : RecyclerView.Adapter<RadioStationViewHolder>() {
+class RadioStationsAdapter(private val radioStations: List<EvaContentMetadata>)
+    : RecyclerView.Adapter<RadioStationViewHolder>() {
 
     override fun getItemCount() = radioStations.size
 
@@ -42,11 +43,11 @@ class RadioStationsAdapter(private val radioStations: List<RadioStation>) : Recy
     inner class RadioStationViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         private val stationName: TextView = view.stationName
 
-        fun bindTo(radioStation: RadioStation) {
-            stationName.text = radioStation.name
+        fun bindTo(radioStation: EvaContentMetadata) {
+            stationName.text = radioStation.title
             view.setOnTouchListener(EvaTouchFeedback(view, touchFeedbackColor))
             view.setOnClickListener {
-                EventPipelines.playRadioStream.onNext(radioStation)
+                EventPipelines.chooseRadioStation.onNext(radioStation)
             }
         }
     }
