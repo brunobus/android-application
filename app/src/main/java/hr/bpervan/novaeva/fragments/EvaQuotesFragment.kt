@@ -13,6 +13,7 @@ import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.services.novaEvaService
+import hr.bpervan.novaeva.util.NEW_CONTENT_KEY_PREFIX
 import hr.bpervan.novaeva.util.networkRequest
 import hr.bpervan.novaeva.views.loadHtmlText
 import hr.bpervan.novaeva.views.snackbar
@@ -63,7 +64,7 @@ class EvaQuotesFragment : EvaBaseFragment() {
                         .build())
 
         prefs.edit {
-            remove("newContentInCategory1")
+            remove("${NEW_CONTENT_KEY_PREFIX}1")
         }
     }
 

@@ -84,11 +84,11 @@
         app:layout_constraintTop_toBottomOf="@+id/horizontalScreenGuideline"
         app:layout_constraintVertical_bias="0"/>
 
-    <TextView
+    <hr.bpervan.novaeva.views.EvaCategoryView
         android:id="@+id/btnPjesmarica"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/button_mp3"
+        android:background="@drawable/button_pjesmarica"
         android:gravity="end|center_vertical"
         android:maxLines="1"
         android:paddingEnd="5dp"
@@ -105,7 +105,7 @@
         app:layout_constraintVertical_chainStyle="packed"
         />
 
-    <TextView
+    <hr.bpervan.novaeva.views.EvaCategoryView
         android:id="@+id/btnIzreke"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -123,7 +123,7 @@
         app:layout_constraintStart_toEndOf="@+id/verticalScreenGuideline"
         app:layout_constraintTop_toBottomOf="@+id/btnPjesmarica"/>
 
-    <TextView
+    <hr.bpervan.novaeva.views.EvaCategoryView
         android:id="@+id/btnAktualno"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -143,7 +143,7 @@
         app:layout_constraintVertical_bias="0"
         app:layout_constraintVertical_chainStyle="packed"/>
 
-    <TextView
+    <hr.bpervan.novaeva.views.EvaCategoryView
         android:id="@+id/btnPropovijedi"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -162,7 +162,7 @@
         app:layout_constraintStart_toEndOf="@+id/verticalScreenGuideline"
         app:layout_constraintTop_toBottomOf="@+id/btnAktualno"/>
 
-    <TextView
+    <hr.bpervan.novaeva.views.EvaCategoryView
         android:id="@+id/btnDuhovnost"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -183,7 +183,7 @@
         app:layout_constraintVertical_chainStyle="packed"
         />
 
-    <TextView
+    <hr.bpervan.novaeva.views.EvaCategoryView
         android:id="@+id/btnPoziv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -202,7 +202,7 @@
         app:layout_constraintEnd_toStartOf="@+id/verticalScreenGuideline"
         app:layout_constraintTop_toBottomOf="@+id/btnDuhovnost"/>
 
-    <TextView
+    <hr.bpervan.novaeva.views.EvaCategoryView
         android:id="@+id/btnOdgovori"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -223,7 +223,7 @@
 
         app:layout_constraintVertical_chainStyle="packed"/>
 
-    <TextView
+    <hr.bpervan.novaeva.views.EvaCategoryView
         android:id="@+id/btnMultimedia"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -241,7 +241,7 @@
         app:layout_constraintEnd_toStartOf="@+id/verticalScreenGuideline"
         app:layout_constraintTop_toBottomOf="@+id/btnOdgovori"/>
 
-    <ImageView
+    <hr.bpervan.novaeva.views.EvaCategoryView
         android:id="@+id/btnCalendar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

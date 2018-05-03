@@ -19,6 +19,7 @@ import hr.bpervan.novaeva.player.EvaPlayer
 import hr.bpervan.novaeva.receivers.ConnectionDetector
 import hr.bpervan.novaeva.util.ImageLoaderConfigurator
 import hr.bpervan.novaeva.util.LifecycleLogger
+import hr.bpervan.novaeva.util.NOVA_EVA_PREFS_NAME
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.realm.Realm
 
@@ -78,7 +79,7 @@ class NovaEvaApp : Application() {
         }
 
         val prefs: SharedPreferences by lazy {
-            instance!!.getSharedPreferences("hr.bpervan.novaeva", Context.MODE_PRIVATE)
+            instance!!.getSharedPreferences(NOVA_EVA_PREFS_NAME, Context.MODE_PRIVATE)
         }
 
         private fun loadTypeface(resFile: String): Typeface? {

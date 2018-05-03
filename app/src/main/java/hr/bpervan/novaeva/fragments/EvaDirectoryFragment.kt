@@ -25,6 +25,7 @@ import hr.bpervan.novaeva.model.*
 import hr.bpervan.novaeva.services.novaEvaService
 import hr.bpervan.novaeva.storage.EvaDirectoryDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
+import hr.bpervan.novaeva.util.NEW_CONTENT_KEY_PREFIX
 import hr.bpervan.novaeva.util.networkRequest
 import hr.bpervan.novaeva.views.snackbar
 import io.reactivex.disposables.Disposable
@@ -108,7 +109,7 @@ class EvaDirectoryFragment : EvaBaseFragment() {
         realm = Realm.getInstance(RealmConfigProvider.evaDBConfig)
 
         prefs.edit {
-            remove("newContentInCategory$directoryId")
+            remove("$NEW_CONTENT_KEY_PREFIX$directoryId")
         }
 
         createIfMissingAndSubscribeToEvaDirectoryUpdates()

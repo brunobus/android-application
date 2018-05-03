@@ -1,6 +1,6 @@
 package hr.bpervan.novaeva.model
 
-enum class EvaCategory(val id: Int) {
+enum class EvaCategory(val id: Long) {
     SPIRITUALITY(354),
     TRENDING(9),
     QUOTES(1),

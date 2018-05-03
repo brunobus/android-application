@@ -136,21 +136,21 @@ class EvaSearchResultDTO {
 
 class EvaIndicatorsDTO {
     @SerializedName("354")
-    val duhovnost: Int? = null
+    val spirituality: Int? = null
     @SerializedName("9")
-    val aktualno: Int? = null
+    val trending: Int? = null
     @SerializedName("1")
-    val izreke: Int? = null
+    val quotes: Int? = null
     @SerializedName("10")
-    val multimedija: Int? = null
+    val multimedia: Int? = null
     @SerializedName("4")
-    val evandjelje: Int? = null
+    val gospel: Int? = null
     @SerializedName("7")
-    val propovijedi: Int? = null
+    val sermons: Int? = null
     @SerializedName("8")
-    val poziv: Int? = null
+    val vocation: Int? = null
     @SerializedName("11")
-    val odgovori: Int? = null
+    val answers: Int? = null
     @SerializedName("355")
-    val pjesmarica: Int? = null
+    val songbook: Int? = null
 }

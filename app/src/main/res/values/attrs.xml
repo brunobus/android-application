@@ -4,4 +4,8 @@
     <attr name="listItemFolderSrc" format="reference"/>
     <attr name="directoryHeaderSrc" format="reference"/>
     <attr name="contentTitleBarSrc" format="reference"/>
+
+    <declare-styleable name="EvaCategoryView">
+        <attr name="indicate_news" format="boolean"/>
+    </declare-styleable>
 </resources>
