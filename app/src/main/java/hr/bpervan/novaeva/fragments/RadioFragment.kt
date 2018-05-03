@@ -63,10 +63,16 @@ class RadioFragment : EvaBaseFragment() {
     private lateinit var adapter: RadioStationsAdapter
 
     private val radioStationList: MutableList<EvaContentMetadata> = mutableListOf()
-    private var selectedRadioStation: String? = null
+    private var selectedStreamUri: String? = null
 
     private var exoPlayer: ExoPlayer? = null
-    private val evaPlayerEventListener = EvaPlayerEventListener({ context }, { exoPlayer }, { selectedRadioStation })
+        set(value) {
+            field?.removeListener(evaPlayerEventListener)
+            value?.removeListener(evaPlayerEventListener)
+            value?.addListener(evaPlayerEventListener)
+            field = value
+        }
+    private val evaPlayerEventListener = EvaPlayerEventListener({ context }, { exoPlayer }, { selectedStreamUri })
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -173,6 +179,8 @@ class RadioFragment : EvaBaseFragment() {
     }
 
     private fun prepareAndPlayRadioStream(streamUri: String) {
+        selectedStreamUri = streamUri
+
         val context = context ?: return
         val dataSourceFactory = DefaultDataSourceFactory(context,
                 Util.getUserAgent(context, resources.getString(R.string.app_name)),
@@ -181,17 +189,11 @@ class RadioFragment : EvaBaseFragment() {
 //        val factory = ExtractorMediaSource.Factory(dataSourceFactory).setCustomCacheKey(streamUri)
 //        val mediaSource = factory.createMediaSource(streamingUri)
 
-        val exoPlayer = NovaEvaApp.evaPlayer.prepareIfNeededAndGetPlayer(streamUri) {
+        exoPlayer = NovaEvaApp.evaPlayer.prepareIfNeededAndGetPlayer(streamUri) {
             ExtractorMediaSource(streamUri.toUri(), dataSourceFactory, DefaultExtractorsFactory(),
                     handler, null, streamUri)
         }
-
-        this.exoPlayer?.removeListener(evaPlayerEventListener)
-        exoPlayer.removeListener(evaPlayerEventListener)
-        exoPlayer.addListener(evaPlayerEventListener)
-        this.exoPlayer = exoPlayer
-
-        exoPlayer.playWhenReady = true
+        exoPlayer?.playWhenReady = true
     }
 
     private fun fetchRadioStationsFromServer(timestamp: Long? = null) {

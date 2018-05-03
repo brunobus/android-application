@@ -155,14 +155,14 @@ class AudioPlayerService : Service() {
         val playPauseIcon = if (playing) R.drawable.exo_controls_pause else R.drawable.exo_controls_play
         val playPauseString = if (playing) getString(R.string.pause) else getString(R.string.play)
 
-        val contentText = NovaEvaApp.evaPlayer.currentAudioTrackUri
+//        val contentText = NovaEvaApp.evaPlayer.currentAudioTrackUri
 
         return NotificationCompat.Builder(context, createNotificationChannel())
                 .setLargeIcon(novaEvaBitmap)
                 .setSmallIcon(R.drawable.notification_icon)
                 .setBadgeIconType(NotificationCompat.BADGE_ICON_NONE)
                 .setContentTitle("Nova Eva")
-                .setContentText(contentText)
+//                .setContentText(contentText)
                 .setContentIntent(controller.sessionActivity) //todo set
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setColor(ContextCompat.getColor(context, R.color.novaEva))

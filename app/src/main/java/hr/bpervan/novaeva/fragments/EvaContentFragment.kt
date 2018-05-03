@@ -64,6 +64,13 @@ class EvaContentFragment : EvaBaseFragment() {
 
 
     private var exoPlayer: ExoPlayer? = null
+        set(value) {
+            field?.removeListener(evaPlayerEventListener)
+            value?.removeListener(evaPlayerEventListener)
+            value?.addListener(evaPlayerEventListener)
+            field = value
+        }
+
     private val evaPlayerEventListener = EvaPlayerEventListener({ context }, { exoPlayer }, { evaContent?.audioURL })
 
     private lateinit var realm: Realm
@@ -162,7 +169,7 @@ class EvaContentFragment : EvaBaseFragment() {
             evaContent.audioURL?.let { audioUrl ->
                 imgMp3.setImageResource(R.drawable.vijest_ind_mp3_active)
                 if (audioUrl != this.evaContent?.audioURL) {
-                    prepareAudioStream(context!!, audioUrl, false)
+                    prepareAudioStream(context!!, audioUrl)
                 }
                 exoPlayer?.let { player ->
                     player_view?.let { playerView ->
@@ -277,7 +284,7 @@ class EvaContentFragment : EvaBaseFragment() {
         exoPlayer = null
     }
 
-    private fun prepareAudioStream(context: Context, audioUri: String, playWhenReady: Boolean) {
+    private fun prepareAudioStream(context: Context, audioUri: String) {
         val dataSourceFactory = DefaultDataSourceFactory(context,
                 Util.getUserAgent(context, resources.getString(R.string.app_name)),
                 DefaultBandwidthMeter())
@@ -285,16 +292,9 @@ class EvaContentFragment : EvaBaseFragment() {
 //        val factory = ExtractorMediaSource.Factory(dataSourceFactory).setCustomCacheKey(audioUri)
 //        val mediaSource = factory.createMediaSource(streamingUri)
 
-        val exoPlayer = NovaEvaApp.evaPlayer.prepareIfNeededAndGetPlayer(audioUri) {
+        exoPlayer = NovaEvaApp.evaPlayer.prepareIfNeededAndGetPlayer(audioUri) {
             ExtractorMediaSource(audioUri.toUri(), dataSourceFactory, DefaultExtractorsFactory(), handler, null, audioUri)
         }
-
-        this.exoPlayer?.removeListener(evaPlayerEventListener)
-        exoPlayer.removeListener(evaPlayerEventListener)
-        exoPlayer.addListener(evaPlayerEventListener)
-        this.exoPlayer = exoPlayer
-
-        exoPlayer.playWhenReady = playWhenReady
     }
 
     override fun onDestroy() {

@@ -40,11 +40,13 @@ class EvaPlayer(context: Context) {
 
         return when {
             currentPlayer.isStopped() -> {
+                currentPlayer.playWhenReady = false
                 currentPlayer.prepare(mediaSourceProvider())
                 currentPlayer
             }
             trackUri == currentAudioTrackUri -> currentPlayer /*don't prepare*/
             else -> {
+                otherPlayer.playWhenReady = false
                 otherPlayer.prepare(mediaSourceProvider())
                 otherPlayer
             }
