@@ -158,11 +158,8 @@ class EvaDirectoryFragment : EvaBaseFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val inflaterToUse =
-                if (themeId != -1) {
-                    inflater.cloneInContext(ContextThemeWrapper(activity, themeId))
-                } else {
-                    inflater
-                }
+                if (themeId != -1) inflater.cloneInContext(ContextThemeWrapper(activity, themeId))
+                else inflater
         return inflaterToUse.inflate(R.layout.fragment_directory_contents, container, false)
     }
 

@@ -76,9 +76,8 @@ class EvaSearchFragment : EvaBaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val ctw = ContextThemeWrapper(activity, R.style.AppTheme)
-        val localInflater = inflater.cloneInContext(ctw)
-        return localInflater.inflate(R.layout.fragment_search, container, false)
+        return inflater.cloneInContext(ContextThemeWrapper(activity, R.style.AppTheme))
+                .inflate(R.layout.fragment_search, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

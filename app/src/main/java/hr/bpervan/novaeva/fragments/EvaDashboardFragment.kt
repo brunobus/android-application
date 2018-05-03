@@ -36,10 +36,8 @@ class EvaDashboardFragment : EvaBaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-
-        val ctw = ContextThemeWrapper(activity, R.style.DashboardTheme)
-        val localInflater = inflater.cloneInContext(ctw)
-        return localInflater.inflate(R.layout.fragment_dashboard, container, false)
+        return inflater.cloneInContext(ContextThemeWrapper(activity, R.style.DashboardTheme))
+                .inflate(R.layout.fragment_dashboard, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

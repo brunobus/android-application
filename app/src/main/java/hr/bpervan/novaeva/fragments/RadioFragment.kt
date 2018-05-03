@@ -89,9 +89,8 @@ class RadioFragment : EvaBaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val ctw = ContextThemeWrapper(activity, R.style.RadioTheme)
-        val localInflater = inflater.cloneInContext(ctw)
-        return localInflater.inflate(R.layout.fragment_radio, container, false)
+        return inflater.cloneInContext(ContextThemeWrapper(activity, R.style.RadioTheme))
+                .inflate(R.layout.fragment_radio, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -99,7 +98,7 @@ class RadioFragment : EvaBaseFragment() {
 
         EventPipelines.changeNavbarColor.onNext(R.color.Black)
         EventPipelines.changeStatusbarColor.onNext(R.color.VeryDarkGray)
-        EventPipelines.changeFragmentBackgroundResource.onNext(R.drawable.radio_background)
+        EventPipelines.changeFragmentBackgroundResource.onNext(R.color.Transparent)
 
         initUI()
 

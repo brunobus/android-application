@@ -45,9 +45,8 @@ class PrayerBookFragment : EvaBaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val ctw = ContextThemeWrapper(activity, R.style.PrayersTheme)
-        val localInflater = inflater.cloneInContext(ctw)
-        return localInflater.inflate(R.layout.fragment_prayers, container, false)
+        return inflater.cloneInContext(ContextThemeWrapper(activity, R.style.PrayersTheme))
+                .inflate(R.layout.fragment_prayers, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

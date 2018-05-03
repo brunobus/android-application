@@ -206,5 +206,7 @@
 
     <style name="RadioTheme" parent="AppTheme">
         <item name="contentTitleBarSrc">@drawable/bar_yellow</item>
+        <item name="colorPrimary">@color/propovjedi</item>
+        <item name="colorAccent">@color/propovjedi</item>
     </style>
 </resources>

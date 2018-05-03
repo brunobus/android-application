@@ -6,5 +6,5 @@
     android:layout_height="wrap_content"
     android:adjustViewBounds="true"
     android:background="@drawable/button_radio"
-    android:contentDescription="radio button"
+    android:contentDescription="@string/dummyDesc"
     android:scaleType="center"/>

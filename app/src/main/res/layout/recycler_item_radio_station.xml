@@ -13,6 +13,7 @@
         android:layout_margin="10dp"
         android:contentDescription="play/stop image"
         android:src="@drawable/player_btn_play"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

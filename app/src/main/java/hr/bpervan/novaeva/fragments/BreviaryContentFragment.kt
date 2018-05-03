@@ -73,9 +73,8 @@ class BreviaryContentFragment : EvaBaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val ctw = ContextThemeWrapper(activity, R.style.BreviaryTheme)
-        val localInflater = inflater.cloneInContext(ctw)
-        return localInflater.inflate(R.layout.fragment_simple_content, container, false)
+        return inflater.cloneInContext(ContextThemeWrapper(activity, R.style.BreviaryTheme))
+                .inflate(R.layout.fragment_simple_content, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
