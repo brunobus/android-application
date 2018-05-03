@@ -72,6 +72,8 @@ class EvaContentFragment : EvaBaseFragment() {
     private var categoryId: Long = 0
     private var evaContent: EvaContent? = null
 
+    private val handler = Handler()
+
     private var fetchFromServerDisposable: Disposable? = null
         set(value) {
             field = safeReplaceDisposable(field, value)
@@ -276,9 +278,6 @@ class EvaContentFragment : EvaBaseFragment() {
     }
 
     private fun prepareAudioStream(context: Context, audioUri: String, playWhenReady: Boolean) {
-
-        val streamingUri = audioUri.toUri()
-
         val dataSourceFactory = DefaultDataSourceFactory(context,
                 Util.getUserAgent(context, resources.getString(R.string.app_name)),
                 DefaultBandwidthMeter())
@@ -287,7 +286,7 @@ class EvaContentFragment : EvaBaseFragment() {
 //        val mediaSource = factory.createMediaSource(streamingUri)
 
         val exoPlayer = NovaEvaApp.evaPlayer.prepareIfNeededAndGetPlayer(audioUri) {
-            ExtractorMediaSource(streamingUri, dataSourceFactory, DefaultExtractorsFactory(), Handler(), null, audioUri)
+            ExtractorMediaSource(audioUri.toUri(), dataSourceFactory, DefaultExtractorsFactory(), handler, null, audioUri)
         }
 
         this.exoPlayer?.removeListener(evaPlayerEventListener)
