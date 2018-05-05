@@ -14,4 +14,4 @@ const val NEW_CONTENT_KEY_PREFIX = "hr.novaeva.newContent"
 const val LATEST_CONTENT_ID_KEY_PREFIX = "hr.novaeva.latestContentId"
 const val LAST_SYNC_TIME_MILLIS_KEY = "hr.novaeva.lastSyncTime"
 
-const val PRAYERS_ASSETS_DIR_PATH = "file:///android_asset/Molitve/"
+const val ASSETS_DIR_PATH = "file:///android_asset/"

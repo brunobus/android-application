@@ -13,7 +13,6 @@ import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.PrayerCategoryRecyclerAdapter
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.PRAYER_CATEGORIES
 import hr.bpervan.novaeva.model.PrayerCategory
 import hr.bpervan.novaeva.views.onLayoutComplete
 import kotlinx.android.synthetic.main.fragment_prayers.*
@@ -40,7 +39,7 @@ class PrayerListFragment : EvaBaseFragment() {
         super.onCreate(savedInstanceState)
 
         val inState = savedInstanceState ?: arguments!!
-        prayerCategory = PRAYER_CATEGORIES.first { it.id == inState.getInt(prayerCategoryIdKey) }
+        prayerCategory = NovaEvaApp.prayerBook[inState.getInt(prayerCategoryIdKey)]!!
 
         adapter = PrayerCategoryRecyclerAdapter(prayerCategory)
 

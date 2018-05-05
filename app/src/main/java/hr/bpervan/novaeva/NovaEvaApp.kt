@@ -14,12 +14,10 @@ import com.google.android.gms.analytics.Tracker
 import com.nostra13.universalimageloader.core.ImageLoader
 import hr.bpervan.novaeva.main.BuildConfig
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.util.EvaTheme
+import hr.bpervan.novaeva.model.PrayerCategory
 import hr.bpervan.novaeva.player.EvaPlayer
 import hr.bpervan.novaeva.receivers.ConnectionDetector
-import hr.bpervan.novaeva.util.ImageLoaderConfigurator
-import hr.bpervan.novaeva.util.LifecycleLogger
-import hr.bpervan.novaeva.util.NOVA_EVA_PREFS_NAME
+import hr.bpervan.novaeva.util.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.realm.Realm
 
@@ -82,15 +80,6 @@ class NovaEvaApp : Application() {
             instance!!.getSharedPreferences(NOVA_EVA_PREFS_NAME, Context.MODE_PRIVATE)
         }
 
-        private fun loadTypeface(resFile: String): Typeface? {
-            Log.d("loadingTypeface", "loading typeface from $resFile")
-            return try {
-                Typeface.createFromAsset(instance!!.assets, resFile)
-            } catch (e: Exception) {
-                null
-            }
-        }
-
         val openSansBold: Typeface? by lazy {
             loadTypeface("opensans-bold.ttf")
         }
@@ -102,6 +91,19 @@ class NovaEvaApp : Application() {
         }
         val openSansRegular: Typeface? by lazy {
             loadTypeface("opensans-regular.ttf")
+        }
+
+        private fun loadTypeface(assetFile: String): Typeface? {
+            Log.d("loadingTypeface", "loading typeface from $assetFile")
+            return try {
+                Typeface.createFromAsset(instance!!.assets, assetFile)
+            } catch (e: Exception) {
+                null
+            }
+        }
+
+        val prayerBook: Map<Int, PrayerCategory> by lazy {
+            AssetsLoader.loadPrayerBook(instance!!).associateBy { it.id }
         }
 
         val defaultDashboardBackground: Drawable by lazy {

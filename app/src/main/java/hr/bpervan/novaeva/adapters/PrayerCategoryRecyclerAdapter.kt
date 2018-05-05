@@ -11,7 +11,7 @@ import android.webkit.WebView
 import android.widget.TextView
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.util.PRAYERS_ASSETS_DIR_PATH
+import hr.bpervan.novaeva.util.ASSETS_DIR_PATH
 import hr.bpervan.novaeva.model.Prayer
 import hr.bpervan.novaeva.model.PrayerCategory
 import hr.bpervan.novaeva.util.EvaTouchFeedback
@@ -76,7 +76,7 @@ class PrayerCategoryRecyclerAdapter(private val prayerCategory: PrayerCategory) 
 
         fun bindTo(prayer: Prayer) {
             prayerTitle.text = prayer.title
-            prayerContent.loadUrl(PRAYERS_ASSETS_DIR_PATH + prayerCategory.directoryName + "/" + prayer.fileName)
+            prayerContent.loadUrl("$ASSETS_DIR_PATH${prayer.filePath}")
 
             expandableLayout.setExpanded(false, false)
 

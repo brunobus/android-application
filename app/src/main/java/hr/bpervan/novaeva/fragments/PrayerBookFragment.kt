@@ -14,7 +14,6 @@ import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.PrayerBookRecyclerAdapter
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.PRAYER_CATEGORIES
 import kotlinx.android.synthetic.main.fragment_prayers.*
 import kotlinx.android.synthetic.main.top_prayerbook.*
 
@@ -35,7 +34,7 @@ class PrayerBookFragment : EvaBaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        adapter = PrayerBookRecyclerAdapter(PRAYER_CATEGORIES)
+        adapter = PrayerBookRecyclerAdapter(NovaEvaApp.prayerBook.values.toList())
 
         savedInstanceState ?: NovaEvaApp.defaultTracker
                 .send(HitBuilders.EventBuilder()
