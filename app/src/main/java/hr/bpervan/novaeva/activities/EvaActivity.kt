@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentTransaction
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.GestureDetectorCompat
 import android.support.v4.view.GravityCompat
+import android.util.DisplayMetrics
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
@@ -41,6 +42,8 @@ class EvaActivity : EvaBaseActivity() {
 
     private lateinit var gestureDetector: GestureDetectorCompat
 
+    private val displayMetrics = DisplayMetrics()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -58,18 +61,21 @@ class EvaActivity : EvaBaseActivity() {
             }
         }
 
-        gestureDetector = GestureDetectorCompat(this, SwipeLeftToRightGestureListener())
+        updateDisplayMetrics()
+
+        gestureDetector = GestureDetectorCompat(this, SwipeLeftToRightGestureListener(displayMetrics))
+    }
+
+    private fun updateDisplayMetrics() {
+        windowManager.defaultDisplay.getMetrics(displayMetrics)
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
-        return if (gestureDetector.onTouchEvent(ev)) {
-            true
-        } else {
-            super.dispatchTouchEvent(ev)
-        }
+        return if (gestureDetector.onTouchEvent(ev)) true
+        else super.dispatchTouchEvent(ev)
     }
 
-    inner class SwipeLeftToRightGestureListener : SwipeGestureListener() {
+    inner class SwipeLeftToRightGestureListener(displayMetrics: DisplayMetrics) : SwipeGestureListener(displayMetrics) {
         override fun onSwipeRight(): Boolean {
             return if (supportFragmentManager.backStackEntryCount > 0
                     && !evaRoot.isDrawerOpen(GravityCompat.END)) {
