@@ -36,9 +36,9 @@
         android:layout_height="0dp"
         android:background="@drawable/menu_right_part"
         android:contentDescription="@string/dummyDesc"
-        app:layout_constraintBottom_toBottomOf="@+id/btnPropovijedi"
+        app:layout_constraintBottom_toBottomOf="@+id/btnPjesmarica"
         app:layout_constraintStart_toEndOf="@+id/btnIzreke"
-        app:layout_constraintTop_toTopOf="@+id/btnPjesmarica"/>
+        app:layout_constraintTop_toTopOf="@+id/btnPropovijedi"/>
 
     <TextView
         android:id="@+id/btnMolitvenik"
@@ -85,17 +85,17 @@
         app:layout_constraintVertical_bias="0"/>
 
     <hr.bpervan.novaeva.views.EvaCategoryView
-        android:id="@+id/btnPjesmarica"
+        android:id="@+id/btnPropovijedi"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/button_pjesmarica"
+        android:background="@drawable/button_propovjedi"
         android:gravity="end|center_vertical"
         android:maxLines="1"
         android:paddingEnd="5dp"
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
         android:paddingStart="5dp"
-        android:text="@string/songbook"
+        android:text="@string/sermons"
         android:textAllCaps="false"
         android:textColor="@color/White"
         app:layout_constraintBottom_toTopOf="@+id/btnIzreke"
@@ -121,7 +121,7 @@
         android:textColor="@color/White"
         app:layout_constraintBottom_toTopOf="@+id/horizontalScreenGuideline"
         app:layout_constraintStart_toEndOf="@+id/verticalScreenGuideline"
-        app:layout_constraintTop_toBottomOf="@+id/btnPjesmarica"/>
+        app:layout_constraintTop_toBottomOf="@+id/btnPropovijedi"/>
 
     <hr.bpervan.novaeva.views.EvaCategoryView
         android:id="@+id/btnAktualno"
@@ -137,17 +137,17 @@
         android:text="@string/trending"
         android:textAllCaps="false"
         android:textColor="@color/White"
-        app:layout_constraintBottom_toTopOf="@+id/btnPropovijedi"
+        app:layout_constraintBottom_toTopOf="@+id/btnPjesmarica"
         app:layout_constraintStart_toEndOf="@+id/verticalScreenGuideline"
         app:layout_constraintTop_toBottomOf="@+id/horizontalScreenGuideline"
         app:layout_constraintVertical_bias="0"
         app:layout_constraintVertical_chainStyle="packed"/>
 
     <hr.bpervan.novaeva.views.EvaCategoryView
-        android:id="@+id/btnPropovijedi"
+        android:id="@+id/btnPjesmarica"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/button_propovjedi"
+        android:background="@drawable/button_pjesmarica"
         android:contentDescription="@string/dummyDesc"
         android:gravity="end|center_vertical"
         android:maxLines="1"
@@ -155,7 +155,7 @@
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
         android:paddingStart="5dp"
-        android:text="@string/sermons"
+        android:text="@string/songbook"
         android:textAllCaps="false"
         android:textColor="@color/White"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -264,7 +264,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btnPropovijedi"/>
+        app:layout_constraintTop_toBottomOf="@id/btnPjesmarica"/>
 
     <include
         android:id="@+id/radioBtn"
@@ -284,6 +284,6 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnPropovijedi"/>
+        app:layout_constraintTop_toBottomOf="@+id/btnPjesmarica"/>
 
 </android.support.constraint.ConstraintLayout>
