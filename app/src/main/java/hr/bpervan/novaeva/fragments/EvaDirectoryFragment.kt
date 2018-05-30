@@ -132,15 +132,18 @@ class EvaDirectoryFragment : EvaBaseFragment() {
                 realm, directoryId, { evaDirectory ->
 
             elementsList.clear()
-            elementsList.addAll(evaDirectory.contentMetadataList)
-            elementsList.addAll(evaDirectory.subDirectoryMetadataList)
 
-            //FIXME ON SERVER: ADD TIMESTAMP TO DIRECTORIES
-            elementsList.sortByDescending {
-                when (it) {
-                    is EvaContentMetadata -> it.timestamp
-                    else -> 0L
-                }
+            val contentSorted = evaDirectory.contentMetadataList.sortedByDescending { it.timestamp }
+
+            val subdirectoriesSorted = evaDirectory.subDirectoryMetadataList//.sortedByDescending { todo ON SERVER }
+
+            if (contentSorted.size > 10) {
+                elementsList.addAll(contentSorted.take(10))
+                elementsList.addAll(subdirectoriesSorted)
+                elementsList.addAll(contentSorted.drop(10))
+            } else {
+                elementsList.addAll(contentSorted)
+                elementsList.addAll(subdirectoriesSorted)
             }
 
             loadingFromDb = false
