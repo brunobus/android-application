@@ -150,7 +150,7 @@ class EvaActivity : EvaBaseActivity() {
         }
 
         disposables += bus.openRadio.screenChangeThrottle().subscribe {
-            addToBackStack(mainContainerId, RadioFragment, RIGHTWARDS)
+            addToBackStack(mainContainerId, RadioFragment, LEFTWARDS)
         }
 
         disposables += bus.openCalendar.screenChangeThrottle().subscribe {
