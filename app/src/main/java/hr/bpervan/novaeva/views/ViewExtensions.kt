@@ -22,11 +22,7 @@ fun WebView.applyEvaConfiguration(prefs: SharedPreferences) {
     settings.displayZoomControls = false
     settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.SINGLE_COLUMN
 
-    //prevent C/P
-    setOnLongClickListener { true }
-    isLongClickable = false
-
-
+    isLongClickable = true
 }
 
 fun WebView.loadHtmlText(text: String?) {

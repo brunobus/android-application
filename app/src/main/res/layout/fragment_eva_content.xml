@@ -67,6 +67,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_below="@+id/loadingCircle"
                     android:layout_marginTop="5dp"
+                    android:layout_marginBottom="80dp"
                     android:textColor="#4c4c4c"/>
 
                 <ImageView
