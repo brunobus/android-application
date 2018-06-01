@@ -47,14 +47,14 @@
     <style name="AppThemeBase" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowBackground">@drawable/background_01</item>
         <item name="android:windowNoTitle">true</item>
-        <item name="colorPrimary">@color/novaEva</item>
-        <item name="colorPrimaryDark">@color/Black</item>
-        <item name="colorAccent">@color/novaEvaDark</item>
-        <item name="listItemContentSrc">@drawable/list_row_dir_lime</item>
-        <item name="listItemFolderSrc">@drawable/list_row_dir_lime</item>
+        <item name="colorPrimary">@color/evaViolet</item>
+        <item name="colorPrimaryDark">@color/evaViolet</item>
+        <item name="colorAccent">@color/evaViolet</item>
+        <item name="listItemContentSrc">@drawable/list_row_dir_mint</item>
+        <item name="listItemFolderSrc">@drawable/list_row_dir_mint</item>
         <item name="directoryHeaderSrc">@drawable/header_mint</item>
         <item name="categoryIconSrc">@drawable/icon_duhovnost</item>
-        <item name="contentTitleBarSrc">@drawable/bar_mint</item>
+        <item name="contentTitleBarSrc">@drawable/bar_violet</item>
     </style>
 
     <style name="AppTheme" parent="AppThemeBase"/>
@@ -68,154 +68,148 @@
 
     <style name="DashboardThemeBase" parent="AppTheme">
         <item name="colorPrimary">@color/novaEva</item>
-        <item name="colorPrimaryDark">@color/Transparent</item>
+        <item name="colorPrimaryDark">@color/novaEvaDark</item>
         <item name="colorAccent">@color/novaEvaDark</item>
     </style>
 
     <style name="DashboardTheme" parent="DashboardThemeBase"/>
 
     <style name="PrayersThemeBase" parent="AppTheme">
-        <item name="colorPrimary">@color/prayerbook</item>
-        <item name="colorPrimaryDark">@color/prayerbookDark</item>
+        <item name="colorPrimary">@color/GraveGray</item>
+        <item name="colorPrimaryDark">@color/Black</item>
         <item name="colorAccent">@color/DimGray</item>
     </style>
 
     <style name="PrayersTheme" parent="PrayersThemeBase"/>
 
-    <style name="BreviaryThemeBase" parent="AppTheme">
-        <item name="colorPrimary">@color/breviary</item>
-        <item name="colorPrimaryDark">@color/Transparent</item>
-        <item name="colorAccent">@color/breviaryDark</item>
-        <item name="contentTitleBarSrc">@drawable/bar_darkpurple</item>
+    <style name="VioletTheme" parent="AppTheme">
+        <item name="colorPrimary">@color/evaViolet</item>
+        <item name="colorPrimaryDark">@color/evaViolet</item>
+        <item name="colorAccent">@color/evaViolet</item>
+        <item name="contentTitleBarSrc">@drawable/bar_violet</item>
     </style>
 
-    <style name="BreviaryTheme" parent="BreviaryThemeBase"/>
-
-    <style name="MultimedijaThemeBase" parent="AppTheme">
-        <item name="colorPrimary">@color/multimedija</item>
-        <item name="colorPrimaryDark">@color/multimedijaDark</item>
-        <item name="colorAccent">@color/multimedijaDark</item>
-        <item name="listItemContentSrc">@drawable/list_row_dir_blue</item>
-        <item name="listItemFolderSrc">@drawable/list_row_dir_blue</item>
-        <item name="directoryHeaderSrc">@drawable/header_blue</item>
-        <item name="categoryIconSrc">@drawable/icon_multimedija</item>
-        <item name="contentTitleBarSrc">@drawable/bar_blue</item>
+    <style name="DarkBlueTheme" parent="AppTheme">
+        <item name="colorPrimary">@color/evaDarkBlue</item>
+        <item name="colorPrimaryDark">@color/evaDarkBlue</item>
+        <item name="colorAccent">@color/evaDarkBlue</item>
+        <item name="listItemContentSrc">@drawable/list_row_dir_dark_blue</item>
+        <item name="listItemFolderSrc">@drawable/list_row_dir_dark_blue</item>
+        <item name="directoryHeaderSrc">@drawable/header_dark_blue</item>
+        <item name="contentTitleBarSrc">@drawable/bar_dark_blue</item>
 
     </style>
 
-    <style name="MultimedijaTheme" parent="MultimedijaThemeBase"/>
-
-    <style name="AktualnoThemeBase" parent="AppTheme">
-        <item name="colorPrimary">@color/aktualno</item>
-        <item name="colorPrimaryDark">@color/aktualnoDark</item>
-        <item name="colorAccent">@color/aktualnoDark</item>
+    <style name="OrangeTheme" parent="AppTheme">
+        <item name="colorPrimary">@color/evaOrange</item>
+        <item name="colorPrimaryDark">@color/evaOrange</item>
+        <item name="colorAccent">@color/evaOrange</item>
         <item name="listItemContentSrc">@drawable/list_row_dir_orange</item>
         <item name="listItemFolderSrc">@drawable/list_row_dir_orange</item>
         <item name="directoryHeaderSrc">@drawable/header_orange</item>
-        <item name="categoryIconSrc">@drawable/icon_aktualno</item>
         <item name="contentTitleBarSrc">@drawable/bar_orange</item>
 
     </style>
 
-    <style name="AktualnoTheme" parent="AktualnoThemeBase"/>
-
-    <style name="OdgovoriThemeBase" parent="AppTheme">
-        <item name="colorPrimary">@color/odgovori</item>
-        <item name="colorPrimaryDark">@color/odgovoriDark</item>
-        <item name="colorAccent">@color/odgovoriDark</item>
+    <style name="PurpleTheme" parent="AppTheme">
+        <item name="colorPrimary">@color/evaPurple</item>
+        <item name="colorPrimaryDark">@color/evaPurple</item>
+        <item name="colorAccent">@color/evaPurple</item>
         <item name="listItemContentSrc">@drawable/list_row_dir_purple</item>
         <item name="listItemFolderSrc">@drawable/list_row_dir_purple</item>
         <item name="directoryHeaderSrc">@drawable/header_purple</item>
-        <item name="categoryIconSrc">@drawable/icon_odgovori</item>
         <item name="contentTitleBarSrc">@drawable/bar_purple</item>
 
     </style>
 
-    <style name="OdgovoriTheme" parent="OdgovoriThemeBase"/>
-
-    <style name="PozivThemeBase" parent="AppTheme">
-        <item name="colorPrimary">@color/poziv</item>
-        <item name="colorPrimaryDark">@color/pozivDark</item>
-        <item name="colorAccent">@color/pozivDark</item>
-        <item name="listItemContentSrc">@drawable/list_row_dir_red</item>
-        <item name="listItemFolderSrc">@drawable/list_row_dir_red</item>
-        <item name="directoryHeaderSrc">@drawable/header_red</item>
-        <item name="categoryIconSrc">@drawable/icon_poziv</item>
-        <item name="contentTitleBarSrc">@drawable/bar_red</item>
+    <style name="BlueTheme" parent="AppTheme">
+        <item name="colorPrimary">@color/evaBlue</item>
+        <item name="colorPrimaryDark">@color/evaBlue</item>
+        <item name="colorAccent">@color/evaBlue</item>
+        <item name="listItemContentSrc">@drawable/list_row_dir_blue</item>
+        <item name="listItemFolderSrc">@drawable/list_row_dir_blue</item>
+        <item name="directoryHeaderSrc">@drawable/header_blue</item>
+        <item name="contentTitleBarSrc">@drawable/bar_blue</item>
 
     </style>
 
-    <style name="PozivTheme" parent="PozivThemeBase"/>
-
-    <style name="EvandjeljeThemeBase" parent="AppTheme">
-        <item name="colorPrimary">@color/evandjelje</item>
-        <item name="colorPrimaryDark">@color/evandjeljeDark</item>
-        <item name="colorAccent">@color/evandjeljeDark</item>
-        <item name="listItemContentSrc">@drawable/list_row_dir_purple</item>
-        <item name="listItemFolderSrc">@drawable/list_row_dir_purple</item>
-        <item name="directoryHeaderSrc">@drawable/header_purple</item>
-        <item name="categoryIconSrc">@drawable/icon_duhovnost</item>
-        <item name="contentTitleBarSrc">@drawable/bar_purple</item>
-
-    </style>
-
-    <style name="EvandjeljeTheme" parent="EvandjeljeThemeBase"/>
-
-    <style name="PropovjediThemeBase" parent="AppTheme">
-        <item name="colorPrimary">@color/propovjedi</item>
-        <item name="colorPrimaryDark">@color/propovjediDark</item>
-        <item name="colorAccent">@color/propovjediDark</item>
+    <style name="YellowTheme" parent="AppTheme">
+        <item name="colorPrimary">@color/evaYellow</item>
+        <item name="colorPrimaryDark">@color/evaYellow</item>
+        <item name="colorAccent">@color/evaYellow</item>
         <item name="listItemContentSrc">@drawable/list_row_dir_yellow</item>
         <item name="listItemFolderSrc">@drawable/list_row_dir_yellow</item>
         <item name="directoryHeaderSrc">@drawable/header_yellow</item>
-        <item name="categoryIconSrc">@drawable/icon_propovjedi</item>
         <item name="contentTitleBarSrc">@drawable/bar_yellow</item>
 
     </style>
 
-    <style name="PropovjediTheme" parent="PropovjediThemeBase"/>
-
-    <style name="IzrekeThemeBase" parent="AppTheme">
-        <item name="colorPrimary">@color/izreke</item>
-        <item name="colorPrimaryDark">@color/izrekeDark</item>
-        <item name="colorAccent">@color/izrekeDark</item>
+    <style name="LimeTheme" parent="AppTheme">
+        <item name="colorPrimary">@color/evaLime</item>
+        <item name="colorPrimaryDark">@color/evaLime</item>
+        <item name="colorAccent">@color/evaLime</item>
+        <item name="listItemContentSrc">@drawable/list_row_dir_yellow</item>
+        <item name="listItemFolderSrc">@drawable/list_row_dir_yellow</item>
+        <item name="directoryHeaderSrc">@drawable/header_yellow</item>
         <item name="contentTitleBarSrc">@drawable/bar_lime</item>
-
     </style>
 
-    <style name="IzrekeTheme" parent="IzrekeThemeBase"/>
-
-    <style name="PjesmaricaThemeBase" parent="AppTheme">
-        <item name="colorPrimary">@color/pjesmarica</item>
-        <item name="colorPrimaryDark">@color/pjesmaricaDark</item>
-        <item name="colorAccent">@color/pjesmaricaDark</item>
-        <item name="listItemContentSrc">@drawable/list_row_dir_darkblue</item>
-        <item name="listItemFolderSrc">@drawable/list_row_dir_darkblue</item>
-        <item name="directoryHeaderSrc">@drawable/header_darkblue</item>
-        <item name="categoryIconSrc">@drawable/icon_pjesmarica</item>
-        <item name="contentTitleBarSrc">@drawable/bar_darkblue</item>
-
+    <style name="RedTheme" parent="AppTheme">
+        <item name="colorPrimary">@color/evaRed</item>
+        <item name="colorPrimaryDark">@color/evaRed</item>
+        <item name="colorAccent">@color/evaRed</item>
+        <item name="listItemContentSrc">@drawable/list_row_dir_red</item>
+        <item name="listItemFolderSrc">@drawable/list_row_dir_red</item>
+        <item name="directoryHeaderSrc">@drawable/header_red</item>
+        <item name="contentTitleBarSrc">@drawable/bar_red</item>
     </style>
 
-    <style name="PjesmaricaTheme" parent="PjesmaricaThemeBase"/>
-
-    <style name="DuhovnostThemeBase" parent="AppTheme">
-        <item name="colorPrimary">@color/duhovnost</item>
-        <item name="colorPrimaryDark">@color/duhovnostDark</item>
-        <item name="colorAccent">@color/duhovnostDark</item>
-        <item name="listItemContentSrc">@drawable/list_row_dir_lime</item>
-        <item name="listItemFolderSrc">@drawable/list_row_dir_lime</item>
+    <style name="MintTheme" parent="AppTheme">
+        <item name="colorPrimary">@color/evaMint</item>
+        <item name="colorPrimaryDark">@color/evaMint</item>
+        <item name="colorAccent">@color/evaMint</item>
+        <item name="listItemContentSrc">@drawable/list_row_dir_mint</item>
+        <item name="listItemFolderSrc">@drawable/list_row_dir_mint</item>
         <item name="directoryHeaderSrc">@drawable/header_mint</item>
-        <item name="categoryIconSrc">@drawable/icon_duhovnost</item>
         <item name="contentTitleBarSrc">@drawable/bar_mint</item>
-
     </style>
 
-    <style name="DuhovnostTheme" parent="DuhovnostThemeBase"/>
-
-    <style name="RadioTheme" parent="AppTheme">
-        <item name="contentTitleBarSrc">@drawable/bar_yellow</item>
-        <item name="colorPrimary">@color/propovjedi</item>
-        <item name="colorAccent">@color/propovjedi</item>
+    <style name="DuhovnostTheme" parent="MintTheme">
+        <item name="categoryIconSrc">@drawable/icon_duhovnost</item>
     </style>
+
+    <style name="PjesmaricaTheme" parent="RedTheme">
+        <item name="categoryIconSrc">@drawable/icon_pjesmarica</item>
+    </style>
+
+    <style name="PropovjediTheme" parent="LimeTheme">
+        <item name="categoryIconSrc">@drawable/icon_propovjedi</item>
+    </style>
+
+    <style name="RadioTheme" parent="YellowTheme"/>
+
+    <style name="IzrekeTheme" parent="YellowTheme">
+        <item name="categoryIconSrc">@drawable/icon_izreke</item>
+    </style>
+
+    <style name="OdgovoriTheme" parent="DarkBlueTheme">
+        <item name="categoryIconSrc">@drawable/icon_odgovori</item>
+    </style>
+
+    <style name="EvandjeljeTheme" parent="YellowTheme"/>
+
+    <style name="MultimedijaTheme" parent="PurpleTheme">
+        <item name="categoryIconSrc">@drawable/icon_multimedija</item>
+    </style>
+
+    <style name="PozivTheme" parent="BlueTheme">
+        <item name="categoryIconSrc">@drawable/icon_poziv</item>
+    </style>
+
+    <style name="AktualnoTheme" parent="OrangeTheme">
+        <item name="categoryIconSrc">@drawable/icon_aktualno</item>
+    </style>
+
+    <style name="BreviaryTheme" parent="VioletTheme"/>
+
 </resources>
