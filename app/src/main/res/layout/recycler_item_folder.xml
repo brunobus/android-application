@@ -5,7 +5,7 @@
     android:id="@+id/evaContentRow"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?attr/listItemContentSrc">
+    android:background="?attr/listItemFolderSrc">
 
     <TextView
         android:id="@+id/tvMapaNaslov"

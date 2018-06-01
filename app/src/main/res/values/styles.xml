@@ -51,7 +51,7 @@
         <item name="colorPrimaryDark">@color/Black</item>
         <item name="colorAccent">@color/novaEvaDark</item>
         <item name="listItemContentSrc">@drawable/list_row_content_duhovnost</item>
-        <item name="listItemFolderSrc">@drawable/list_row_folder_duhovnost</item>
+        <item name="listItemFolderSrc">@drawable/list_row_content_duhovnost</item>
         <item name="directoryHeaderSrc">@drawable/header_mint</item>
         <item name="categoryIconSrc">@drawable/icon_duhovnost</item>
         <item name="contentTitleBarSrc">@drawable/bar_mint</item>
@@ -96,7 +96,7 @@
         <item name="colorPrimaryDark">@color/multimedijaDark</item>
         <item name="colorAccent">@color/multimedijaDark</item>
         <item name="listItemContentSrc">@drawable/list_row_content_multimedija</item>
-        <item name="listItemFolderSrc">@drawable/list_row_folder_multimedija</item>
+        <item name="listItemFolderSrc">@drawable/list_row_content_multimedija</item>
         <item name="directoryHeaderSrc">@drawable/header_blue</item>
         <item name="categoryIconSrc">@drawable/icon_multimedija</item>
         <item name="contentTitleBarSrc">@drawable/bar_blue</item>
@@ -110,7 +110,7 @@
         <item name="colorPrimaryDark">@color/aktualnoDark</item>
         <item name="colorAccent">@color/aktualnoDark</item>
         <item name="listItemContentSrc">@drawable/list_row_content_aktualno</item>
-        <item name="listItemFolderSrc">@drawable/list_row_folder_aktualno</item>
+        <item name="listItemFolderSrc">@drawable/list_row_content_aktualno</item>
         <item name="directoryHeaderSrc">@drawable/header_orange</item>
         <item name="categoryIconSrc">@drawable/icon_aktualno</item>
         <item name="contentTitleBarSrc">@drawable/bar_orange</item>
@@ -138,7 +138,7 @@
         <item name="colorPrimaryDark">@color/pozivDark</item>
         <item name="colorAccent">@color/pozivDark</item>
         <item name="listItemContentSrc">@drawable/list_row_content_poziv</item>
-        <item name="listItemFolderSrc">@drawable/list_row_folder_poziv</item>
+        <item name="listItemFolderSrc">@drawable/list_row_content_poziv</item>
         <item name="directoryHeaderSrc">@drawable/header_red</item>
         <item name="categoryIconSrc">@drawable/icon_poziv</item>
         <item name="contentTitleBarSrc">@drawable/bar_red</item>
@@ -152,7 +152,7 @@
         <item name="colorPrimaryDark">@color/evandjeljeDark</item>
         <item name="colorAccent">@color/evandjeljeDark</item>
         <item name="listItemContentSrc">@drawable/list_row_content_evandjelje</item>
-        <item name="listItemFolderSrc">@drawable/list_row_folder_evandjelje</item>
+        <item name="listItemFolderSrc">@drawable/list_row_content_evandjelje</item>
         <item name="directoryHeaderSrc">@drawable/header_purple</item>
         <item name="categoryIconSrc">@drawable/icon_duhovnost</item>
         <item name="contentTitleBarSrc">@drawable/bar_purple</item>
@@ -166,7 +166,7 @@
         <item name="colorPrimaryDark">@color/propovjediDark</item>
         <item name="colorAccent">@color/propovjediDark</item>
         <item name="listItemContentSrc">@drawable/list_row_content_propovijedi</item>
-        <item name="listItemFolderSrc">@drawable/list_row_folder_propovijedi</item>
+        <item name="listItemFolderSrc">@drawable/list_row_content_propovijedi</item>
         <item name="directoryHeaderSrc">@drawable/header_yellow</item>
         <item name="categoryIconSrc">@drawable/icon_propovjedi</item>
         <item name="contentTitleBarSrc">@drawable/bar_yellow</item>
@@ -190,7 +190,7 @@
         <item name="colorPrimaryDark">@color/pjesmaricaDark</item>
         <item name="colorAccent">@color/pjesmaricaDark</item>
         <item name="listItemContentSrc">@drawable/list_row_content_pjesmarica</item>
-        <item name="listItemFolderSrc">@drawable/list_row_folder_pjesmarica</item>
+        <item name="listItemFolderSrc">@drawable/list_row_content_pjesmarica</item>
         <item name="directoryHeaderSrc">@drawable/header_darkblue</item>
         <item name="categoryIconSrc">@drawable/icon_pjesmarica</item>
         <item name="contentTitleBarSrc">@drawable/bar_darkblue</item>
@@ -204,7 +204,7 @@
         <item name="colorPrimaryDark">@color/duhovnostDark</item>
         <item name="colorAccent">@color/duhovnostDark</item>
         <item name="listItemContentSrc">@drawable/list_row_content_duhovnost</item>
-        <item name="listItemFolderSrc">@drawable/list_row_folder_duhovnost</item>
+        <item name="listItemFolderSrc">@drawable/list_row_content_duhovnost</item>
         <item name="directoryHeaderSrc">@drawable/header_mint</item>
         <item name="categoryIconSrc">@drawable/icon_duhovnost</item>
         <item name="contentTitleBarSrc">@drawable/bar_mint</item>
