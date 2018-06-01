@@ -29,7 +29,7 @@ class EvaDashboardFragment : EvaBaseFragment() {
         }
     }
 
-    private val syncIntervalMillis: Long = 120 * 1000
+    private val syncIntervalMillis: Long = 20 * 1000
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
