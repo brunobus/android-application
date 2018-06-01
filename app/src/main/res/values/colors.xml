@@ -7,7 +7,7 @@
     <color name="evaViolet">#1E2D57</color>
     <color name="evaMint">#00B5C0</color>
     <color name="evaLime">#85B841</color>
-    <color name="evaYellow">#F8A818</color>
+    <color name="evaGold">#F8A818</color>
     <color name="evaOrange">#EF551F</color>
     <color name="evaRed">#CB212A</color>
     <color name="evaPurple">#852980</color>
@@ -158,7 +158,7 @@
     <color name="Navy">#000080</color>
     <color name="Black">#000000</color>
 
-    <color name="GraveGray">#252525</color>
+    <color name="VeryDarkGray">#252525</color>
     <color name="Pinky">#FF69B4</color>
     <color name="SmoothBlue">#6969ff</color>
     <color name="Apricot">#eeb882</color>

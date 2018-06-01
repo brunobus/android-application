@@ -75,7 +75,7 @@
     <style name="DashboardTheme" parent="DashboardThemeBase"/>
 
     <style name="PrayersThemeBase" parent="AppTheme">
-        <item name="colorPrimary">@color/GraveGray</item>
+        <item name="colorPrimary">@color/VeryDarkGray</item>
         <item name="colorPrimaryDark">@color/Black</item>
         <item name="colorAccent">@color/DimGray</item>
     </style>
@@ -133,14 +133,14 @@
 
     </style>
 
-    <style name="YellowTheme" parent="AppTheme">
-        <item name="colorPrimary">@color/evaYellow</item>
-        <item name="colorPrimaryDark">@color/evaYellow</item>
-        <item name="colorAccent">@color/evaYellow</item>
-        <item name="listItemContentSrc">@drawable/list_row_dir_yellow</item>
-        <item name="listItemFolderSrc">@drawable/list_row_dir_yellow</item>
-        <item name="directoryHeaderSrc">@drawable/header_yellow</item>
-        <item name="contentTitleBarSrc">@drawable/bar_yellow</item>
+    <style name="GoldTheme" parent="AppTheme">
+        <item name="colorPrimary">@color/evaGold</item>
+        <item name="colorPrimaryDark">@color/evaGold</item>
+        <item name="colorAccent">@color/evaGold</item>
+        <item name="listItemContentSrc">@drawable/list_row_dir_gold</item>
+        <item name="listItemFolderSrc">@drawable/list_row_dir_gold</item>
+        <item name="directoryHeaderSrc">@drawable/header_gold</item>
+        <item name="contentTitleBarSrc">@drawable/bar_gold</item>
 
     </style>
 
@@ -148,9 +148,9 @@
         <item name="colorPrimary">@color/evaLime</item>
         <item name="colorPrimaryDark">@color/evaLime</item>
         <item name="colorAccent">@color/evaLime</item>
-        <item name="listItemContentSrc">@drawable/list_row_dir_yellow</item>
-        <item name="listItemFolderSrc">@drawable/list_row_dir_yellow</item>
-        <item name="directoryHeaderSrc">@drawable/header_yellow</item>
+        <item name="listItemContentSrc">@drawable/list_row_dir_gold</item>
+        <item name="listItemFolderSrc">@drawable/list_row_dir_gold</item>
+        <item name="directoryHeaderSrc">@drawable/header_gold</item>
         <item name="contentTitleBarSrc">@drawable/bar_lime</item>
     </style>
 
@@ -186,17 +186,17 @@
         <item name="categoryIconSrc">@drawable/icon_propovjedi</item>
     </style>
 
-    <style name="RadioTheme" parent="YellowTheme"/>
+    <style name="RadioTheme" parent="GoldTheme"/>
 
-    <style name="IzrekeTheme" parent="YellowTheme">
+    <style name="IzrekeTheme" parent="GoldTheme">
         <item name="categoryIconSrc">@drawable/icon_izreke</item>
     </style>
+
+    <style name="EvandjeljeTheme" parent="GoldTheme"/>
 
     <style name="OdgovoriTheme" parent="DarkBlueTheme">
         <item name="categoryIconSrc">@drawable/icon_odgovori</item>
     </style>
-
-    <style name="EvandjeljeTheme" parent="YellowTheme"/>
 
     <style name="MultimedijaTheme" parent="PurpleTheme">
         <item name="categoryIconSrc">@drawable/icon_multimedija</item>
