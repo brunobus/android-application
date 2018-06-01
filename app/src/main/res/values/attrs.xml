@@ -2,6 +2,7 @@
 <resources>
     <attr name="listItemContentSrc" format="reference"/>
     <attr name="listItemFolderSrc" format="reference"/>
+    <attr name="categoryIconSrc" format="reference"/>
     <attr name="directoryHeaderSrc" format="reference"/>
     <attr name="contentTitleBarSrc" format="reference"/>
 
