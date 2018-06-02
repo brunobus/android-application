@@ -22,37 +22,52 @@ body {
     background-color: rgb(255, 255, 255);
     -webkit-locale: "HR";
     display: block;
-    margin: 8px;
+    margin: 8px 0px 8px 0px;
+    
+}
+
+a {
+    font-family: "Calibri";
+    font-size: 14pt;
+    font-style: regular;
+    color: #252525;
+    text-decoration: none;
 }
 
 .MolitvenikTitle
 {
-    margin:0in;
+    /*margin:0in;
     margin-right:0in;
     margin-left:0in;
-    margin-bottom:.0001pt;
+    margin-bottom:.0001pt;*/
+    margin: 0px 0px 0px 20px;
     line-height:150%;
     font-size:18.0pt;
-    font-family:"Calibri","sans-serif";
-    color:#17365D;
-    text-transform:uppercase;
+    /*font-family:"Calibri","sans-serif";*/
+    /*color:#17365D;*/
+    
+    font-family: "Calibri"; 
+    color: #252525;
+    font-style: bold;
+    /*text-transform:uppercase;*/
     font-weight:bold;
 
     text-indent:0in;
-    font-style:normal;
+    /*font-style:normal;*/
 }
 
 .Title
 {
-    margin:0in;
+    /*margin:0in;
     margin-top:.25in;
     margin-right:0in;
     margin-left:0in;
-    margin-bottom:.0001pt;
+    margin-bottom:.0001pt;*/
+    margin: 20px 0px 5px 20px;
     line-height:100%;
     font-size:14.0pt;
     font-weight: bold;
-    font-family:"Arial","sans-serif";
+    font-family:"Arial","sans-serif"; 
     color:black;
 
     text-transform:none;
@@ -61,13 +76,14 @@ body {
 }
 .Subtitle
 {
-    margin:0in;
+    /*margin:0in;
     margin-bottom:.0001pt;
     margin-right:0in;
-    margin-left:0in;
+    margin-left:0in;*/
+    margin: 20px 0px 5px 20px;
     line-height:150%;
     font-size:16.0pt;
-    font-family:"Calibri","sans-serif";
+    font-family:"Calibri","sans-serif"; 
     color:#548DD4;
     font-weight:bold;
 
@@ -79,36 +95,38 @@ body {
 
 .PlainTekst
 {
-    margin:0in;
+    /*margin:0in;
     margin-bottom:.0001pt;
     margin-top:0in;
     margin-right:0in;
-    margin-left:0in;
-    text-indent:.1in;
+    margin-left:0in;*/
+    margin: 10px 0px 5px 20px;
+    /*text-indent:.1in;*/
     line-height:150%;
     font-size:14.0pt;
-    font-family:"Calibri","sans-serif";
+    font-family:"Calibri","sans-serif"; 
 
-    color:WindowText;
+    color:#252525;
     font-weight:normal;
     text-transform:none;
-    font-style:normal;
+    font-style:regular;
 }
 
 .Comment {
-    margin:0in;
-    margin-bottom:.0001pt;
+    /*margin:0in;
+    margin-bottom:.0001pt;*/
+    margin: 10px 0px 5px 52px;
     line-height:150%;
-    font-size:11.0pt;
+    font-size:12.0pt;
     font-family:"Calibri","sans-serif";
-    color:#17365D;
+    color:#252525;;
     text-transform:uppercase;
     font-style:italic;
 
-    margin-top:0in;
+    /*margin-top:0in;
     margin-right:0in;
-    margin-left:0in;
-    text-indent:0in;
+    margin-left:0in;*/
+    /*text-indent:0in;*/
     font-weight:normal;
 }
 
@@ -148,12 +166,13 @@ body {
 }
 
 .Highlighted {
-    margin: 0in;
-    margin-bottom: .0001pt;
+    /*margin: 0in;
+    margin-bottom: .0001pt;*/
+    margin: 10px 0px 5px 20px;
     text-indent: .1in;
     line-height: 150%;
     font-size: 14.0pt;
-    font-family: "Calibri","sans-serif";
+    font-family: "Calibri","sans-serif"; 
     font-weight: bold;
     font-style: italic;
 }
@@ -171,14 +190,15 @@ body {
 }
 
 .Author {
-    margin: 0in;
-    margin-bottom: .0001pt;
-    text-align: right;
+    /*margin: 0in;
+    margin-bottom: .0001pt;*/
+    margin: 10px 0px 5px 45px;
+    text-align: left;
     text-indent: .1in;
     line-height: 150%;
     font-size: 11.0pt;
     font-family: "Calibri","sans-serif";
-    color: red;
+    color: #252525;
     font-style: italic;
 }
 
