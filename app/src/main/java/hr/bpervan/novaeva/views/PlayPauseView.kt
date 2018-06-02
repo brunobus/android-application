@@ -3,18 +3,18 @@ package hr.bpervan.novaeva.views
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
-import android.widget.TextView
+import android.widget.ImageView
 import hr.bpervan.novaeva.main.R
 
 /**
  *
  */
-class EvaCategoryView(context: Context?, attrs: AttributeSet?) : TextView(context, attrs) {
+class PlayPauseView(context: Context?, attrs: AttributeSet?) : ImageView(context, attrs) {
     companion object {
-        private val STATE_INDICATE_NEWS = intArrayOf(R.attr.indicate_news)
+        private val STATE_IS_PLAYING = intArrayOf(R.attr.is_playing)
     }
 
-    var indicateNews: Boolean = false
+    var isPlaying: Boolean = false
         set(value) {
             field = value
             refreshDrawableState()
@@ -22,8 +22,8 @@ class EvaCategoryView(context: Context?, attrs: AttributeSet?) : TextView(contex
 
     override fun onCreateDrawableState(extraSpace: Int): IntArray {
         val drawableState = super.onCreateDrawableState(extraSpace + 1)
-        if (indicateNews) {
-            View.mergeDrawableStates(drawableState, STATE_INDICATE_NEWS)
+        if (isPlaying) {
+            View.mergeDrawableStates(drawableState, STATE_IS_PLAYING)
         }
         return drawableState
     }

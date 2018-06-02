@@ -66,12 +66,11 @@ class EvaContentFragment : EvaBaseFragment() {
     private var exoPlayer: ExoPlayer? = null
         set(value) {
             field?.removeListener(evaPlayerEventListener)
-            value?.removeListener(evaPlayerEventListener)
             value?.addListener(evaPlayerEventListener)
             field = value
         }
 
-    private val evaPlayerEventListener = EvaPlayerEventListener({ context }, { exoPlayer }, { evaContent?.audioURL })
+    private val evaPlayerEventListener = EvaPlayerEventListener({ exoPlayer })
 
     private lateinit var realm: Realm
 
@@ -171,14 +170,18 @@ class EvaContentFragment : EvaBaseFragment() {
                 if (audioUrl != this.evaContent?.audioURL) {
                     prepareAudioStream(context!!, audioUrl)
                 }
-                exoPlayer?.let { player ->
-                    player_view?.let { playerView ->
-                        playerView.isVisible = true
-                        playerView.requestFocus()
-                        playerView.player = player
+                exoPlayer?.let { exoPlayer ->
+                    player_view?.apply {
+                        player = exoPlayer
+                        applyEvaConfiguration()
+                        requestFocus()
+                        showController()
+
                     }
                 }
+                evaPlayerEventListener.playbackId = audioUrl
             }
+
 
             evaContent.videoURL?.let { videoUrl ->
                 imgLink.setImageResource(R.drawable.vijest_ind_www_active)
@@ -278,7 +281,6 @@ class EvaContentFragment : EvaBaseFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         player_view?.player = null
-        exoPlayer?.removeListener(evaPlayerEventListener)
         exoPlayer = null
     }
 

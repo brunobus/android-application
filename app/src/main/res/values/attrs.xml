@@ -9,4 +9,7 @@
     <declare-styleable name="EvaCategoryView">
         <attr name="indicate_news" format="boolean"/>
     </declare-styleable>
+    <declare-styleable name="PlayPauseView">
+        <attr name="is_playing" format="boolean"/>
+    </declare-styleable>
 </resources>

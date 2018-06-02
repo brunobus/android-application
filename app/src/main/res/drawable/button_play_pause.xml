@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:drawable="@drawable/button_play"
+          app:is_playing="false"/>
+    <item android:drawable="@drawable/button_pause"
+          app:is_playing="true"/>
+</selector>

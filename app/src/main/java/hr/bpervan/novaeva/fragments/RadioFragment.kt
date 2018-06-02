@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.net.toUri
 import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
@@ -33,6 +34,7 @@ import hr.bpervan.novaeva.services.novaEvaService
 import hr.bpervan.novaeva.util.networkRequest
 import hr.bpervan.novaeva.util.plusAssign
 import hr.bpervan.novaeva.views.snackbar
+import io.reactivex.Maybe
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -63,16 +65,19 @@ class RadioFragment : EvaBaseFragment() {
     private lateinit var adapter: RadioStationsAdapter
 
     private val radioStationList: MutableList<EvaContentMetadata> = mutableListOf()
-    private var selectedStreamUri: String? = null
 
     private var exoPlayer: ExoPlayer? = null
         set(value) {
             field?.removeListener(evaPlayerEventListener)
-            value?.removeListener(evaPlayerEventListener)
+            field?.removeListener(radioPlayerEventListener)
+
             value?.addListener(evaPlayerEventListener)
+            value?.addListener(radioPlayerEventListener)
+
             field = value
         }
-    private val evaPlayerEventListener = EvaPlayerEventListener({ context }, { exoPlayer }, { selectedStreamUri })
+    private val evaPlayerEventListener = EvaPlayerEventListener({ exoPlayer })
+    private val radioPlayerEventListener = RadioPlayerEventListener()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -104,22 +109,34 @@ class RadioFragment : EvaBaseFragment() {
 
         baseDisposables += EventPipelines.chooseRadioStation
                 .throttleWithTimeout(200, TimeUnit.MILLISECONDS)
-                .observeOn(Schedulers.io())
-                .switchMap {
-                    novaEvaService.getContentData(it.contentId).toObservable()
-                }
-                .map { it.toDatabaseModel() }
                 .observeOn(AndroidSchedulers.mainThread())
+                .switchMapMaybe {
+                    if (evaPlayerEventListener.playbackId == it.contentId.toString()) {
+                        evaPlayerEventListener.playbackId = null
+                        exoPlayer?.playWhenReady = false
+                        Maybe.empty()
+                    } else {
+                        novaEvaService.getContentData(it.contentId).toMaybe()
+                                .subscribeOn(Schedulers.io())
+                    }
+                }
+                .observeOn(AndroidSchedulers.mainThread())
+                .map { it.toDatabaseModel() }
                 .doOnNext { updateUI(it) }
                 .observeOn(Schedulers.io())
-                .switchMap {
-                    getStreamLinksFromPlaylistUri(it.audioURL!!).toObservable()
+                .switchMap { radioStation ->
+                    getStreamLinksFromPlaylistUri(radioStation.audioURL!!)
+                            .toObservable()
+                            .map { Pair(radioStation.contentId, it) }
                 }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ streamUris ->
+                .subscribe({ stationStreams ->
+                    val stationId = stationStreams.first
+                    val streamUris = stationStreams.second
+
                     for (streamUri in streamUris.shuffled()) {
                         try {
-                            prepareAndPlayRadioStream(streamUri)
+                            prepareAndPlayRadioStream(stationId, streamUri)
                             break
                         } catch (e: Exception) {
                             /*continue*/
@@ -149,9 +166,15 @@ class RadioFragment : EvaBaseFragment() {
 
     }
 
+    inner class RadioPlayerEventListener : Player.DefaultEventListener() {
+        override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+            adapter.radioStationPlaying = evaPlayerEventListener.playbackId?.toLong()
+            adapter.notifyItemRangeChanged(0, adapter.itemCount)
+        }
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
-        exoPlayer?.removeListener(evaPlayerEventListener)
         exoPlayer = null
     }
 
@@ -177,8 +200,8 @@ class RadioFragment : EvaBaseFragment() {
                 }
     }
 
-    private fun prepareAndPlayRadioStream(streamUri: String) {
-        selectedStreamUri = streamUri
+    private fun prepareAndPlayRadioStream(stationId: Long, streamUri: String) {
+        evaPlayerEventListener.playbackId = stationId.toString()
 
         val context = context ?: return
         val dataSourceFactory = DefaultDataSourceFactory(context,
@@ -188,7 +211,7 @@ class RadioFragment : EvaBaseFragment() {
 //        val factory = ExtractorMediaSource.Factory(dataSourceFactory).setCustomCacheKey(streamUri)
 //        val mediaSource = factory.createMediaSource(streamingUri)
 
-        exoPlayer = NovaEvaApp.evaPlayer.prepareIfNeededAndGetPlayer(streamUri) {
+        exoPlayer = NovaEvaApp.evaPlayer.prepareIfNeededAndGetPlayer(stationId.toString()) {
             ExtractorMediaSource(streamUri.toUri(), dataSourceFactory, DefaultExtractorsFactory(),
                     handler, null, streamUri)
         }
@@ -196,7 +219,7 @@ class RadioFragment : EvaBaseFragment() {
     }
 
     private fun fetchRadioStationsFromServer(timestamp: Long? = null) {
-        fetchFromServerDisposable = novaEvaService.getDirectoryContent(EvaCategory.RADIO.id.toLong(), timestamp, 1000)
+        fetchFromServerDisposable = novaEvaService.getDirectoryContent(EvaCategory.RADIO.id, timestamp, 1000)
                 .networkRequest({ evaDirectoryDTO ->
                     radioStationList.clear()
                     radioStationList.addAll(evaDirectoryDTO.contentMetadataList.map { it.toDatabaseModel() })

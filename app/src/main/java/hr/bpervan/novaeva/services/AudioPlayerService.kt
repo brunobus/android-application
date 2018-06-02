@@ -155,7 +155,7 @@ class AudioPlayerService : Service() {
         val playPauseIcon = if (playing) R.drawable.exo_controls_pause else R.drawable.exo_controls_play
         val playPauseString = if (playing) getString(R.string.pause) else getString(R.string.play)
 
-//        val contentText = NovaEvaApp.evaPlayer.currentAudioTrackUri
+//        val contentText = NovaEvaApp.evaPlayer.currentPlaybackId
 
         return NotificationCompat.Builder(context, createNotificationChannel())
                 .setLargeIcon(novaEvaBitmap)

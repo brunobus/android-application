@@ -33,9 +33,9 @@ class EvaPlayer(context: Context) {
     private val otherPlayer: ExoPlayer
         get() = if (currentPlayer == playerAlpha) playerBeta else playerAlpha
 
-    var currentAudioTrackUri: String? = null
+    var currentPlaybackId: String? = null
 
-    fun prepareIfNeededAndGetPlayer(trackUri: String, mediaSourceProvider: () -> MediaSource): ExoPlayer {
+    fun prepareIfNeededAndGetPlayer(playbackId: String, mediaSourceProvider: () -> MediaSource): ExoPlayer {
         val currentPlayer = this.currentPlayer
 
         return when {
@@ -44,7 +44,7 @@ class EvaPlayer(context: Context) {
                 currentPlayer.prepare(mediaSourceProvider())
                 currentPlayer
             }
-            trackUri == currentAudioTrackUri -> currentPlayer /*don't prepare*/
+            playbackId == currentPlaybackId -> currentPlayer /*don't prepare*/
             else -> {
                 otherPlayer.playWhenReady = false
                 otherPlayer.prepare(mediaSourceProvider())

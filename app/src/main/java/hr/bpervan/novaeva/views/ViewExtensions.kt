@@ -10,6 +10,8 @@ import android.view.ViewTreeObserver
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.core.view.isVisible
+import com.google.android.exoplayer2.ui.PlayerView
 import hr.bpervan.novaeva.util.defaultTextSize
 import hr.bpervan.novaeva.util.TEXT_SIZE_KEY
 
@@ -23,6 +25,15 @@ fun WebView.applyEvaConfiguration(prefs: SharedPreferences) {
     settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.SINGLE_COLUMN
 
     isLongClickable = true
+}
+
+fun PlayerView.applyEvaConfiguration(){
+    isVisible = true
+    useController = true
+    controllerAutoShow = true
+    controllerShowTimeoutMs = 0
+    controllerHideOnTouch = false
+    setControllerHideDuringAds(false)
 }
 
 fun WebView.loadHtmlText(text: String?) {
