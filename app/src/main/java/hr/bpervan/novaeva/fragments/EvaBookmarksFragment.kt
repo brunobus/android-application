@@ -15,6 +15,7 @@ import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
+import hr.bpervan.novaeva.rest.EvaCategory
 import hr.bpervan.novaeva.model.EvaContentMetadata
 import hr.bpervan.novaeva.storage.EvaContentDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
@@ -57,7 +58,8 @@ class EvaBookmarksFragment : EvaBaseFragment() {
 
         realm = Realm.getInstance(RealmConfigProvider.evaDBConfig)
 
-        adapter = EvaRecyclerAdapter(bookmarksList)
+        //todo fixme find which category bookmark belongs to
+        adapter = EvaRecyclerAdapter(EvaCategory.GOSPEL, bookmarksList)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

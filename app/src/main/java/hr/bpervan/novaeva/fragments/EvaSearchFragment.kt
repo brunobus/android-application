@@ -18,9 +18,10 @@ import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.util.showFetchErrorDialog
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
+import hr.bpervan.novaeva.rest.EvaCategory
 import hr.bpervan.novaeva.model.EvaContentMetadata
 import hr.bpervan.novaeva.model.toDatabaseModel
-import hr.bpervan.novaeva.services.novaEvaService
+import hr.bpervan.novaeva.rest.novaEvaServiceV2
 import hr.bpervan.novaeva.util.networkRequest
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.fragment_search.*
@@ -59,7 +60,8 @@ class EvaSearchFragment : EvaBaseFragment() {
         val inState: Bundle = savedInstanceState ?: arguments!!
         searchString = inState.getString(searchStringKey)
 
-        adapter = EvaRecyclerAdapter(searchResultList)
+        //todo fixme find which category search results belong to
+        adapter = EvaRecyclerAdapter(EvaCategory.GOSPEL, searchResultList)
 
         savedInstanceState ?: NovaEvaApp.defaultTracker
                 .send(HitBuilders.EventBuilder()
@@ -123,7 +125,7 @@ class EvaSearchFragment : EvaBaseFragment() {
         searchResultList.clear()
         adapter.notifyDataSetChanged()
 
-        searchForContentDisposable = novaEvaService.searchForContent(searchString)
+        searchForContentDisposable = novaEvaServiceV2.searchForContent(searchString)
                 .networkRequest({ searchResult ->
                     if (!searchResult.searchResultContentMetadataList.isEmpty()) {
                         searchResultList.addAll(

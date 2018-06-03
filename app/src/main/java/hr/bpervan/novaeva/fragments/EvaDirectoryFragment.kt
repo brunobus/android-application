@@ -22,7 +22,9 @@ import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.*
-import hr.bpervan.novaeva.services.novaEvaService
+import hr.bpervan.novaeva.rest.EvaCategory
+import hr.bpervan.novaeva.rest.novaEvaServiceV3
+import hr.bpervan.novaeva.rest.region
 import hr.bpervan.novaeva.storage.EvaDirectoryDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
 import hr.bpervan.novaeva.util.NEW_CONTENT_KEY_PREFIX
@@ -30,7 +32,6 @@ import hr.bpervan.novaeva.util.networkRequest
 import hr.bpervan.novaeva.views.snackbar
 import io.reactivex.disposables.Disposable
 import io.realm.Realm
-import io.realm.Sort
 import kotlinx.android.synthetic.main.collapsing_directory_header.view.*
 import kotlinx.android.synthetic.main.fragment_directory_contents.*
 import kotlinx.android.synthetic.main.top_izbornik.view.*
@@ -42,6 +43,7 @@ class EvaDirectoryFragment : EvaBaseFragment() {
 
     companion object : EvaBaseFragment.EvaFragmentFactory<EvaDirectoryFragment, OpenDirectoryEvent> {
 
+        private const val CATEGORY_KEY = "category"
         private const val directoryIdKey = "directoryId"
         private const val directoryTitleKey = "directoryTitle"
         private const val themeIdKey = "themeId"
@@ -49,6 +51,7 @@ class EvaDirectoryFragment : EvaBaseFragment() {
         override fun newInstance(initializer: OpenDirectoryEvent): EvaDirectoryFragment {
             return EvaDirectoryFragment().apply {
                 arguments = bundleOf(
+                        CATEGORY_KEY to initializer.category,
                         directoryIdKey to initializer.directoryMetadata.directoryId,
                         directoryTitleKey to initializer.directoryMetadata.title,
                         themeIdKey to initializer.themeId
@@ -69,12 +72,8 @@ class EvaDirectoryFragment : EvaBaseFragment() {
             field = safeReplaceDisposable(field, value)
         }
 
-    private var loadEvaDirectoryDisposable: Disposable? = null
-        set(value) {
-            field = safeReplaceDisposable(field, value)
-        }
-
-    private var directoryId: Long = -1
+    private lateinit var category: EvaCategory
+    private var directoryId: Long = 1
     private lateinit var directoryTitle: String
     private var themeId: Int = -1
 
@@ -91,11 +90,13 @@ class EvaDirectoryFragment : EvaBaseFragment() {
         super.onCreate(savedInstanceState)
 
         val inState: Bundle = savedInstanceState ?: arguments!!
-        directoryId = inState.getLong(directoryIdKey)
+
+        category = inState.getSerializable(CATEGORY_KEY) as EvaCategory
+        directoryId = inState.getLong(directoryIdKey, 1)
         directoryTitle = inState.getString(directoryTitleKey)
         themeId = inState.getInt(themeIdKey)
 
-        adapter = EvaRecyclerAdapter(elementsList, { loadingFromDb || fetchingFromServer }, themeId)
+        adapter = EvaRecyclerAdapter(category, elementsList, { loadingFromDb || fetchingFromServer }, themeId)
         adapter.registerAdapterDataObserver(DataChangeLogger())
 
         savedInstanceState ?: NovaEvaApp.defaultTracker
@@ -153,6 +154,7 @@ class EvaDirectoryFragment : EvaBaseFragment() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
+        outState.putSerializable(CATEGORY_KEY, category)
         outState.putLong(directoryIdKey, directoryId)
         outState.putString(directoryTitleKey, directoryTitle)
         outState.putInt(themeIdKey, themeId)
@@ -222,18 +224,10 @@ class EvaDirectoryFragment : EvaBaseFragment() {
             if (firstVisibleItem > 0 && visibleItemCount > 0 && totalItemCount > 0) {
                 if (!fetchingFromServer && hasMore && totalItemCount - visibleItemCount <= firstVisibleItem + visibleThreshold) {
 
-                    /** Ako je zadnji u listi podkategorija, onda on nema UnixDatum, pa tražimo zadnji koji ima */
-
                     fetchingFromServer = true
                     refreshLoadingCircleState()
 
-                    loadEvaDirectoryDisposable = EvaDirectoryDbAdapter.loadEvaDirectoryAsync(realm, directoryId, { evaDirectory ->
-                        if (evaDirectory != null) {
-                            val oldestTimestamp = evaDirectory.contentMetadataList.sort(TIMESTAMP_FIELD, Sort.DESCENDING)
-                                    .lastOrNull()?.timestamp
-                            fetchEvaDirectoryDataFromServer(oldestTimestamp)
-                        }
-                    })
+                    fetchEvaDirectoryDataFromServer(pageOn + 1)
                 }
             }
         }
@@ -246,22 +240,25 @@ class EvaDirectoryFragment : EvaBaseFragment() {
         }
     }
 
-    private fun fetchEvaDirectoryDataFromServer(timestamp: Long? = null) {
+    private var pageOn: Long = -99
+
+    private fun fetchEvaDirectoryDataFromServer(page: Long = 1) {
         fetchingFromServer = true
         refreshLoadingCircleState()
 
-        fetchFromServerDisposable = novaEvaService.getDirectoryContent(directoryId, timestamp)
-                .networkRequest({ evaDirectoryDTO ->
+        fetchFromServerDisposable = novaEvaServiceV3.categoryContent(
+                category.endpointRoot, directoryId, page, region.id)
+                .networkRequest({ categoryDto ->
                     loadingFromDb = true
                     fetchingFromServer = false
 
-                    evaDirectoryDTO.directoryId = directoryId //todo fix on server
+                    categoryDto.id = directoryId // cache mock data hack
 
-                    EvaCache.cache(realm, evaDirectoryDTO)
+                    EvaCache.cache(realm, categoryDto)
 
                     handler.postDelayed(4000) {
                         /*if there are no actual new changes from server, data in cache will not be "updated"
-                        and on update callback (in subscribeToDirectoryUpdates) will not be called,
+                        and on-update callback (in subscribeToDirectoryUpdates) will not be called,
                         resulting in progress circle spinning forever
                         This block kills loading circle after some reasonable time
                         */
@@ -269,8 +266,9 @@ class EvaDirectoryFragment : EvaBaseFragment() {
                         refreshLoadingCircleState()
                     }
 
-                    hasMore = evaDirectoryDTO.more > 0
+                    hasMore = page < categoryDto.totalPages
 
+                    pageOn = page
                 }, onError = {
                     handler.postDelayed(2000) {
                         fetchingFromServer = false

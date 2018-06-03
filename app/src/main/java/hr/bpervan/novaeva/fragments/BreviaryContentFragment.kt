@@ -12,7 +12,7 @@ import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.util.SCROLL_PERCENT_KEY
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.services.novaEvaService
+import hr.bpervan.novaeva.rest.novaEvaServiceV2
 import hr.bpervan.novaeva.util.networkRequest
 import hr.bpervan.novaeva.util.plusAssign
 import hr.bpervan.novaeva.views.*
@@ -123,7 +123,7 @@ class BreviaryContentFragment : EvaBaseFragment() {
 
     private fun fetchBreviary() {
 
-        baseDisposables += novaEvaService
+        baseDisposables += novaEvaServiceV2
                 .getBreviary(breviaryId.toString())
                 .networkRequest({ breviary ->
                     view ?: return@networkRequest

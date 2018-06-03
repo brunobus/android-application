@@ -21,7 +21,7 @@ import hr.bpervan.novaeva.fragments.*
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaContentMetadata
 import hr.bpervan.novaeva.model.OpenContentEvent
-import hr.bpervan.novaeva.services.novaEvaService
+import hr.bpervan.novaeva.rest.novaEvaServiceV2
 import hr.bpervan.novaeva.util.*
 import hr.bpervan.novaeva.util.TransitionAnimation.*
 import io.reactivex.disposables.CompositeDisposable
@@ -54,11 +54,12 @@ class EvaActivity : EvaBaseActivity() {
         if (savedInstanceState == null) {
             openDashboardFragment()
 
-            val contentId = intent.data?.lastPathSegment?.toLongOrNull() ?: -1L
-            if (contentId != -1L) {
-                openContentFragment(OpenContentEvent(
-                        EvaContentMetadata(contentId, 0, -1)))
-            }
+            //todo find which category requested content belongs to
+//            val contentId = intent.data?.lastPathSegment?.toLongOrNull() ?: -1L
+//            if (contentId != -1L) {
+//                openContentFragment(OpenContentEvent(EvaCategory.GOSPEL,
+//                        EvaContentMetadata(contentId, 0, -1)))
+//            }
         }
 
         updateDisplayMetrics()
@@ -193,7 +194,7 @@ class EvaActivity : EvaBaseActivity() {
     }
 
     private fun fetchBreviaryCoverUrl() {
-        novaEvaService.getDirectoryContent(546, null)
+        novaEvaServiceV2.getDirectoryContent(546, null)
                 .networkRequest({ directoryContent ->
                     val image = directoryContent.image?.size640 ?: directoryContent.image?.size640
                     if (image != null) {
@@ -205,7 +206,7 @@ class EvaActivity : EvaBaseActivity() {
     }
 
     private fun fetchDashboardBackgroundUrl() {
-//        novaEvaService.getDashboardBackground(EventPipelines.evaTheme.value!!)
+//        novaEvaServiceV2.getDashboardBackground(EventPipelines.evaTheme.value!!)
 //                .networkRequest({ url ->
 //                    NovaEvaApp.imageLoader.loadImage(url, object : SimpleImageLoadingListener() {
 //                        override fun onLoadingComplete(imageUri: String, view: View?, loadedImage: Bitmap) {

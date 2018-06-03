@@ -24,13 +24,12 @@ import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.RadioStationsAdapter
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.EvaCategory
 import hr.bpervan.novaeva.model.EvaContent
 import hr.bpervan.novaeva.model.EvaContentMetadata
 import hr.bpervan.novaeva.model.toDatabaseModel
 import hr.bpervan.novaeva.player.EvaPlayerEventListener
 import hr.bpervan.novaeva.player.PlaylistExtractor
-import hr.bpervan.novaeva.services.novaEvaService
+import hr.bpervan.novaeva.rest.novaEvaServiceV2
 import hr.bpervan.novaeva.util.networkRequest
 import hr.bpervan.novaeva.util.plusAssign
 import hr.bpervan.novaeva.views.snackbar
@@ -116,7 +115,7 @@ class RadioFragment : EvaBaseFragment() {
                         exoPlayer?.playWhenReady = false
                         Maybe.empty()
                     } else {
-                        novaEvaService.getContentData(it.contentId).toMaybe()
+                        novaEvaServiceV2.getContentData(it.contentId).toMaybe()
                                 .subscribeOn(Schedulers.io())
                     }
                 }
@@ -218,8 +217,11 @@ class RadioFragment : EvaBaseFragment() {
         exoPlayer?.playWhenReady = true
     }
 
+    //legacy
+    private val radioDirectoryId: Long = 473
+
     private fun fetchRadioStationsFromServer(timestamp: Long? = null) {
-        fetchFromServerDisposable = novaEvaService.getDirectoryContent(EvaCategory.RADIO.id, timestamp, 1000)
+        fetchFromServerDisposable = novaEvaServiceV2.getDirectoryContent(radioDirectoryId, timestamp, 1000)
                 .networkRequest({ evaDirectoryDTO ->
                     radioStationList.clear()
                     radioStationList.addAll(evaDirectoryDTO.contentMetadataList.map { it.toDatabaseModel() })

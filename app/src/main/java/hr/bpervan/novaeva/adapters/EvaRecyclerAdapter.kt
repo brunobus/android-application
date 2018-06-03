@@ -10,13 +10,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.isVisible
 import hr.bpervan.novaeva.NovaEvaApp
-import hr.bpervan.novaeva.model.OpenContentEvent
-import hr.bpervan.novaeva.model.OpenDirectoryEvent
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.EvaContentMetadata
-import hr.bpervan.novaeva.model.EvaDirectoryMetadata
-import hr.bpervan.novaeva.model.TreeElementInfo
+import hr.bpervan.novaeva.model.*
+import hr.bpervan.novaeva.rest.EvaCategory
 import hr.bpervan.novaeva.util.EvaTouchFeedback
 import hr.bpervan.novaeva.util.TransitionAnimation
 import kotlinx.android.synthetic.main.recycler_item_eva_content.view.*
@@ -27,7 +24,8 @@ import java.util.*
 /**
  * Created by vpriscan on 08.10.17..
  */
-class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
+class EvaRecyclerAdapter(val category: EvaCategory,
+                         private val data: List<TreeElementInfo>,
                          val isLoadingSupplier: () -> Boolean = { false },
                          val themeId: Int = -1) :
         RecyclerView.Adapter<EvaRecyclerAdapter.BindableViewHolder>() {
@@ -109,7 +107,7 @@ class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
 
             view.setOnTouchListener(EvaTouchFeedback(view, themeColorTrans))
             view.setOnClickListener {
-                EventPipelines.openDirectory.onNext(OpenDirectoryEvent(directoryInfo, themeId, TransitionAnimation.LEFTWARDS))
+                EventPipelines.openDirectory.onNext(OpenDirectoryEvent(category, directoryInfo, themeId, TransitionAnimation.LEFTWARDS))
             }
         }
 
@@ -170,7 +168,7 @@ class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
             view.setOnTouchListener(EvaTouchFeedback(view, themeColorTrans))
 
             view.setOnClickListener {
-                EventPipelines.openContent.onNext(OpenContentEvent(contentInfo, themeId, TransitionAnimation.LEFTWARDS))
+                EventPipelines.openContent.onNext(OpenContentEvent(category, contentInfo, themeId, TransitionAnimation.LEFTWARDS))
             }
         }
     }

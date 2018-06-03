@@ -22,18 +22,18 @@ import com.google.android.exoplayer2.util.Util
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
-import hr.bpervan.novaeva.util.SCROLL_PERCENT_KEY
-import hr.bpervan.novaeva.util.sendEmailIntent
-import hr.bpervan.novaeva.util.EvaCache
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.EvaCategory
+import hr.bpervan.novaeva.rest.EvaCategory
 import hr.bpervan.novaeva.model.EvaContent
 import hr.bpervan.novaeva.model.OpenContentEvent
 import hr.bpervan.novaeva.player.EvaPlayerEventListener
-import hr.bpervan.novaeva.services.novaEvaService
+import hr.bpervan.novaeva.rest.novaEvaServiceV2
 import hr.bpervan.novaeva.storage.EvaContentDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
+import hr.bpervan.novaeva.util.EvaCache
+import hr.bpervan.novaeva.util.SCROLL_PERCENT_KEY
 import hr.bpervan.novaeva.util.networkRequest
+import hr.bpervan.novaeva.util.sendEmailIntent
 import hr.bpervan.novaeva.views.*
 import io.reactivex.disposables.Disposable
 import io.realm.Realm
@@ -47,16 +47,16 @@ class EvaContentFragment : EvaBaseFragment() {
 
     companion object : EvaFragmentFactory<EvaContentFragment, OpenContentEvent> {
 
+        private const val CATEGORY_KEY = "category"
         private const val CONTENT_ID_KEY = "contentId"
-        private const val CATEGORY_ID_KEY = "categoryId"
         private const val THEME_ID_KEY = "themeId"
 
         override fun newInstance(initializer: OpenContentEvent): EvaContentFragment {
             return EvaContentFragment().apply {
                 arguments = bundleOf(
                         CONTENT_ID_KEY to initializer.contentMetadata.contentId,
-                        CATEGORY_ID_KEY to initializer.contentMetadata.categoryId,
-                        THEME_ID_KEY to initializer.themeId
+                        THEME_ID_KEY to initializer.themeId,
+                        CATEGORY_KEY to initializer.category
                 )
             }
         }
@@ -74,8 +74,8 @@ class EvaContentFragment : EvaBaseFragment() {
 
     private lateinit var realm: Realm
 
+    private lateinit var category: EvaCategory
     private var contentId: Long = 0
-    private var categoryId: Long = 0
     private var evaContent: EvaContent? = null
 
     private val handler = Handler()
@@ -101,8 +101,8 @@ class EvaContentFragment : EvaBaseFragment() {
         super.onCreate(savedInstanceState)
 
         val inState = savedInstanceState ?: arguments!!
+        category = inState.getSerializable(CATEGORY_KEY) as EvaCategory
         contentId = inState.getLong(CONTENT_ID_KEY)
-        categoryId = inState.getLong(CATEGORY_ID_KEY)
         themeId = inState.getInt(THEME_ID_KEY, -1)
 
         savedInstanceState ?: NovaEvaApp.defaultTracker
@@ -121,8 +121,8 @@ class EvaContentFragment : EvaBaseFragment() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
+        outState.putSerializable(CATEGORY_KEY, category)
         outState.putLong(CONTENT_ID_KEY, contentId)
-        outState.putLong(CATEGORY_ID_KEY, categoryId)
         outState.putInt(THEME_ID_KEY, themeId)
         outState.putFloat(SCROLL_PERCENT_KEY, scrollView.calcScrollYPercent(scrollView.getChildAt(0).height))
 
@@ -204,12 +204,12 @@ class EvaContentFragment : EvaBaseFragment() {
     }
 
     private fun fetchContentFromServer(contentId: Long) {
-        fetchFromServerDisposable = novaEvaService.getContentData(contentId)
-                .networkRequest({ contentDataDTO ->
-                    EvaCache.cache(realm, contentDataDTO)
-                }, onError = {
-                    view?.snackbar(R.string.error_fetching_data, Snackbar.LENGTH_LONG)
-                })
+//        fetchFromServerDisposable = novaEvaServiceV2.getContentData(contentId)
+//                .networkRequest({ contentDataDTO ->
+//                    EvaCache.cache(realm, contentDataDTO)
+//                }, onError = {
+//                    view?.snackbar(R.string.error_fetching_data, Snackbar.LENGTH_LONG)
+//                })
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -247,8 +247,7 @@ class EvaContentFragment : EvaBaseFragment() {
         vijestWebView.applyEvaConfiguration(prefs)
         vijestWebView.loadHtmlText(evaContent?.text)
 
-        /** Is this 'Duhovni poziv' or 'Odgovori' category?  */
-        if (categoryId == EvaCategory.VOCATION.id.toLong()) {
+        if (category == EvaCategory.VOCATION) {
             btnPoziv.isVisible = true
             btnPoziv.setOnClickListener {
                 val text = "Hvaljen Isus i Marija, javljam Vam se jer razmišljam o duhovnom pozivu."

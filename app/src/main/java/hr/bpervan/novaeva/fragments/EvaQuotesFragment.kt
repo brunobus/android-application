@@ -12,7 +12,7 @@ import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.services.novaEvaService
+import hr.bpervan.novaeva.rest.novaEvaServiceV2
 import hr.bpervan.novaeva.util.NEW_CONTENT_KEY_PREFIX
 import hr.bpervan.novaeva.util.networkRequest
 import hr.bpervan.novaeva.views.loadHtmlText
@@ -115,21 +115,21 @@ class EvaQuotesFragment : EvaBaseFragment() {
     }
 
     private fun fetchRandomQuote() {
-        loadRandomQuoteDisposable = novaEvaService.getRandomDirectoryContent(1)
-                .networkRequest({ directoryContent ->
-                    val contentMetadataList = directoryContent.contentMetadataList
-                    if (contentMetadataList != null && contentMetadataList.isNotEmpty()) {
-                        val quoteInfo = contentMetadataList[0]
-
-                        quoteTitle = quoteInfo.title
-                        quoteData = quoteInfo.text
-                        quoteId = quoteInfo.contentId
-
-                        showQuote()
-                    }
-                }, onError = {
-                    view?.snackbar(R.string.network_unavailable, Snackbar.LENGTH_SHORT)
-                })
+//        loadRandomQuoteDisposable = novaEvaServiceV2.getRandomDirectoryContent(1)
+//                .networkRequest({ directoryContent ->
+//                    val contentMetadataList = directoryContent.contentMetadataList
+//                    if (contentMetadataList != null && contentMetadataList.isNotEmpty()) {
+//                        val quoteInfo = contentMetadataList[0]
+//
+//                        quoteTitle = quoteInfo.title
+//                        quoteData = quoteInfo.text
+//                        quoteId = quoteInfo.contentId
+//
+//                        showQuote()
+//                    }
+//                }, onError = {
+//                    view?.snackbar(R.string.network_unavailable, Snackbar.LENGTH_SHORT)
+//                })
     }
 
     private fun showQuote() {
