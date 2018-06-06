@@ -34,5 +34,13 @@
     <string name="pause">Pauziraj</string>
     <string name="play">Pokreni</string>
     <string name="radio_stations">Radio stanice</string>
+    <string name="info_about">Informacije</string>
+    <string name="help">Pomoć</string>
+    <string name="text_plus_minus">Tekst +/-</string>
+    <string name="theme">Izgled</string>
+    <string name="share">Dijeli</string>
+    <string name="bookmark">Zabilježi</string>
+    <string name="home">Početna</string>
+
 
 </resources>

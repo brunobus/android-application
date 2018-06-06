@@ -1,69 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/settings_background"
     android:clickable="true"
+    android:fillViewport="true"
     android:focusable="true">
 
-    <LinearLayout
-        android:layout_width="0dp"
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_gravity="center"
+        android:padding="20dp">
 
         <TextView
+            android:id="@+id/optionInfo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:text="[Temp] Info/About"/>
+            android:text="@string/info_about"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toTopOf="@id/optionHelp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="spread"/>
 
         <TextView
+            android:id="@+id/optionHelp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:text="[Temp] Help"/>
+            android:text="@string/help"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toTopOf="@id/optionTextSize"
+            app:layout_constraintTop_toBottomOf="@id/optionInfo"/>
 
         <TextView
+            android:id="@+id/optionTextSize"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:text="[Temp] Text +/-"/>
+            android:text="@string/text_plus_minus"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toTopOf="@id/optionTheme"
+            app:layout_constraintTop_toBottomOf="@id/optionHelp"/>
 
         <TextView
+            android:id="@+id/optionTheme"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:text="[Temp] White/Black"/>
+            android:text="@string/theme"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toTopOf="@id/optionShare"
+            app:layout_constraintTop_toBottomOf="@id/optionTextSize"/>
 
         <TextView
+            android:id="@+id/optionShare"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:text="[Temp] Share"/>
+            android:text="@string/share"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toTopOf="@id/optionBookmark"
+            app:layout_constraintTop_toBottomOf="@id/optionTheme"/>
 
         <TextView
+            android:id="@+id/optionBookmark"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:text="[Temp] Bookmark"/>
+            android:text="@string/bookmark"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toTopOf="@id/optionHome"
+            app:layout_constraintTop_toBottomOf="@id/optionShare"/>
 
         <TextView
+            android:id="@+id/optionHome"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:text="[Temp] Share"/>
+            android:text="@string/home"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/optionBookmark"/>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:text="[Temp] Home"/>
-    </LinearLayout>
+    </android.support.constraint.ConstraintLayout>
 
-</android.support.constraint.ConstraintLayout>
+</ScrollView>
