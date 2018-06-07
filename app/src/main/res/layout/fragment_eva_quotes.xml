@@ -32,11 +32,8 @@
                 android:id="@+id/webText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"/>
 
-                android:layout_below="@+id/imgPodnaslovnaCrta"
-                android:layout_marginTop="5dp"
-                android:paddingBottom="30dp"
-                android:textColor="#4c4c4c"/>
 
         </android.support.v4.widget.NestedScrollView>
 
@@ -50,10 +47,10 @@
         android:layout_marginTop="5dp"
         android:contentDescription="@string/dummyDesc"
         android:src="@drawable/button_obnovi"
-        app:layout_constraintTop_toTopOf="@id/optionsBtn"
         app:layout_constraintBottom_toBottomOf="@id/radioBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/optionsBtn"
         />
 
     <include
