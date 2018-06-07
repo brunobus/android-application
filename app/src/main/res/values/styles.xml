@@ -144,8 +144,8 @@
         <item name="colorPrimary">@color/evaLime</item>
         <item name="colorPrimaryDark">@color/evaLime</item>
         <item name="colorAccent">@color/evaLime</item>
-        <item name="listItemContentSrc">@drawable/list_row_dir_gold</item>
-        <item name="listItemFolderSrc">@drawable/list_row_dir_gold</item>
+        <item name="listItemContentSrc">@drawable/list_row_dir_lime</item>
+        <item name="listItemFolderSrc">@drawable/list_row_dir_lime</item>
         <item name="directoryHeaderSrc">@drawable/header_lime</item>
         <item name="contentTitleBarSrc">@drawable/bar_lime</item>
     </style>
