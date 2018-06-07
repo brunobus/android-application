@@ -7,85 +7,205 @@
     android:background="@drawable/settings_background"
     android:clickable="true"
     android:fillViewport="true"
-    android:focusable="true">
+    android:focusable="true"
+    android:overScrollMode="never"
+    android:paddingBottom="1dp"
+    android:paddingEnd="5dp"
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp"
+    android:paddingStart="5dp"
+    android:paddingTop="1dp"
+    android:scrollbars="none">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:padding="20dp">
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/imgInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/dummyDesc"
+            android:src="@drawable/btn_info"
+            app:layout_constraintBottom_toTopOf="@id/imgHelp"
+            app:layout_constraintEnd_toStartOf="@id/optionInfo"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"/>
 
         <TextView
             android:id="@+id/optionInfo"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:text="@string/info_about"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toTopOf="@id/optionHelp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="spread"/>
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@id/imgInfo"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/imgInfo"
+            app:layout_constraintTop_toTopOf="@id/imgInfo"/>
+
+        <ImageView
+            android:id="@+id/imgHelp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/dummyDesc"
+            android:src="@drawable/btn_help"
+            app:layout_constraintBottom_toTopOf="@id/imgTextSize"
+            app:layout_constraintEnd_toStartOf="@id/optionHelp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/imgInfo"/>
 
         <TextView
             android:id="@+id/optionHelp"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:text="@string/help"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toTopOf="@id/optionTextSize"
-            app:layout_constraintTop_toBottomOf="@id/optionInfo"/>
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@id/imgHelp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/imgHelp"
+            app:layout_constraintTop_toTopOf="@id/imgHelp"/>
+
+        <ImageView
+            android:id="@+id/imgTextSize"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/dummyDesc"
+            android:src="@drawable/btn_text_1"
+            app:layout_constraintBottom_toTopOf="@id/imgChurch"
+            app:layout_constraintEnd_toStartOf="@id/optionTextSize"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/imgHelp"/>
 
         <TextView
             android:id="@+id/optionTextSize"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:text="@string/text_plus_minus"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toTopOf="@id/optionTheme"
-            app:layout_constraintTop_toBottomOf="@id/optionHelp"/>
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@id/imgTextSize"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/imgTextSize"
+            app:layout_constraintTop_toTopOf="@id/imgTextSize"/>
+
+        <ImageView
+            android:id="@+id/imgChurch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/dummyDesc"
+            android:src="@drawable/btn_lokacija"
+            app:layout_constraintBottom_toTopOf="@id/imgTheme"
+            app:layout_constraintEnd_toStartOf="@id/optionChurch"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/imgTextSize"/>
+
+        <TextView
+            android:id="@+id/optionChurch"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="@string/church"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@id/imgChurch"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/imgChurch"
+            app:layout_constraintTop_toTopOf="@id/imgChurch"/>
+
+        <ImageView
+            android:id="@+id/imgTheme"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/dummyDesc"
+            android:src="@drawable/btn_w_b_1"
+            app:layout_constraintBottom_toTopOf="@id/imgShare"
+            app:layout_constraintEnd_toStartOf="@id/optionTheme"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/imgChurch"/>
 
         <TextView
             android:id="@+id/optionTheme"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:text="@string/theme"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toTopOf="@id/optionShare"
-            app:layout_constraintTop_toBottomOf="@id/optionTextSize"/>
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@id/imgTheme"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/imgTheme"
+            app:layout_constraintTop_toTopOf="@id/imgTheme"/>
+
+        <ImageView
+            android:id="@+id/imgShare"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/dummyDesc"
+            android:src="@drawable/btn_share_1"
+            app:layout_constraintBottom_toTopOf="@id/imgBookmark"
+            app:layout_constraintEnd_toStartOf="@id/optionShare"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/imgTheme"/>
 
         <TextView
             android:id="@+id/optionShare"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:text="@string/share"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toTopOf="@id/optionBookmark"
-            app:layout_constraintTop_toBottomOf="@id/optionTheme"/>
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@id/imgShare"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/imgShare"
+            app:layout_constraintTop_toTopOf="@id/imgShare"
+            />
+
+        <ImageView
+            android:id="@+id/imgBookmark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/dummyDesc"
+            android:src="@drawable/btn_bookmark_1"
+            app:layout_constraintBottom_toTopOf="@id/imgHome"
+            app:layout_constraintEnd_toStartOf="@id/optionBookmark"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/imgShare"/>
 
         <TextView
             android:id="@+id/optionBookmark"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:text="@string/bookmark"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toTopOf="@id/optionHome"
-            app:layout_constraintTop_toBottomOf="@id/optionShare"/>
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@id/imgBookmark"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/imgBookmark"
+            app:layout_constraintTop_toTopOf="@id/imgBookmark"/>
+
+        <ImageView
+            android:id="@+id/imgHome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/dummyDesc"
+            android:src="@drawable/btn_home_1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/optionHome"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/imgBookmark"/>
 
         <TextView
             android:id="@+id/optionHome"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:text="@string/home"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/optionBookmark"/>
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@id/imgHome"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/imgHome"
+            app:layout_constraintTop_toTopOf="@id/imgHome"/>
 
     </android.support.constraint.ConstraintLayout>
-
 </ScrollView>

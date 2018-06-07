@@ -5,7 +5,9 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import hr.bpervan.novaeva.main.R
+import kotlinx.android.synthetic.main.fragment_options.*
 
 /**
  *
@@ -24,5 +26,13 @@ class OptionsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        sequenceOf(optionInfo, optionHelp, optionTextSize, optionChurch,
+                optionTheme, optionShare, optionBookmark, optionHome).forEach { textView ->
+
+            textView.setOnClickListener {
+                Toast.makeText(context, "[todo] ${textView.text}", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }
