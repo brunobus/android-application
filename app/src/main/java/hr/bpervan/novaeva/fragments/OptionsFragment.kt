@@ -27,8 +27,8 @@ class OptionsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        sequenceOf(optionInfo, optionHelp, optionTextSize, optionChurch,
-                optionTheme, optionShare, optionBookmark, optionHome).forEach { textView ->
+        sequenceOf(imgInfo, imgHelp, imgTextSize, imgChurch,
+                imgTheme, imgShare, imgBookmark, imgHome).forEach { textView ->
 
             textView.setOnClickListener {
                 Toast.makeText(context, "[todo] ${textView.text}", Toast.LENGTH_SHORT).show()
