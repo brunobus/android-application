@@ -10,7 +10,7 @@
         <item name="android:statusBarColor">@color/Transparent</item>
     </style>
 
-    <style name="SplashTheme" parent="SplashThemeBase">
+    <style name="LauncherTheme" parent="LauncherThemeBase">
         <item name="android:navigationBarColor">@color/Transparent</item>
         <item name="android:statusBarColor">@color/Transparent</item>
     </style>
