@@ -8,5 +8,5 @@ enum class TransitionAnimation {
 }
 
 enum class EvaTheme {
-    DEFAULT, NIGHT
+    WESTERN, EASTERN, WESTERN_NIGHT, EASTERN_NIGHT
 }

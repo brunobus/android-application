@@ -30,12 +30,12 @@
             android:background="@drawable/options_menu_line"
             android:contentDescription="@string/dummyDesc"
             android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="@id/imgHome"
+            app:layout_constraintBottom_toBottomOf="@id/btnHome"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/imgInfo"/>
+            app:layout_constraintTop_toTopOf="@id/btnInfo"/>
 
         <TextView
-            android:id="@+id/imgInfo"
+            android:id="@+id/btnInfo"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="30dp"
@@ -51,14 +51,14 @@
             android:paddingStart="80dp"
             android:text="@string/info_about"
 
-            app:layout_constraintBottom_toTopOf="@id/imgHelp"
+            app:layout_constraintBottom_toTopOf="@id/btnHelp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="packed"/>
 
         <TextView
-            android:id="@+id/imgHelp"
+            android:id="@+id/btnHelp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="30dp"
@@ -73,13 +73,13 @@
             android:paddingRight="5dp"
             android:paddingStart="80dp"
             android:text="@string/help"
-            app:layout_constraintBottom_toTopOf="@id/imgTextSize"
+            app:layout_constraintBottom_toTopOf="@id/btnTextSize"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/imgInfo"/>
+            app:layout_constraintTop_toBottomOf="@id/btnInfo"/>
 
         <TextView
-            android:id="@+id/imgTextSize"
+            android:id="@+id/btnTextSize"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="30dp"
@@ -95,13 +95,13 @@
             android:paddingStart="80dp"
             android:text="@string/text_plus_minus"
 
-            app:layout_constraintBottom_toTopOf="@id/imgChurch"
+            app:layout_constraintBottom_toTopOf="@id/btnChurch"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/imgHelp"/>
+            app:layout_constraintTop_toBottomOf="@id/btnHelp"/>
 
         <TextView
-            android:id="@+id/imgChurch"
+            android:id="@+id/btnChurch"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="30dp"
@@ -117,13 +117,13 @@
             android:paddingStart="80dp"
             android:text="@string/church"
 
-            app:layout_constraintBottom_toTopOf="@id/imgTheme"
+            app:layout_constraintBottom_toTopOf="@id/btnTheme"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/imgTextSize"/>
+            app:layout_constraintTop_toBottomOf="@id/btnTextSize"/>
 
         <TextView
-            android:id="@+id/imgTheme"
+            android:id="@+id/btnTheme"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="30dp"
@@ -139,13 +139,13 @@
             android:paddingStart="80dp"
             android:text="@string/theme"
 
-            app:layout_constraintBottom_toTopOf="@id/imgShare"
+            app:layout_constraintBottom_toTopOf="@id/btnShare"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/imgChurch"/>
+            app:layout_constraintTop_toBottomOf="@id/btnChurch"/>
 
         <TextView
-            android:id="@+id/imgShare"
+            android:id="@+id/btnShare"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="30dp"
@@ -161,13 +161,13 @@
             android:paddingStart="80dp"
             android:text="@string/share"
 
-            app:layout_constraintBottom_toTopOf="@id/imgBookmark"
+            app:layout_constraintBottom_toTopOf="@id/btnBookmark"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/imgTheme"/>
+            app:layout_constraintTop_toBottomOf="@id/btnTheme"/>
 
         <TextView
-            android:id="@+id/imgBookmark"
+            android:id="@+id/btnBookmark"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="30dp"
@@ -183,13 +183,13 @@
             android:paddingStart="80dp"
             android:text="@string/bookmark"
 
-            app:layout_constraintBottom_toTopOf="@id/imgHome"
+            app:layout_constraintBottom_toTopOf="@id/btnHome"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/imgShare"/>
+            app:layout_constraintTop_toBottomOf="@id/btnShare"/>
 
         <TextView
-            android:id="@+id/imgHome"
+            android:id="@+id/btnHome"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="30dp"
@@ -206,7 +206,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/imgBookmark"/>
+            app:layout_constraintTop_toBottomOf="@id/btnBookmark"/>
 
     </android.support.constraint.ConstraintLayout>
 </ScrollView>

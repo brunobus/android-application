@@ -32,7 +32,7 @@
             android:scaleType="centerCrop"
             android:src="@drawable/christos_kai_theotokos"
             app:layout_collapseMode="parallax"
-            app:layout_collapseParallaxMultiplier="0.5"/>
+            app:layout_collapseParallaxMultiplier="0.4"/>
 
         <ImageView
             android:layout_width="match_parent"

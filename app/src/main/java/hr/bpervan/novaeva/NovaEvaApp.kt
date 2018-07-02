@@ -42,14 +42,6 @@ class NovaEvaApp : Application() {
             enableAdvertisingIdCollection(false)
         }
 
-        EventPipelines.evaTheme
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    prefs.edit {
-                        putString(evaThemeKey, it.toString())
-                    }
-                }
-
         val filter = IntentFilter()
         filter.addAction("android.net.wifi.supplicant.CONNECTION_CHANGE")
         filter.addAction("android.net.wifi.STATE_CHANGE")
