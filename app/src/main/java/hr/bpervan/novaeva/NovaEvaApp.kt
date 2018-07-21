@@ -8,7 +8,6 @@ import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.support.v4.content.ContextCompat
 import android.util.Log
-import androidx.core.content.edit
 import com.google.android.gms.analytics.GoogleAnalytics
 import com.google.android.gms.analytics.Tracker
 import com.nostra13.universalimageloader.core.ImageLoader
@@ -17,8 +16,10 @@ import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.PrayerCategory
 import hr.bpervan.novaeva.player.EvaPlayer
 import hr.bpervan.novaeva.receivers.ConnectionDetector
-import hr.bpervan.novaeva.util.*
-import io.reactivex.android.schedulers.AndroidSchedulers
+import hr.bpervan.novaeva.util.AssetsLoader
+import hr.bpervan.novaeva.util.ImageLoaderConfigurator
+import hr.bpervan.novaeva.util.LifecycleLogger
+import hr.bpervan.novaeva.util.NOVA_EVA_PREFS_NAME
 import io.realm.Realm
 
 /**
@@ -104,15 +105,6 @@ class NovaEvaApp : Application() {
 
         val defaultBreviaryBackground: Drawable by lazy {
             ContextCompat.getDrawable(NovaEvaApp.instance!!, R.drawable.brevijar_backbrevijar)!!
-        }
-
-        fun getDefaultEvaTheme(): EvaTheme {
-            return try {
-                val evaThemeString = prefs.getString(evaThemeKey, EvaTheme.DEFAULT.toString())
-                EvaTheme.valueOf(evaThemeString)
-            } catch (iae: IllegalArgumentException) {
-                EvaTheme.DEFAULT
-            }
         }
     }
 }

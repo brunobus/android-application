@@ -38,6 +38,8 @@
     <string name="share">Dijeli</string>
     <string name="bookmarks">Zabilješke</string>
     <string name="bookmark">Zabilježi</string>
+    <string name="bookmarked">Zabilješka dodana</string>
+    <string name="unbookmarked">Zabilješka uklonjena</string>
     <string name="home">Početna</string>
     <string name="church">Crkva</string>
 

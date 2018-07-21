@@ -74,7 +74,7 @@ class EvaContentFragment : EvaBaseFragment() {
 
     private lateinit var realm: Realm
 
-    private var contentId: Long = 0
+    public var contentId: Long = 0
     private var categoryId: Long = 0
     private var evaContent: EvaContent? = null
 

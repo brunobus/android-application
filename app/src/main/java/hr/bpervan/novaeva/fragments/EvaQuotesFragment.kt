@@ -41,7 +41,7 @@ class EvaQuotesFragment : EvaBaseFragment() {
 
     private var quoteTitle: String? = null
     private var quoteData: String? = null
-    private var quoteId: Long = -1
+    public var quoteId: Long = -1
 
     private var loadRandomQuoteDisposable: Disposable? = null
         set(value) {
@@ -118,7 +118,7 @@ class EvaQuotesFragment : EvaBaseFragment() {
         loadRandomQuoteDisposable = novaEvaService.getRandomDirectoryContent(1)
                 .networkRequest({ directoryContent ->
                     val contentMetadataList = directoryContent.contentMetadataList
-                    if (contentMetadataList != null && contentMetadataList.isNotEmpty()) {
+                    if (contentMetadataList.isNotEmpty()) {
                         val quoteInfo = contentMetadataList[0]
 
                         quoteTitle = quoteInfo.title
