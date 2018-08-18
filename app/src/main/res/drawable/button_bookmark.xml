@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
+<selector
+    xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:drawable="@drawable/btn_bookmark_2" android:state_enabled="false"/>
     <item android:drawable="@drawable/btn_bookmark_2" android:state_pressed="true"/>
-    <item android:drawable="@drawable/btn_bookmark_1"/>
+    <item android:drawable="@drawable/btn_bookmark_false" app:is_bookmarked="false"/>
+    <item android:drawable="@drawable/btn_bookmark_true" app:is_bookmarked="true"/>
 </selector>
