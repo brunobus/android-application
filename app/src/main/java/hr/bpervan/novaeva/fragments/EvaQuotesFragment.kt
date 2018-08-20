@@ -92,6 +92,8 @@ class EvaQuotesFragment : EvaBaseFragment() {
     private fun initUI() {
         val ctx = context ?: return
 
+        evaCollapsingBar.collapsingToolbar.title = ctx.getString(R.string.quotes)
+
         btnObnovi.setOnClickListener {
             fetchRandomQuote()
         }
@@ -134,7 +136,6 @@ class EvaQuotesFragment : EvaBaseFragment() {
 
     private fun showQuote() {
         view ?: return
-        evaCollapsingBar.collapsingToolbar.title = quoteTitle ?: ""
         webText.loadHtmlText(quoteData)
     }
 }
