@@ -37,7 +37,7 @@ class AudioPlayerService : Service() {
     }
 
     private lateinit var mediaSessionConnector: MediaSessionConnector
-    private val playerEventListener = EvaServicePlayerEventListener()
+    private val playerEventListener = OnPlayNotificationStarter()
 
     private lateinit var audioManager: AudioManager
     private lateinit var novaEvaBitmap: Bitmap
@@ -55,17 +55,17 @@ class AudioPlayerService : Service() {
 
         mediaSessionConnector = MediaSessionConnector(mediaSession, EvaPlaybackController())
 
-        NovaEvaApp.evaPlayer.currentPlayerChange.subscribe {
-            it.oldPlayer.removeListener(playerEventListener)
+        NovaEvaApp.evaPlayer.playerChangeSubject.subscribe {
+            it.oldPlayer.player.removeListener(playerEventListener)
             val newPlayer = it.newPlayer
 
-            playerEventListener.onPlayerStateChanged(newPlayer.playWhenReady, newPlayer.playbackState)
-            newPlayer.addListener(playerEventListener)
-            mediaSessionConnector.setPlayer(newPlayer, null)
+            playerEventListener.onPlayerStateChanged(newPlayer.player.playWhenReady, newPlayer.player.playbackState)
+            newPlayer.player.addListener(playerEventListener)
+            mediaSessionConnector.setPlayer(newPlayer.player, null)
         }
     }
 
-    private inner class EvaServicePlayerEventListener : Player.DefaultEventListener() {
+    private inner class OnPlayNotificationStarter : Player.DefaultEventListener() {
         override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
             if (playbackState == Player.STATE_READY) {
                 val notification = buildNotification(this@AudioPlayerService, mediaSession, playWhenReady)
@@ -106,21 +106,20 @@ class AudioPlayerService : Service() {
         }
     }
 
-    private fun getCurrentPlayer(): Player? {
-        return NovaEvaApp.evaPlayer.currentPlayerChange.value?.newPlayer
-    }
+    private val currentPlayer: Player?
+        get() = NovaEvaApp.evaPlayer.playerChangeSubject.value?.newPlayer?.player
 
     private inner class EvaPlaybackController : DefaultPlaybackController() {
 
         val audioFocusChangeListener = AudioManager.OnAudioFocusChangeListener {
             when (it) {
                 AudioManager.AUDIOFOCUS_GAIN -> {
-                    getCurrentPlayer()?.playWhenReady = true
+                    /*nothing*/
                 }
                 AudioManager.AUDIOFOCUS_LOSS,
                 AudioManager.AUDIOFOCUS_LOSS_TRANSIENT,
                 AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
-                    getCurrentPlayer()?.playWhenReady = false
+                    currentPlayer?.playWhenReady = false
                 }
             }
         }

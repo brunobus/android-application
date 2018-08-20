@@ -21,6 +21,7 @@ import hr.bpervan.novaeva.model.OpenContentEvent
 import hr.bpervan.novaeva.services.novaEvaService
 import hr.bpervan.novaeva.util.*
 import hr.bpervan.novaeva.util.TransitionAnimation.*
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_eva_main.*
 import java.util.concurrent.TimeUnit
@@ -172,6 +173,10 @@ class EvaActivity : EvaBaseActivity() {
 
         disposables += bus.connectedToNetwork
                 .throttleWithTimeout(10, TimeUnit.SECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext {
+                    NovaEvaApp.evaPlayer.stop() //roaming safeguard
+                }
                 .subscribe {
                     fetchBreviaryCoverUrl()
                     fetchDashboardBackgroundUrl()

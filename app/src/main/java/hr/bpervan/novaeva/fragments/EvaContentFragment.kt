@@ -13,7 +13,6 @@ import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
-import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
@@ -22,18 +21,17 @@ import com.google.android.exoplayer2.util.Util
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
-import hr.bpervan.novaeva.util.SCROLL_PERCENT_KEY
-import hr.bpervan.novaeva.util.sendEmailIntent
-import hr.bpervan.novaeva.util.EvaCache
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaCategory
 import hr.bpervan.novaeva.model.EvaContent
 import hr.bpervan.novaeva.model.OpenContentEvent
-import hr.bpervan.novaeva.player.EvaPlayerEventListener
 import hr.bpervan.novaeva.services.novaEvaService
 import hr.bpervan.novaeva.storage.EvaContentDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
+import hr.bpervan.novaeva.util.EvaCache
+import hr.bpervan.novaeva.util.SCROLL_PERCENT_KEY
 import hr.bpervan.novaeva.util.networkRequest
+import hr.bpervan.novaeva.util.sendEmailIntent
 import hr.bpervan.novaeva.views.*
 import io.reactivex.disposables.Disposable
 import io.realm.Realm
@@ -61,16 +59,6 @@ class EvaContentFragment : EvaBaseFragment() {
             }
         }
     }
-
-
-    private var exoPlayer: ExoPlayer? = null
-        set(value) {
-            field?.removeListener(evaPlayerEventListener)
-            value?.addListener(evaPlayerEventListener)
-            field = value
-        }
-
-    private val evaPlayerEventListener = EvaPlayerEventListener({ exoPlayer })
 
     private lateinit var realm: Realm
 
@@ -170,16 +158,13 @@ class EvaContentFragment : EvaBaseFragment() {
                 if (audioUrl != this.evaContent?.audioURL) {
                     prepareAudioStream(context!!, audioUrl)
                 }
-                exoPlayer?.let { exoPlayer ->
-                    player_view?.apply {
-                        player = exoPlayer
-                        applyEvaConfiguration()
-                        requestFocus()
-                        showController()
+                player_view?.apply {
+                    NovaEvaApp.evaPlayer.supplyPlayerToView(this, audioUrl)
+                    applyEvaConfiguration()
+                    requestFocus()
+                    showController()
 
-                    }
                 }
-                evaPlayerEventListener.playbackId = audioUrl
             }
 
 
@@ -278,12 +263,6 @@ class EvaContentFragment : EvaBaseFragment() {
 //        }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        player_view?.player = null
-        exoPlayer = null
-    }
-
     private fun prepareAudioStream(context: Context, audioUri: String) {
         val dataSourceFactory = DefaultDataSourceFactory(context,
                 Util.getUserAgent(context, resources.getString(R.string.app_name)),
@@ -292,7 +271,7 @@ class EvaContentFragment : EvaBaseFragment() {
 //        val factory = ExtractorMediaSource.Factory(dataSourceFactory).setCustomCacheKey(audioUri)
 //        val mediaSource = factory.createMediaSource(streamingUri)
 
-        exoPlayer = NovaEvaApp.evaPlayer.prepareIfNeededAndGetPlayer(audioUri) {
+        NovaEvaApp.evaPlayer.prepareIfNeeded(audioUri, doAutoPlay = false) {
             ExtractorMediaSource(audioUri.toUri(), dataSourceFactory, DefaultExtractorsFactory(), handler, null, audioUri)
         }
     }

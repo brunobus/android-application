@@ -1,12 +1,18 @@
 package hr.bpervan.novaeva.player
 
 import android.content.Context
+import android.content.Intent
+import android.support.v4.content.ContextCompat
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.ExoPlayerFactory
+import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
+import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
+import hr.bpervan.novaeva.NovaEvaApp
+import hr.bpervan.novaeva.services.AudioPlayerService
 import io.reactivex.subjects.BehaviorSubject
 
 /**
@@ -14,41 +20,78 @@ import io.reactivex.subjects.BehaviorSubject
  */
 class EvaPlayer(context: Context) {
 
-    class CurrentPlayerChangeData(val newPlayer: ExoPlayer, val oldPlayer: ExoPlayer)
+    class PlayerChange(val newPlayer: PlayerWrapper, val oldPlayer: PlayerWrapper)
 
-    private val playerAlpha: ExoPlayer = createDefaultExoPlayer(context)
-    private val playerBeta: ExoPlayer = createDefaultExoPlayer(context)
+    class PlayerWrapper(val player: ExoPlayer, var playbackId: String? = null)
 
-    val currentPlayerChange = BehaviorSubject.createDefault(CurrentPlayerChangeData(playerAlpha, playerBeta))
+    private val wrapperAlpha: PlayerWrapper = PlayerWrapper(createDefaultExoPlayer(context))
+    private val wrapperBeta: PlayerWrapper = PlayerWrapper(createDefaultExoPlayer(context))
 
-    var currentPlayer: ExoPlayer = playerAlpha
-        set(newPlayer) {
-            val oldPlayer = field
-            if (oldPlayer == newPlayer) return
-            oldPlayer.playWhenReady = false
-            oldPlayer.stop()
-            field = newPlayer
-            currentPlayerChange.onNext(CurrentPlayerChangeData(newPlayer, oldPlayer))
-        }
-    private val otherPlayer: ExoPlayer
-        get() = if (currentPlayer == playerAlpha) playerBeta else playerAlpha
+    init {
+        wrapperAlpha.player.addListener(StartServiceIfNeeded(wrapperAlpha, wrapperBeta))
+        wrapperBeta.player.addListener(StartServiceIfNeeded(wrapperBeta, wrapperAlpha))
+    }
 
-    var currentPlaybackId: String? = null
+    inner class StartServiceIfNeeded(val thisPlayer: PlayerWrapper, val otherPlayer: PlayerWrapper) : Player.DefaultEventListener() {
 
-    fun prepareIfNeededAndGetPlayer(playbackId: String, mediaSourceProvider: () -> MediaSource): ExoPlayer {
-        val currentPlayer = this.currentPlayer
+        override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+            if ((playbackState == Player.STATE_READY)) {
+                if (playWhenReady) {
+                    val ctx = NovaEvaApp.instance ?: return
+                    ContextCompat.startForegroundService(ctx, Intent(ctx, AudioPlayerService::class.java))
 
-        return when {
-            currentPlayer.isStopped() -> {
-                currentPlayer.playWhenReady = false
-                currentPlayer.prepare(mediaSourceProvider())
-                currentPlayer
+                    playerChangeSubject.onNext(PlayerChange(thisPlayer, otherPlayer))
+                }
+            } else if (playbackState == Player.STATE_IDLE) {
+                thisPlayer.playbackId = null
             }
-            playbackId == currentPlaybackId -> currentPlayer /*don't prepare*/
+        }
+    }
+
+    val playerChangeSubject = BehaviorSubject.create<PlayerChange>()
+
+    init {
+        playerChangeSubject.subscribe { pc ->
+            pc.oldPlayer.apply {
+                player.playWhenReady = false
+                player.stop(true)
+            }
+        }
+    }
+
+//    val currentPlaybackId: String?
+//        get() = when {
+//            !currentPlayerWrapper.player.isPlaying() -> null
+//            else -> currentPlayerWrapper.playbackId
+//        }
+
+    fun prepareIfNeeded(preparingPlaybackId: String, doAutoPlay: Boolean = false, mediaSourceProvider: () -> MediaSource) {
+        val latestPlaybackChange = playerChangeSubject.value
+
+        val currentPlayer = latestPlaybackChange?.newPlayer ?: wrapperAlpha
+        val standbyPlayer = latestPlaybackChange?.oldPlayer ?: wrapperBeta
+
+        when {
+            preparingPlaybackId == currentPlayer.playbackId -> {
+                if (doAutoPlay) {
+                    currentPlayer.player.playWhenReady = true
+                }
+            }
+            currentPlayer.player.isStopped() || doAutoPlay -> {
+                currentPlayer.apply {
+                    player.playWhenReady = false
+                    playbackId = preparingPlaybackId
+                    player.prepare(mediaSourceProvider())
+                    player.playWhenReady = doAutoPlay
+                }
+
+            }
             else -> {
-                otherPlayer.playWhenReady = false
-                otherPlayer.prepare(mediaSourceProvider())
-                otherPlayer
+                standbyPlayer.apply {
+                    player.playWhenReady = false
+                    playbackId = preparingPlaybackId
+                    player.prepare(mediaSourceProvider())
+                }
             }
         }
     }
@@ -58,5 +101,29 @@ class EvaPlayer(context: Context) {
         val factory = AdaptiveTrackSelection.Factory(bandwidthMeter)
         val trackSelector = DefaultTrackSelector(factory)
         return ExoPlayerFactory.newSimpleInstance(context, trackSelector)
+    }
+
+    fun stop() {
+        wrapperAlpha.player.stop()
+        wrapperBeta.player.stop()
+    }
+
+    fun pause() {
+        wrapperAlpha.player.playWhenReady = false
+        wrapperBeta.player.playWhenReady = false
+    }
+
+    fun addListener(listener: Player.EventListener) {
+        wrapperAlpha.player.addListener(listener)
+        wrapperBeta.player.addListener(listener)
+    }
+
+    fun removeListener(listener: Player.EventListener) {
+        wrapperAlpha.player.removeListener(listener)
+        wrapperBeta.player.removeListener(listener)
+    }
+
+    fun supplyPlayerToView(playerView: PlayerView, playbackId: String) {
+        playerView.player = if (playbackId == wrapperAlpha.playbackId) wrapperAlpha.player else wrapperBeta.player
     }
 }
