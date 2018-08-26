@@ -59,11 +59,6 @@ abstract class EvaBaseFragment : Fragment() {
         baseDisposables.clear()
     }
 
-    override fun onStop() {
-        super.onStop()
-        baseDisposables.clear()
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         baseDisposables.dispose()

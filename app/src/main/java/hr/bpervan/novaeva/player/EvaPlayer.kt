@@ -20,78 +20,76 @@ import io.reactivex.subjects.BehaviorSubject
  */
 class EvaPlayer(context: Context) {
 
-    class PlayerChange(val newPlayer: PlayerWrapper, val oldPlayer: PlayerWrapper)
+    class PlaybackChange(val player: ExoPlayer,
+                         val playbackInfo: PlaybackInfo?)
 
-    class PlayerWrapper(val player: ExoPlayer, var playbackId: String? = null)
+    class PlaybackInfo(val id: String,
+                       val title: String? = null)
 
-    private val wrapperAlpha: PlayerWrapper = PlayerWrapper(createDefaultExoPlayer(context))
-    private val wrapperBeta: PlayerWrapper = PlayerWrapper(createDefaultExoPlayer(context))
+    private val playerAlpha: ExoPlayer = createDefaultExoPlayer(context)
+    private val playerBeta: ExoPlayer = createDefaultExoPlayer(context)
+
+    private val playerPlaybackInfoMap = mutableMapOf<ExoPlayer, PlaybackInfo?>()
 
     init {
-        wrapperAlpha.player.addListener(StartServiceIfNeeded(wrapperAlpha, wrapperBeta))
-        wrapperBeta.player.addListener(StartServiceIfNeeded(wrapperBeta, wrapperAlpha))
+        ContextCompat.startForegroundService(context, Intent(context, AudioPlayerService::class.java))
+
+        playerAlpha.addListener(StartServiceIfNeeded(playerAlpha, playerBeta))
+        playerBeta.addListener(StartServiceIfNeeded(playerBeta, playerAlpha))
     }
 
-    inner class StartServiceIfNeeded(val thisPlayer: PlayerWrapper, val otherPlayer: PlayerWrapper) : Player.DefaultEventListener() {
+    inner class StartServiceIfNeeded(private val thisPlayer: ExoPlayer,
+                                     private val otherPlayer: ExoPlayer) : Player.DefaultEventListener() {
 
         override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
             if ((playbackState == Player.STATE_READY)) {
                 if (playWhenReady) {
-                    val ctx = NovaEvaApp.instance ?: return
-                    ContextCompat.startForegroundService(ctx, Intent(ctx, AudioPlayerService::class.java))
 
-                    playerChangeSubject.onNext(PlayerChange(thisPlayer, otherPlayer))
+                    otherPlayer.playWhenReady = false
+                    otherPlayer.stop(true)
                 }
+                val ctx = NovaEvaApp.instance ?: return
+
+                ContextCompat.startForegroundService(ctx, Intent(ctx, AudioPlayerService::class.java))
             } else if (playbackState == Player.STATE_IDLE) {
-                thisPlayer.playbackId = null
+                playerPlaybackInfoMap[thisPlayer] = null
             }
+            emitPlaybackChange()
+        }
+
+        private fun emitPlaybackChange() {
+            playbackChangeSubject.onNext(PlaybackChange(thisPlayer, playerPlaybackInfoMap[thisPlayer]))
         }
     }
 
-    val playerChangeSubject = BehaviorSubject.create<PlayerChange>()
+    val playbackChangeSubject = BehaviorSubject.create<PlaybackChange>()
 
-    init {
-        playerChangeSubject.subscribe { pc ->
-            pc.oldPlayer.apply {
-                player.playWhenReady = false
-                player.stop(true)
-            }
-        }
-    }
+    fun prepareIfNeeded(playbackInfo: PlaybackInfo, doAutoPlay: Boolean = false, mediaSourceProvider: () -> MediaSource) {
 
-//    val currentPlaybackId: String?
-//        get() = when {
-//            !currentPlayerWrapper.player.isPlaying() -> null
-//            else -> currentPlayerWrapper.playbackId
-//        }
-
-    fun prepareIfNeeded(preparingPlaybackId: String, doAutoPlay: Boolean = false, mediaSourceProvider: () -> MediaSource) {
-        val latestPlaybackChange = playerChangeSubject.value
-
-        val currentPlayer = latestPlaybackChange?.newPlayer ?: wrapperAlpha
-        val standbyPlayer = latestPlaybackChange?.oldPlayer ?: wrapperBeta
+        val currentPlayer = if (playerBeta.isPlaying()) playerBeta else playerAlpha
+        val otherPlayer = if (currentPlayer == playerAlpha) playerBeta else playerAlpha
 
         when {
-            preparingPlaybackId == currentPlayer.playbackId -> {
+            playbackInfo.id == playerPlaybackInfoMap[currentPlayer]?.id -> {
                 if (doAutoPlay) {
-                    currentPlayer.player.playWhenReady = true
+                    currentPlayer.playWhenReady = true
                 }
             }
-            currentPlayer.player.isStopped() || doAutoPlay -> {
+            currentPlayer.isStopped() || doAutoPlay -> {
                 currentPlayer.apply {
-                    player.playWhenReady = false
-                    playbackId = preparingPlaybackId
-                    player.prepare(mediaSourceProvider())
-                    player.playWhenReady = doAutoPlay
+                    playWhenReady = false
+                    prepare(mediaSourceProvider())
+                    playWhenReady = doAutoPlay
                 }
+                playerPlaybackInfoMap[currentPlayer] = playbackInfo
 
             }
             else -> {
-                standbyPlayer.apply {
-                    player.playWhenReady = false
-                    playbackId = preparingPlaybackId
-                    player.prepare(mediaSourceProvider())
+                otherPlayer.apply {
+                    playWhenReady = false
+                    prepare(mediaSourceProvider())
                 }
+                playerPlaybackInfoMap[otherPlayer] = playbackInfo
             }
         }
     }
@@ -104,26 +102,25 @@ class EvaPlayer(context: Context) {
     }
 
     fun stop() {
-        wrapperAlpha.player.stop()
-        wrapperBeta.player.stop()
+        playerAlpha.stop()
+        playerBeta.stop()
     }
 
     fun pause() {
-        wrapperAlpha.player.playWhenReady = false
-        wrapperBeta.player.playWhenReady = false
+        playerAlpha.playWhenReady = false
+        playerBeta.playWhenReady = false
     }
 
-    fun addListener(listener: Player.EventListener) {
-        wrapperAlpha.player.addListener(listener)
-        wrapperBeta.player.addListener(listener)
-    }
-
-    fun removeListener(listener: Player.EventListener) {
-        wrapperAlpha.player.removeListener(listener)
-        wrapperBeta.player.removeListener(listener)
+    fun currentPlaybackInfo(): PlaybackInfo? {
+        return NovaEvaApp.evaPlayer.playbackChangeSubject.value?.playbackInfo
     }
 
     fun supplyPlayerToView(playerView: PlayerView, playbackId: String) {
-        playerView.player = if (playbackId == wrapperAlpha.playbackId) wrapperAlpha.player else wrapperBeta.player
+        for (playerTrack in playerPlaybackInfoMap) {
+            if (playerTrack.value?.id == playbackId) {
+                playerView.player = playerTrack.key
+                return
+            }
+        }
     }
 }

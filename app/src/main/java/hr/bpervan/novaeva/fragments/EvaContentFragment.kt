@@ -25,6 +25,7 @@ import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaCategory
 import hr.bpervan.novaeva.model.EvaContent
 import hr.bpervan.novaeva.model.OpenContentEvent
+import hr.bpervan.novaeva.player.EvaPlayer
 import hr.bpervan.novaeva.services.novaEvaService
 import hr.bpervan.novaeva.storage.EvaContentDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
@@ -156,10 +157,11 @@ class EvaContentFragment : EvaBaseFragment() {
             evaContent.audioURL?.let { audioUrl ->
                 imgMp3.setImageResource(R.drawable.vijest_ind_mp3_active)
                 if (audioUrl != this.evaContent?.audioURL) {
-                    prepareAudioStream(context!!, audioUrl)
+                    prepareAudioStream(context!!, audioUrl, evaContent.contentId.toString(),
+                            evaContent.contentMetadata?.title ?: "nepoznato")
                 }
                 player_view?.apply {
-                    NovaEvaApp.evaPlayer.supplyPlayerToView(this, audioUrl)
+                    NovaEvaApp.evaPlayer.supplyPlayerToView(this, evaContent.contentId.toString())
                     applyEvaConfiguration()
                     requestFocus()
                     showController()
@@ -240,30 +242,9 @@ class EvaContentFragment : EvaBaseFragment() {
                 sendEmailIntent(ctx, "Duhovni poziv", text, arrayOf("duhovnipoziv@gmail.com"))
             }
         }
-
-        //todo move to options drawer
-//        options.btnSearch.setOnClickListener {
-//            showSearchPopup()
-//        }
-//        options.btnBookmark.setOnClickListener {
-//            evaContent?.let { evaContent ->
-//                val evaContentMetadata = evaContent.contentMetadata!!
-//                EvaContentDbAdapter.updateEvaContentMetadataAsync(realm, evaContentMetadata.contentId) {
-//                    it.bookmark = !it.bookmark
-//                }
-//            }
-//        }
-//
-//        options.btnShare.setOnClickListener {
-//            shareIntent(ctx, "http://novaeva.com/node/$contentId")
-//        }
-//
-//        options.btnMail.setOnClickListener {
-//            sendEmailIntent(ctx, evaContent!!.contentMetadata!!.title, "http://novaeva.com/node/$contentId")
-//        }
     }
 
-    private fun prepareAudioStream(context: Context, audioUri: String) {
+    private fun prepareAudioStream(context: Context, audioUri: String, contentId: String, contentTitle: String) {
         val dataSourceFactory = DefaultDataSourceFactory(context,
                 Util.getUserAgent(context, resources.getString(R.string.app_name)),
                 DefaultBandwidthMeter())
@@ -271,7 +252,7 @@ class EvaContentFragment : EvaBaseFragment() {
 //        val factory = ExtractorMediaSource.Factory(dataSourceFactory).setCustomCacheKey(audioUri)
 //        val mediaSource = factory.createMediaSource(streamingUri)
 
-        NovaEvaApp.evaPlayer.prepareIfNeeded(audioUri, doAutoPlay = false) {
+        NovaEvaApp.evaPlayer.prepareIfNeeded(EvaPlayer.PlaybackInfo(contentId, contentTitle), doAutoPlay = false) {
             ExtractorMediaSource(audioUri.toUri(), dataSourceFactory, DefaultExtractorsFactory(), handler, null, audioUri)
         }
     }
