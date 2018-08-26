@@ -160,6 +160,9 @@ class EvaContentFragment : EvaBaseFragment() {
                     showController()
 
                 }
+                imgMp3.setOnClickListener {
+                    startActivity(Intent(Intent.ACTION_VIEW, audioUrl.toUri()))
+                }
             }
 
 
@@ -172,8 +175,8 @@ class EvaContentFragment : EvaBaseFragment() {
             if (evaContent.attachments.isNotEmpty()) {
                 imgText.setImageResource(R.drawable.vijest_ind_txt_active)
                 imgText.setOnClickListener {
-                    startActivity(Intent.createChooser(Intent(Intent.ACTION_VIEW, evaContent.attachments[0]!!.url.toUri()),
-                            "Otvaranje dokumenta " + evaContent.attachments[0]!!.name))
+                    startActivity(Intent.createChooser(Intent(Intent.ACTION_VIEW,
+                            evaContent.attachments[0]!!.url.toUri()), evaContent.attachments[0]!!.name))
                 }
             }
 
