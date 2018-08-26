@@ -69,7 +69,7 @@ class EvaInfoFragment : EvaBaseFragment() {
 
         webView.applyEvaConfiguration(prefs)
 
-        webView.loadUrl("file:///android_asset/info.htm")
+        webView.loadUrl("file:///android_asset/info.html")
 
         evaCollapsingBar.collapsingToolbar.title = "Nova Eva info"
     }

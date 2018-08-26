@@ -41,7 +41,7 @@ class EvaQuotesFragment : EvaBaseFragment() {
 
     private var quoteTitle: String? = null
     private var quoteData: String? = null
-    private var quoteId: Long = -1
+    public var quoteId: Long = -1
 
     private var loadRandomQuoteDisposable: Disposable? = null
         set(value) {
@@ -92,6 +92,8 @@ class EvaQuotesFragment : EvaBaseFragment() {
     private fun initUI() {
         val ctx = context ?: return
 
+        evaCollapsingBar.collapsingToolbar.title = ctx.getString(R.string.quotes)
+
         btnObnovi.setOnClickListener {
             fetchRandomQuote()
         }
@@ -115,10 +117,10 @@ class EvaQuotesFragment : EvaBaseFragment() {
     }
 
     private fun fetchRandomQuote() {
-//        loadRandomQuoteDisposable = novaEvaServiceV2.getRandomDirectoryContent(1)
+//        loadRandomQuoteDisposable = novaEvaService.getRandomDirectoryContent(1)
 //                .networkRequest({ directoryContent ->
 //                    val contentMetadataList = directoryContent.contentMetadataList
-//                    if (contentMetadataList != null && contentMetadataList.isNotEmpty()) {
+//                    if (contentMetadataList.isNotEmpty()) {
 //                        val quoteInfo = contentMetadataList[0]
 //
 //                        quoteTitle = quoteInfo.title
@@ -134,7 +136,6 @@ class EvaQuotesFragment : EvaBaseFragment() {
 
     private fun showQuote() {
         view ?: return
-        evaCollapsingBar.collapsingToolbar.title = quoteTitle ?: ""
         webText.loadHtmlText(quoteData)
     }
 }

@@ -10,11 +10,8 @@ import android.support.v4.view.GestureDetectorCompat
 import android.support.v4.view.GravityCompat
 import android.util.DisplayMetrics
 import android.view.MotionEvent
-import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.edit
-import androidx.core.view.isGone
-import androidx.core.view.isVisible
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.fragments.*
@@ -24,6 +21,7 @@ import hr.bpervan.novaeva.model.OpenContentEvent
 import hr.bpervan.novaeva.rest.novaEvaServiceV2
 import hr.bpervan.novaeva.util.*
 import hr.bpervan.novaeva.util.TransitionAnimation.*
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_eva_main.*
 import java.util.concurrent.TimeUnit
@@ -65,6 +63,12 @@ class EvaActivity : EvaBaseActivity() {
         updateDisplayMetrics()
 
         gestureDetector = GestureDetectorCompat(this, SwipeLeftToRightGestureListener(displayMetrics))
+
+        supportFragmentManager?.addOnBackStackChangedListener {
+            if (evaRoot.isDrawerOpen(GravityCompat.END)) {
+                evaRoot.closeDrawer(GravityCompat.END)
+            }
+        }
     }
 
     private fun updateDisplayMetrics() {
@@ -91,75 +95,61 @@ class EvaActivity : EvaBaseActivity() {
 
     private fun initGui() {
         mainContainerId = R.id.evaMainFragmentFrame
-
         mainContainer = findViewById(mainContainerId)
-    }
-
-    private inner class EvaHierarchyChangeListener(private val targetView: ViewGroup)
-        : ViewGroup.OnHierarchyChangeListener {
-        override fun onChildViewRemoved(parent: View?, child: View?) {
-            if (targetView.childCount == 0) {
-                targetView.isGone = true
-            }
-        }
-
-        override fun onChildViewAdded(parent: View?, child: View?) {
-            targetView.isVisible = true
-        }
     }
 
     override fun onStart() {
         super.onStart()
 
-        disposables += bus.goHome.screenChangeThrottle().subscribe(::openDashboardFragment)
-        disposables += bus.openContent.screenChangeThrottle().subscribe(::openContentFragment)
+        disposables += bus.goHome.subscribeThrottled(::openDashboardFragment)
+        disposables += bus.openContent.subscribeThrottled(::openContentFragment)
 
-        disposables += bus.search.screenChangeThrottle().subscribe {
-            addToBackStack(mainContainerId, EvaSearchFragment, it, FADE)
+        disposables += bus.search.subscribeThrottled {
+            addToBackStack(mainContainerId, EvaSearchFragment, it, FADE, true)
         }
 
-        disposables += bus.openDirectory.screenChangeThrottle().subscribe {
-            addToBackStack(mainContainerId, EvaDirectoryFragment, it, it.animation)
+        disposables += bus.openDirectory.subscribeThrottled {
+            addToBackStack(mainContainerId, EvaDirectoryFragment, it, it.animation, false)
         }
 
-        disposables += bus.openQuotes.screenChangeThrottle().subscribe {
-            addToBackStack(mainContainerId, EvaQuotesFragment, it.quoteId, it.animation)
+        disposables += bus.openQuotes.subscribeThrottled {
+            addToBackStack(mainContainerId, EvaQuotesFragment, it.quoteId, it.animation, true)
         }
 
-        disposables += bus.openBreviaryChooser.screenChangeThrottle().subscribe {
-            addToBackStack(mainContainerId, BreviaryChooserFragment, it)
+        disposables += bus.openBreviaryChooser.subscribeThrottled {
+            addToBackStack(mainContainerId, BreviaryChooserFragment, it, true)
         }
 
-        disposables += bus.openBreviaryContent.screenChangeThrottle().subscribe {
-            addToBackStack(mainContainerId, BreviaryContentFragment, it.breviaryId, it.animation)
+        disposables += bus.openBreviaryContent.subscribeThrottled {
+            addToBackStack(mainContainerId, BreviaryContentFragment, it.breviaryId, it.animation, true)
         }
 
-        disposables += bus.openInfo.screenChangeThrottle().subscribe {
-            addToBackStack(mainContainerId, EvaInfoFragment, it)
+        disposables += bus.openInfo.subscribeThrottled {
+            addToBackStack(mainContainerId, EvaInfoFragment, it, true)
         }
 
-        disposables += bus.openOptionsDrawer.screenChangeThrottle().subscribe {
+        disposables += bus.openOptionsDrawer.subscribeThrottled {
             evaRoot.openDrawer(GravityCompat.END)
         }
 
-        disposables += bus.openPrayerBook.screenChangeThrottle().subscribe {
-            addToBackStack(mainContainerId, PrayerBookFragment, it)
+        disposables += bus.openPrayerBook.subscribeThrottled {
+            addToBackStack(mainContainerId, PrayerBookFragment, it, true)
         }
 
-        disposables += bus.openPrayerCategory.screenChangeThrottle().subscribe {
-            addToBackStack(mainContainerId, PrayerListFragment, it.prayerCategory.id, it.animation)
+        disposables += bus.openPrayerCategory.subscribeThrottled {
+            addToBackStack(mainContainerId, PrayerListFragment, it.prayerCategory.id, it.animation, true)
         }
 
-        disposables += bus.openRadio.screenChangeThrottle().subscribe {
-            addToBackStack(mainContainerId, RadioFragment, LEFTWARDS)
+        disposables += bus.openRadio.subscribeThrottled {
+            addToBackStack(mainContainerId, RadioFragment, LEFTWARDS, true)
         }
 
-        disposables += bus.openCalendar.screenChangeThrottle().subscribe {
-            addToBackStack(mainContainerId, EvaCalendarFragment, it)
+        disposables += bus.openCalendar.subscribeThrottled {
+            addToBackStack(mainContainerId, EvaCalendarFragment, it, true)
         }
 
-        disposables += bus.openBookmarks.screenChangeThrottle().subscribe {
-            addToBackStack(mainContainerId, EvaBookmarksFragment, it)
+        disposables += bus.openBookmarks.subscribeThrottled {
+            addToBackStack(mainContainerId, EvaBookmarksFragment, it, true)
         }
 
         disposables += bus.changeWindowBackgroundDrawable
@@ -184,6 +174,10 @@ class EvaActivity : EvaBaseActivity() {
 
         disposables += bus.connectedToNetwork
                 .throttleWithTimeout(10, TimeUnit.SECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext {
+                    NovaEvaApp.evaPlayer.stop() //roaming safeguard
+                }
                 .subscribe {
                     fetchBreviaryCoverUrl()
                     fetchDashboardBackgroundUrl()
@@ -191,6 +185,14 @@ class EvaActivity : EvaBaseActivity() {
 
         fetchBreviaryCoverUrl()
         fetchDashboardBackgroundUrl()
+    }
+
+    private fun openDashboardFragment(animation: TransitionAnimation = FADE) {
+        addToBackStack(mainContainerId, EvaDashboardFragment, animation, true)
+    }
+
+    private fun openContentFragment(request: OpenContentEvent) {
+        addToBackStack(mainContainerId, EvaContentFragment, request, request.animation, false)
     }
 
     private fun fetchBreviaryCoverUrl() {
@@ -220,22 +222,13 @@ class EvaActivity : EvaBaseActivity() {
         if (evaRoot.isDrawerOpen(GravityCompat.END)) {
             evaRoot.closeDrawer(GravityCompat.END)
         } else {
+            supportFragmentManager.ifPresent {
+                if (it.backStackEntryCount == 1) {
+                    it.popBackStack()
+                }
+            }
             super.onBackPressed()
         }
-    }
-
-    private fun openDashboardFragment(animation: TransitionAnimation = FADE) {
-        popAllFragments()
-
-        supportFragmentManager.beginTransaction()
-                .setCustomAnimation(animation)
-                .replace(mainContainerId, EvaDashboardFragment)
-                .commitAllowingStateLoss()
-    }
-
-    private fun openContentFragment(request: OpenContentEvent) {
-
-        addToBackStack(mainContainerId, EvaContentFragment, request, request.animation)
     }
 
     override fun onStop() {
@@ -248,8 +241,28 @@ class EvaActivity : EvaBaseActivity() {
         super.onDestroy()
     }
 
-    private fun popAllFragments() {
-        supportFragmentManager.popBackStackImmediate(null, POP_BACK_STACK_INCLUSIVE)
+    private fun <T : Fragment, K> addToBackStack(
+            containerViewId: Int,
+            evaFragmentFactory: EvaBaseFragment.EvaFragmentFactory<T, K>,
+            fragmentInitializer: K, animation: TransitionAnimation = NONE,
+            popUpToLastOfSameTypeInclusive: Boolean) {
+
+        if (popUpToLastOfSameTypeInclusive) {
+            supportFragmentManager.popBackStack(evaFragmentFactory.tag, POP_BACK_STACK_INCLUSIVE)
+        }
+
+        supportFragmentManager.beginTransaction()
+                .setCustomAnimation(animation)
+                .replace(containerViewId, evaFragmentFactory.newInstance(fragmentInitializer), evaFragmentFactory.tag)
+                .addToBackStack(evaFragmentFactory.tag)
+                .commitAllowingStateLoss()
+    }
+
+    private fun <T : Fragment> addToBackStack(
+            containerViewId: Int,
+            evaFragmentFactory: EvaBaseFragment.EvaFragmentFactory<T, Unit>, animation: TransitionAnimation = NONE,
+            popUpToLastOfSameTypeInclusive: Boolean) {
+        return addToBackStack(containerViewId, evaFragmentFactory, Unit, animation, popUpToLastOfSameTypeInclusive)
     }
 
     private fun FragmentTransaction.setCustomAnimation(animation: TransitionAnimation): FragmentTransaction {
@@ -266,36 +279,5 @@ class EvaActivity : EvaBaseActivity() {
                 setCustomAnimations(R.anim.fade_in, R.anim.nothing, R.anim.fade_in, R.anim.nothing)
             else -> this
         }
-    }
-
-    private fun <T : Fragment, K> FragmentTransaction.replace(
-            containerViewId: Int,
-            evaFragmentFactory: EvaBaseFragment.EvaFragmentFactory<T, K>,
-            fragmentInitializer: K): FragmentTransaction {
-        return this.replace(containerViewId, evaFragmentFactory.newInstance(fragmentInitializer), evaFragmentFactory.tag)
-    }
-
-    private fun <T : Fragment> FragmentTransaction.replace(
-            containerViewId: Int,
-            evaFragmentFactory: EvaBaseFragment.EvaFragmentFactory<T, Unit>): FragmentTransaction {
-        return this.replace(containerViewId, evaFragmentFactory, Unit)
-    }
-
-    private fun <T : Fragment, K> addToBackStack(
-            containerViewId: Int,
-            evaFragmentFactory: EvaBaseFragment.EvaFragmentFactory<T, K>,
-            fragmentInitializer: K, animation: TransitionAnimation = NONE) {
-
-        supportFragmentManager.beginTransaction()
-                .setCustomAnimation(animation)
-                .replace(containerViewId, evaFragmentFactory, fragmentInitializer)
-                .addToBackStack(null)
-                .commitAllowingStateLoss()
-    }
-
-    private fun <T : Fragment> addToBackStack(
-            containerViewId: Int,
-            evaFragmentFactory: EvaBaseFragment.EvaFragmentFactory<T, Unit>, animation: TransitionAnimation = NONE) {
-        return addToBackStack(containerViewId, evaFragmentFactory, Unit, animation)
     }
 }

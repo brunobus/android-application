@@ -13,7 +13,6 @@ import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
-import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
@@ -26,7 +25,7 @@ import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.rest.EvaCategory
 import hr.bpervan.novaeva.model.EvaContent
 import hr.bpervan.novaeva.model.OpenContentEvent
-import hr.bpervan.novaeva.player.EvaPlayerEventListener
+import hr.bpervan.novaeva.player.EvaPlayer
 import hr.bpervan.novaeva.rest.novaEvaServiceV2
 import hr.bpervan.novaeva.storage.EvaContentDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
@@ -62,20 +61,10 @@ class EvaContentFragment : EvaBaseFragment() {
         }
     }
 
-
-    private var exoPlayer: ExoPlayer? = null
-        set(value) {
-            field?.removeListener(evaPlayerEventListener)
-            value?.addListener(evaPlayerEventListener)
-            field = value
-        }
-
-    private val evaPlayerEventListener = EvaPlayerEventListener({ exoPlayer })
-
     private lateinit var realm: Realm
 
     private lateinit var category: EvaCategory
-    private var contentId: Long = 0
+    public var contentId: Long = 0
     private var evaContent: EvaContent? = null
 
     private val handler = Handler()
@@ -138,13 +127,6 @@ class EvaContentFragment : EvaBaseFragment() {
     private fun subscribeToEvaContentUpdates() {
         view ?: return
 
-        evaContentMetadataChangesDisposable = EvaContentDbAdapter.subscribeToEvaContentMetadataUpdatesAsync(realm, contentId) { evaContentMetadata ->
-            //todo move to options drawer
-//            options.btnBookmark.setImageResource(
-//                    if (evaContentMetadata.bookmark) R.drawable.action_button_bookmarked
-//                    else R.drawable.action_button_bookmark)
-        }
-
         evaContentChangesDisposable = EvaContentDbAdapter.subscribeToEvaContentUpdatesAsync(realm, contentId) { evaContent ->
 
             evaCollapsingBar.collapsingToolbar.title = evaContent.contentMetadata!!.title
@@ -168,18 +150,16 @@ class EvaContentFragment : EvaBaseFragment() {
             evaContent.audioURL?.let { audioUrl ->
                 imgMp3.setImageResource(R.drawable.vijest_ind_mp3_active)
                 if (audioUrl != this.evaContent?.audioURL) {
-                    prepareAudioStream(context!!, audioUrl)
+                    prepareAudioStream(context!!, audioUrl, evaContent.contentId.toString(),
+                            evaContent.contentMetadata?.title ?: "nepoznato")
                 }
-                exoPlayer?.let { exoPlayer ->
-                    player_view?.apply {
-                        player = exoPlayer
-                        applyEvaConfiguration()
-                        requestFocus()
-                        showController()
+                player_view?.apply {
+                    NovaEvaApp.evaPlayer.supplyPlayerToView(this, evaContent.contentId.toString())
+                    applyEvaConfiguration()
+                    requestFocus()
+                    showController()
 
-                    }
                 }
-                evaPlayerEventListener.playbackId = audioUrl
             }
 
 
@@ -254,36 +234,9 @@ class EvaContentFragment : EvaBaseFragment() {
                 sendEmailIntent(ctx, "Duhovni poziv", text, arrayOf("duhovnipoziv@gmail.com"))
             }
         }
-
-        //todo move to options drawer
-//        options.btnSearch.setOnClickListener {
-//            showSearchPopup()
-//        }
-//        options.btnBookmark.setOnClickListener {
-//            evaContent?.let { evaContent ->
-//                val evaContentMetadata = evaContent.contentMetadata!!
-//                EvaContentDbAdapter.updateEvaContentMetadataAsync(realm, evaContentMetadata.contentId) {
-//                    it.bookmark = !it.bookmark
-//                }
-//            }
-//        }
-//
-//        options.btnShare.setOnClickListener {
-//            shareIntent(ctx, "http://novaeva.com/node/$contentId")
-//        }
-//
-//        options.btnMail.setOnClickListener {
-//            sendEmailIntent(ctx, evaContent!!.contentMetadata!!.title, "http://novaeva.com/node/$contentId")
-//        }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        player_view?.player = null
-        exoPlayer = null
-    }
-
-    private fun prepareAudioStream(context: Context, audioUri: String) {
+    private fun prepareAudioStream(context: Context, audioUri: String, contentId: String, contentTitle: String) {
         val dataSourceFactory = DefaultDataSourceFactory(context,
                 Util.getUserAgent(context, resources.getString(R.string.app_name)),
                 DefaultBandwidthMeter())
@@ -291,7 +244,7 @@ class EvaContentFragment : EvaBaseFragment() {
 //        val factory = ExtractorMediaSource.Factory(dataSourceFactory).setCustomCacheKey(audioUri)
 //        val mediaSource = factory.createMediaSource(streamingUri)
 
-        exoPlayer = NovaEvaApp.evaPlayer.prepareIfNeededAndGetPlayer(audioUri) {
+        NovaEvaApp.evaPlayer.prepareIfNeeded(EvaPlayer.PlaybackInfo(contentId, contentTitle), doAutoPlay = false) {
             ExtractorMediaSource(audioUri.toUri(), dataSourceFactory, DefaultExtractorsFactory(), handler, null, audioUri)
         }
     }

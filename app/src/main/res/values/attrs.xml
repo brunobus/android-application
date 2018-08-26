@@ -12,4 +12,7 @@
     <declare-styleable name="PlayPauseView">
         <attr name="is_playing" format="boolean"/>
     </declare-styleable>
+    <declare-styleable name="EvaBookmarkView">
+        <attr name="is_bookmarked" format="boolean"/>
+    </declare-styleable>
 </resources>

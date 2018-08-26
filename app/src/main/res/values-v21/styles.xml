@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="eva_floating_action_button" parent="Widget.Design.FloatingActionButton">
-        <item name="android:layout_margin">16dp</item>
-    </style>
-
     <style name="eva_loading_circle" parent="Widget.AppCompat.ProgressBar">
         <item name="android:indeterminateTintMode">src_in</item>
     </style>
@@ -14,7 +10,7 @@
         <item name="android:statusBarColor">@color/Transparent</item>
     </style>
 
-    <style name="SplashTheme" parent="SplashThemeBase">
+    <style name="LauncherTheme" parent="LauncherThemeBase">
         <item name="android:navigationBarColor">@color/Transparent</item>
         <item name="android:statusBarColor">@color/Transparent</item>
     </style>

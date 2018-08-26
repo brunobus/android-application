@@ -23,8 +23,8 @@ object AssetsLoader {
 
                     val prayers = prayerFiles.map { prayerFile ->
                         val prayerId = prayerFile.substringBefore(' ').toInt()
-                        val prayerName = prayerFile.substringBeforeLast('.')
-                                .replace(Regex("-?$"), "")
+                        val prayerName = prayerFile
+                                .substringBeforeLast('.')
                                 .substringAfter(' ')
 
                         Prayer(prayerId, prayerName, "$basePath/$prayerCategoryDir/$prayerFile")

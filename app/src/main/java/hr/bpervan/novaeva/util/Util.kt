@@ -25,8 +25,9 @@ fun <T> Single<T>.networkRequest(onSuccess: (T) -> Unit, onError: (Throwable) ->
             .subscribe(onSuccess, onError)
 }
 
-fun <T> Observable<T>.screenChangeThrottle(): Observable<T> {
+fun <T> Observable<T>.subscribeThrottled(consumer: (T) -> Unit): Disposable {
     return throttleFirst(500, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
+            .subscribe(consumer)
 }
 
 inline fun <T> MutableList<T>.addIfNoneExistingMatch(toAdd: T, predicate: (existingElement: T) -> Boolean) {
@@ -39,6 +40,10 @@ operator fun CompositeDisposable.minusAssign(oldDisposable: Disposable) {
 
 operator fun CompositeDisposable.plusAssign(oldDisposable: Disposable) {
     add(oldDisposable)
+}
+
+inline fun <T, R> T?.ifPresent(block: (T) -> R): R? {
+    return this?.let(block)
 }
 
 fun logError(throwable: Throwable) {

@@ -23,6 +23,8 @@ import com.google.android.exoplayer2.ext.mediasession.DefaultPlaybackController
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
+import hr.bpervan.novaeva.util.plusAssign
+import io.reactivex.disposables.CompositeDisposable
 
 typealias MediaStyleCompat = android.support.v4.media.app.NotificationCompat.MediaStyle
 
@@ -36,8 +38,9 @@ class AudioPlayerService : Service() {
         private lateinit var mediaSession: MediaSessionCompat
     }
 
+    private val disposables = CompositeDisposable()
+
     private lateinit var mediaSessionConnector: MediaSessionConnector
-    private val playerEventListener = EvaServicePlayerEventListener()
 
     private lateinit var audioManager: AudioManager
     private lateinit var novaEvaBitmap: Bitmap
@@ -55,26 +58,31 @@ class AudioPlayerService : Service() {
 
         mediaSessionConnector = MediaSessionConnector(mediaSession, EvaPlaybackController())
 
-        NovaEvaApp.evaPlayer.currentPlayerChange.subscribe {
-            it.oldPlayer.removeListener(playerEventListener)
-            val newPlayer = it.newPlayer
+        disposables += NovaEvaApp.evaPlayer.playbackChangeSubject.subscribe {
 
-            playerEventListener.onPlayerStateChanged(newPlayer.playWhenReady, newPlayer.playbackState)
-            newPlayer.addListener(playerEventListener)
-            mediaSessionConnector.setPlayer(newPlayer, null)
-        }
-    }
+            val player = it.player
 
-    private inner class EvaServicePlayerEventListener : Player.DefaultEventListener() {
-        override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-            if (playbackState == Player.STATE_READY) {
-                val notification = buildNotification(this@AudioPlayerService, mediaSession, playWhenReady)
-                startForeground(33313331, notification)
-                if (!playWhenReady) {
-                    stopForeground(false)
+            when (player.playbackState) {
+                Player.STATE_READY -> {
+                    if (player.playWhenReady || player.contentPosition > 0) {
+
+                        val notification =
+                                buildNotification(mediaSession,
+                                        player.playWhenReady, it.playbackInfo?.title ?: "")
+                        val notificationId = 33313331
+
+                        startForeground(notificationId, notification)
+
+                        if (!player.playWhenReady) {
+                            stopForeground(false)
+                        }
+
+                        mediaSessionConnector.setPlayer(player, null)
+                    }
                 }
-            } else {
-                stopForeground(true)
+                Player.STATE_IDLE, Player.STATE_ENDED -> {
+                    stopForeground(true)
+                }
             }
         }
     }
@@ -106,41 +114,37 @@ class AudioPlayerService : Service() {
         }
     }
 
-    private fun getCurrentPlayer(): Player? {
-        return NovaEvaApp.evaPlayer.currentPlayerChange.value?.newPlayer
-    }
-
     private inner class EvaPlaybackController : DefaultPlaybackController() {
 
-        val audioFocusChangeListener = AudioManager.OnAudioFocusChangeListener {
-            when (it) {
-                AudioManager.AUDIOFOCUS_GAIN -> {
-                    getCurrentPlayer()?.playWhenReady = true
-                }
-                AudioManager.AUDIOFOCUS_LOSS,
-                AudioManager.AUDIOFOCUS_LOSS_TRANSIENT,
-                AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
-                    getCurrentPlayer()?.playWhenReady = false
-                }
-            }
-        }
+//        fun onAudioFocusChange(player: Player, it: Int) {
+//            when (it) {
+//                AudioManager.AUDIOFOCUS_GAIN -> {
+//                    /*nothing*/
+//                }
+//                AudioManager.AUDIOFOCUS_LOSS,
+//                AudioManager.AUDIOFOCUS_LOSS_TRANSIENT,
+//                AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
+//                    player.playWhenReady = false
+//                }
+//            }
+//        }
 
         override fun onPlay(player: Player) {
-            @Suppress("DEPRECATION")
-            val focusRequestResult = audioManager.requestAudioFocus(audioFocusChangeListener,
-                    AudioManager.STREAM_MUSIC,
-                    AudioManager.AUDIOFOCUS_GAIN)
-
-            if (focusRequestResult == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-                player.playWhenReady = true
-            }
+//            @Suppress("DEPRECATION")
+//            val focusRequestResult = audioManager.requestAudioFocus({ onAudioFocusChange(player, it) },
+//                    AudioManager.STREAM_MUSIC,
+//                    AudioManager.AUDIOFOCUS_GAIN)
+//
+//            if (focusRequestResult == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+//            }
+            player.playWhenReady = true
         }
 
         override fun onStop(player: Player) {
             player.playWhenReady = false
             player.stop()
-            @Suppress("DEPRECATION")
-            audioManager.abandonAudioFocus(audioFocusChangeListener)
+//            @Suppress("DEPRECATION")
+//            audioManager.abandonAudioFocus(audioFocusChangeListener)
         }
 
         override fun onPause(player: Player) {
@@ -148,21 +152,21 @@ class AudioPlayerService : Service() {
         }
     }
 
-    private fun buildNotification(context: Context, mediaSession: MediaSessionCompat,
-                                  playing: Boolean): Notification {
+    private fun buildNotification(mediaSession: MediaSessionCompat,
+                                  playing: Boolean,
+                                  contentText: String = ""): Notification {
         val controller = mediaSession.controller
+        val context = this
 
         val playPauseIcon = if (playing) R.drawable.exo_controls_pause else R.drawable.exo_controls_play
         val playPauseString = if (playing) getString(R.string.pause) else getString(R.string.play)
-
-//        val contentText = NovaEvaApp.evaPlayer.currentPlaybackId
 
         return NotificationCompat.Builder(context, createNotificationChannel())
                 .setLargeIcon(novaEvaBitmap)
                 .setSmallIcon(R.drawable.notification_icon)
                 .setBadgeIconType(NotificationCompat.BADGE_ICON_NONE)
                 .setContentTitle("Nova Eva")
-//                .setContentText(contentText)
+                .setContentText(contentText)
                 .setContentIntent(controller.sessionActivity) //todo set
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setColor(ContextCompat.getColor(context, R.color.novaEva))
@@ -182,6 +186,7 @@ class AudioPlayerService : Service() {
     }
 
     override fun onDestroy() {
+        disposables.dispose()
         mediaSession.release()
         super.onDestroy()
     }

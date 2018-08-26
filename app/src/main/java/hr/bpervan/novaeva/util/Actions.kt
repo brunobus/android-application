@@ -26,11 +26,11 @@ fun sendEmailIntent(context: Context, subject: String, text: String, receivers: 
     context.startActivity(Intent.createChooser(mailIntent, context.getString(R.string.title_share_mail)))
 }
 
-fun shareIntent(context: Context, text: String) {
+fun shareIntent(context: Context?, text: String) {
     val shareIntent = Intent(Intent.ACTION_SEND)
     shareIntent.type = "text/plain"
     shareIntent.putExtra(Intent.EXTRA_TEXT, text)
-    context.startActivity(Intent.createChooser(shareIntent, context.getString(R.string.title_share)))
+    context?.startActivity(Intent.createChooser(shareIntent, context.getString(R.string.title_share)))
 }
 
 inline fun showFetchErrorDialog(throwable: Throwable?, context: Activity, crossinline onTryAgain: () -> Unit) {

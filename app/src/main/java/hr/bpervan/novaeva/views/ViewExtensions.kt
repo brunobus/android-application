@@ -12,8 +12,8 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.core.view.isVisible
 import com.google.android.exoplayer2.ui.PlayerView
-import hr.bpervan.novaeva.util.defaultTextSize
 import hr.bpervan.novaeva.util.TEXT_SIZE_KEY
+import hr.bpervan.novaeva.util.defaultTextSize
 
 /**
  *
@@ -27,7 +27,7 @@ fun WebView.applyEvaConfiguration(prefs: SharedPreferences) {
     isLongClickable = true
 }
 
-fun PlayerView.applyEvaConfiguration(){
+fun PlayerView.applyEvaConfiguration() {
     isVisible = true
     useController = true
     controllerAutoShow = true

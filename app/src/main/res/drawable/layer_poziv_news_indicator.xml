@@ -4,7 +4,8 @@
     <item
         android:bottom="20dp"
         android:drawable="@drawable/news_indicator"
-        android:gravity="center_vertical|right"
-        android:right="60dp">
+        android:left="75dp"
+        android:right="95dp"
+        android:top="20dp">
     </item>
 </layer-list>

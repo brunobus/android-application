@@ -12,7 +12,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.net.toUri
-import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.ExtractorMediaSource
@@ -27,7 +26,7 @@ import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaContent
 import hr.bpervan.novaeva.model.EvaContentMetadata
 import hr.bpervan.novaeva.model.toDatabaseModel
-import hr.bpervan.novaeva.player.EvaPlayerEventListener
+import hr.bpervan.novaeva.player.EvaPlayer
 import hr.bpervan.novaeva.player.PlaylistExtractor
 import hr.bpervan.novaeva.rest.novaEvaServiceV2
 import hr.bpervan.novaeva.util.networkRequest
@@ -65,19 +64,6 @@ class RadioFragment : EvaBaseFragment() {
 
     private val radioStationList: MutableList<EvaContentMetadata> = mutableListOf()
 
-    private var exoPlayer: ExoPlayer? = null
-        set(value) {
-            field?.removeListener(evaPlayerEventListener)
-            field?.removeListener(radioPlayerEventListener)
-
-            value?.addListener(evaPlayerEventListener)
-            value?.addListener(radioPlayerEventListener)
-
-            field = value
-        }
-    private val evaPlayerEventListener = EvaPlayerEventListener({ exoPlayer })
-    private val radioPlayerEventListener = RadioPlayerEventListener()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -110,9 +96,9 @@ class RadioFragment : EvaBaseFragment() {
                 .throttleWithTimeout(200, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .switchMapMaybe {
-                    if (evaPlayerEventListener.playbackId == it.contentId.toString()) {
-                        evaPlayerEventListener.playbackId = null
-                        exoPlayer?.playWhenReady = false
+                    if (it.contentId.toString() == NovaEvaApp.evaPlayer.currentPlaybackInfo()?.id) {
+
+                        NovaEvaApp.evaPlayer.stop()
                         Maybe.empty()
                     } else {
                         novaEvaServiceV2.getContentData(it.contentId).toMaybe()
@@ -120,28 +106,35 @@ class RadioFragment : EvaBaseFragment() {
                     }
                 }
                 .observeOn(AndroidSchedulers.mainThread())
-                .map { it.toDatabaseModel() }
-                .doOnNext { updateUI(it) }
+                .doOnNext { updateUI(it.toDatabaseModel()) }
                 .observeOn(Schedulers.io())
                 .switchMap { radioStation ->
                     getStreamLinksFromPlaylistUri(radioStation.audioURL!!)
                             .toObservable()
-                            .map { Pair(radioStation.contentId, it) }
+                            .map { Pair(it, radioStation) }
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ stationStreams ->
-                    val stationId = stationStreams.first
-                    val streamUris = stationStreams.second
+                    val streamUris = stationStreams.first
+                    val radioStation = stationStreams.second
 
                     for (streamUri in streamUris.shuffled()) {
                         try {
-                            prepareAndPlayRadioStream(stationId, streamUri)
+                            prepareAndPlayRadioStream(streamUri, radioStation.contentId.toString(),
+                                    radioStation.title ?: "nepoznato")
                             break
                         } catch (e: Exception) {
                             /*continue*/
                         }
                     }
                 }, { Log.e("radioError", it.message, it) })
+
+        baseDisposables += NovaEvaApp.evaPlayer.playbackChangeSubject.subscribe {
+            if (it.player.playbackState != Player.STATE_BUFFERING) {
+                adapter.radioStationPlaying = it.playbackInfo?.id?.toLongOrNull()
+                adapter.notifyItemRangeChanged(0, adapter.itemCount)
+            }
+        }
     }
 
     private fun updateUI(radioStationDetails: EvaContent) {
@@ -163,18 +156,6 @@ class RadioFragment : EvaBaseFragment() {
         recyclerView.itemAnimator = DefaultItemAnimator()
         recyclerView.adapter = adapter
 
-    }
-
-    inner class RadioPlayerEventListener : Player.DefaultEventListener() {
-        override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-            adapter.radioStationPlaying = evaPlayerEventListener.playbackId?.toLong()
-            adapter.notifyItemRangeChanged(0, adapter.itemCount)
-        }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        exoPlayer = null
     }
 
     private val handler = Handler()
@@ -199,8 +180,7 @@ class RadioFragment : EvaBaseFragment() {
                 }
     }
 
-    private fun prepareAndPlayRadioStream(stationId: Long, streamUri: String) {
-        evaPlayerEventListener.playbackId = stationId.toString()
+    private fun prepareAndPlayRadioStream(streamUri: String, stationId: String, stationTitle: String) {
 
         val context = context ?: return
         val dataSourceFactory = DefaultDataSourceFactory(context,
@@ -210,11 +190,10 @@ class RadioFragment : EvaBaseFragment() {
 //        val factory = ExtractorMediaSource.Factory(dataSourceFactory).setCustomCacheKey(streamUri)
 //        val mediaSource = factory.createMediaSource(streamingUri)
 
-        exoPlayer = NovaEvaApp.evaPlayer.prepareIfNeededAndGetPlayer(stationId.toString()) {
+        NovaEvaApp.evaPlayer.prepareIfNeeded(EvaPlayer.PlaybackInfo(stationId, stationTitle), doAutoPlay = true) {
             ExtractorMediaSource(streamUri.toUri(), dataSourceFactory, DefaultExtractorsFactory(),
                     handler, null, streamUri)
         }
-        exoPlayer?.playWhenReady = true
     }
 
     //legacy

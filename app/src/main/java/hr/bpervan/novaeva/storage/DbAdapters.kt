@@ -91,7 +91,7 @@ object EvaDirectoryDbAdapter {
 }
 
 object EvaContentDbAdapter {
-    private fun loadEvaContentMetadata(realm: Realm, contentId: Long): EvaContentMetadata? {
+    fun loadEvaContentMetadata(realm: Realm, contentId: Long): EvaContentMetadata? {
         return realm.where<EvaContentMetadata>().equalTo(CONTENT_ID_FIELD, contentId).findFirst()
     }
 
@@ -122,7 +122,8 @@ object EvaContentDbAdapter {
         return realm.where<EvaContentMetadata>().subscribeToUpdatesAsync(CONTENT_ID_FIELD, contentId, contentMetadataConsumer)
     }
 
-    fun addOrUpdateEvaContentAsync(realm: Realm, evaContent: EvaContent) {
+    fun addOrUpdateEvaContentAsync(realm: Realm,
+                                   evaContent: EvaContent) {
         realm.executeTransactionAsync { realmInTrans ->
             if (evaContent.contentMetadata == null) {
                 evaContent.contentMetadata =
@@ -132,13 +133,16 @@ object EvaContentDbAdapter {
         }
     }
 
-    fun updateEvaContentMetadataAsync(realm: Realm, evaContentId: Long, updateFunction: (EvaContentMetadata) -> Unit) {
+    fun updateEvaContentMetadataAsync(realm: Realm, evaContentId: Long,
+                                      updateFunction: (EvaContentMetadata) -> Unit,
+                                      onSuccess: () -> Unit = {}) {
         realm.executeTransactionAsync({ realmInTrans ->
             loadEvaContentMetadata(realmInTrans, evaContentId)?.let(updateFunction)
-        })
+        }, onSuccess)
     }
 
-    fun loadManyEvaContentMetadata(realm: Realm, predicate: (EvaContentMetadata) -> Boolean,
+    fun loadManyEvaContentMetadata(realm: Realm,
+                                   predicate: (EvaContentMetadata) -> Boolean,
                                    subscriber: (EvaContentMetadata) -> Unit): Disposable? {
         return realm
                 .where<EvaContentMetadata>()

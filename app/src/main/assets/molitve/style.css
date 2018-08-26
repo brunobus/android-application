@@ -221,3 +221,9 @@ a {
     font-size:14.0pt;
     font-family:"Calibri","sans-serif";
 }
+
+pre {
+    white-space: pre-wrap;
+    word-break: keep-all;
+    overflow: auto;
+}

@@ -1,9 +1,5 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="eva_floating_action_button" parent="Widget.Design.FloatingActionButton">
-        <item name="android:layout_margin">0dp</item>
-    </style>
-
     <style name="eva_custom_floating_button">
         <item name="android:layout_marginStart" tools:targetApi="jelly_bean_mr1">
             @dimen/eva_floating_button_margin_start
@@ -50,29 +46,21 @@
         <item name="colorPrimary">@color/evaViolet</item>
         <item name="colorPrimaryDark">@color/evaViolet</item>
         <item name="colorAccent">@color/evaViolet</item>
-        <item name="listItemContentSrc">@drawable/list_row_dir_mint</item>
-        <item name="listItemFolderSrc">@drawable/list_row_dir_mint</item>
-        <item name="directoryHeaderSrc">@drawable/header_mint</item>
+        <item name="listItemContentSrc">@drawable/list_row_dir_gold</item>
+        <item name="listItemFolderSrc">@drawable/list_row_dir_gold</item>
+        <item name="directoryHeaderSrc">@drawable/header_gold</item>
         <item name="categoryIconSrc">@drawable/icon_duhovnost</item>
-        <item name="contentTitleBarSrc">@drawable/bar_violet</item>
+        <item name="contentTitleBarSrc">@drawable/bar_gold</item>
     </style>
 
     <style name="AppTheme" parent="AppThemeBase"/>
 
-    <style name="SplashThemeBase" parent="AppTheme">
+    <style name="LauncherThemeBase" parent="AppTheme">
         <item name="android:windowBackground">@drawable/splash</item>
         <item name="colorPrimaryDark">@color/Transparent</item>
     </style>
 
-    <style name="SplashTheme" parent="SplashThemeBase"/>
-
-    <style name="DashboardThemeBase" parent="AppTheme">
-        <item name="colorPrimary">@color/novaEva</item>
-        <item name="colorPrimaryDark">@color/novaEvaDark</item>
-        <item name="colorAccent">@color/novaEvaDark</item>
-    </style>
-
-    <style name="DashboardTheme" parent="DashboardThemeBase"/>
+    <style name="LauncherTheme" parent="LauncherThemeBase"/>
 
     <style name="PrayersThemeBase" parent="AppTheme">
         <item name="colorPrimary">@color/VeryDarkGray</item>
@@ -148,8 +136,8 @@
         <item name="colorPrimary">@color/evaLime</item>
         <item name="colorPrimaryDark">@color/evaLime</item>
         <item name="colorAccent">@color/evaLime</item>
-        <item name="listItemContentSrc">@drawable/list_row_dir_gold</item>
-        <item name="listItemFolderSrc">@drawable/list_row_dir_gold</item>
+        <item name="listItemContentSrc">@drawable/list_row_dir_lime</item>
+        <item name="listItemFolderSrc">@drawable/list_row_dir_lime</item>
         <item name="directoryHeaderSrc">@drawable/header_lime</item>
         <item name="contentTitleBarSrc">@drawable/bar_lime</item>
     </style>
