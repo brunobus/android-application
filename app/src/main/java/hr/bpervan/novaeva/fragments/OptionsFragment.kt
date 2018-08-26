@@ -74,7 +74,7 @@ class OptionsFragment : Fragment() {
                     })
         }
         btnHome.setOnClickListener {
-            EventPipelines.goHome.onNext(TransitionAnimation.RIGHTWARDS)
+            EventPipelines.goHome.onNext(TransitionAnimation.FADE)
         }
     }
 
