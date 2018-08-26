@@ -36,10 +36,11 @@
     <string name="text_plus_minus">Tekst +/-</string>
     <string name="theme">Izgled</string>
     <string name="share">Dijeli</string>
-    <string name="bookmarks">Zabilješke</string>
-    <string name="bookmark">Zabilježi</string>
-    <string name="bookmarked">Zabilješka dodana</string>
-    <string name="unbookmarked">Zabilješka uklonjena</string>
+    <string name="bookmarks">Oznake</string>
+    <string name="bookmark">Označi</string>
+    <string name="unbookmark">Odznači</string>
+    <string name="bookmarked">Oznaka dodana</string>
+    <string name="unbookmarked">Oznaka uklonjena</string>
     <string name="home">Početna</string>
     <string name="church">Crkva</string>
 

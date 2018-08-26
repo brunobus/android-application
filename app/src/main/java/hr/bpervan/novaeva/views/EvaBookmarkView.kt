@@ -18,6 +18,8 @@ class EvaBookmarkView(context: Context?, attrs: AttributeSet?) : TextView(contex
         set(value) {
             field = value
             refreshDrawableState()
+
+            text = resources.getString(if (value) R.string.unbookmark else R.string.bookmark)
         }
 
     override fun onCreateDrawableState(extraSpace: Int): IntArray {

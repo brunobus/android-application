@@ -91,7 +91,7 @@ object EvaDirectoryDbAdapter {
 }
 
 object EvaContentDbAdapter {
-    private fun loadEvaContentMetadata(realm: Realm, contentId: Long): EvaContentMetadata? {
+    fun loadEvaContentMetadata(realm: Realm, contentId: Long): EvaContentMetadata? {
         return realm.where<EvaContentMetadata>().equalTo(CONTENT_ID_FIELD, contentId).findFirst()
     }
 

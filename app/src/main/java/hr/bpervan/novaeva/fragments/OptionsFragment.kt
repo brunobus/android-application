@@ -64,18 +64,26 @@ class OptionsFragment : Fragment() {
         btnShare.setOnClickListener {
             shareIntent(context, "http://novaeva.com/node/$contentId")
         }
+
         btnBookmark.setOnClickListener {
+            val wasBookmarked = isContentBookmarked(contentId)
             EvaContentDbAdapter.updateEvaContentMetadataAsync(realm, contentId,
                     updateFunction = {
-                        it.bookmark = true
+                        it.bookmark = !wasBookmarked
                     },
                     onSuccess = {
-                        context?.toast(R.string.bookmarked)
+                        context?.toast(if (!wasBookmarked) R.string.bookmarked else R.string.unbookmarked)
+                        btnBookmark.bookmarked = !wasBookmarked
                     })
         }
         btnHome.setOnClickListener {
             EventPipelines.goHome.onNext(TransitionAnimation.FADE)
         }
+    }
+
+    private fun isContentBookmarked(contentId: Long): Boolean {
+        val evaContentMetadata = EvaContentDbAdapter.loadEvaContentMetadata(realm, contentId)
+        return evaContentMetadata?.bookmark ?: false
     }
 
     override fun onDestroyView() {
@@ -104,6 +112,7 @@ class OptionsFragment : Fragment() {
                             btnTheme, btnHome, btnShare, btnBookmark)
 
                     contentId = fragment.contentId
+                    btnBookmark.bookmarked = isContentBookmarked(contentId)
                 }
                 is EvaDashboardFragment -> {
                     enableOptions(btnInfo, btnHelp, btnChurch, btnTheme)

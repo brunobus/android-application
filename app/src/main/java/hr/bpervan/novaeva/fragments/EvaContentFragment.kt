@@ -127,13 +127,6 @@ class EvaContentFragment : EvaBaseFragment() {
     private fun subscribeToEvaContentUpdates() {
         view ?: return
 
-        evaContentMetadataChangesDisposable = EvaContentDbAdapter.subscribeToEvaContentMetadataUpdatesAsync(realm, contentId) { evaContentMetadata ->
-            //todo move to options drawer
-//            options.btnBookmark.setImageResource(
-//                    if (evaContentMetadata.bookmark) R.drawable.action_button_bookmarked
-//                    else R.drawable.action_button_bookmark)
-        }
-
         evaContentChangesDisposable = EvaContentDbAdapter.subscribeToEvaContentUpdatesAsync(realm, contentId) { evaContent ->
 
             evaCollapsingBar.collapsingToolbar.title = evaContent.contentMetadata!!.title
