@@ -141,8 +141,8 @@ class AudioPlayerService : Service() {
         }
 
         override fun onStop(player: Player) {
-            player.playWhenReady = false
             player.stop()
+            player.playWhenReady = false
 //            @Suppress("DEPRECATION")
 //            audioManager.abandonAudioFocus(audioFocusChangeListener)
         }
@@ -161,6 +161,9 @@ class AudioPlayerService : Service() {
         val playPauseIcon = if (playing) R.drawable.exo_controls_pause else R.drawable.exo_controls_play
         val playPauseString = if (playing) getString(R.string.pause) else getString(R.string.play)
 
+        val stopIcon = R.drawable.player_controls_stop
+        val stopText = getString(R.string.stop)
+
         return NotificationCompat.Builder(context, createNotificationChannel())
                 .setLargeIcon(novaEvaBitmap)
                 .setSmallIcon(R.drawable.notification_icon)
@@ -174,6 +177,9 @@ class AudioPlayerService : Service() {
                 .addAction(NotificationCompat.Action(playPauseIcon, playPauseString,
                         MediaButtonReceiver.buildMediaButtonPendingIntent(context,
                                 PlaybackStateCompat.ACTION_PLAY_PAUSE)))
+                .addAction(NotificationCompat.Action(stopIcon, stopText,
+                        MediaButtonReceiver.buildMediaButtonPendingIntent(context,
+                                PlaybackStateCompat.ACTION_STOP)))
                 .setStyle(MediaStyleCompat()
                         .setMediaSession(mediaSession.sessionToken)
                         .setShowActionsInCompactView(0)
