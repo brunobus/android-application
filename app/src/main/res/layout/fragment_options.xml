@@ -74,36 +74,37 @@
             android:paddingStart="80dp"
             android:text="@string/help"
             android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@id/btnTextSize"
+            app:layout_constraintBottom_toTopOf="@id/btnChurch"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/btnInfo"/>
 
-        <TextView
-            android:id="@+id/btnTextSize"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/button_text"
-            android:contentDescription="@string/dummyDesc"
-            android:maxLines="1"
-            android:paddingEnd="5dp"
-            android:paddingLeft="80dp"
-            android:paddingRight="5dp"
-            android:paddingStart="80dp"
-            android:text="@string/text_plus_minus"
+        <!--<TextView-->
+            <!--android:id="@+id/btnTextSize"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginBottom="15dp"-->
+            <!--android:layout_marginLeft="15dp"-->
+            <!--android:layout_marginStart="15dp"-->
+            <!--android:layout_marginTop="5dp"-->
+            <!--android:background="@drawable/button_text"-->
+            <!--android:contentDescription="@string/dummyDesc"-->
+            <!--android:maxLines="1"-->
+            <!--android:paddingEnd="5dp"-->
+            <!--android:paddingLeft="80dp"-->
+            <!--android:paddingRight="5dp"-->
+            <!--android:paddingStart="80dp"-->
+            <!--android:text="@string/text_plus_minus"-->
 
-            app:layout_constraintBottom_toTopOf="@id/btnChurch"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btnHelp"/>
+            <!--app:layout_constraintBottom_toTopOf="@id/btnChurch"-->
+            <!--app:layout_constraintEnd_toEndOf="parent"-->
+            <!--app:layout_constraintStart_toStartOf="parent"-->
+            <!--app:layout_constraintTop_toBottomOf="@id/btnHelp"/>-->
 
         <TextView
             android:id="@+id/btnChurch"
             android:layout_width="0dp"
+            android:visibility="gone"
             android:layout_height="wrap_content"
             android:layout_marginBottom="15dp"
             android:layout_marginLeft="15dp"
@@ -121,7 +122,7 @@
             app:layout_constraintBottom_toTopOf="@id/btnTheme"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btnTextSize"/>
+            app:layout_constraintTop_toBottomOf="@id/btnHelp"/>
 
         <TextView
             android:id="@+id/btnTheme"
