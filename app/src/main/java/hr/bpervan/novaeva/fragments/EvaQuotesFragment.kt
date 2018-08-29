@@ -15,6 +15,9 @@ import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.services.novaEvaService
 import hr.bpervan.novaeva.util.NEW_CONTENT_KEY_PREFIX
 import hr.bpervan.novaeva.util.networkRequest
+import hr.bpervan.novaeva.util.plusAssign
+import hr.bpervan.novaeva.views.applyConfiguredFontSize
+import hr.bpervan.novaeva.views.applyEvaConfiguration
 import hr.bpervan.novaeva.views.loadHtmlText
 import hr.bpervan.novaeva.views.snackbar
 import io.reactivex.disposables.Disposable
@@ -86,13 +89,16 @@ class EvaQuotesFragment : EvaBaseFragment() {
             showQuote()
         }
 
+        baseDisposables += EventPipelines.resizeText.subscribe {
+            webText?.applyConfiguredFontSize(prefs)
+        }
+
         initUI()
     }
 
     private fun initUI() {
-        val ctx = context ?: return
-
-        evaCollapsingBar.collapsingToolbar.title = ctx.getString(R.string.quotes)
+        webText.applyEvaConfiguration(prefs)
+        evaCollapsingBar.collapsingToolbar.title = context!!.getString(R.string.quotes)
 
         btnObnovi.setOnClickListener {
             fetchRandomQuote()
@@ -135,7 +141,6 @@ class EvaQuotesFragment : EvaBaseFragment() {
     }
 
     private fun showQuote() {
-        view ?: return
-        webText.loadHtmlText(quoteData)
+        webText?.loadHtmlText(quoteData)
     }
 }

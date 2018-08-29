@@ -11,8 +11,6 @@ import io.reactivex.subjects.PublishSubject
  */
 object EventPipelines {
 
-    val chooseRadioStation = PublishSubject.create<EvaContentMetadata>()
-
     //navigation
     val goHome = PublishSubject.create<TransitionAnimation>()
     val openContent = PublishSubject.create<OpenContentEvent>()
@@ -41,6 +39,8 @@ object EventPipelines {
 
     //action
     val search = PublishSubject.create<String>()
+    val chooseRadioStation = PublishSubject.create<EvaContentMetadata>()
+    val resizeText = PublishSubject.create<Unit>()
 
     //network
     val connectedToNetwork = PublishSubject.create<Unit>()

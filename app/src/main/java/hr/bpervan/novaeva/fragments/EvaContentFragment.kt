@@ -29,10 +29,7 @@ import hr.bpervan.novaeva.player.EvaPlayer
 import hr.bpervan.novaeva.services.novaEvaService
 import hr.bpervan.novaeva.storage.EvaContentDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
-import hr.bpervan.novaeva.util.EvaCache
-import hr.bpervan.novaeva.util.SCROLL_PERCENT_KEY
-import hr.bpervan.novaeva.util.networkRequest
-import hr.bpervan.novaeva.util.sendEmailIntent
+import hr.bpervan.novaeva.util.*
 import hr.bpervan.novaeva.views.*
 import io.reactivex.disposables.Disposable
 import io.realm.Realm
@@ -229,11 +226,14 @@ class EvaContentFragment : EvaBaseFragment() {
             }
         }
 
+        baseDisposables += EventPipelines.resizeText.subscribe {
+            vijestWebView?.applyConfiguredFontSize(prefs)
+        }
+
         initUI()
     }
 
     private fun initUI() {
-        val ctx = context ?: return
 
         loadingCircle.isVisible = true
 

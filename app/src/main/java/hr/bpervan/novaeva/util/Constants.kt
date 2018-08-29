@@ -3,7 +3,9 @@ package hr.bpervan.novaeva.util
 /**
  *
  */
-const val defaultTextSize = 14
+const val defaultTextSize = 16
+const val minTextSize = 12
+const val maxTextSize = 26
 
 const val NOVA_EVA_PREFS_NAME = "hr.novaeva"
 const val TEXT_SIZE_KEY = "hr.novaeva.textsize"

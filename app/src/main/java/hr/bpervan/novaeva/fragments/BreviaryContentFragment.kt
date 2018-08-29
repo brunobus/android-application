@@ -99,6 +99,10 @@ class BreviaryContentFragment : EvaBaseFragment() {
             fetchBreviary()
         }
 
+        baseDisposables += EventPipelines.resizeText.subscribe {
+            webView?.applyConfiguredFontSize(prefs)
+        }
+
         initUI()
     }
 

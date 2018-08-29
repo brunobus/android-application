@@ -10,10 +10,8 @@ import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.util.SCROLL_PERCENT_KEY
-import hr.bpervan.novaeva.views.afterLoadAndLayoutComplete
-import hr.bpervan.novaeva.views.applyEvaConfiguration
-import hr.bpervan.novaeva.views.calcScrollYAbsolute
-import hr.bpervan.novaeva.views.calcScrollYPercent
+import hr.bpervan.novaeva.util.plusAssign
+import hr.bpervan.novaeva.views.*
 import kotlinx.android.synthetic.main.collapsing_content_header.view.*
 import kotlinx.android.synthetic.main.fragment_simple_content.*
 
@@ -55,6 +53,10 @@ class EvaInfoFragment : EvaBaseFragment() {
             webView.afterLoadAndLayoutComplete {
                 simpleContentScrollView.scrollY = calcScrollYAbsolute(savedScrollPercent, webView.height)
             }
+        }
+
+        baseDisposables += EventPipelines.resizeText.subscribe {
+            webView?.applyConfiguredFontSize(prefs)
         }
 
         initUI()
