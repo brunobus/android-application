@@ -16,8 +16,12 @@ interface TreeElementInfo
 open class EvaDirectoryMetadata(
         @PrimaryKey
         var directoryId: Long = -1,
+        var categoryId: Long = -1,
         var title: String = ""
-) : RealmObject(), TreeElementInfo
+) : RealmObject(), TreeElementInfo {
+    constructor(directoryId: Long, title: String) :
+            this(directoryId, directoryId, title)
+}
 
 open class EvaContentMetadata(
         @PrimaryKey

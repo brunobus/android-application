@@ -12,7 +12,9 @@
     <color name="evaRed">#CB212A</color>
     <color name="evaPurple">#852980</color>
     <color name="evaBlue">#0174B5</color>
+    <color name="evaBlueTrans">#880174B5</color>
     <color name="evaDarkBlue">#2E2B82</color>
+    <color name="evaDarkBlueTrans">#882E2B82</color>
 
     <color name="Transparent">#00000000</color>
     <color name="TranslucentGray">#7c2e2e2e</color>

@@ -47,14 +47,12 @@ class EvaContentFragment : EvaBaseFragment() {
     companion object : EvaFragmentFactory<EvaContentFragment, OpenContentEvent> {
 
         private const val CONTENT_ID_KEY = "contentId"
-        private const val CATEGORY_ID_KEY = "categoryId"
         private const val THEME_ID_KEY = "themeId"
 
         override fun newInstance(initializer: OpenContentEvent): EvaContentFragment {
             return EvaContentFragment().apply {
                 arguments = bundleOf(
                         CONTENT_ID_KEY to initializer.contentMetadata.contentId,
-                        CATEGORY_ID_KEY to initializer.contentMetadata.categoryId,
                         THEME_ID_KEY to initializer.themeId
                 )
             }
@@ -64,7 +62,6 @@ class EvaContentFragment : EvaBaseFragment() {
     private lateinit var realm: Realm
 
     public var contentId: Long = 0
-    private var categoryId: Long = 0
     private var evaContent: EvaContent? = null
 
     private val handler = Handler()
@@ -91,7 +88,6 @@ class EvaContentFragment : EvaBaseFragment() {
 
         val inState = savedInstanceState ?: arguments!!
         contentId = inState.getLong(CONTENT_ID_KEY)
-        categoryId = inState.getLong(CATEGORY_ID_KEY)
         themeId = inState.getInt(THEME_ID_KEY, -1)
 
         savedInstanceState ?: NovaEvaApp.defaultTracker
@@ -111,7 +107,6 @@ class EvaContentFragment : EvaBaseFragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putLong(CONTENT_ID_KEY, contentId)
-        outState.putLong(CATEGORY_ID_KEY, categoryId)
         outState.putInt(THEME_ID_KEY, themeId)
         outState.putFloat(SCROLL_PERCENT_KEY, scrollView.calcScrollYPercent(scrollView.getChildAt(0).height))
 
@@ -183,6 +178,23 @@ class EvaContentFragment : EvaBaseFragment() {
             loadingCircle.isGone = true
 
             this.evaContent = evaContent
+
+            when (evaContent.contentMetadata?.categoryId) {
+                EvaCategory.VOCATION.id -> {
+                    btnPoziv.isVisible = true
+                    btnPoziv.setOnClickListener {
+                        val text = "Hvaljen Isus i Marija, javljam Vam se jer razmišljam o duhovnom pozivu."
+                        sendEmailIntent(context, "Duhovni poziv", text, arrayOf("duhovnipoziv@gmail.com"))
+                    }
+                }
+                EvaCategory.ANSWERS.id -> {
+                    btnPitanje.isVisible = true
+                    btnPitanje.setOnClickListener {
+                        val text = "Hvaljen Isus!"
+                        sendEmailIntent(context, "Imam pitanje", text, arrayOf("novaevangelizacija@gmail.com"))
+                    }
+                }
+            }
         }
     }
 
@@ -229,15 +241,6 @@ class EvaContentFragment : EvaBaseFragment() {
 
         vijestWebView.applyEvaConfiguration(prefs)
         vijestWebView.loadHtmlText(evaContent?.text)
-
-        /** Is this 'Duhovni poziv' or 'Odgovori' category?  */
-        if (categoryId == EvaCategory.VOCATION.id) {
-            btnPoziv.isVisible = true
-            btnPoziv.setOnClickListener {
-                val text = "Hvaljen Isus i Marija, javljam Vam se jer razmišljam o duhovnom pozivu."
-                sendEmailIntent(ctx, "Duhovni poziv", text, arrayOf("duhovnipoziv@gmail.com"))
-            }
-        }
     }
 
     private fun prepareAudioStream(context: Context, audioUri: String, contentId: String, contentTitle: String) {
