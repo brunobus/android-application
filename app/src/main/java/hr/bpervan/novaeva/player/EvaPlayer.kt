@@ -32,8 +32,6 @@ class EvaPlayer(context: Context) {
     private val playerPlaybackInfoMap = mutableMapOf<ExoPlayer, PlaybackInfo?>()
 
     init {
-        ContextCompat.startForegroundService(context, Intent(context, AudioPlayerService::class.java))
-
         playerAlpha.addListener(StartServiceIfNeeded(playerAlpha, playerBeta))
         playerBeta.addListener(StartServiceIfNeeded(playerBeta, playerAlpha))
     }
@@ -47,10 +45,10 @@ class EvaPlayer(context: Context) {
 
                     otherPlayer.playWhenReady = false
                     otherPlayer.stop(true)
-                }
-                val ctx = NovaEvaApp.instance ?: return
 
-                ContextCompat.startForegroundService(ctx, Intent(ctx, AudioPlayerService::class.java))
+                    val ctx = NovaEvaApp.instance ?: return
+                    ContextCompat.startForegroundService(ctx, Intent(ctx, AudioPlayerService::class.java))
+                }
             } else if (playbackState == Player.STATE_IDLE) {
                 playerPlaybackInfoMap[thisPlayer] = null
             }
