@@ -129,27 +129,27 @@ class EvaDirectoryFragment : EvaBaseFragment() {
 
     private fun subscribeToDirectoryUpdates() {
         evaDirectoryChangesDisposable = EvaDirectoryDbAdapter.subscribeToEvaDirectoryUpdatesAsync(
-                realm, directoryId, { evaDirectory ->
+                realm, directoryId) { evaDirectory ->
 
-            elementsList.clear()
+                    elementsList.clear()
 
-            val contentSorted = evaDirectory.contentMetadataList.sortedByDescending { it.timestamp }
+                    val contentSorted = evaDirectory.contentMetadataList.sortedByDescending { it.timestamp }
 
-            val subdirectoriesSorted = evaDirectory.subDirectoryMetadataList//.sortedByDescending { todo ON SERVER }
+                    val subdirectoriesSorted = evaDirectory.subDirectoryMetadataList//.sortedByDescending { todo ON SERVER }
 
-            if (contentSorted.size > 10) {
-                elementsList.addAll(contentSorted.take(10))
-                elementsList.addAll(subdirectoriesSorted)
-                elementsList.addAll(contentSorted.drop(10))
-            } else {
-                elementsList.addAll(contentSorted)
-                elementsList.addAll(subdirectoriesSorted)
-            }
+                    if (contentSorted.size > 10) {
+                        elementsList.addAll(contentSorted.take(10))
+                        elementsList.addAll(subdirectoriesSorted)
+                        elementsList.addAll(contentSorted.drop(10))
+                    } else {
+                        elementsList.addAll(contentSorted)
+                        elementsList.addAll(subdirectoriesSorted)
+                    }
 
-            loadingFromDb = false
+                    loadingFromDb = false
 
-            adapter.notifyDataSetChanged()
-        })
+                    adapter.notifyDataSetChanged()
+                }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
