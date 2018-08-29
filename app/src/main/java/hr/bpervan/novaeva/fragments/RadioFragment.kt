@@ -91,7 +91,13 @@ class RadioFragment : EvaBaseFragment() {
         EventPipelines.changeStatusbarColor.onNext(R.color.VeryDarkGray)
         EventPipelines.changeFragmentBackgroundResource.onNext(R.color.Transparent)
 
-        initUI()
+        collapsingRadioHeader.collapsingToolbar.title = getString(R.string.radio_stations)
+
+        val recyclerView = evaRecyclerView as RecyclerView
+        val linearLayoutManager = LinearLayoutManager(context)
+        recyclerView.layoutManager = linearLayoutManager
+        recyclerView.itemAnimator = DefaultItemAnimator()
+        recyclerView.adapter = adapter
 
         baseDisposables += EventPipelines.chooseRadioStation
                 .throttleWithTimeout(200, TimeUnit.MILLISECONDS)
@@ -145,18 +151,6 @@ class RadioFragment : EvaBaseFragment() {
         if (coverImageInfo != null && coverImageView != null) {
             imageLoader.displayImage(coverImageInfo.url, coverImageView)
         }
-    }
-
-    private fun initUI() {
-
-        collapsingRadioHeader.collapsingToolbar.title = getString(R.string.radio_stations)
-
-        val recyclerView = evaRecyclerView as RecyclerView
-        val linearLayoutManager = LinearLayoutManager(context)
-        recyclerView.layoutManager = linearLayoutManager
-        recyclerView.itemAnimator = DefaultItemAnimator()
-        recyclerView.adapter = adapter
-
     }
 
     private val handler = Handler()

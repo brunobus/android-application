@@ -59,20 +59,15 @@ class EvaInfoFragment : EvaBaseFragment() {
             webView?.applyConfiguredFontSize(prefs)
         }
 
-        initUI()
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        outState.putFloat(SCROLL_PERCENT_KEY, simpleContentScrollView.calcScrollYPercent(webView.height))
-        super.onSaveInstanceState(outState)
-    }
-
-    private fun initUI() {
-
         webView.applyEvaConfiguration(prefs)
 
         webView.loadUrl("file:///android_asset/info.html")
 
         evaCollapsingBar.collapsingToolbar.title = "Nova Eva info"
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putFloat(SCROLL_PERCENT_KEY, simpleContentScrollView.calcScrollYPercent(webView.height))
+        super.onSaveInstanceState(outState)
     }
 }

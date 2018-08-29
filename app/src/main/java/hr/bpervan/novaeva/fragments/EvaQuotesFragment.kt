@@ -93,10 +93,6 @@ class EvaQuotesFragment : EvaBaseFragment() {
             webText?.applyConfiguredFontSize(prefs)
         }
 
-        initUI()
-    }
-
-    private fun initUI() {
         webText.applyEvaConfiguration(prefs)
         evaCollapsingBar.collapsingToolbar.title = context!!.getString(R.string.quotes)
 

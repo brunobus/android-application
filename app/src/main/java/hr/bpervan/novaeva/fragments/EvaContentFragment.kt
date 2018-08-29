@@ -230,11 +230,6 @@ class EvaContentFragment : EvaBaseFragment() {
             vijestWebView?.applyConfiguredFontSize(prefs)
         }
 
-        initUI()
-    }
-
-    private fun initUI() {
-
         loadingCircle.isVisible = true
 
         createIfMissingAndSubscribeToEvaContentUpdates()

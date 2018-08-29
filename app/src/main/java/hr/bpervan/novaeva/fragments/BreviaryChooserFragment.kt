@@ -50,11 +50,6 @@ class BreviaryChooserFragment : EvaBaseFragment() {
         EventPipelines.changeStatusbarColor.onNext(R.color.Transparent)
         EventPipelines.changeFragmentBackgroundResource.onNext(R.color.Transparent)
 
-        initUI()
-    }
-
-    private fun initUI() {
-
         val openSansRegular = NovaEvaApp.openSansRegular
         if (openSansRegular != null) {
             txtKs.typeface = openSansRegular

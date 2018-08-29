@@ -183,11 +183,7 @@ class EvaDirectoryFragment : EvaBaseFragment() {
         EventPipelines.changeStatusbarColor.onNext(R.color.VeryDarkGray)
         EventPipelines.changeFragmentBackgroundResource.onNext(R.color.White)
 
-        initUI()
-    }
-
-    private fun initUI() {
-        val ctx = context ?: return
+        val ctx = context!!
 
         evaDirectoryCollapsingBar.izbornikTop.izbornikTopNazivKategorije.apply {
             text = directoryTitle
