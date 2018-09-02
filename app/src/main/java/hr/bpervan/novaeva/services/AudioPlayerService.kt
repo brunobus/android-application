@@ -10,6 +10,8 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.media.AudioAttributes
+import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.os.Build
 import android.os.IBinder
@@ -116,35 +118,57 @@ class AudioPlayerService : Service() {
 
     private inner class EvaPlaybackController : DefaultPlaybackController() {
 
-//        fun onAudioFocusChange(player: Player, it: Int) {
-//            when (it) {
-//                AudioManager.AUDIOFOCUS_GAIN -> {
-//                    /*nothing*/
-//                }
-//                AudioManager.AUDIOFOCUS_LOSS,
-//                AudioManager.AUDIOFOCUS_LOSS_TRANSIENT,
-//                AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
-//                    player.playWhenReady = false
-//                }
-//            }
-//        }
+        var audioFocusChangeListener: AudioManager.OnAudioFocusChangeListener? = null
+        var audioFocusRequest: AudioFocusRequest? = null
 
         override fun onPlay(player: Player) {
-//            @Suppress("DEPRECATION")
-//            val focusRequestResult = audioManager.requestAudioFocus({ onAudioFocusChange(player, it) },
-//                    AudioManager.STREAM_MUSIC,
-//                    AudioManager.AUDIOFOCUS_GAIN)
-//
-//            if (focusRequestResult == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-//            }
-            player.playWhenReady = true
+            val focusRequestResult =
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        audioFocusRequest = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+                                .setAudioAttributes(AudioAttributes.Builder()
+                                        .setUsage(AudioAttributes.USAGE_MEDIA)
+                                        .setContentType(AudioAttributes.CONTENT_TYPE_UNKNOWN)
+                                        .build())
+                                .build()
+
+                        audioManager.requestAudioFocus(audioFocusRequest)
+                    } else {
+                        audioFocusChangeListener = AudioManager.OnAudioFocusChangeListener { focusChange ->
+                            when (focusChange) {
+                                AudioManager.AUDIOFOCUS_GAIN -> {
+                                    /*dont autostart*/
+                                }
+                                AudioManager.AUDIOFOCUS_LOSS,
+                                AudioManager.AUDIOFOCUS_LOSS_TRANSIENT,
+                                AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
+                                    player.playWhenReady = false
+                                }
+                            }
+                        }
+
+                        @Suppress("DEPRECATION")
+                        audioManager.requestAudioFocus(audioFocusChangeListener,
+                                AudioManager.STREAM_MUSIC,
+                                AudioManager.AUDIOFOCUS_GAIN)
+                    }
+
+            if (focusRequestResult == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+                player.playWhenReady = true
+            }
         }
 
         override fun onStop(player: Player) {
             player.stop()
             player.playWhenReady = false
-//            @Suppress("DEPRECATION")
-//            audioManager.abandonAudioFocus(audioFocusChangeListener)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                audioManager.abandonAudioFocusRequest(audioFocusRequest)
+            } else {
+                @Suppress("DEPRECATION")
+                audioFocusChangeListener?.let {
+                    audioManager.abandonAudioFocus(it)
+                }
+            }
         }
 
         override fun onPause(player: Player) {
