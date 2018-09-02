@@ -130,6 +130,7 @@
 
         <TextView
             android:id="@+id/btnTheme"
+            android:visibility="gone"
             android:textColor="@color/option_text_color"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

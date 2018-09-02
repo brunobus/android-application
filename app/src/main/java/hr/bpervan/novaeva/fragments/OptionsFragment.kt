@@ -29,7 +29,7 @@ class OptionsFragment : Fragment() {
     }
 
     private lateinit var realm: Realm
-    var contentId: Long = -1L
+    private var contentId: Long? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,9 +50,6 @@ class OptionsFragment : Fragment() {
         btnInfo.setOnClickListener {
             EventPipelines.openInfo.onNext(TransitionAnimation.LEFTWARDS)
         }
-//        btnHelp.setOnClickListener {
-//            context?.toast("Not yet supported")
-//        }
         btnTextSize.setOnClickListener {
             val currentTextSize = NovaEvaApp.prefs.getInt(TEXT_SIZE_KEY, defaultTextSize)
             val newShift = currentTextSize + 2 - minTextSize
@@ -71,10 +68,17 @@ class OptionsFragment : Fragment() {
             context?.toast("Not yet supported")
         }
         btnShare.setOnClickListener {
-            shareIntent(context, "http://novaeva.com/node/$contentId")
+            val contentId = contentId
+            if (contentId != null) {
+                shareIntent(context, "http://novaeva.com/node/$contentId")
+            } else {
+                shareIntent(context, getString(R.string.recommendation) + ":\nhttp://novaeva.com/web")
+            }
         }
 
         btnBookmark.setOnClickListener {
+            val contentId = contentId ?: return@setOnClickListener
+
             val wasBookmarked = isContentBookmarked(contentId)
             EvaContentDbAdapter.updateEvaContentMetadataAsync(realm, contentId,
                     updateFunction = {
@@ -115,13 +119,15 @@ class OptionsFragment : Fragment() {
 
             val fragment = fm.findFragmentByTag(backStackEntryAt.name)
 
+            contentId = null
+
             when (fragment) {
                 is EvaContentFragment -> {
                     enableOptions(btnInfo, btnHelp, btnTextSize, btnChurch,
                             btnTheme, btnHome, btnShare, btnBookmark)
 
                     contentId = fragment.contentId
-                    btnBookmark.bookmarked = isContentBookmarked(contentId)
+                    btnBookmark.bookmarked = isContentBookmarked(fragment.contentId)
                 }
                 is EvaQuotesFragment,
                 is BreviaryContentFragment -> {
@@ -133,8 +139,8 @@ class OptionsFragment : Fragment() {
                     disableOptions(btnInfo, btnShare, btnBookmark)
                 }
                 is EvaDashboardFragment -> {
-                    enableOptions(btnInfo, btnHelp, btnChurch, btnTheme)
-                    disableOptions(btnHome, btnTextSize, btnShare, btnBookmark)
+                    enableOptions(btnInfo, btnHelp, btnChurch, btnTheme, btnShare)
+                    disableOptions(btnHome, btnTextSize, btnBookmark)
                 }
                 else -> {
                     enableOptions(btnInfo, btnHelp, btnChurch, btnTheme, btnHome)
