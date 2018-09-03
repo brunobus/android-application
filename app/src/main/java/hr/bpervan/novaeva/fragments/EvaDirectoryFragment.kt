@@ -28,10 +28,7 @@ import hr.bpervan.novaeva.model.TreeElementInfo
 import hr.bpervan.novaeva.services.novaEvaService
 import hr.bpervan.novaeva.storage.EvaDirectoryDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
-import hr.bpervan.novaeva.util.EvaCache
-import hr.bpervan.novaeva.util.NEW_CONTENT_KEY_PREFIX
-import hr.bpervan.novaeva.util.networkRequest
-import hr.bpervan.novaeva.util.sendEmailIntent
+import hr.bpervan.novaeva.util.*
 import hr.bpervan.novaeva.views.snackbar
 import io.reactivex.disposables.Disposable
 import io.realm.Realm
@@ -119,6 +116,17 @@ class EvaDirectoryFragment : EvaBaseFragment() {
 
         prefs.edit {
             remove("$NEW_CONTENT_KEY_PREFIX$directoryId")
+        }
+
+        if (context?.networkConnectionExists() == true) {
+            val lastEvictionTime = prefs.getLong(LAST_EVICTION_TIME_MILLIS_KEY + directoryId, 0L)
+            if (System.currentTimeMillis() - lastEvictionTime > evictionIntervalMillis) {
+                EvaDirectoryDbAdapter.deleteDirectoryContent(realm, directoryId)
+
+                prefs.edit {
+                    putLong(LAST_EVICTION_TIME_MILLIS_KEY + directoryId, System.currentTimeMillis())
+                }
+            }
         }
 
         createIfMissingAndSubscribeToEvaDirectoryUpdates()

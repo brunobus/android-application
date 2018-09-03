@@ -12,6 +12,16 @@ import io.realm.kotlin.where
 
 object EvaDirectoryDbAdapter {
 
+    fun deleteDirectoryContent(realm: Realm, directoryId: Long) {
+        realm.executeTransaction { realmInTrans ->
+            val directory = realmInTrans.where<EvaDirectory>().equalTo(DIRECTORY_ID_FIELD, directoryId).findFirst()
+            directory?.apply {
+                subDirectoryMetadataList.deleteAllFromRealm()
+                contentMetadataList.deleteAllFromRealm()
+            }
+        }
+    }
+
     private fun loadEvaDirectoryMetadata(realm: Realm, directoryId: Long): EvaDirectoryMetadata? {
         return realm.where<EvaDirectoryMetadata>().equalTo(DIRECTORY_ID_FIELD, directoryId).findFirst()
     }
