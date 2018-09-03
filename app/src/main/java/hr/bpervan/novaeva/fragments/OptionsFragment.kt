@@ -62,10 +62,10 @@ class OptionsFragment : Fragment() {
             EventPipelines.resizeText.onNext(Unit)
         }
         btnChurch.setOnClickListener {
-            context?.toast("Not yet supported")
+            context?.toast(getString(R.string.not_supported))
         }
         btnTheme.setOnClickListener {
-            context?.toast("Not yet supported")
+            context?.toast(getString(R.string.not_supported))
         }
         btnShare.setOnClickListener {
             val contentId = contentId
