@@ -218,6 +218,7 @@ class EvaActivity : EvaBaseActivity() {
                     getStreamLinksFromPlaylistUri(radioStation.audioURL!!)
                             .map { Pair(it, radioStation) }
                 }
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ stationStreams ->
                     val streamUris = stationStreams.first
                     val radioStation = stationStreams.second
