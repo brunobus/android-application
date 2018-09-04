@@ -23,7 +23,7 @@ abstract class EvaBaseFragment : Fragment() {
     /**
      * Fragment's lifecycle bound disposables
      */
-    protected val baseDisposables = CompositeDisposable()
+    protected val disposables = CompositeDisposable()
 
     protected val prefs: SharedPreferences
         get() = NovaEvaApp.prefs
@@ -43,14 +43,14 @@ abstract class EvaBaseFragment : Fragment() {
 
         val evaRadioBtn = (radioBtn as? EvaRadioBtn)
 
-        baseDisposables += EventPipelines.changeFragmentBackgroundResource
+        disposables += EventPipelines.changeFragmentBackgroundResource
                 .distinctUntilChanged()
                 .subscribe {
                     view.setBackgroundResource(it)
                 }
 
         if (evaRadioBtn != null) {
-            baseDisposables += EventPipelines.playbackChanged
+            disposables += EventPipelines.playbackChanged
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe {
                         evaRadioBtn.expanded = it.playbackInfo?.isRadio == true
@@ -65,22 +65,22 @@ abstract class EvaBaseFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        baseDisposables.clear()
+        disposables.clear()
         super.onDestroyView()
     }
 
     override fun onDestroy() {
-        baseDisposables.dispose()
+        disposables.dispose()
         super.onDestroy()
     }
 
     protected fun safeReplaceDisposable(oldDisposable: Disposable?, newDisposable: Disposable?): Disposable? {
         if (oldDisposable != null) {
-            baseDisposables -= oldDisposable
-            oldDisposable.dispose() //do not rely on baseDisposables.remove()
+            disposables -= oldDisposable
+            oldDisposable.dispose() //do not rely on disposables.remove(oldDisposable)
         }
         if (newDisposable != null && !newDisposable.isDisposed) {
-            baseDisposables += newDisposable
+            disposables += newDisposable
         }
         return newDisposable
     }

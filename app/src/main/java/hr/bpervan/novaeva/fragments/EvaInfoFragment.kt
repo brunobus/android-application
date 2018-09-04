@@ -55,7 +55,7 @@ class EvaInfoFragment : EvaBaseFragment() {
             }
         }
 
-        baseDisposables += EventPipelines.resizeText.subscribe {
+        disposables += EventPipelines.resizeText.subscribe {
             webView?.applyConfiguredFontSize(prefs)
         }
 

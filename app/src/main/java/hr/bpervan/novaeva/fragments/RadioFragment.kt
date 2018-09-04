@@ -1,7 +1,6 @@
 package hr.bpervan.novaeva.fragments
 
 import android.os.Bundle
-import android.os.Handler
 import android.support.design.widget.Snackbar
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
@@ -11,13 +10,7 @@ import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.net.toUri
 import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
-import com.google.android.exoplayer2.source.ExtractorMediaSource
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
-import com.google.android.exoplayer2.util.Util
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
@@ -27,8 +20,6 @@ import hr.bpervan.novaeva.model.EvaCategory
 import hr.bpervan.novaeva.model.EvaContent
 import hr.bpervan.novaeva.model.EvaContentMetadata
 import hr.bpervan.novaeva.model.toDatabaseModel
-import hr.bpervan.novaeva.player.EvaPlayer
-import hr.bpervan.novaeva.player.PlaylistExtractor
 import hr.bpervan.novaeva.player.getStreamLinksFromPlaylistUri
 import hr.bpervan.novaeva.player.prepareAudioStream
 import hr.bpervan.novaeva.services.novaEvaService
@@ -36,14 +27,11 @@ import hr.bpervan.novaeva.util.networkRequest
 import hr.bpervan.novaeva.util.plusAssign
 import hr.bpervan.novaeva.views.snackbar
 import io.reactivex.Maybe
-import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.collapsing_content_header.view.*
 import kotlinx.android.synthetic.main.fragment_radio.*
-import java.net.HttpURLConnection
-import java.net.URL
 import java.util.concurrent.TimeUnit
 
 
@@ -101,7 +89,7 @@ class RadioFragment : EvaBaseFragment() {
         recyclerView.itemAnimator = DefaultItemAnimator()
         recyclerView.adapter = adapter
 
-        baseDisposables += EventPipelines.chooseRadioStation
+        disposables += EventPipelines.chooseRadioStation
                 .throttleWithTimeout(200, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .switchMapMaybe {
@@ -139,7 +127,7 @@ class RadioFragment : EvaBaseFragment() {
                     }
                 }, { Log.e("radioError", it.message, it) })
 
-        baseDisposables += EventPipelines.playbackChanged.subscribe {
+        disposables += EventPipelines.playbackChanged.subscribe {
             if (it.player.playbackState != Player.STATE_BUFFERING) {
                 adapter.radioStationPlaying = it.playbackInfo?.id?.toLongOrNull()
                 adapter.notifyItemRangeChanged(0, adapter.itemCount)

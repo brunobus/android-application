@@ -202,7 +202,7 @@ class EvaActivity : EvaBaseActivity() {
     }
 
     private fun playFirstRadioStation() {
-        novaEvaService.getDirectoryContent(EvaCategory.RADIO.id, null, items = 1)
+        disposables += novaEvaService.getDirectoryContent(EvaCategory.RADIO.id, null, items = 1)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .map { it.contentMetadataList.first() }
@@ -245,7 +245,7 @@ class EvaActivity : EvaBaseActivity() {
     }
 
     private fun fetchBreviaryCoverUrl() {
-        novaEvaService.getDirectoryContent(546, null)
+        disposables += novaEvaService.getDirectoryContent(546, null)
                 .networkRequest({ directoryContent ->
                     val image = directoryContent.image?.size640 ?: directoryContent.image?.size640
                     if (image != null) {

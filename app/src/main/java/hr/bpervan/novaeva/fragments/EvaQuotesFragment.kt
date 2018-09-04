@@ -89,7 +89,7 @@ class EvaQuotesFragment : EvaBaseFragment() {
             showQuote()
         }
 
-        baseDisposables += EventPipelines.resizeText.subscribe {
+        disposables += EventPipelines.resizeText.subscribe {
             webText?.applyConfiguredFontSize(prefs)
         }
 

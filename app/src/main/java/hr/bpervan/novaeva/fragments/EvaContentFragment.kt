@@ -1,6 +1,5 @@
 package hr.bpervan.novaeva.fragments
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -13,11 +12,6 @@ import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
-import com.google.android.exoplayer2.source.ExtractorMediaSource
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
-import com.google.android.exoplayer2.util.Util
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
@@ -25,7 +19,6 @@ import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaCategory
 import hr.bpervan.novaeva.model.EvaContent
 import hr.bpervan.novaeva.model.OpenContentEvent
-import hr.bpervan.novaeva.player.EvaPlayer
 import hr.bpervan.novaeva.player.prepareAudioStream
 import hr.bpervan.novaeva.services.novaEvaService
 import hr.bpervan.novaeva.storage.EvaContentDbAdapter
@@ -228,7 +221,7 @@ class EvaContentFragment : EvaBaseFragment() {
             }
         }
 
-        baseDisposables += EventPipelines.resizeText.subscribe {
+        disposables += EventPipelines.resizeText.subscribe {
             vijestWebView?.applyConfiguredFontSize(prefs)
         }
 

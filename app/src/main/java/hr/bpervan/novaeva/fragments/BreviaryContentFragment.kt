@@ -99,7 +99,7 @@ class BreviaryContentFragment : EvaBaseFragment() {
             fetchBreviary()
         }
 
-        baseDisposables += EventPipelines.resizeText.subscribe {
+        disposables += EventPipelines.resizeText.subscribe {
             webView?.applyConfiguredFontSize(prefs)
         }
 
@@ -123,7 +123,7 @@ class BreviaryContentFragment : EvaBaseFragment() {
 
     private fun fetchBreviary() {
 
-        baseDisposables += novaEvaService
+        disposables += novaEvaService
                 .getBreviary(breviaryId.toString())
                 .networkRequest({ breviary ->
                     view ?: return@networkRequest

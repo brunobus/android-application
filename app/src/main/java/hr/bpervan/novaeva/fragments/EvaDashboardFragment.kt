@@ -51,7 +51,7 @@ class EvaDashboardFragment : EvaBaseFragment() {
         EventPipelines.changeStatusbarColor.onNext(R.color.Transparent)
         EventPipelines.changeFragmentBackgroundResource.onNext(R.color.Transparent)
 
-        baseDisposables += EventPipelines.dashboardBackground.subscribe {
+        disposables += EventPipelines.dashboardBackground.subscribe {
             EventPipelines.changeWindowBackgroundDrawable.onNext(it)
         }
 
