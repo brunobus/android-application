@@ -9,6 +9,8 @@ import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.util.minusAssign
 import hr.bpervan.novaeva.util.plusAssign
+import hr.bpervan.novaeva.views.EvaRadioBtn
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.fragment_prayers.*
@@ -39,29 +41,37 @@ abstract class EvaBaseFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val evaRadioBtn = (radioBtn as? EvaRadioBtn)
+
         baseDisposables += EventPipelines.changeFragmentBackgroundResource
                 .distinctUntilChanged()
                 .subscribe {
                     view.setBackgroundResource(it)
                 }
 
+        if (evaRadioBtn != null) {
+            baseDisposables += EventPipelines.playbackChanged
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe {
+                        evaRadioBtn.expanded = it.playbackInfo?.isRadio == true
+                    }
+        }
+
         optionsBtn?.setOnClickListener {
             EventPipelines.openOptionsDrawer.onNext(Unit)
         }
 
-        radioBtn?.setOnClickListener {
-            EventPipelines.openRadio.onNext(Unit)
-        }
+        evaRadioBtn?.initialize()
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
         baseDisposables.clear()
+        super.onDestroyView()
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         baseDisposables.dispose()
+        super.onDestroy()
     }
 
     protected fun safeReplaceDisposable(oldDisposable: Disposable?, newDisposable: Disposable?): Disposable? {

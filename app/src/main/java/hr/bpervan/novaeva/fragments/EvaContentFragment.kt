@@ -26,6 +26,7 @@ import hr.bpervan.novaeva.model.EvaCategory
 import hr.bpervan.novaeva.model.EvaContent
 import hr.bpervan.novaeva.model.OpenContentEvent
 import hr.bpervan.novaeva.player.EvaPlayer
+import hr.bpervan.novaeva.player.prepareAudioStream
 import hr.bpervan.novaeva.services.novaEvaService
 import hr.bpervan.novaeva.storage.EvaContentDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
@@ -142,8 +143,9 @@ class EvaContentFragment : EvaBaseFragment() {
             evaContent.audioURL?.let { audioUrl ->
                 imgMp3.setImageResource(R.drawable.vijest_ind_mp3_active)
                 if (audioUrl != this.evaContent?.audioURL) {
-                    prepareAudioStream(context!!, audioUrl, evaContent.contentId.toString(),
-                            evaContent.contentMetadata?.title ?: "nepoznato")
+                    prepareAudioStream(audioUrl, evaContent.contentId.toString(),
+                            evaContent.contentMetadata?.title ?: "nepoznato",
+                            isRadio = false, doAutoPlay = false)
                 }
                 player_view?.apply {
                     NovaEvaApp.evaPlayer.supplyPlayerToView(this, evaContent.contentId.toString())
@@ -236,19 +238,6 @@ class EvaContentFragment : EvaBaseFragment() {
 
         vijestWebView.applyEvaConfiguration(prefs)
         vijestWebView.loadHtmlText(evaContent?.text)
-    }
-
-    private fun prepareAudioStream(context: Context, audioUri: String, contentId: String, contentTitle: String) {
-        val dataSourceFactory = DefaultDataSourceFactory(context,
-                Util.getUserAgent(context, resources.getString(R.string.app_name)),
-                DefaultBandwidthMeter())
-
-//        val factory = ExtractorMediaSource.Factory(dataSourceFactory).setCustomCacheKey(audioUri)
-//        val mediaSource = factory.createMediaSource(streamingUri)
-
-        NovaEvaApp.evaPlayer.prepareIfNeeded(EvaPlayer.PlaybackInfo(contentId, contentTitle), doAutoPlay = false) {
-            ExtractorMediaSource(audioUri.toUri(), dataSourceFactory, DefaultExtractorsFactory(), handler, null, audioUri)
-        }
     }
 
     override fun onDestroy() {

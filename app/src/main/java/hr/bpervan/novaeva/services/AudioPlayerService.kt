@@ -23,7 +23,7 @@ import android.support.v4.media.session.PlaybackStateCompat
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ext.mediasession.DefaultPlaybackController
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
-import hr.bpervan.novaeva.NovaEvaApp
+import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.util.plusAssign
 import io.reactivex.disposables.CompositeDisposable
@@ -60,7 +60,7 @@ class AudioPlayerService : Service() {
 
         mediaSessionConnector = MediaSessionConnector(mediaSession, EvaPlaybackController())
 
-        disposables += NovaEvaApp.evaPlayer.playbackChangeSubject.subscribe {
+        disposables += EventPipelines.playbackChanged.subscribe {
 
             val player = it.player
 

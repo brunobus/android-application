@@ -11,9 +11,10 @@ import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
+import hr.bpervan.novaeva.EventPipelines
+import hr.bpervan.novaeva.EventPipelines.playbackChanged
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.services.AudioPlayerService
-import io.reactivex.subjects.BehaviorSubject
 
 /**
  *
@@ -24,7 +25,8 @@ class EvaPlayer(context: Context) {
                          val playbackInfo: PlaybackInfo?)
 
     class PlaybackInfo(val id: String,
-                       val title: String? = null)
+                       val title: String?,
+                       val isRadio: Boolean)
 
     private val playerAlpha: ExoPlayer = createDefaultExoPlayer(context)
     private val playerBeta: ExoPlayer = createDefaultExoPlayer(context)
@@ -56,11 +58,9 @@ class EvaPlayer(context: Context) {
         }
 
         private fun emitPlaybackChange() {
-            playbackChangeSubject.onNext(PlaybackChange(thisPlayer, playerPlaybackInfoMap[thisPlayer]))
+            playbackChanged.onNext(PlaybackChange(thisPlayer, playerPlaybackInfoMap[thisPlayer]))
         }
     }
-
-    val playbackChangeSubject = BehaviorSubject.create<PlaybackChange>()
 
     fun prepareIfNeeded(playbackInfo: PlaybackInfo, doAutoPlay: Boolean = false, mediaSourceProvider: () -> MediaSource) {
 
@@ -110,7 +110,7 @@ class EvaPlayer(context: Context) {
     }
 
     fun currentPlaybackInfo(): PlaybackInfo? {
-        return NovaEvaApp.evaPlayer.playbackChangeSubject.value?.playbackInfo
+        return EventPipelines.playbackChanged.value?.playbackInfo
     }
 
     fun supplyPlayerToView(playerView: PlayerView, playbackId: String) {

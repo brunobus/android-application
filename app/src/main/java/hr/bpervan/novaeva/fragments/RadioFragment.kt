@@ -29,6 +29,8 @@ import hr.bpervan.novaeva.model.EvaContentMetadata
 import hr.bpervan.novaeva.model.toDatabaseModel
 import hr.bpervan.novaeva.player.EvaPlayer
 import hr.bpervan.novaeva.player.PlaylistExtractor
+import hr.bpervan.novaeva.player.getStreamLinksFromPlaylistUri
+import hr.bpervan.novaeva.player.prepareAudioStream
 import hr.bpervan.novaeva.services.novaEvaService
 import hr.bpervan.novaeva.util.networkRequest
 import hr.bpervan.novaeva.util.plusAssign
@@ -127,8 +129,9 @@ class RadioFragment : EvaBaseFragment() {
 
                     for (streamUri in streamUris.shuffled()) {
                         try {
-                            prepareAndPlayRadioStream(streamUri, radioStation.contentId.toString(),
-                                    radioStation.title ?: "nepoznato")
+                            prepareAudioStream(streamUri, radioStation.contentId.toString(),
+                                    radioStation.title ?: "nepoznato",
+                                    isRadio = true, doAutoPlay = true)
                             break
                         } catch (e: Exception) {
                             /*continue*/
@@ -136,7 +139,7 @@ class RadioFragment : EvaBaseFragment() {
                     }
                 }, { Log.e("radioError", it.message, it) })
 
-        baseDisposables += NovaEvaApp.evaPlayer.playbackChangeSubject.subscribe {
+        baseDisposables += EventPipelines.playbackChanged.subscribe {
             if (it.player.playbackState != Player.STATE_BUFFERING) {
                 adapter.radioStationPlaying = it.playbackInfo?.id?.toLongOrNull()
                 adapter.notifyItemRangeChanged(0, adapter.itemCount)
@@ -153,46 +156,8 @@ class RadioFragment : EvaBaseFragment() {
         }
     }
 
-    private val handler = Handler()
-
-    private fun getStreamLinksFromPlaylistUri(playlistFileUri: String): Single<List<String>> {
-        return Single
-                .create<List<String>> { emitter ->
-                    val url = URL(playlistFileUri)
-                    val httpConnection = url.openConnection() as HttpURLConnection
-
-                    try {
-                        if (httpConnection.responseCode == HttpURLConnection.HTTP_OK) {
-                            httpConnection.inputStream.bufferedReader().useLines {
-                                val streamUris = PlaylistExtractor.extractStreamLinksFromPlaylist(
-                                        it.toList(), playlistFileUri)
-                                emitter.onSuccess(streamUris)
-                            }
-                        } else throw RuntimeException("Http error ${httpConnection.responseCode} for $playlistFileUri")
-                    } finally {
-                        httpConnection.disconnect()
-                    }
-                }
-    }
-
-    private fun prepareAndPlayRadioStream(streamUri: String, stationId: String, stationTitle: String) {
-
-        val context = context ?: return
-        val dataSourceFactory = DefaultDataSourceFactory(context,
-                Util.getUserAgent(context, resources.getString(R.string.app_name)),
-                DefaultBandwidthMeter())
-
-//        val factory = ExtractorMediaSource.Factory(dataSourceFactory).setCustomCacheKey(streamUri)
-//        val mediaSource = factory.createMediaSource(streamingUri)
-
-        NovaEvaApp.evaPlayer.prepareIfNeeded(EvaPlayer.PlaybackInfo(stationId, stationTitle), doAutoPlay = true) {
-            ExtractorMediaSource(streamUri.toUri(), dataSourceFactory, DefaultExtractorsFactory(),
-                    handler, null, streamUri)
-        }
-    }
-
-    private fun fetchRadioStationsFromServer(timestamp: Long? = null) {
-        fetchFromServerDisposable = novaEvaService.getDirectoryContent(EvaCategory.RADIO.id, timestamp, 1000)
+    private fun fetchRadioStationsFromServer() {
+        fetchFromServerDisposable = novaEvaService.getDirectoryContent(EvaCategory.RADIO.id, null, 1000)
                 .networkRequest({ evaDirectoryDTO ->
                     radioStationList.clear()
                     radioStationList.addAll(evaDirectoryDTO.contentMetadataList.map { it.toDatabaseModel() })
