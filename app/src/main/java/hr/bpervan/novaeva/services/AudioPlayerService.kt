@@ -162,7 +162,9 @@ class AudioPlayerService : Service() {
             player.playWhenReady = false
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                audioManager.abandonAudioFocusRequest(audioFocusRequest)
+                audioFocusRequest?.let {
+                    audioManager.abandonAudioFocusRequest(it)
+                }
             } else {
                 @Suppress("DEPRECATION")
                 audioFocusChangeListener?.let {
