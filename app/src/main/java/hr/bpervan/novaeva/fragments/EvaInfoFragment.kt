@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
+import hr.bpervan.novaeva.main.BuildConfig
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.util.SCROLL_PERCENT_KEY
 import hr.bpervan.novaeva.util.plusAssign
@@ -63,7 +64,10 @@ class EvaInfoFragment : EvaBaseFragment() {
 
         webView.loadUrl("file:///android_asset/info.html")
 
-        evaCollapsingBar.collapsingToolbar.title = "Nova Eva info"
+        val titleText = "${getString(R.string.app_name)} - ${BuildConfig.VERSION_NAME}" +
+                if (BuildConfig.DEBUG) " (debug)" else ""
+
+        evaCollapsingBar.collapsingToolbar.title = titleText
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
