@@ -20,7 +20,7 @@ object EventPipelines {
     val openBreviaryChooser = PublishSubject.create<TransitionAnimation>()
     val openBreviaryContent = PublishSubject.create<OpenBreviaryContentEvent>()
     val openInfo = PublishSubject.create<TransitionAnimation>()
-    val openOptionsDrawer = PublishSubject.create<Unit>()
+    val toggleOptionsDrawer = PublishSubject.create<Unit>()
     val openPrayerBook = PublishSubject.create<TransitionAnimation>()
     val openPrayerCategory = PublishSubject.create<OpenPrayerCategoryEvent>()
     val openRadio = PublishSubject.create<Unit>()

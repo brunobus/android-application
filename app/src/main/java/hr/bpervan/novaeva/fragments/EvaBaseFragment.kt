@@ -58,7 +58,7 @@ abstract class EvaBaseFragment : Fragment() {
         }
 
         optionsBtn?.setOnClickListener {
-            EventPipelines.openOptionsDrawer.onNext(Unit)
+            EventPipelines.toggleOptionsDrawer.onNext(Unit)
         }
 
         evaRadioBtn?.initialize()

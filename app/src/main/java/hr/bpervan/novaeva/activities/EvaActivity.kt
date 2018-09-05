@@ -132,8 +132,12 @@ class EvaActivity : EvaBaseActivity() {
             addToBackStack(mainContainerId, EvaInfoFragment, it, true)
         }
 
-        disposables += bus.openOptionsDrawer.subscribeThrottled {
-            evaRoot.openDrawer(GravityCompat.END)
+        disposables += bus.toggleOptionsDrawer.subscribeThrottled {
+            if (evaRoot.isDrawerOpen(GravityCompat.END)) {
+                evaRoot.closeDrawer(GravityCompat.END)
+            } else {
+                evaRoot.openDrawer(GravityCompat.END)
+            }
         }
 
         disposables += bus.openPrayerBook.subscribeThrottled {
