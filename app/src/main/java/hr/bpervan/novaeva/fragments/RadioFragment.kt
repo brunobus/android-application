@@ -1,7 +1,6 @@
 package hr.bpervan.novaeva.fragments
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -25,7 +24,6 @@ import hr.bpervan.novaeva.services.novaEvaService
 import hr.bpervan.novaeva.util.dataErrorSnackbar
 import hr.bpervan.novaeva.util.networkRequest
 import hr.bpervan.novaeva.util.plusAssign
-import hr.bpervan.novaeva.views.snackbar
 import io.reactivex.Maybe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -128,12 +126,17 @@ class RadioFragment : EvaBaseFragment() {
                     }
                 }, { Log.e("radioError", it.message, it) })
 
-        disposables += EventPipelines.playbackChanged.subscribe {
-            if (it.player.playbackState != Player.STATE_BUFFERING) {
-                adapter.radioStationPlaying = it.playbackInfo?.id?.toLongOrNull()
-                adapter.notifyItemRangeChanged(0, adapter.itemCount)
-            }
-        }
+        disposables += EventPipelines.playbackStartStop
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    if (it.player.playbackState == Player.STATE_READY
+                            && it.playbackInfo?.isRadio == true) {
+                        adapter.radioStationPlaying = it.playbackInfo.id.toLongOrNull()
+                    } else {
+                        adapter.radioStationPlaying = null
+                    }
+                    adapter.notifyItemRangeChanged(0, adapter.itemCount)
+                }
     }
 
     private fun updateUI(radioStationDetails: EvaContent) {

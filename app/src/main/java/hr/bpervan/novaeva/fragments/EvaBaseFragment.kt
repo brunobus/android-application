@@ -50,7 +50,7 @@ abstract class EvaBaseFragment : Fragment() {
                 }
 
         if (evaRadioBtn != null) {
-            disposables += EventPipelines.playbackChanged
+            disposables += EventPipelines.playbackStartStop
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe {
                         evaRadioBtn.expanded = it.playbackInfo?.isRadio == true

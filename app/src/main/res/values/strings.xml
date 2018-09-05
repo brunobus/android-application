@@ -27,6 +27,7 @@
     <string name="introduction_identifier">Uvod:</string>
     <string name="error_fetching_data">Dohvaćanje podataka nije uspjelo</string>
     <string name="network_unavailable">Internetska veza nije dostupna</string>
+    <string name="network_changed_player_stopped">Detektirana je promjena mreže - reprodukcija zvuka zaustavljena</string>
     <string name="try_again">Pokušaj ponovno</string>
     <string name="go_back">Povratak</string>
     <string name="error">Greška</string>

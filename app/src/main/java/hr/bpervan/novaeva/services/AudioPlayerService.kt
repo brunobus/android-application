@@ -65,31 +65,31 @@ class AudioPlayerService : Service() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
 
-            val player = it.player
+                    val player = it.player
 
-            when (player.playbackState) {
-                Player.STATE_READY -> {
-                    if (player.playWhenReady || player.contentPosition > 0) {
+                    when (player.playbackState) {
+                        Player.STATE_READY -> {
+                            if (player.playWhenReady || player.contentPosition > 0) {
 
-                        val notification =
-                                buildNotification(mediaSession,
-                                        player.playWhenReady, it.playbackInfo?.title ?: "")
-                        val notificationId = 33313331
+                                val notification =
+                                        buildNotification(mediaSession,
+                                                player.playWhenReady, it.playbackInfo?.title ?: "")
+                                val notificationId = 33313331
 
-                        startForeground(notificationId, notification)
+                                startForeground(notificationId, notification)
 
-                        if (!player.playWhenReady) {
-                            stopForeground(false)
+                                if (!player.playWhenReady) {
+                                    stopForeground(false)
+                                }
+
+                                mediaSessionConnector.setPlayer(player, null)
+                            }
                         }
-
-                        mediaSessionConnector.setPlayer(player, null)
+                        Player.STATE_IDLE, Player.STATE_ENDED -> {
+                            stopForeground(true)
+                        }
                     }
                 }
-                Player.STATE_IDLE, Player.STATE_ENDED -> {
-                    stopForeground(true)
-                }
-            }
-        }
     }
 
     @SuppressLint("NewApi")

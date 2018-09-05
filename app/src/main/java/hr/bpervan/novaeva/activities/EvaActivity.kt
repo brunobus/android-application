@@ -2,7 +2,6 @@ package hr.bpervan.novaeva.activities
 
 import android.os.Build
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
 import android.support.v4.app.FragmentTransaction
@@ -181,7 +180,11 @@ class EvaActivity : EvaBaseActivity() {
                 .throttleWithTimeout(10, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext {
-                    NovaEvaApp.evaPlayer.stop() //roaming safeguard
+                    if (!NovaEvaApp.evaPlayer.isStopped()) {
+                        Log.w("networkChange", "Network change detected - stopping audio player")
+                        NovaEvaApp.evaPlayer.stop() //roaming safeguard
+                        evaRoot?.snackbar(R.string.network_changed_player_stopped)
+                    }
                 }
                 .subscribe {
                     fetchBreviaryCoverUrl()
