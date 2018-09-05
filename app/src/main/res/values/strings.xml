@@ -25,7 +25,7 @@
     <string name="laudato_copyright">Ovaj časoslov se preuzima sa www.laudato.hr</string>
     <string name="ks_copyright">Prijevodi: Copyright KS www.ks.hr</string>
     <string name="introduction_identifier">Uvod:</string>
-    <string name="error_fetching_data">Nije moguće dohvatiti najnovije podatke</string>
+    <string name="error_fetching_data">Dohvaćanje podataka nije uspjelo</string>
     <string name="network_unavailable">Internetska veza nije dostupna</string>
     <string name="try_again">Pokušaj ponovno</string>
     <string name="go_back">Povratak</string>

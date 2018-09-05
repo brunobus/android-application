@@ -105,42 +105,20 @@ object EvaContentDbAdapter {
         return realm.where<EvaContentMetadata>().equalTo(CONTENT_ID_FIELD, contentId).findFirst()
     }
 
-    private fun loadEvaContent(realm: Realm, contentId: Long): EvaContent? {
+    fun loadEvaContent(realm: Realm, contentId: Long): EvaContent? {
         return realm.where<EvaContent>().equalTo(CONTENT_ID_FIELD, contentId).findFirst()
     }
 
-    fun createIfMissingEvaContentAsync(realm: Realm, contentId: Long,
-                                       valuesApplier: (EvaContentMetadata) -> Unit = {},
-                                       onSuccess: () -> Unit) {
-        realm.executeTransactionAsync({ realmInTrans ->
-            val evaContent = EvaContentDbAdapter.loadEvaContent(realmInTrans, contentId)
-            if (evaContent == null) {
-                val contentMetadata = loadEvaContentMetadata(realmInTrans, contentId)
-                        ?: EvaContentMetadata(contentId).apply(valuesApplier)
-                val defaultContent = EvaContent(contentId, contentMetadata)
-                realmInTrans.insertOrUpdate(defaultContent)
-            }
-        }, onSuccess)
-    }
-
-    fun subscribeToEvaContentUpdatesAsync(realm: Realm, contentId: Long, contentConsumer: (EvaContent) -> Unit): Disposable? {
-        return realm.where<EvaContent>().subscribeToUpdatesAsync(CONTENT_ID_FIELD, contentId, contentConsumer)
-    }
-
-    fun subscribeToEvaContentMetadataUpdatesAsync(realm: Realm, contentId: Long,
-                                                  contentMetadataConsumer: (EvaContentMetadata) -> Unit): Disposable? {
-        return realm.where<EvaContentMetadata>().subscribeToUpdatesAsync(CONTENT_ID_FIELD, contentId, contentMetadataConsumer)
-    }
-
     fun addOrUpdateEvaContentAsync(realm: Realm,
-                                   evaContent: EvaContent) {
-        realm.executeTransactionAsync { realmInTrans ->
+                                   evaContent: EvaContent,
+                                   onSuccess: () -> Unit = {}) {
+        realm.executeTransactionAsync({ realmInTrans ->
             if (evaContent.contentMetadata == null) {
                 evaContent.contentMetadata =
                         loadEvaContentMetadata(realmInTrans, evaContent.contentId) ?: EvaContentMetadata(evaContent.contentId)
             }
             realmInTrans.insertOrUpdate(evaContent)
-        }
+        }, onSuccess)
     }
 
     fun updateEvaContentMetadataAsync(realm: Realm, evaContentId: Long,

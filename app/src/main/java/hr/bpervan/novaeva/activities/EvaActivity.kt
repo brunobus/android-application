@@ -232,7 +232,7 @@ class EvaActivity : EvaBaseActivity() {
                         }
                     }
                 }) {
-                    evaRoot?.snackbar(R.string.error_fetching_data, Snackbar.LENGTH_LONG)
+                    evaRoot?.dataErrorSnackbar()
                 }
     }
 

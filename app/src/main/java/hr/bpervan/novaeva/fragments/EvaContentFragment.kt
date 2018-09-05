@@ -2,8 +2,6 @@ package hr.bpervan.novaeva.fragments
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.support.design.widget.Snackbar
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
@@ -19,12 +17,12 @@ import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaCategory
 import hr.bpervan.novaeva.model.EvaContent
 import hr.bpervan.novaeva.model.OpenContentEvent
+import hr.bpervan.novaeva.model.toDatabaseModel
 import hr.bpervan.novaeva.services.novaEvaService
 import hr.bpervan.novaeva.storage.EvaContentDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
 import hr.bpervan.novaeva.util.*
 import hr.bpervan.novaeva.views.*
-import io.reactivex.disposables.Disposable
 import io.realm.Realm
 import kotlinx.android.synthetic.main.collapsing_content_header.view.*
 import kotlinx.android.synthetic.main.fragment_eva_content.*
@@ -53,22 +51,11 @@ class EvaContentFragment : EvaBaseFragment() {
 
     public var contentId: Long = 0
     private var evaContent: EvaContent? = null
-
-    private val handler = Handler()
-
-    private var fetchFromServerDisposable: Disposable? = null
         set(value) {
-            field = safeReplaceDisposable(field, value)
-        }
-
-    private var evaContentChangesDisposable: Disposable? = null
-        set(value) {
-            field = safeReplaceDisposable(field, value)
-        }
-
-    private var evaContentMetadataChangesDisposable: Disposable? = null
-        set(value) {
-            field = safeReplaceDisposable(field, value)
+            field = value
+            if (value != null) {
+                updateUI(value)
+            }
         }
 
     private var themeId = -1
@@ -89,10 +76,6 @@ class EvaContentFragment : EvaBaseFragment() {
                         .build())
 
         realm = Realm.getInstance(RealmConfigProvider.evaDBConfig)
-
-        if (savedInstanceState == null) {
-            fetchContentFromServer(contentId)
-        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -103,100 +86,84 @@ class EvaContentFragment : EvaBaseFragment() {
         super.onSaveInstanceState(outState)
     }
 
-    private fun createIfMissingAndSubscribeToEvaContentUpdates() {
-        EvaContentDbAdapter.createIfMissingEvaContentAsync(realm, contentId) {
-            subscribeToEvaContentUpdates()
-        }
-    }
+    private fun updateUI(evaContent: EvaContent) {
 
-    private fun subscribeToEvaContentUpdates() {
         view ?: return
 
-        evaContentChangesDisposable = EvaContentDbAdapter.subscribeToEvaContentUpdatesAsync(realm, contentId) { evaContent ->
+        evaCollapsingBar.collapsingToolbar.title = evaContent.contentMetadata!!.title
 
-            evaCollapsingBar.collapsingToolbar.title = evaContent.contentMetadata!!.title
+        val coverImageInfo = evaContent.image
+        val coverImageView = evaCollapsingBar.coverImage
 
-            val coverImageInfo = evaContent.image
-            val coverImageView = evaCollapsingBar.coverImage
-
-            if (coverImageInfo != null) {
-                if (coverImageView != null) {
-                    imageLoader.displayImage(coverImageInfo.url, coverImageView)
-                }
-            } else {
-                //TODO bring back category headers
+        if (coverImageInfo != null) {
+            if (coverImageView != null) {
+                imageLoader.displayImage(coverImageInfo.url, coverImageView)
+            }
+        } else {
+            //TODO bring back category headers
 //                val url = prefs.getString("hr.bpervan.novaeva.categoryheader." + contentData.contentMetadata!!.directoryId, null)
 //                if (url != null && headerImage != null) {
 //                    imageLoader.displayImage(url, headerImage)
 //                }
+        }
+        vijestWebView.loadHtmlText(evaContent.text)
+
+        evaContent.audioURL?.let { audioUrl ->
+            imgMp3.setImageResource(R.drawable.vijest_ind_mp3_active)
+
+            NovaEvaApp.evaPlayer.prepareAudioStream(
+                    audioUrl, evaContent.contentId.toString(),
+                    evaContent.contentMetadata?.title ?: "nepoznato",
+                    isRadio = false, doAutoPlay = false)
+
+            player_view?.apply {
+                NovaEvaApp.evaPlayer.supplyPlayerToView(this, evaContent.contentId.toString())
+                applyEvaConfiguration()
+                requestFocus()
+                showController()
+
             }
-            vijestWebView.loadHtmlText(evaContent.text)
+            imgMp3.setOnClickListener {
+                startActivity(Intent(Intent.ACTION_VIEW, audioUrl.toUri()))
+            }
+        }
 
-            evaContent.audioURL?.let { audioUrl ->
-                imgMp3.setImageResource(R.drawable.vijest_ind_mp3_active)
-                if (audioUrl != this.evaContent?.audioURL) {
-                    NovaEvaApp.evaPlayer.prepareAudioStream(
-                            audioUrl, evaContent.contentId.toString(),
-                            evaContent.contentMetadata?.title ?: "nepoznato",
-                            isRadio = false, doAutoPlay = false)
-                }
-                player_view?.apply {
-                    NovaEvaApp.evaPlayer.supplyPlayerToView(this, evaContent.contentId.toString())
-                    applyEvaConfiguration()
-                    requestFocus()
-                    showController()
 
-                }
-                imgMp3.setOnClickListener {
-                    startActivity(Intent(Intent.ACTION_VIEW, audioUrl.toUri()))
+        evaContent.videoURL?.let { videoUrl ->
+            imgLink.setImageResource(R.drawable.vijest_ind_www_active)
+            imgLink.setOnClickListener {
+                startActivity(Intent(Intent.ACTION_VIEW, videoUrl.toUri()))
+            }
+        }
+        if (evaContent.attachments.isNotEmpty()) {
+            imgText.setImageResource(R.drawable.vijest_ind_txt_active)
+            imgText.setOnClickListener {
+                startActivity(Intent.createChooser(Intent(Intent.ACTION_VIEW,
+                        evaContent.attachments[0]!!.url.toUri()), evaContent.attachments[0]!!.name))
+            }
+        }
+
+        loadingCircle.isGone = true
+
+        when (evaContent.contentMetadata?.categoryId) {
+            EvaCategory.VOCATION.id -> {
+                btnPoziv.isVisible = true
+                btnPoziv.setOnClickListener {
+                    val text = "Hvaljen Isus i Marija, javljam Vam se jer razmišljam o duhovnom pozivu."
+                    sendEmailIntent(context, "Duhovni poziv", text, arrayOf("duhovnipoziv@gmail.com"))
                 }
             }
-
-
-            evaContent.videoURL?.let { videoUrl ->
-                imgLink.setImageResource(R.drawable.vijest_ind_www_active)
-                imgLink.setOnClickListener {
-                    startActivity(Intent(Intent.ACTION_VIEW, videoUrl.toUri()))
-                }
-            }
-            if (evaContent.attachments.isNotEmpty()) {
-                imgText.setImageResource(R.drawable.vijest_ind_txt_active)
-                imgText.setOnClickListener {
-                    startActivity(Intent.createChooser(Intent(Intent.ACTION_VIEW,
-                            evaContent.attachments[0]!!.url.toUri()), evaContent.attachments[0]!!.name))
-                }
-            }
-
-            loadingCircle.isGone = true
-
-            this.evaContent = evaContent
-
-            when (evaContent.contentMetadata?.categoryId) {
-                EvaCategory.VOCATION.id -> {
-                    btnPoziv.isVisible = true
-                    btnPoziv.setOnClickListener {
-                        val text = "Hvaljen Isus i Marija, javljam Vam se jer razmišljam o duhovnom pozivu."
-                        sendEmailIntent(context, "Duhovni poziv", text, arrayOf("duhovnipoziv@gmail.com"))
-                    }
-                }
-                EvaCategory.ANSWERS.id -> {
-                    btnPitanje.isVisible = true
-                    btnPitanje.setOnClickListener {
-                        val text = "Hvaljen Isus!"
-                        sendEmailIntent(context, "Imam pitanje", text, arrayOf("novaevangelizacija@gmail.com"))
-                    }
+            EvaCategory.ANSWERS.id -> {
+                btnPitanje.isVisible = true
+                btnPitanje.setOnClickListener {
+                    val text = "Hvaljen Isus!"
+                    sendEmailIntent(context, "Imam pitanje", text, arrayOf("novaevangelizacija@gmail.com"))
                 }
             }
         }
-    }
 
-    private fun fetchContentFromServer(contentId: Long) {
-        fetchFromServerDisposable = novaEvaService.getContentData(contentId)
-                .networkRequest({ contentDataDTO ->
-                    EvaCache.cache(realm, contentDataDTO)
-                }, onError = {
-                    view?.snackbar(R.string.error_fetching_data, Snackbar.LENGTH_LONG)
-                })
+        vijestWebView.applyEvaConfiguration(prefs)
+        vijestWebView.loadHtmlText(evaContent.text)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -209,6 +176,8 @@ class EvaContentFragment : EvaBaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        loadingCircle.isVisible = true
 
         EventPipelines.changeNavbarColor.onNext(R.color.Black)
         EventPipelines.changeStatusbarColor.onNext(R.color.VeryDarkGray)
@@ -225,16 +194,30 @@ class EvaContentFragment : EvaBaseFragment() {
             vijestWebView?.applyConfiguredFontSize(prefs)
         }
 
-        loadingCircle.isVisible = true
+        val evaContent = EvaContentDbAdapter.loadEvaContent(realm, contentId)
 
-        createIfMissingAndSubscribeToEvaContentUpdates()
-
-        vijestWebView.applyEvaConfiguration(prefs)
-        vijestWebView.loadHtmlText(evaContent?.text)
+        if (evaContent == null || savedInstanceState == null) {
+            fetchContentFromServer(contentId)
+        } else {
+            this.evaContent = evaContent
+        }
     }
 
     override fun onDestroy() {
         realm.close()
         super.onDestroy()
+    }
+
+    private fun fetchContentFromServer(contentId: Long) {
+        disposables += novaEvaService.getContentData(contentId)
+                .networkRequest({ contentDataDTO ->
+                    EvaContentDbAdapter.addOrUpdateEvaContentAsync(realm, contentDataDTO.toDatabaseModel()) {
+                        evaContent = EvaContentDbAdapter.loadEvaContent(realm, contentId)
+                    }
+                }) {
+                    view?.dataErrorSnackbar()
+                    //load old
+                    evaContent = EvaContentDbAdapter.loadEvaContent(realm, contentId)
+                }
     }
 }

@@ -3,7 +3,6 @@ package hr.bpervan.novaeva.fragments
 import android.content.res.Configuration
 import android.os.Bundle
 import android.os.Handler
-import android.support.design.widget.Snackbar
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -21,15 +20,11 @@ import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.EvaCategory
-import hr.bpervan.novaeva.model.OpenDirectoryEvent
-import hr.bpervan.novaeva.model.TIMESTAMP_FIELD
-import hr.bpervan.novaeva.model.TreeElementInfo
+import hr.bpervan.novaeva.model.*
 import hr.bpervan.novaeva.services.novaEvaService
 import hr.bpervan.novaeva.storage.EvaDirectoryDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
 import hr.bpervan.novaeva.util.*
-import hr.bpervan.novaeva.views.snackbar
 import io.reactivex.disposables.Disposable
 import io.realm.Realm
 import io.realm.Sort
@@ -290,7 +285,7 @@ class EvaDirectoryFragment : EvaBaseFragment() {
                     evaDirectoryDTO.directoryId = directoryId //todo fix on server
                     evaDirectoryDTO.categoryId = categoryId
 
-                    EvaCache.cache(realm, evaDirectoryDTO)
+                    cache(realm, evaDirectoryDTO)
 
                     handler.postDelayed(4000) {
                         /*if there are no actual new changes from server, data in cache will not be "updated"
@@ -309,8 +304,22 @@ class EvaDirectoryFragment : EvaBaseFragment() {
                         fetchingFromServer = false
                         refreshLoadingCircleState()
 
-                        view?.snackbar(R.string.error_fetching_data, Snackbar.LENGTH_LONG)
+                        view?.dataErrorSnackbar()
                     }
                 })
+    }
+
+    fun cache(realm: Realm, evaDirectoryDTO: EvaDirectoryDTO) {
+        EvaDirectoryDbAdapter.addOrUpdateEvaDirectoryAsync(realm, evaDirectoryDTO.directoryId,
+                evaDirectoryDTO.contentMetadataList.map {
+                    it.directoryId = evaDirectoryDTO.directoryId
+                    it.categoryId = evaDirectoryDTO.categoryId
+                    it.toDatabaseModel()
+                },
+                evaDirectoryDTO.subDirectoryMetadataList.map {
+                    it.categoryId = evaDirectoryDTO.categoryId
+                    it.toDatabaseModel()
+                }
+        )
     }
 }

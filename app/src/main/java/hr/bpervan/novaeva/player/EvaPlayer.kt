@@ -74,17 +74,27 @@ class EvaPlayer(context: Context) {
     fun prepareAudioStream(audioUri: String, contentId: String, contentTitle: String, isRadio: Boolean, doAutoPlay: Boolean) {
 
         val context = NovaEvaApp.instance ?: return
-        val dataSourceFactory = DefaultDataSourceFactory(context,
-                Util.getUserAgent(context, context.resources.getString(R.string.app_name)),
-                DefaultBandwidthMeter())
-
-//        val factory = ExtractorMediaSource.Factory(dataSourceFactory).setCustomCacheKey(audioUri)
-//        val mediaSource = factory.createMediaSource(streamingUri)
 
         prepareIfNeeded(EvaPlayer.PlaybackInfo(contentId, contentTitle, isRadio), doAutoPlay) {
+            //        val factory = ExtractorMediaSource.Factory(dataSourceFactory).setCustomCacheKey(audioUri)
+//        val mediaSource = factory.createMediaSource(streamingUri)
+            val dataSourceFactory = DefaultDataSourceFactory(context,
+                    Util.getUserAgent(context, context.resources.getString(R.string.app_name)),
+                    DefaultBandwidthMeter())
+
             ExtractorMediaSource(audioUri.toUri(), dataSourceFactory, DefaultExtractorsFactory(),
                     handler, null, audioUri)
         }
+    }
+
+    private fun Player.isPlaying(): Boolean {
+        return (playbackState == Player.STATE_READY
+                || playbackState == Player.STATE_BUFFERING) && playWhenReady
+    }
+
+    private fun Player.isStopped(): Boolean {
+        return playbackState == Player.STATE_IDLE
+                || playbackState == Player.STATE_ENDED
     }
 
     private fun prepareIfNeeded(playbackInfo: PlaybackInfo, doAutoPlay: Boolean = false, mediaSourceProvider: () -> MediaSource) {
@@ -92,28 +102,20 @@ class EvaPlayer(context: Context) {
         val currentPlayer = if (playerBeta.isPlaying()) playerBeta else playerAlpha
         val otherPlayer = if (currentPlayer == playerAlpha) playerBeta else playerAlpha
 
-        when {
-            playbackInfo.id == playerPlaybackInfoMap[currentPlayer]?.id -> {
-                if (doAutoPlay) {
-                    currentPlayer.playWhenReady = true
-                }
+        if (playbackInfo.id == playerPlaybackInfoMap[currentPlayer]?.id) {
+            if (doAutoPlay) {
+                currentPlayer.playWhenReady = true
             }
-            currentPlayer.isStopped() || doAutoPlay -> {
-                currentPlayer.apply {
-                    playWhenReady = false
-                    prepare(mediaSourceProvider())
-                    playWhenReady = doAutoPlay
-                }
-                playerPlaybackInfoMap[currentPlayer] = playbackInfo
+            return
+        }
 
-            }
-            else -> {
-                otherPlayer.apply {
-                    playWhenReady = false
-                    prepare(mediaSourceProvider())
-                }
-                playerPlaybackInfoMap[otherPlayer] = playbackInfo
-            }
+        val playerToUse = if (currentPlayer.isStopped()) currentPlayer else otherPlayer
+
+        playerToUse.apply {
+            playWhenReady = false
+            prepare(mediaSourceProvider())
+            playWhenReady = doAutoPlay
+            playerPlaybackInfoMap[this] = playbackInfo
         }
     }
 

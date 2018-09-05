@@ -22,6 +22,7 @@ import hr.bpervan.novaeva.model.EvaContentMetadata
 import hr.bpervan.novaeva.model.toDatabaseModel
 import hr.bpervan.novaeva.player.getStreamLinksFromPlaylistUri
 import hr.bpervan.novaeva.services.novaEvaService
+import hr.bpervan.novaeva.util.dataErrorSnackbar
 import hr.bpervan.novaeva.util.networkRequest
 import hr.bpervan.novaeva.util.plusAssign
 import hr.bpervan.novaeva.views.snackbar
@@ -151,7 +152,7 @@ class RadioFragment : EvaBaseFragment() {
                     radioStationList.addAll(evaDirectoryDTO.contentMetadataList.map { it.toDatabaseModel() })
                     adapter.notifyDataSetChanged()
                 }, onError = {
-                    view?.snackbar(R.string.error_fetching_data, Snackbar.LENGTH_LONG)
+                    view?.dataErrorSnackbar()
                 })
     }
 }
