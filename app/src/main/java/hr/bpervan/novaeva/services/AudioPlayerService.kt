@@ -51,7 +51,7 @@ class AudioPlayerService : Service() {
     override fun onCreate() {
         super.onCreate()
 
-        novaEvaBitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_launcher)
+        novaEvaBitmap = BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher_round)
 
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
