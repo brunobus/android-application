@@ -30,7 +30,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_eva_main.*
-import kotlinx.android.synthetic.main.fragment_search.*
 import java.util.concurrent.TimeUnit
 
 /**
@@ -233,7 +232,7 @@ class EvaActivity : EvaBaseActivity() {
                         }
                     }
                 }) {
-                    radioBtn?.snackbar(R.string.error_fetching_data, Snackbar.LENGTH_LONG)
+                    evaRoot?.snackbar(R.string.error_fetching_data, Snackbar.LENGTH_LONG)
                 }
     }
 
