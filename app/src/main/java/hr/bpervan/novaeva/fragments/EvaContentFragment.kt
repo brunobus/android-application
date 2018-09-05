@@ -19,7 +19,6 @@ import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaCategory
 import hr.bpervan.novaeva.model.EvaContent
 import hr.bpervan.novaeva.model.OpenContentEvent
-import hr.bpervan.novaeva.player.prepareAudioStream
 import hr.bpervan.novaeva.services.novaEvaService
 import hr.bpervan.novaeva.storage.EvaContentDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
@@ -136,7 +135,8 @@ class EvaContentFragment : EvaBaseFragment() {
             evaContent.audioURL?.let { audioUrl ->
                 imgMp3.setImageResource(R.drawable.vijest_ind_mp3_active)
                 if (audioUrl != this.evaContent?.audioURL) {
-                    prepareAudioStream(audioUrl, evaContent.contentId.toString(),
+                    NovaEvaApp.evaPlayer.prepareAudioStream(
+                            audioUrl, evaContent.contentId.toString(),
                             evaContent.contentMetadata?.title ?: "nepoznato",
                             isRadio = false, doAutoPlay = false)
                 }

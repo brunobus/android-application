@@ -21,7 +21,6 @@ import hr.bpervan.novaeva.model.EvaContent
 import hr.bpervan.novaeva.model.EvaContentMetadata
 import hr.bpervan.novaeva.model.toDatabaseModel
 import hr.bpervan.novaeva.player.getStreamLinksFromPlaylistUri
-import hr.bpervan.novaeva.player.prepareAudioStream
 import hr.bpervan.novaeva.services.novaEvaService
 import hr.bpervan.novaeva.util.networkRequest
 import hr.bpervan.novaeva.util.plusAssign
@@ -108,16 +107,17 @@ class RadioFragment : EvaBaseFragment() {
                 .switchMap { radioStation ->
                     getStreamLinksFromPlaylistUri(radioStation.audioURL!!)
                             .toObservable()
-                            .map { Pair(it, radioStation) }
+                            .map { Pair(radioStation, it) }
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ stationStreams ->
-                    val streamUris = stationStreams.first
-                    val radioStation = stationStreams.second
+                    val radioStation = stationStreams.first
+                    val streamUris = stationStreams.second
 
                     for (streamUri in streamUris.shuffled()) {
                         try {
-                            prepareAudioStream(streamUri, radioStation.contentId.toString(),
+                            NovaEvaApp.evaPlayer.prepareAudioStream(
+                                    streamUri, radioStation.contentId.toString(),
                                     radioStation.title ?: "nepoznato",
                                     isRadio = true, doAutoPlay = true)
                             break
