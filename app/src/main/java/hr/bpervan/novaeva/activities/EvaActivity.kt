@@ -86,13 +86,13 @@ class EvaActivity : EvaBaseActivity() {
 
     inner class SwipeLeftToRightGestureListener(displayMetrics: DisplayMetrics) : SwipeGestureListener(displayMetrics) {
         override fun onSwipeRight(): Boolean {
-            return if (supportFragmentManager.backStackEntryCount > 0
-                    && !evaRoot.isDrawerOpen(GravityCompat.END)) {
-                onBackPressed()
-                true
-            } else {
-                /*drawer already listens for swipe right gesture, don't consume the event here*/
-                false
+            return when {
+                evaRoot.isDrawerOpen(GravityCompat.END) -> false /*drawer already listens for swipe right gesture, don't consume the event here*/
+                supportFragmentManager.backStackEntryCount > 1 -> {
+                    onBackPressed()
+                    true
+                }
+                else -> false
             }
         }
     }
