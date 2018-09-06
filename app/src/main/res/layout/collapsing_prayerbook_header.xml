@@ -21,10 +21,9 @@
             android:layout_height="match_parent"
             android:contentDescription="@string/dummyDesc"
             android:scaleType="centerCrop"
-            android:scrollY="20dp"
-            android:src="@drawable/christos_kai_theotokos"
+            android:src="@drawable/veni_sancte_spiritus"
             app:layout_collapseMode="parallax"
-            app:layout_collapseParallaxMultiplier="0.4"/>
+            app:layout_collapseParallaxMultiplier="0.5"/>
 
         <include
             android:id="@+id/prayerTop"
