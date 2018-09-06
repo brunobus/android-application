@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.edit
+import androidx.core.view.isVisible
 import androidx.core.widget.toast
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
@@ -124,34 +125,34 @@ class OptionsFragment : Fragment() {
 
             when (fragment) {
                 is EvaContentFragment -> {
-                    enableOptions(btnInfo, btnHelp, btnTextSize, btnChurch,
-                            btnTheme, btnHome, btnShare, btnBookmark)
+                    showOptions(btnInfo, /*btnHelp, */btnTextSize, /*btnChurch,
+                            btnTheme, */btnHome, btnShare, btnBookmark)
 
                     contentId = fragment.contentId
                     btnBookmark.bookmarked = isContentBookmarked(fragment.contentId)
                 }
                 is EvaQuotesFragment,
                 is BreviaryContentFragment -> {
-                    enableOptions(btnInfo, btnHelp, btnTextSize, btnChurch, btnTheme, btnHome)
-                    disableOptions(btnShare, btnBookmark)
+                    showOptions(btnInfo, /*btnHelp, */btnTextSize, /*btnChurch, btnTheme, */btnHome)
+                    hideOptions(btnShare, btnBookmark)
                 }
                 is EvaInfoFragment -> {
-                    enableOptions(btnHelp, btnChurch, btnTheme, btnHome, btnTextSize)
-                    disableOptions(btnInfo, btnShare, btnBookmark)
+                    showOptions(/*btnHelp, btnChurch, btnTheme, */btnHome, btnTextSize)
+                    hideOptions(btnInfo, btnShare, btnBookmark)
                 }
                 is EvaDashboardFragment -> {
-                    enableOptions(btnInfo, btnHelp, btnChurch, btnTheme, btnShare)
-                    disableOptions(btnHome, btnTextSize, btnBookmark)
+                    showOptions(btnInfo, /*btnHelp, btnChurch, btnTheme, */btnShare)
+                    hideOptions(btnHome, btnTextSize, btnBookmark)
                 }
                 else -> {
-                    enableOptions(btnInfo, btnHelp, btnChurch, btnTheme, btnHome)
-                    disableOptions(btnTextSize, btnShare, btnBookmark)
+                    showOptions(btnInfo, /*btnHelp, btnChurch, btnTheme, */btnHome)
+                    hideOptions(btnTextSize, btnShare, btnBookmark)
                 }
             }
         }
     }
 
-    private fun disableOptions(vararg views: View) = views.forEach { it.isEnabled = false }
+    private fun hideOptions(vararg views: View) = views.forEach { it.isVisible = false }
 
-    private fun enableOptions(vararg views: View) = views.forEach { it.isEnabled = true }
+    private fun showOptions(vararg views: View) = views.forEach { it.isVisible = true }
 }
