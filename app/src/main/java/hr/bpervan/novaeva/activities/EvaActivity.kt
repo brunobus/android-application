@@ -1,5 +1,6 @@
 package hr.bpervan.novaeva.activities
 
+import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -79,9 +80,21 @@ class EvaActivity : EvaBaseActivity() {
         windowManager.defaultDisplay.getMetrics(displayMetrics)
     }
 
-    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
-        return if (gestureDetector.onTouchEvent(ev)) true
-        else super.dispatchTouchEvent(ev)
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        if (gestureDetector.onTouchEvent(ev)) return true
+
+        if (ev.action == MotionEvent.ACTION_UP
+                && evaRoot.isDrawerOpen(GravityCompat.END)) {
+
+            val viewRect = Rect()
+            evaOptionsFragmentFrame.getGlobalVisibleRect(viewRect)
+            if (!viewRect.contains(ev.rawX.toInt(), ev.rawY.toInt())) {
+                evaRoot.closeDrawer(GravityCompat.END)
+                return true
+            }
+        }
+
+        return super.dispatchTouchEvent(ev)
     }
 
     inner class SwipeLeftToRightGestureListener(displayMetrics: DisplayMetrics) : SwipeGestureListener(displayMetrics) {
