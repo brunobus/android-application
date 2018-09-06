@@ -23,7 +23,7 @@ fun sendEmailIntent(context: Context?, subject: String, text: String, receiver: 
     try {
         val uriText = "mailto:$receiver" +
                 "?subject=" + Uri.encode(subject) +
-                "&body=" + Uri.encode(text)
+                "&body=" + Uri.encode("$text\n")
 
         val mailIntent = Intent(Intent.ACTION_SENDTO, Uri.parse(uriText))
         context.startActivity(Intent.createChooser(mailIntent, context.getString(R.string.title_share_mail)))

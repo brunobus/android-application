@@ -42,8 +42,8 @@ class EvaQuotesFragment : EvaBaseFragment() {
     }
 
     private var quoteTitle: String? = null
-    private var quoteData: String? = null
-    public var quoteId: Long = -1
+    var quoteData: String? = null
+    var quoteId: Long = -1L
 
     private var loadRandomQuoteDisposable: Disposable? = null
         set(value) {

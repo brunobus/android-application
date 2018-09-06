@@ -3,6 +3,7 @@ package hr.bpervan.novaeva.fragments
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
+import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,7 +31,6 @@ class OptionsFragment : Fragment() {
     }
 
     private lateinit var realm: Realm
-    private var contentId: Long? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,27 +69,39 @@ class OptionsFragment : Fragment() {
             context?.toast(getString(R.string.not_supported))
         }
         btnShare.setOnClickListener {
-            val contentId = contentId
-            if (contentId != null) {
-                shareIntent(context, "http://novaeva.com/node/$contentId")
-            } else {
-                shareIntent(context, getString(R.string.recommendation)
-                        + "\nhttps://play.google.com/store/apps/details?id=hr.bpervan.novaeva.main")
+
+            val topFragment = getTopFragment()
+
+            val shareString = when (topFragment) {
+                is EvaContentFragment -> "http://novaeva.com/node/${topFragment.contentId}"
+                is EvaQuotesFragment -> {
+                    @Suppress("DEPRECATION")
+                    val quoteText = Html.fromHtml(topFragment.quoteData).toString().trim()
+                    "$quoteText\n\nhttp://novaeva.com/node/${topFragment.quoteId}#quote"
+                }
+                else -> getString(R.string.recommendation) +
+                        "\n\nhttps://play.google.com/store/apps/details?id=hr.bpervan.novaeva.main" +
+                        "\nhttps://itunes.apple.com/us/app/nova-eva/id599928807"
+
             }
+            shareIntent(context, shareString)
         }
 
-        btnBookmark.setOnClickListener {
-            val contentId = contentId ?: return@setOnClickListener
+        btnBookmark.setOnClickListener { _ ->
 
-            val wasBookmarked = isContentBookmarked(contentId)
-            EvaContentDbAdapter.updateEvaContentMetadataAsync(realm, contentId,
-                    updateFunction = {
-                        it.bookmark = !wasBookmarked
-                    },
-                    onSuccess = {
-                        context?.toast(if (!wasBookmarked) R.string.bookmarked else R.string.unbookmarked)
-                        btnBookmark.bookmarked = !wasBookmarked
-                    })
+            val topFragment = getTopFragment()
+            if (topFragment is EvaContentFragment) {
+                val contentId = topFragment.contentId
+                val wasBookmarked = isContentBookmarked(contentId)
+                EvaContentDbAdapter.updateEvaContentMetadataAsync(realm, contentId,
+                        updateFunction = {
+                            it.bookmark = !wasBookmarked
+                        },
+                        onSuccess = {
+                            context?.toast(if (!wasBookmarked) R.string.bookmarked else R.string.unbookmarked)
+                            btnBookmark.bookmarked = !wasBookmarked
+                        })
+            }
         }
         btnHome.setOnClickListener {
             EventPipelines.goHome.onNext(TransitionAnimation.FADE)
@@ -114,24 +126,22 @@ class OptionsFragment : Fragment() {
     }
 
     private val topFragmentChecker: () -> Unit = {
-        val fm = activity?.supportFragmentManager
-        if (fm != null && fm.backStackEntryCount > 0) {
-            val backStackEntryAt: FragmentManager.BackStackEntry = fm
-                    .getBackStackEntryAt(fm.backStackEntryCount - 1)
 
-            val fragment = fm.findFragmentByTag(backStackEntryAt.name)
+        val fragment = getTopFragment()
 
-            contentId = null
+        if (fragment != null) {
 
             when (fragment) {
                 is EvaContentFragment -> {
                     showOptions(btnInfo, /*btnHelp, */btnTextSize, /*btnChurch,
                             btnTheme, */btnHome, btnShare, btnBookmark)
 
-                    contentId = fragment.contentId
                     btnBookmark.bookmarked = isContentBookmarked(fragment.contentId)
                 }
-                is EvaQuotesFragment,
+                is EvaQuotesFragment -> {
+                    showOptions(btnInfo, /*btnHelp, */btnTextSize, /*btnChurch, btnTheme, */btnHome, btnShare)
+                    hideOptions(btnBookmark)
+                }
                 is BreviaryContentFragment -> {
                     showOptions(btnInfo, /*btnHelp, */btnTextSize, /*btnChurch, btnTheme, */btnHome)
                     hideOptions(btnShare, btnBookmark)
@@ -150,6 +160,16 @@ class OptionsFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun getTopFragment(): Fragment? {
+        val fm = activity?.supportFragmentManager
+        return if (fm != null && fm.backStackEntryCount > 0) {
+            val backStackEntryAt: FragmentManager.BackStackEntry = fm
+                    .getBackStackEntryAt(fm.backStackEntryCount - 1)
+
+            fm.findFragmentByTag(backStackEntryAt.name)
+        } else null
     }
 
     private fun hideOptions(vararg views: View) = views.forEach { it.isVisible = false }

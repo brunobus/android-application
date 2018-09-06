@@ -21,6 +21,7 @@ import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaCategory
 import hr.bpervan.novaeva.model.EvaContentMetadata
 import hr.bpervan.novaeva.model.OpenContentEvent
+import hr.bpervan.novaeva.model.OpenQuotesEvent
 import hr.bpervan.novaeva.player.getStreamLinksFromPlaylistUri
 import hr.bpervan.novaeva.services.novaEvaService
 import hr.bpervan.novaeva.util.*
@@ -58,10 +59,17 @@ class EvaActivity : EvaBaseActivity() {
         if (savedInstanceState == null) {
             openDashboardFragment()
 
-            val contentId = intent.data?.lastPathSegment?.toLongOrNull() ?: -1L
-            if (contentId != -1L) {
-                openContentFragment(OpenContentEvent(
-                        EvaContentMetadata(contentId, 0, -1)))
+            intent.data?.let { uriData ->
+                val contentId = uriData.lastPathSegment?.toLongOrNull() ?: -1L
+
+                if (contentId != -1L) {
+                    if (uriData.fragment == "quote") {
+                        openQuotesFragment(OpenQuotesEvent(contentId))
+                    } else {
+                        openContentFragment(OpenContentEvent(
+                                EvaContentMetadata(contentId, 0, -1)))
+                    }
+                }
             }
         }
 
@@ -129,9 +137,7 @@ class EvaActivity : EvaBaseActivity() {
             addToBackStack(mainContainerId, EvaDirectoryFragment, it, it.animation, false)
         }
 
-        disposables += bus.openQuotes.subscribeThrottled {
-            addToBackStack(mainContainerId, EvaQuotesFragment, it.quoteId, it.animation, true)
-        }
+        disposables += bus.openQuotes.subscribeThrottled(this::openQuotesFragment)
 
         disposables += bus.openBreviaryChooser.subscribeThrottled {
             addToBackStack(mainContainerId, BreviaryChooserFragment, it, true)
@@ -262,6 +268,10 @@ class EvaActivity : EvaBaseActivity() {
 
     private fun openContentFragment(request: OpenContentEvent) {
         addToBackStack(mainContainerId, EvaContentFragment, request, request.animation, false)
+    }
+
+    private fun openQuotesFragment(request: OpenQuotesEvent) {
+        addToBackStack(mainContainerId, EvaQuotesFragment, request.quoteId, request.animation, true)
     }
 
     private fun fetchBreviaryCoverUrl() {
