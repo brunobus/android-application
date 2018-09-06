@@ -72,7 +72,8 @@ class OptionsFragment : Fragment() {
             if (contentId != null) {
                 shareIntent(context, "http://novaeva.com/node/$contentId")
             } else {
-                shareIntent(context, getString(R.string.recommendation) + ":\nhttp://novaeva.com/web")
+                shareIntent(context, getString(R.string.recommendation)
+                        + "\nhttps://play.google.com/store/apps/details?id=hr.bpervan.novaeva.main")
             }
         }
 
