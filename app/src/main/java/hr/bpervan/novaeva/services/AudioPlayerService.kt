@@ -61,7 +61,7 @@ class AudioPlayerService : Service() {
 
         mediaSessionConnector = MediaSessionConnector(mediaSession, EvaPlaybackController())
 
-        disposables += EventPipelines.playbackChanged
+        disposables += EventPipelines.playbackStartStopPause
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
 

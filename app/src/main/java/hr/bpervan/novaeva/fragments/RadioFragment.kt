@@ -91,7 +91,7 @@ class RadioFragment : EvaBaseFragment() {
                 .throttleWithTimeout(200, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .switchMapMaybe {
-                    if (it.contentId.toString() == NovaEvaApp.evaPlayer.currentPlaybackInfo()?.id) {
+                    if (it.contentId == adapter.radioStationPlaying) {
 
                         NovaEvaApp.evaPlayer.stop()
                         Maybe.empty()
@@ -126,10 +126,11 @@ class RadioFragment : EvaBaseFragment() {
                     }
                 }, { Log.e("radioError", it.message, it) })
 
-        disposables += EventPipelines.playbackStartStop
+        disposables += EventPipelines.playbackStartStopPause
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     if (it.player.playbackState == Player.STATE_READY
+                            && it.player.playWhenReady
                             && it.playbackInfo?.isRadio == true) {
                         adapter.radioStationPlaying = it.playbackInfo.id.toLongOrNull()
                     } else {

@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.View
+import com.google.android.exoplayer2.Player
 import com.nostra13.universalimageloader.core.ImageLoader
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
@@ -50,10 +51,12 @@ abstract class EvaBaseFragment : Fragment() {
                 }
 
         if (evaRadioBtn != null) {
-            disposables += EventPipelines.playbackStartStop
+            disposables += EventPipelines.playbackStartStopPause
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe {
                         evaRadioBtn.expanded = it.playbackInfo?.isRadio == true
+                                && it.player.playWhenReady
+                                && it.player.playbackState == Player.STATE_READY
                     }
         }
 

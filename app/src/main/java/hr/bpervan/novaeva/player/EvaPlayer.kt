@@ -18,8 +18,7 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import hr.bpervan.novaeva.EventPipelines
-import hr.bpervan.novaeva.EventPipelines.playbackChanged
-import hr.bpervan.novaeva.EventPipelines.playbackStartStop
+import hr.bpervan.novaeva.EventPipelines.playbackStartStopPause
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.services.AudioPlayerService
@@ -58,28 +57,27 @@ class EvaPlayer(context: Context) {
 
                     val ctx = NovaEvaApp.instance ?: return
                     ContextCompat.startForegroundService(ctx, Intent(ctx, AudioPlayerService::class.java))
-
-                    emitPlaybackStartStop()
                 }
-                emitPlaybackChange()
+                if (otherPlayer.playbackState == Player.STATE_IDLE
+                        || otherPlayer.playbackState == Player.STATE_ENDED
+                        || otherPlayer.playWhenReady.not()) {
+                    emitPlaybackStartStopPause()
+                }
             } else if (playbackState == Player.STATE_IDLE
                     || playbackState == Player.STATE_ENDED) {
+
                 playerPlaybackInfoMap[thisPlayer] = null
 
-                if ((otherPlayer.playbackState != Player.STATE_READY
-                                && otherPlayer.playbackState != Player.STATE_BUFFERING) || !otherPlayer.playWhenReady) {
-                    emitPlaybackStartStop()
-                    emitPlaybackChange()
+                if (otherPlayer.playbackState == Player.STATE_IDLE
+                        || otherPlayer.playbackState == Player.STATE_ENDED
+                        || otherPlayer.playWhenReady.not()) {
+                    emitPlaybackStartStopPause()
                 }
             }
         }
 
-        private fun emitPlaybackChange() {
-            playbackChanged.onNext(PlaybackChange(thisPlayer, playerPlaybackInfoMap[thisPlayer]))
-        }
-
-        private fun emitPlaybackStartStop() {
-            playbackStartStop.onNext(PlaybackChange(thisPlayer, playerPlaybackInfoMap[thisPlayer]))
+        private fun emitPlaybackStartStopPause() {
+            playbackStartStopPause.onNext(PlaybackChange(thisPlayer, playerPlaybackInfoMap[thisPlayer]))
         }
     }
 
@@ -157,7 +155,7 @@ class EvaPlayer(context: Context) {
     }
 
     fun currentPlaybackInfo(): PlaybackInfo? {
-        return EventPipelines.playbackStartStop.value?.playbackInfo
+        return EventPipelines.playbackStartStopPause.value?.playbackInfo
     }
 
     fun supplyPlayerToView(playerView: PlayerView, playbackId: String) {

@@ -45,8 +45,7 @@ object EventPipelines {
     val resizeText = PublishSubject.create<Unit>()
 
     //event
-    val playbackChanged = BehaviorSubject.create<EvaPlayer.PlaybackChange>()
-    val playbackStartStop = BehaviorSubject.create<EvaPlayer.PlaybackChange>()
+    val playbackStartStopPause = BehaviorSubject.create<EvaPlayer.PlaybackChange>()
 
     //network
     val connectedToNetwork = PublishSubject.create<Unit>()
