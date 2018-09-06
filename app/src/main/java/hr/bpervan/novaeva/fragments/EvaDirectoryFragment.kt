@@ -166,6 +166,7 @@ class EvaDirectoryFragment : EvaBaseFragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putLong(directoryIdKey, directoryId)
+        outState.putLong(categoryIdKey, categoryId)
         outState.putString(directoryTitleKey, directoryTitle)
         outState.putInt(themeIdKey, themeId)
 
