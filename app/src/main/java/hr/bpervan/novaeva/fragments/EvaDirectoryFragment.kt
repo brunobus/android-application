@@ -207,14 +207,14 @@ class EvaDirectoryFragment : EvaBaseFragment() {
                 btnPoziv.isVisible = true
                 btnPoziv.setOnClickListener {
                     val text = "Hvaljen Isus i Marija, javljam Vam se jer razmišljam o duhovnom pozivu."
-                    sendEmailIntent(ctx, "Duhovni poziv", text, arrayOf("duhovnipoziv@gmail.com"))
+                    sendEmailIntent(ctx, "Duhovni poziv", text, "duhovnipoziv@gmail.com")
                 }
             }
             EvaCategory.ANSWERS.id -> {
                 btnPitanje.isVisible = true
                 btnPitanje.setOnClickListener {
                     val text = "Hvaljen Isus!"
-                    sendEmailIntent(ctx, "Imam pitanje", text, arrayOf("novaevangelizacija@gmail.com"))
+                    sendEmailIntent(ctx, "Imam pitanje", text, "novaevangelizacija@gmail.com")
                 }
             }
         }

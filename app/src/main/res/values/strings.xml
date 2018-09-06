@@ -48,5 +48,7 @@
     <string name="unbookmarked">Oznaka uklonjena</string>
     <string name="home">Početna</string>
     <string name="church">Crkva</string>
+    <string name="send_email_failed">Slanje e-pošte nije uspjelo</string>
+    <string name="share_failed">Dijeljenje nije uspjelo</string>
 
 </resources>
