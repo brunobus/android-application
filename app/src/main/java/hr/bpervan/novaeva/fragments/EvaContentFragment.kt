@@ -81,7 +81,6 @@ class EvaContentFragment : EvaBaseFragment() {
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putLong(CONTENT_ID_KEY, contentId)
         outState.putInt(THEME_ID_KEY, themeId)
-        outState.putFloat(SCROLL_PERCENT_KEY, scrollView.calcScrollYPercent(scrollView.getChildAt(0).height))
 
         super.onSaveInstanceState(outState)
     }
@@ -182,13 +181,6 @@ class EvaContentFragment : EvaBaseFragment() {
         EventPipelines.changeNavbarColor.onNext(R.color.Black)
         EventPipelines.changeStatusbarColor.onNext(R.color.VeryDarkGray)
         EventPipelines.changeFragmentBackgroundResource.onNext(R.color.White)
-
-        val savedScrollPercent = savedInstanceState?.getFloat(SCROLL_PERCENT_KEY, 0f) ?: 0f
-        if (savedScrollPercent > 0) {
-            vijestWebView.afterLoadAndLayoutComplete {
-                scrollView.scrollY = calcScrollYAbsolute(savedScrollPercent, scrollView.getChildAt(0).height)
-            }
-        }
 
         disposables += EventPipelines.resizeText.subscribe {
             vijestWebView?.applyConfiguredFontSize(prefs)

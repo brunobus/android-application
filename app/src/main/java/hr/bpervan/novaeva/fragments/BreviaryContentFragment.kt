@@ -11,11 +11,12 @@ import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.services.novaEvaService
-import hr.bpervan.novaeva.util.SCROLL_PERCENT_KEY
 import hr.bpervan.novaeva.util.dataErrorSnackbar
 import hr.bpervan.novaeva.util.networkRequest
 import hr.bpervan.novaeva.util.plusAssign
-import hr.bpervan.novaeva.views.*
+import hr.bpervan.novaeva.views.applyConfiguredFontSize
+import hr.bpervan.novaeva.views.applyEvaConfiguration
+import hr.bpervan.novaeva.views.loadHtmlText
 import kotlinx.android.synthetic.main.collapsing_content_header.view.*
 import kotlinx.android.synthetic.main.fragment_simple_content.*
 
@@ -85,13 +86,6 @@ class BreviaryContentFragment : EvaBaseFragment() {
         EventPipelines.changeStatusbarColor.onNext(R.color.Transparent)
         EventPipelines.changeFragmentBackgroundResource.onNext(R.color.Transparent)
 
-        val savedScrollPercent = savedInstanceState?.getFloat(SCROLL_PERCENT_KEY, 0f) ?: 0f
-        if (savedScrollPercent > 0) {
-            webView.afterLoadAndLayoutComplete {
-                simpleContentScrollView.scrollY = calcScrollYAbsolute(savedScrollPercent, webView.height)
-            }
-        }
-
         if (savedInstanceState != null && savedBreviaryText != null) {
             breviaryText = savedBreviaryText
             showBreviary()
@@ -116,7 +110,6 @@ class BreviaryContentFragment : EvaBaseFragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putInt(BREVIARY_ID_KEY, breviaryId)
-        outState.putFloat(SCROLL_PERCENT_KEY, simpleContentScrollView.calcScrollYPercent(webView.height))
         savedBreviaryText = breviaryText
         super.onSaveInstanceState(outState)
     }
