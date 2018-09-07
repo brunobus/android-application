@@ -99,11 +99,10 @@ class EvaContentFragment : EvaBaseFragment() {
                 imageLoader.displayImage(coverImageInfo.url, coverImageView)
             }
         } else {
-            //TODO bring back category headers
-//                val url = prefs.getString("hr.bpervan.novaeva.categoryheader." + contentData.contentMetadata!!.directoryId, null)
-//                if (url != null && headerImage != null) {
-//                    imageLoader.displayImage(url, headerImage)
-//                }
+                val url = prefs.getString("hr.bpervan.novaeva.categoryheader." + evaContent.contentMetadata?.categoryId, null)
+                if (url != null && coverImageView != null) {
+                    imageLoader.displayImage(url, coverImageView)
+                }
         }
         vijestWebView.loadHtmlText(evaContent.text)
 

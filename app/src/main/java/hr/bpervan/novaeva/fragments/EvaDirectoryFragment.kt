@@ -158,6 +158,12 @@ class EvaDirectoryFragment : EvaBaseFragment() {
                 elementsList.addAll(subdirectoriesSorted)
             }
 
+            evaDirectory.image?.let { image ->
+                prefs.edit {
+                    putString("hr.bpervan.novaeva.categoryheader.$categoryId", image.url)
+                }
+            }
+
             loadingFromDb = false
 
             adapter.notifyDataSetChanged()
