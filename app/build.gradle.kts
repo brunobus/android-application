@@ -17,8 +17,8 @@ android {
         applicationId = "hr.bpervan.novaeva.main"
         minSdkVersion(16)
         targetSdkVersion(27)
-        versionCode = 160021002
-        versionName = "2.10.2"
+        versionCode = 160030000
+        versionName = "3.0"
     }
 
     buildTypes {
