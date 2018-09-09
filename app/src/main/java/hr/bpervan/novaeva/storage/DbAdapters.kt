@@ -16,8 +16,8 @@ object EvaDirectoryDbAdapter {
         realm.executeTransaction { realmInTrans ->
             val directory = realmInTrans.where<EvaDirectory>().equalTo(DIRECTORY_ID_FIELD, directoryId).findFirst()
             directory?.apply {
-                subDirectoryMetadataList.deleteAllFromRealm()
-                contentMetadataList.deleteAllFromRealm()
+                subDirectoryMetadataList.clear()
+                contentMetadataList.clear()
             }
         }
     }
@@ -52,21 +52,37 @@ object EvaDirectoryDbAdapter {
         }, onSuccess)
     }
 
-    fun addOrUpdateEvaDirectoryAsync(realm: Realm, directoryId: Long,
-                                     newContentMetadata: List<EvaContentMetadata>,
-                                     newSubDirectoryMetadata: List<EvaDirectoryMetadata>,
+    fun addOrUpdateEvaDirectoryAsync(realm: Realm, evaDirectoryDTO: EvaDirectoryDTO,
                                      onSuccess: () -> Unit = {}) {
 
         realm.executeTransactionAsync({ realmInTrans ->
 
+            val directoryId = evaDirectoryDTO.directoryId
+
             val existingEvaDirectory = EvaDirectoryDbAdapter.loadEvaDirectory(realmInTrans, directoryId)
 
             val evaDirectory = if (existingEvaDirectory != null) {
+                if (existingEvaDirectory.image?.timestamp != evaDirectoryDTO.image?.timestamp) {
+                    val newPic = evaDirectoryDTO.image?.toDatabaseModel()
+                    if (newPic != null) {
+                        existingEvaDirectory.image = realmInTrans.copyToRealm(newPic)
+                    }
+                }
                 existingEvaDirectory
             } else {
                 val directoryMetadata = loadEvaDirectoryMetadata(realmInTrans, directoryId)
                         ?: EvaDirectoryMetadata(directoryId)
-                EvaDirectory(directoryId, directoryMetadata)
+                EvaDirectory(directoryId, directoryMetadata, evaDirectoryDTO.image?.toDatabaseModel())
+            }
+
+            val newContentMetadata = evaDirectoryDTO.contentMetadataList.map {
+                it.directoryId = evaDirectoryDTO.directoryId
+                it.categoryId = evaDirectoryDTO.categoryId
+                it.toDatabaseModel()
+            }
+            val newSubDirectoryMetadata = evaDirectoryDTO.subDirectoryMetadataList.map {
+                it.categoryId = evaDirectoryDTO.categoryId
+                it.toDatabaseModel()
             }
 
             newContentMetadata.forEach {

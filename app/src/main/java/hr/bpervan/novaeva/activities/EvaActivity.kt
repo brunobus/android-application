@@ -88,17 +88,29 @@ class EvaActivity : EvaBaseActivity() {
         windowManager.defaultDisplay.getMetrics(displayMetrics)
     }
 
+    private val drawerCloseWait = 200L
+    var lastDownPress: Long = 0
+
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
         if (gestureDetector.onTouchEvent(ev)) return true
 
-        if (ev.action == MotionEvent.ACTION_UP
-                && evaRoot.isDrawerOpen(GravityCompat.END)) {
+        if (evaRoot.isDrawerOpen(GravityCompat.END)) {
 
             val viewRect = Rect()
             evaOptionsFragmentFrame.getGlobalVisibleRect(viewRect)
             if (!viewRect.contains(ev.rawX.toInt(), ev.rawY.toInt())) {
-                evaRoot.closeDrawer(GravityCompat.END)
-                return true
+
+                when (ev.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        lastDownPress = System.currentTimeMillis()
+                    }
+                    MotionEvent.ACTION_UP -> {
+                        if (System.currentTimeMillis() - lastDownPress <= drawerCloseWait) {
+                            evaRoot.closeDrawer(GravityCompat.END)
+                        }
+                        return true
+                    }
+                }
             }
         }
 
@@ -277,7 +289,7 @@ class EvaActivity : EvaBaseActivity() {
     private fun fetchBreviaryCoverUrl() {
         disposables += novaEvaService.getDirectoryContent(546, null)
                 .networkRequest({ directoryContent ->
-                    val image = directoryContent.image?.size640 ?: directoryContent.image?.size640
+                    val image = directoryContent.image?.size640
                     if (image != null) {
                         NovaEvaApp.prefs.edit {
                             putString("hr.bpervan.novaeva.brevijarheaderimage", image)

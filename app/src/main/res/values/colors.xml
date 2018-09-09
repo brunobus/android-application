@@ -18,6 +18,9 @@
     <color name="Transparent">#00000000</color>
     <color name="TranslucentGray">#7c2e2e2e</color>
 
+    <!--680000-->
+    <color name="prayerbookColor">#252525</color>
+
     <color name="White">#ffffff</color>
     <color name="Ivory">#FFFFF0</color>
     <color name="LightYellow">#FFFFE0</color>

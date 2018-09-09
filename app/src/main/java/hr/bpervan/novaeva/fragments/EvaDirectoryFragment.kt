@@ -292,7 +292,7 @@ class EvaDirectoryFragment : EvaBaseFragment() {
                     evaDirectoryDTO.directoryId = directoryId //todo fix on server
                     evaDirectoryDTO.categoryId = categoryId
 
-                    cache(realm, evaDirectoryDTO)
+                    EvaDirectoryDbAdapter.addOrUpdateEvaDirectoryAsync(realm, evaDirectoryDTO)
 
                     handler.postDelayed(4000) {
                         /*if there are no actual new changes from server, data in cache will not be "updated"
@@ -314,19 +314,5 @@ class EvaDirectoryFragment : EvaBaseFragment() {
                         view?.dataErrorSnackbar()
                     }
                 })
-    }
-
-    fun cache(realm: Realm, evaDirectoryDTO: EvaDirectoryDTO) {
-        EvaDirectoryDbAdapter.addOrUpdateEvaDirectoryAsync(realm, evaDirectoryDTO.directoryId,
-                evaDirectoryDTO.contentMetadataList.map {
-                    it.directoryId = evaDirectoryDTO.directoryId
-                    it.categoryId = evaDirectoryDTO.categoryId
-                    it.toDatabaseModel()
-                },
-                evaDirectoryDTO.subDirectoryMetadataList.map {
-                    it.categoryId = evaDirectoryDTO.categoryId
-                    it.toDatabaseModel()
-                }
-        )
     }
 }

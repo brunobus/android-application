@@ -57,7 +57,7 @@ class EvaInfoFragment : EvaBaseFragment() {
 
         webView.loadUrl("file:///android_asset/info.html")
 
-        val titleText = "${getString(R.string.app_name)} - ${BuildConfig.VERSION_NAME}" +
+        val titleText = "${getString(R.string.app_name)} - v${BuildConfig.VERSION_NAME}" +
                 if (BuildConfig.DEBUG) " (debug)" else ""
 
         evaCollapsingBar.collapsingToolbar.title = titleText

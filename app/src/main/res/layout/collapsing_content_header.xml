@@ -30,7 +30,7 @@
             android:layout_gravity="center"
             android:contentDescription="@string/dummyDesc"
             android:scaleType="centerCrop"
-            android:src="@drawable/christos_kai_theotokos_3"
+            android:src="@drawable/christos_kai_theotokos_4"
             app:layout_collapseMode="parallax"
             app:layout_collapseParallaxMultiplier="0.45"/>
 
