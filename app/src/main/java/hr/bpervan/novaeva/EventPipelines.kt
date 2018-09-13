@@ -40,7 +40,7 @@ object EventPipelines {
 
     //action
     val search = PublishSubject.create<String>()
-    val chooseRadioStation = PublishSubject.create<EvaContentMetadata>()
+    val chooseRadioStation = PublishSubject.create<EvaContent>()
     val playAnyRadioStation = PublishSubject.create<Unit>()
     val resizeText = PublishSubject.create<Unit>()
 

@@ -93,9 +93,9 @@ class OptionsFragment : Fragment() {
             if (topFragment is EvaContentFragment) {
                 val contentId = topFragment.contentId
                 val wasBookmarked = isContentBookmarked(contentId)
-                EvaContentDbAdapter.updateEvaContentMetadataAsync(realm, contentId,
+                EvaContentDbAdapter.updateEvaContentAsync(realm, contentId,
                         updateFunction = {
-                            it.bookmark = !wasBookmarked
+                            it.bookmarked = !wasBookmarked
                         },
                         onSuccess = {
                             context?.toast(if (!wasBookmarked) R.string.bookmarked else R.string.unbookmarked)
@@ -109,8 +109,7 @@ class OptionsFragment : Fragment() {
     }
 
     private fun isContentBookmarked(contentId: Long): Boolean {
-        val evaContentMetadata = EvaContentDbAdapter.loadEvaContentMetadata(realm, contentId)
-        return evaContentMetadata?.bookmark ?: false
+        return EvaContentDbAdapter.loadEvaContent(realm, contentId)?.bookmarked ?: false
     }
 
     override fun onDestroyView() {

@@ -10,13 +10,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.isVisible
 import hr.bpervan.novaeva.NovaEvaApp
-import hr.bpervan.novaeva.model.OpenContentEvent
-import hr.bpervan.novaeva.model.OpenDirectoryEvent
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.EvaContentMetadata
-import hr.bpervan.novaeva.model.EvaDirectoryMetadata
-import hr.bpervan.novaeva.model.TreeElementInfo
+import hr.bpervan.novaeva.model.*
 import hr.bpervan.novaeva.util.EvaTouchFeedback
 import hr.bpervan.novaeva.util.TransitionAnimation
 import kotlinx.android.synthetic.main.recycler_item_eva_content.view.*
@@ -27,7 +23,7 @@ import java.util.*
 /**
  * Created by vpriscan on 08.10.17..
  */
-class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
+class EvaRecyclerAdapter(private val data: List<EvaNode>,
                          val isLoadingSupplier: () -> Boolean = { false },
                          val themeId: Int = -1) :
         RecyclerView.Adapter<EvaRecyclerAdapter.BindableViewHolder>() {
@@ -56,7 +52,7 @@ class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
     override fun getItemViewType(position: Int): Int {
         return when {
             position == data.size -> PROGRESS_VIEW_TYPE
-            data[position] is EvaContentMetadata -> CONTENT_VIEW_TYPE
+            data[position] is EvaContent -> CONTENT_VIEW_TYPE
             else -> SUBDIRECTORY_VIEW_TYPE
         }
     }
@@ -103,7 +99,7 @@ class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
         }
 
         override fun bindTo(t: Any) {
-            val directoryInfo = t as EvaDirectoryMetadata
+            val directoryInfo = t as EvaDirectory
 
             tvMapaNaslov.text = directoryInfo.title
 
@@ -147,7 +143,7 @@ class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
         }
 
         override fun bindTo(t: Any) {
-            val contentInfo = t as EvaContentMetadata
+            val contentInfo = t as EvaContent
 
             tvNaslov.text = contentInfo.title
 

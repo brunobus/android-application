@@ -19,7 +19,7 @@ import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.fragments.*
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaCategory
-import hr.bpervan.novaeva.model.EvaContentMetadata
+import hr.bpervan.novaeva.model.EvaContent
 import hr.bpervan.novaeva.model.OpenContentEvent
 import hr.bpervan.novaeva.model.OpenQuotesEvent
 import hr.bpervan.novaeva.player.getStreamLinksFromPlaylistUri
@@ -67,7 +67,7 @@ class EvaActivity : EvaBaseActivity() {
                         openQuotesFragment(OpenQuotesEvent(contentId))
                     } else {
                         openContentFragment(OpenContentEvent(
-                                EvaContentMetadata(contentId, 0, -1)))
+                                EvaContent(contentId, 0, -1)))
                     }
                 }
             }

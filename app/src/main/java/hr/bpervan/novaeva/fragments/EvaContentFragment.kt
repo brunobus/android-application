@@ -40,7 +40,7 @@ class EvaContentFragment : EvaBaseFragment() {
         override fun newInstance(initializer: OpenContentEvent): EvaContentFragment {
             return EvaContentFragment().apply {
                 arguments = bundleOf(
-                        CONTENT_ID_KEY to initializer.contentMetadata.contentId,
+                        CONTENT_ID_KEY to initializer.content.contentId,
                         THEME_ID_KEY to initializer.themeId
                 )
             }
@@ -89,7 +89,7 @@ class EvaContentFragment : EvaBaseFragment() {
 
         view ?: return
 
-        evaCollapsingBar.collapsingToolbar.title = evaContent.contentMetadata!!.title
+        evaCollapsingBar.collapsingToolbar.title = evaContent.title
 
         val coverImageInfo = evaContent.image
         val coverImageView = evaCollapsingBar.coverImage
@@ -99,7 +99,7 @@ class EvaContentFragment : EvaBaseFragment() {
                 imageLoader.displayImage(coverImageInfo.url, coverImageView)
             }
         } else {
-                val url = prefs.getString("hr.bpervan.novaeva.categoryheader." + evaContent.contentMetadata?.categoryId, null)
+                val url = prefs.getString("hr.bpervan.novaeva.categoryheader." + evaContent.categoryId, null)
                 if (url != null && coverImageView != null) {
                     imageLoader.displayImage(url, coverImageView)
                 }
@@ -111,7 +111,7 @@ class EvaContentFragment : EvaBaseFragment() {
 
             NovaEvaApp.evaPlayer.prepareAudioStream(
                     audioUrl, evaContent.contentId.toString(),
-                    evaContent.contentMetadata?.title ?: "nepoznato",
+                    evaContent.title,
                     isRadio = false, doAutoPlay = false)
 
             player_view?.apply {
@@ -143,7 +143,7 @@ class EvaContentFragment : EvaBaseFragment() {
 
         loadingCircle.isGone = true
 
-        when (evaContent.contentMetadata?.categoryId) {
+        when (evaContent.categoryId) {
             EvaCategory.VOCATION.id -> {
                 btnPoziv.isVisible = true
                 btnPoziv.setOnClickListener {

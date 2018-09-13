@@ -6,13 +6,13 @@ import io.realm.RealmList
  * Created by vpriscan on 19.10.17..
  */
 
-fun EvaDirectoryMetadataDTO.toDatabaseModel(): EvaDirectoryMetadata =
-        EvaDirectoryMetadata(directoryId, categoryId, title ?: "")
+fun EvaDirectoryMetadataDTO.toDatabaseModel(): EvaDirectory =
+        EvaDirectory(directoryId, categoryId, title ?: "")
 
-fun EvaContentMetadataDTO.toDatabaseModel(): EvaContentMetadata =
-        EvaContentMetadata(contentId, directoryId, categoryId,
-                attachmentsIndicator?.toDatabaseModel(),
-                datetime?.toLong() ?: 0, title ?: "", preview)
+fun EvaContentMetadataDTO.toDatabaseModel(): EvaContent =
+        EvaContent(contentId, directoryId, categoryId, datetime?.toLong() ?: 0,
+                preview, title ?: "",
+                attachmentsIndicator = attachmentsIndicator?.toDatabaseModel())
 
 fun EvaAttachmentsIndicatorDTO.toDatabaseModel(): EvaAttachmentsIndicator =
         EvaAttachmentsIndicator(hasVideo, hasDocuments, hasMusic, hasImages, hasText)
@@ -27,6 +27,10 @@ fun EvaImageDTO.toDatabaseModel(): EvaImage? {
 fun EvaContentDTO.toDatabaseModel(): EvaContent {
     val attachmentsDb = attachments.map { it.toDatabaseModel() }.toTypedArray()
     val image = images.firstOrNull()
-    return EvaContent(contentId, null, text ?: "",
-            null, RealmList(*attachmentsDb), image?.toDatabaseModel(), videoURL, audioURL)
+    return EvaContent(contentId, directoryId, categoryId, 0,
+            title = title ?: "", text = text ?: "",
+            attachments = RealmList(*attachmentsDb),
+            image = image?.toDatabaseModel(),
+            videoURL = videoURL,
+            audioURL = audioURL)
 }

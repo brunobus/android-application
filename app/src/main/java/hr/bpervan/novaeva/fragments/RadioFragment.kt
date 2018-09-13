@@ -17,7 +17,6 @@ import hr.bpervan.novaeva.adapters.RadioStationsAdapter
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaCategory
 import hr.bpervan.novaeva.model.EvaContent
-import hr.bpervan.novaeva.model.EvaContentMetadata
 import hr.bpervan.novaeva.model.toDatabaseModel
 import hr.bpervan.novaeva.player.getStreamLinksFromPlaylistUri
 import hr.bpervan.novaeva.services.novaEvaService
@@ -51,7 +50,7 @@ class RadioFragment : EvaBaseFragment() {
 
     private lateinit var adapter: RadioStationsAdapter
 
-    private val radioStationList: MutableList<EvaContentMetadata> = mutableListOf()
+    private val radioStationList: MutableList<EvaContent> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

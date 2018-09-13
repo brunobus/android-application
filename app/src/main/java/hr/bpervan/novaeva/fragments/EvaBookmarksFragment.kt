@@ -15,7 +15,7 @@ import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.EvaContentMetadata
+import hr.bpervan.novaeva.model.EvaContent
 import hr.bpervan.novaeva.storage.EvaContentDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
 import io.reactivex.disposables.Disposable
@@ -42,7 +42,7 @@ class EvaBookmarksFragment : EvaBaseFragment() {
         }
 
     private lateinit var adapter: EvaRecyclerAdapter
-    private var bookmarksList: MutableList<EvaContentMetadata> = ArrayList()
+    private var bookmarksList: MutableList<EvaContent> = ArrayList()
 
     private lateinit var realm: Realm
 
@@ -94,7 +94,7 @@ class EvaBookmarksFragment : EvaBaseFragment() {
     private fun reloadBookmarksFromDb() {
         bookmarksList.clear()
         loadBookmarksFromDbDisposable =
-                EvaContentDbAdapter.loadManyEvaContentMetadata(realm, { it.bookmark }) {
+                EvaContentDbAdapter.loadManyEvaContentMetadata(realm, { it.bookmarked }) {
                     bookmarksList.add(it)
                     adapter.notifyDataSetChanged()
                 }

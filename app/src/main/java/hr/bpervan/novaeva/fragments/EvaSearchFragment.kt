@@ -18,7 +18,7 @@ import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.util.showFetchErrorDialog
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.EvaContentMetadata
+import hr.bpervan.novaeva.model.EvaContent
 import hr.bpervan.novaeva.model.toDatabaseModel
 import hr.bpervan.novaeva.services.novaEvaService
 import hr.bpervan.novaeva.util.networkRequest
@@ -48,7 +48,7 @@ class EvaSearchFragment : EvaBaseFragment() {
             field = safeReplaceDisposable(field, value)
         }
 
-    private val searchResultList = ArrayList<EvaContentMetadata>()
+    private val searchResultList = ArrayList<EvaContent>()
 
     private lateinit var adapter: EvaRecyclerAdapter
     private lateinit var searchString: String

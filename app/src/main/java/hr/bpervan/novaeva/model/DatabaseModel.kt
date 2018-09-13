@@ -11,29 +11,7 @@ const val CONTENT_ID_FIELD = "contentId"
 const val DIRECTORY_ID_FIELD = "directoryId"
 const val TIMESTAMP_FIELD = "timestamp"
 
-interface TreeElementInfo
-
-open class EvaDirectoryMetadata(
-        @PrimaryKey
-        var directoryId: Long = -1,
-        var categoryId: Long = -1,
-        var title: String = ""
-) : RealmObject(), TreeElementInfo {
-    constructor(directoryId: Long, title: String) :
-            this(directoryId, directoryId, title)
-}
-
-open class EvaContentMetadata(
-        @PrimaryKey
-        var contentId: Long = -1,
-        var directoryId: Long = -1,
-        var categoryId: Long = -1,
-        var attachmentsIndicator: EvaAttachmentsIndicator? = null,
-        var timestamp: Long = 0,
-        var title: String = "",
-        var preview: String = "",
-        var bookmark: Boolean = false
-) : RealmObject(), TreeElementInfo
+interface EvaNode
 
 open class EvaAttachmentsIndicator(
         var hasVideo: Boolean = false,
@@ -41,13 +19,6 @@ open class EvaAttachmentsIndicator(
         var hasMusic: Boolean = false,
         var hasImages: Boolean = false,
         var hasText: Boolean = false
-) : RealmObject()
-
-open class EvaColor(
-        var cRed: Byte = 0x0,
-        var cGreen: Byte = 0xff.toByte(),
-        var cBlue: Byte = 0x0,
-        var cAlpha: Byte = 0x0
 ) : RealmObject()
 
 open class EvaAttachment(
@@ -63,20 +34,26 @@ open class EvaImage(
 open class EvaDirectory(
         @PrimaryKey
         var directoryId: Long = -1,
-        var directoryMetadata: EvaDirectoryMetadata? = null,
+        var categoryId: Long = directoryId,
+        var title: String = "",
         var image: EvaImage? = null,
-        var subDirectoryMetadataList: RealmList<EvaDirectoryMetadata> = RealmList(),
-        var contentMetadataList: RealmList<EvaContentMetadata> = RealmList()
-) : RealmObject()
+        var subDirectoriesList: RealmList<EvaDirectory> = RealmList(),
+        var contentsList: RealmList<EvaContent> = RealmList()
+) : RealmObject(), EvaNode
 
 open class EvaContent(
         @PrimaryKey
         var contentId: Long = -1,
-        var contentMetadata: EvaContentMetadata? = null,
+        var directoryId: Long = -1,
+        var categoryId: Long = -1,
+        var timestamp: Long = 0,
+        var preview: String = "",
+        var title: String = "",
         var text: String = "",
-        var color: EvaColor? = null,
+        var bookmarked: Boolean = false,
+        var attachmentsIndicator: EvaAttachmentsIndicator? = null,
         var attachments: RealmList<EvaAttachment> = RealmList(),
         var image: EvaImage? = null,
         var videoURL: String? = null,
         var audioURL: String? = null
-) : RealmObject()
+) : RealmObject(), EvaNode

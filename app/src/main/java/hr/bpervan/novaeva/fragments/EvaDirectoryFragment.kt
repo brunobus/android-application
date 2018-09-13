@@ -47,9 +47,9 @@ class EvaDirectoryFragment : EvaBaseFragment() {
         override fun newInstance(initializer: OpenDirectoryEvent): EvaDirectoryFragment {
             return EvaDirectoryFragment().apply {
                 arguments = bundleOf(
-                        directoryIdKey to initializer.directoryMetadata.directoryId,
-                        categoryIdKey to initializer.directoryMetadata.categoryId,
-                        directoryTitleKey to initializer.directoryMetadata.title,
+                        directoryIdKey to initializer.directory.directoryId,
+                        categoryIdKey to initializer.directory.categoryId,
+                        directoryTitleKey to initializer.directory.title,
                         themeIdKey to initializer.themeId
                 )
             }
@@ -80,7 +80,7 @@ class EvaDirectoryFragment : EvaBaseFragment() {
 
     private lateinit var adapter: EvaRecyclerAdapter
 
-    private val elementsList: MutableList<TreeElementInfo> = mutableListOf()
+    private val elementsList: MutableList<EvaNode> = mutableListOf()
     private var hasMore = true
     private var fetchingFromServer = true
     private var loadingFromDb = true
@@ -145,9 +145,9 @@ class EvaDirectoryFragment : EvaBaseFragment() {
 
             elementsList.clear()
 
-            val contentSorted = evaDirectory.contentMetadataList.sortedByDescending { it.timestamp }
+            val contentSorted = evaDirectory.contentsList.sortedByDescending { it.timestamp }
 
-            val subdirectoriesSorted = evaDirectory.subDirectoryMetadataList//.sortedByDescending { todo ON SERVER }
+            val subdirectoriesSorted = evaDirectory.subDirectoriesList//.sortedByDescending { todo ON SERVER }
 
             if (contentSorted.size > 10) {
                 elementsList.addAll(contentSorted.take(10))
@@ -263,7 +263,7 @@ class EvaDirectoryFragment : EvaBaseFragment() {
 
                     loadEvaDirectoryDisposable = EvaDirectoryDbAdapter.loadEvaDirectoryAsync(realm, directoryId) { evaDirectory ->
                         if (evaDirectory != null) {
-                            val oldestTimestamp = evaDirectory.contentMetadataList.sort(TIMESTAMP_FIELD, Sort.DESCENDING)
+                            val oldestTimestamp = evaDirectory.contentsList.sort(TIMESTAMP_FIELD, Sort.DESCENDING)
                                     .lastOrNull()?.timestamp
                             fetchEvaDirectoryDataFromServer(oldestTimestamp)
                         }
