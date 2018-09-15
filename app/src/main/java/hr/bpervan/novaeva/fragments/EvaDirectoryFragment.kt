@@ -20,7 +20,10 @@ import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.*
+import hr.bpervan.novaeva.model.EvaCategory
+import hr.bpervan.novaeva.model.EvaNode
+import hr.bpervan.novaeva.model.OpenDirectoryEvent
+import hr.bpervan.novaeva.model.TIMESTAMP_FIELD
 import hr.bpervan.novaeva.services.novaEvaService
 import hr.bpervan.novaeva.storage.EvaDirectoryDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
@@ -212,15 +215,19 @@ class EvaDirectoryFragment : EvaBaseFragment() {
             EvaCategory.VOCATION.id -> {
                 btnPoziv.isVisible = true
                 btnPoziv.setOnClickListener {
-                    val text = "Hvaljen Isus i Marija, javljam Vam se jer razmišljam o duhovnom pozivu."
-                    sendEmailIntent(ctx, "Duhovni poziv", text, "duhovnipoziv@gmail.com")
+                    sendEmailIntent(context,
+                            subject = getString(R.string.thinking_of_vocation),
+                            text = "Hvaljen Isus i Marija, javljam vam se jer razmišljam o duhovnom pozivu.",
+                            receiver = getString(R.string.vocation_email))
                 }
             }
             EvaCategory.ANSWERS.id -> {
                 btnPitanje.isVisible = true
                 btnPitanje.setOnClickListener {
-                    val text = "Hvaljen Isus!"
-                    sendEmailIntent(ctx, "Imam pitanje", text, "novaevangelizacija@gmail.com")
+                    sendEmailIntent(context,
+                            subject = getString(R.string.having_a_question),
+                            text = getString(R.string.praise_the_lord),
+                            receiver = getString(R.string.answers_email))
                 }
             }
         }

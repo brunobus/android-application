@@ -79,9 +79,7 @@ class OptionsFragment : Fragment() {
                     val quoteText = Html.fromHtml(topFragment.quoteData).toString().trim()
                     "$quoteText\n\nhttp://novaeva.com/node/${topFragment.quoteId}#quote"
                 }
-                else -> getString(R.string.recommendation) +
-                        "\n\nhttps://play.google.com/store/apps/details?id=hr.bpervan.novaeva.main" +
-                        "\nhttps://itunes.apple.com/us/app/nova-eva/id599928807"
+                else -> getString(R.string.recommendation) + getString(R.string.app_links)
 
             }
             shareIntent(context, shareString)
