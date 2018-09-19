@@ -91,10 +91,8 @@ class OptionsFragment : Fragment() {
             if (topFragment is EvaContentFragment) {
                 val contentId = topFragment.contentId
                 val wasBookmarked = isContentBookmarked(contentId)
-                EvaContentDbAdapter.updateEvaContentAsync(realm, contentId,
-                        updateFunction = {
-                            it.bookmarked = !wasBookmarked
-                        },
+                EvaContentDbAdapter.updateEvaContentIfExistsAsync(realm, contentId,
+                        updateFunc = { it.bookmarked = !wasBookmarked },
                         onSuccess = {
                             context?.toast(if (!wasBookmarked) R.string.bookmarked else R.string.unbookmarked)
                             btnBookmark.bookmarked = !wasBookmarked

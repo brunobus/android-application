@@ -196,8 +196,6 @@ class EvaDirectoryFragment : EvaBaseFragment() {
         EventPipelines.changeStatusbarColor.onNext(R.color.VeryDarkGray)
         EventPipelines.changeFragmentBackgroundResource.onNext(R.color.White)
 
-        val ctx = context!!
-
         evaDirectoryCollapsingBar.izbornikTop.izbornikTopNazivKategorije.apply {
             text = directoryTitle
             typeface = NovaEvaApp.openSansBold
@@ -296,8 +294,10 @@ class EvaDirectoryFragment : EvaBaseFragment() {
                     loadingFromDb = true
                     fetchingFromServer = false
 
-                    evaDirectoryDTO.directoryId = directoryId //todo fix on server
+                    //todo fix on server
+                    evaDirectoryDTO.directoryId = directoryId
                     evaDirectoryDTO.categoryId = categoryId
+                    evaDirectoryDTO.title = directoryTitle
 
                     EvaDirectoryDbAdapter.addOrUpdateEvaDirectoryAsync(realm, evaDirectoryDTO)
 

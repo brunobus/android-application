@@ -17,7 +17,7 @@ import hr.bpervan.novaeva.adapters.RadioStationsAdapter
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaCategory
 import hr.bpervan.novaeva.model.EvaContent
-import hr.bpervan.novaeva.model.toDatabaseModel
+import hr.bpervan.novaeva.model.toDbModel
 import hr.bpervan.novaeva.player.getStreamLinksFromPlaylistUri
 import hr.bpervan.novaeva.services.novaEvaService
 import hr.bpervan.novaeva.util.dataErrorSnackbar
@@ -100,7 +100,7 @@ class RadioFragment : EvaBaseFragment() {
                     }
                 }
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext { updateUI(it.toDatabaseModel()) }
+                .doOnNext { updateUI(it.toDbModel()) }
                 .observeOn(Schedulers.io())
                 .switchMap { radioStation ->
                     getStreamLinksFromPlaylistUri(radioStation.audioURL!!)
@@ -152,7 +152,7 @@ class RadioFragment : EvaBaseFragment() {
         fetchFromServerDisposable = novaEvaService.getDirectoryContent(EvaCategory.RADIO.id, null, 1000)
                 .networkRequest({ evaDirectoryDTO ->
                     radioStationList.clear()
-                    radioStationList.addAll(evaDirectoryDTO.contentMetadataList.map { it.toDatabaseModel() })
+                    radioStationList.addAll(evaDirectoryDTO.contentMetadataList.map { it.toDbModel() })
                     adapter.notifyDataSetChanged()
                 }, onError = {
                     view?.dataErrorSnackbar()

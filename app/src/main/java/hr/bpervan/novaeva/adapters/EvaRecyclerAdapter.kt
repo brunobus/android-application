@@ -154,9 +154,9 @@ class EvaRecyclerAdapter(private val data: List<EvaNode>,
             val yearHourMinute: String = yearHourMinuteFormat.format(datetime)
 
             contentInfo.attachmentsIndicator.let {
-                imgHasTxt.isVisible = it?.hasDocuments ?: false
-                imgHasLink.isVisible = it?.hasVideo ?: false
-                imgHasAudio.isVisible = it?.hasMusic ?: false
+                imgHasTxt.isVisible = AttachmentIndicatorHelper.hasDocs(it)
+                imgHasLink.isVisible = AttachmentIndicatorHelper.hasVideo(it)
+                imgHasAudio.isVisible = AttachmentIndicatorHelper.hasMusic(it)
             }
 
             tvGodinaSatMinuta.text = yearHourMinute

@@ -13,14 +13,6 @@ const val TIMESTAMP_FIELD = "timestamp"
 
 interface EvaNode
 
-open class EvaAttachmentsIndicator(
-        var hasVideo: Boolean = false,
-        var hasDocuments: Boolean = false,
-        var hasMusic: Boolean = false,
-        var hasImages: Boolean = false,
-        var hasText: Boolean = false
-) : RealmObject()
-
 open class EvaAttachment(
         var name: String = "",
         var url: String = ""
@@ -51,7 +43,7 @@ open class EvaContent(
         var title: String = "",
         var text: String = "",
         var bookmarked: Boolean = false,
-        var attachmentsIndicator: EvaAttachmentsIndicator? = null,
+        var attachmentsIndicator: Int = 0,
         var attachments: RealmList<EvaAttachment> = RealmList(),
         var image: EvaImage? = null,
         var videoURL: String? = null,

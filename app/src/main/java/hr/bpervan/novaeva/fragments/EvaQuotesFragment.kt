@@ -98,15 +98,6 @@ class EvaQuotesFragment : EvaBaseFragment() {
         btnObnovi.setOnClickListener {
             fetchRandomQuote()
         }
-
-        //todo move to options drawer
-//        options.btnShare.setOnClickListener {
-//            shareIntent(ctx, "http://novaeva.com/node/$contentId")
-//        }
-//        options.btnMail.setOnClickListener {
-//            sendEmailIntent(ctx, quoteTitle!!, "http://novaeva.com/node/$contentId")
-//        }
-
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

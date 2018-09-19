@@ -17,12 +17,16 @@ import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaCategory
 import hr.bpervan.novaeva.model.EvaContent
 import hr.bpervan.novaeva.model.OpenContentEvent
-import hr.bpervan.novaeva.model.toDatabaseModel
 import hr.bpervan.novaeva.services.novaEvaService
 import hr.bpervan.novaeva.storage.EvaContentDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
-import hr.bpervan.novaeva.util.*
-import hr.bpervan.novaeva.views.*
+import hr.bpervan.novaeva.util.dataErrorSnackbar
+import hr.bpervan.novaeva.util.networkRequest
+import hr.bpervan.novaeva.util.plusAssign
+import hr.bpervan.novaeva.util.sendEmailIntent
+import hr.bpervan.novaeva.views.applyConfiguredFontSize
+import hr.bpervan.novaeva.views.applyEvaConfiguration
+import hr.bpervan.novaeva.views.loadHtmlText
 import io.realm.Realm
 import kotlinx.android.synthetic.main.collapsing_content_header.view.*
 import kotlinx.android.synthetic.main.fragment_eva_content.*
@@ -99,10 +103,10 @@ class EvaContentFragment : EvaBaseFragment() {
                 imageLoader.displayImage(coverImageInfo.url, coverImageView)
             }
         } else {
-                val url = prefs.getString("hr.bpervan.novaeva.categoryheader." + evaContent.categoryId, null)
-                if (url != null && coverImageView != null) {
-                    imageLoader.displayImage(url, coverImageView)
-                }
+            val url = prefs.getString("hr.bpervan.novaeva.categoryheader." + evaContent.categoryId, null)
+            if (url != null && coverImageView != null) {
+                imageLoader.displayImage(url, coverImageView)
+            }
         }
         vijestWebView.loadHtmlText(evaContent.text)
 
@@ -206,7 +210,7 @@ class EvaContentFragment : EvaBaseFragment() {
     private fun fetchContentFromServer(contentId: Long) {
         disposables += novaEvaService.getContentData(contentId)
                 .networkRequest({ contentDataDTO ->
-                    EvaContentDbAdapter.addOrUpdateEvaContentAsync(realm, contentDataDTO.toDatabaseModel()) {
+                    EvaContentDbAdapter.addOrUpdateEvaContentAsync(realm, contentDataDTO) {
                         evaContent = EvaContentDbAdapter.loadEvaContent(realm, contentId)
                     }
                 }) {

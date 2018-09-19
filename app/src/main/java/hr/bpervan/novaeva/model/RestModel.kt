@@ -9,7 +9,7 @@ import com.google.gson.annotations.SerializedName
 class EvaDirectoryDTO {
     var directoryId: Long = 0
     var categoryId: Long = -1
-
+    var title: String? = null
     val image: EvaImageDTO? = null
 
     val paket: Int = 0
@@ -112,7 +112,8 @@ class EvaContentDTO {
 }
 
 class EvaAttachmentDTO {
-    val naziv: String? = null
+    @SerializedName("naziv")
+    val name: String? = null
     val url: String? = null
 }
 

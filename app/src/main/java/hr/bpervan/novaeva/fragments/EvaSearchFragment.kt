@@ -19,7 +19,7 @@ import hr.bpervan.novaeva.util.showFetchErrorDialog
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaContent
-import hr.bpervan.novaeva.model.toDatabaseModel
+import hr.bpervan.novaeva.model.toDbModel
 import hr.bpervan.novaeva.services.novaEvaService
 import hr.bpervan.novaeva.util.networkRequest
 import io.reactivex.disposables.Disposable
@@ -123,7 +123,7 @@ class EvaSearchFragment : EvaBaseFragment() {
                 .networkRequest({ searchResult ->
                     if (!searchResult.searchResultContentMetadataList.isEmpty()) {
                         searchResultList.addAll(
-                                searchResult.searchResultContentMetadataList.map { it.toDatabaseModel() })
+                                searchResult.searchResultContentMetadataList.map { it.toDbModel() })
 
                         adapter.notifyDataSetChanged()
                     } else {
