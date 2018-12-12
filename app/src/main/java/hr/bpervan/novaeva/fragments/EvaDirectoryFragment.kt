@@ -15,9 +15,9 @@ import android.view.ViewGroup
 import androidx.core.content.edit
 import androidx.core.os.bundleOf
 import androidx.core.os.postDelayed
+import androidx.core.view.isVisible
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.EventPipelines
-import hr.bpervan.novaeva.util.EvaCache
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
@@ -25,10 +25,13 @@ import hr.bpervan.novaeva.model.*
 import hr.bpervan.novaeva.rest.EvaCategory
 import hr.bpervan.novaeva.rest.novaEvaServiceV3
 import hr.bpervan.novaeva.rest.region
+import hr.bpervan.novaeva.model.EvaCategory
+import hr.bpervan.novaeva.model.OpenDirectoryEvent
+import hr.bpervan.novaeva.model.TIMESTAMP_FIELD
+import hr.bpervan.novaeva.model.TreeElementInfo
 import hr.bpervan.novaeva.storage.EvaDirectoryDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
-import hr.bpervan.novaeva.util.NEW_CONTENT_KEY_PREFIX
-import hr.bpervan.novaeva.util.networkRequest
+import hr.bpervan.novaeva.util.*
 import hr.bpervan.novaeva.views.snackbar
 import io.reactivex.disposables.Disposable
 import io.realm.Realm
@@ -45,6 +48,7 @@ class EvaDirectoryFragment : EvaBaseFragment() {
 
         private const val CATEGORY_KEY = "category"
         private const val directoryIdKey = "directoryId"
+        private const val categoryIdKey = "categoryId"
         private const val directoryTitleKey = "directoryTitle"
         private const val themeIdKey = "themeId"
 
@@ -53,6 +57,7 @@ class EvaDirectoryFragment : EvaBaseFragment() {
                 arguments = bundleOf(
                         CATEGORY_KEY to initializer.category,
                         directoryIdKey to initializer.directoryMetadata.directoryId,
+                        categoryIdKey to initializer.directoryMetadata.categoryId,
                         directoryTitleKey to initializer.directoryMetadata.title,
                         themeIdKey to initializer.themeId
                 )
@@ -90,9 +95,8 @@ class EvaDirectoryFragment : EvaBaseFragment() {
         super.onCreate(savedInstanceState)
 
         val inState: Bundle = savedInstanceState ?: arguments!!
-
         category = inState.getSerializable(CATEGORY_KEY) as EvaCategory
-        directoryId = inState.getLong(directoryIdKey, 1)
+        directoryId = inState.getLong(directoryIdKey)
         directoryTitle = inState.getString(directoryTitleKey)
         themeId = inState.getInt(themeIdKey)
 
@@ -113,6 +117,17 @@ class EvaDirectoryFragment : EvaBaseFragment() {
             remove("$NEW_CONTENT_KEY_PREFIX$directoryId")
         }
 
+        if (context?.networkConnectionExists() == true) {
+            val lastEvictionTime = prefs.getLong(LAST_EVICTION_TIME_MILLIS_KEY + directoryId, 0L)
+            if (System.currentTimeMillis() - lastEvictionTime > evictionIntervalMillis) {
+                EvaDirectoryDbAdapter.deleteDirectoryContent(realm, directoryId)
+
+                prefs.edit {
+                    putLong(LAST_EVICTION_TIME_MILLIS_KEY + directoryId, System.currentTimeMillis())
+                }
+            }
+        }
+
         createIfMissingAndSubscribeToEvaDirectoryUpdates()
 
         if (savedInstanceState == null) {
@@ -130,7 +145,7 @@ class EvaDirectoryFragment : EvaBaseFragment() {
 
     private fun subscribeToDirectoryUpdates() {
         evaDirectoryChangesDisposable = EvaDirectoryDbAdapter.subscribeToEvaDirectoryUpdatesAsync(
-                realm, directoryId, { evaDirectory ->
+                realm, directoryId) { evaDirectory ->
 
             elementsList.clear()
 
@@ -150,7 +165,7 @@ class EvaDirectoryFragment : EvaBaseFragment() {
             loadingFromDb = false
 
             adapter.notifyDataSetChanged()
-        })
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -176,10 +191,8 @@ class EvaDirectoryFragment : EvaBaseFragment() {
         EventPipelines.changeStatusbarColor.onNext(R.color.VeryDarkGray)
         EventPipelines.changeFragmentBackgroundResource.onNext(R.color.White)
 
-        initUI()
-    }
+        val ctx = context!!
 
-    private fun initUI() {
         evaDirectoryCollapsingBar.izbornikTop.izbornikTopNazivKategorije.apply {
             text = directoryTitle
             typeface = NovaEvaApp.openSansBold
@@ -192,6 +205,23 @@ class EvaDirectoryFragment : EvaBaseFragment() {
         recyclerView.itemAnimator = DefaultItemAnimator()
         recyclerView.adapter = adapter
         recyclerView.addOnScrollListener(EndlessScrollListener(linearLayoutManager))
+
+        when (categoryId) {
+            EvaCategory.VOCATION.id -> {
+                btnPoziv.isVisible = true
+                btnPoziv.setOnClickListener {
+                    val text = "Hvaljen Isus i Marija, javljam Vam se jer razmišljam o duhovnom pozivu."
+                    sendEmailIntent(ctx, "Duhovni poziv", text, arrayOf("duhovnipoziv@gmail.com"))
+                }
+            }
+            EvaCategory.ANSWERS.id -> {
+                btnPitanje.isVisible = true
+                btnPitanje.setOnClickListener {
+                    val text = "Hvaljen Isus!"
+                    sendEmailIntent(ctx, "Imam pitanje", text, arrayOf("novaevangelizacija@gmail.com"))
+                }
+            }
+        }
     }
 
     override fun onConfigurationChanged(newConfig: Configuration?) {

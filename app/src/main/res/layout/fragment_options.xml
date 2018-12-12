@@ -36,6 +36,7 @@
 
         <TextView
             android:id="@+id/btnInfo"
+            android:textColor="@color/option_text_color"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="15dp"
@@ -59,6 +60,7 @@
 
         <TextView
             android:id="@+id/btnHelp"
+            android:textColor="@color/option_text_color"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="15dp"
@@ -81,6 +83,7 @@
 
         <TextView
             android:id="@+id/btnTextSize"
+            android:textColor="@color/option_text_color"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="15dp"
@@ -103,7 +106,9 @@
 
         <TextView
             android:id="@+id/btnChurch"
+            android:textColor="@color/option_text_color"
             android:layout_width="0dp"
+            android:visibility="gone"
             android:layout_height="wrap_content"
             android:layout_marginBottom="15dp"
             android:layout_marginLeft="15dp"
@@ -125,6 +130,8 @@
 
         <TextView
             android:id="@+id/btnTheme"
+            android:visibility="gone"
+            android:textColor="@color/option_text_color"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="15dp"
@@ -147,6 +154,7 @@
 
         <TextView
             android:id="@+id/btnShare"
+            android:textColor="@color/option_text_color"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="15dp"
@@ -169,6 +177,7 @@
 
         <hr.bpervan.novaeva.views.EvaBookmarkView
             android:id="@+id/btnBookmark"
+            android:textColor="@color/option_text_color"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="15dp"
@@ -191,6 +200,7 @@
 
         <TextView
             android:id="@+id/btnHome"
+            android:textColor="@color/option_text_color"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="15dp"

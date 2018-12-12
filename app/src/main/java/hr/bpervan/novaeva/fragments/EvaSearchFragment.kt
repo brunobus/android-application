@@ -89,10 +89,6 @@ class EvaSearchFragment : EvaBaseFragment() {
         EventPipelines.changeStatusbarColor.onNext(R.color.VeryDarkGray)
         EventPipelines.changeFragmentBackgroundResource.onNext(R.color.White)
 
-        initUI()
-    }
-
-    private fun initUI() {
 //        btnSearch.setOnClickListener(this)
 
         val recyclerView = evaRecyclerView as RecyclerView

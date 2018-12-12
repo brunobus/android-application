@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/btn_over_poziv"
-          android:state_pressed="true" />
-    <item android:drawable="@drawable/btn_over_poziv"
-          android:state_focused="true" />
-    <item android:drawable="@drawable/btn_normal_poziv" />
+    <item android:state_pressed="true">
+        <shape xmlns:android="http://schemas.android.com/apk/res/android">
+            <solid android:color="@color/evaBlueTrans"/>
+            <corners android:radius="25dp"/>
+        </shape>
+    </item>
+    <item>
+        <shape xmlns:android="http://schemas.android.com/apk/res/android">
+            <solid android:color="@color/evaBlue"/>
+            <corners android:radius="25dp"/>
+        </shape>
+    </item>
 </selector>

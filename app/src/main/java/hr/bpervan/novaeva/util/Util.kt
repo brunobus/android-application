@@ -1,7 +1,10 @@
 package hr.bpervan.novaeva.util
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.util.Log
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -66,3 +69,9 @@ fun isDarkBitmap(bitmap: Bitmap): Boolean {
 }
 
 fun String.vertical() = this.asSequence().joinToString(separator = "\n")
+
+fun Context.networkConnectionExists(): Boolean {
+    val cm = this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    val activeNetwork: NetworkInfo? = cm.activeNetworkInfo
+    return activeNetwork?.isConnectedOrConnecting == true
+}

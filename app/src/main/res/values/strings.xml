@@ -17,7 +17,10 @@
     <string name="to_search">Pretraži</string>
     <string name="title_share_mail">E-pošta</string>
     <string name="title_share">Dijeli</string>
-    <string name="thinking_of_life_call">Razmišljam o pozivu</string>
+    <string name="recommendation">Preporučam</string>
+    <string name="not_supported">Još nije podržano</string>
+    <string name="thinking_of_vocation">Razmišljam o pozivu</string>
+    <string name="having_a_question">Imam pitanje</string>
     <string name="action_settings">Postavke</string>
     <string name="laudato_copyright">Ovaj časoslov se preuzima sa www.laudato.hr</string>
     <string name="ks_copyright">Prijevodi: Copyright KS www.ks.hr</string>
@@ -30,6 +33,7 @@
     <string name="dummyDesc"/>
     <string name="pause">Pauziraj</string>
     <string name="play">Pokreni</string>
+    <string name="stop">Zaustavi</string>
     <string name="radio_stations">Radio stanice</string>
     <string name="info_about">Informacije</string>
     <string name="help">Pomoć</string>
@@ -43,6 +47,5 @@
     <string name="unbookmarked">Oznaka uklonjena</string>
     <string name="home">Početna</string>
     <string name="church">Crkva</string>
-
 
 </resources>

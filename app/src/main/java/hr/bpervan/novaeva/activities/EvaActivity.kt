@@ -2,6 +2,7 @@ package hr.bpervan.novaeva.activities
 
 import android.os.Build
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
 import android.support.v4.app.FragmentTransaction
@@ -9,6 +10,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.view.GestureDetectorCompat
 import android.support.v4.view.GravityCompat
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.MotionEvent
 import android.view.ViewGroup
 import androidx.core.content.edit
@@ -16,14 +18,20 @@ import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.fragments.*
 import hr.bpervan.novaeva.main.R
+import hr.bpervan.novaeva.model.EvaCategory
 import hr.bpervan.novaeva.model.EvaContentMetadata
 import hr.bpervan.novaeva.model.OpenContentEvent
+import hr.bpervan.novaeva.player.getStreamLinksFromPlaylistUri
+import hr.bpervan.novaeva.player.prepareAudioStream
 import hr.bpervan.novaeva.rest.novaEvaServiceV2
 import hr.bpervan.novaeva.util.*
 import hr.bpervan.novaeva.util.TransitionAnimation.*
+import hr.bpervan.novaeva.views.snackbar
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_eva_main.*
+import kotlinx.android.synthetic.main.fragment_search.*
 import java.util.concurrent.TimeUnit
 
 /**
@@ -183,8 +191,50 @@ class EvaActivity : EvaBaseActivity() {
                     fetchDashboardBackgroundUrl()
                 }
 
+        disposables += bus.playAnyRadioStation
+                .throttleFirst(1, TimeUnit.SECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    playFirstRadioStation()
+                }
+
         fetchBreviaryCoverUrl()
         fetchDashboardBackgroundUrl()
+    }
+
+    private fun playFirstRadioStation() {
+        novaEvaService.getDirectoryContent(EvaCategory.RADIO.id, null, items = 1)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .map { it.contentMetadataList.first() }
+                .doOnError {
+                    Log.e("evaNetworkError", it.message, it)
+                }
+                .observeOn(Schedulers.io())
+                .flatMap {
+                    novaEvaService.getContentData(it.contentId)
+                            .subscribeOn(Schedulers.io())
+                }
+                .flatMap { radioStation ->
+                    getStreamLinksFromPlaylistUri(radioStation.audioURL!!)
+                            .map { Pair(it, radioStation) }
+                }
+                .subscribe({ stationStreams ->
+                    val streamUris = stationStreams.first
+                    val radioStation = stationStreams.second
+                    for (streamUri in streamUris.shuffled()) {
+                        try {
+                            prepareAudioStream(streamUri, radioStation.contentId.toString(),
+                                    radioStation.title ?: "nepoznato",
+                                    isRadio = true, doAutoPlay = true)
+                            break
+                        } catch (e: Exception) {
+                            /*continue*/
+                        }
+                    }
+                }) {
+                    radioBtn?.snackbar(R.string.error_fetching_data, Snackbar.LENGTH_LONG)
+                }
     }
 
     private fun openDashboardFragment(animation: TransitionAnimation = FADE) {

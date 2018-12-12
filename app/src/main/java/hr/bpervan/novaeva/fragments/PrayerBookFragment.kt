@@ -55,10 +55,6 @@ class PrayerBookFragment : EvaBaseFragment() {
         EventPipelines.changeStatusbarColor.onNext(R.color.VeryDarkGray)
         EventPipelines.changeFragmentBackgroundResource.onNext(R.color.White)
 
-        initUI()
-    }
-
-    private fun initUI() {
         val title = "Molitvenik"
 
         prayerArrow.isInvisible = true

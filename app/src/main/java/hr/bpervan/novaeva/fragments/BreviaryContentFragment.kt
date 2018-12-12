@@ -99,10 +99,10 @@ class BreviaryContentFragment : EvaBaseFragment() {
             fetchBreviary()
         }
 
-        initUI()
-    }
+        baseDisposables += EventPipelines.resizeText.subscribe {
+            webView?.applyConfiguredFontSize(prefs)
+        }
 
-    private fun initUI() {
         webView.applyEvaConfiguration(prefs)
 
         evaCollapsingBar.collapsingToolbar.title = breviaryName

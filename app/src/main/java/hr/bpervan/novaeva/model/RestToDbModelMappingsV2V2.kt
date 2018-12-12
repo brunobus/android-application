@@ -7,10 +7,10 @@ import io.realm.RealmList
  */
 
 fun EvaDirectoryMetadataDTO.toDatabaseModel(): EvaDirectoryMetadata =
-        EvaDirectoryMetadata(directoryId, title ?: "")
+        EvaDirectoryMetadata(directoryId, categoryId, title ?: "")
 
 fun EvaContentMetadataDTO.toDatabaseModel(): EvaContentMetadata =
-        EvaContentMetadata(contentId, -1, -1,
+        EvaContentMetadata(contentId, directoryId, categoryId,
                 attachmentsIndicator?.toDatabaseModel(),
                 datetime?.toLong() ?: 0, title ?: "", preview)
 
@@ -19,13 +19,14 @@ fun EvaAttachmentsIndicatorDTO.toDatabaseModel(): EvaAttachmentsIndicator =
 
 fun EvaAttachmentDTO.toDatabaseModel(): EvaAttachment = EvaAttachment(naziv ?: "", url ?: "")
 
-fun EvaImageDTO.toDatabaseModel(): EvaImage?{
-    val imageURL = this.original ?: this.size720 ?: this.size640?:return null
+fun EvaImageDTO.toDatabaseModel(): EvaImage? {
+    val imageURL = this.original ?: this.size720 ?: this.size640 ?: return null
     return EvaImage(imageURL, this.timestamp)
 }
 
 fun EvaContentDTO.toDatabaseModel(): EvaContent {
     val attachmentsDb = attachments.map { it.toDatabaseModel() }.toTypedArray()
     val image = images.firstOrNull()
-    return EvaContent(contentId, null, text ?: "", null, RealmList(*attachmentsDb), image?.toDatabaseModel(), videoURL, audioURL)
+    return EvaContent(contentId, null, text ?: "",
+            null, RealmList(*attachmentsDb), image?.toDatabaseModel(), videoURL, audioURL)
 }

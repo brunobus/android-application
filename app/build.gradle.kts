@@ -17,8 +17,8 @@ android {
         applicationId = "hr.bpervan.novaeva.main"
         minSdkVersion(16)
         targetSdkVersion(27)
-        versionCode = 160020905
-        versionName = "2.9.5"
+        versionCode = 160020910
+        versionName = "2.9.10"
     }
 
     buildTypes {
@@ -44,7 +44,7 @@ android {
 
 dependencies {
     testImplementation("junit:junit:4.12")
-    testImplementation("com.google.code.gson:gson:2.8.2")
+    testImplementation("com.google.code.gson:gson:2.8.5")
 
     implementation("com.android.support:support-compat:27.1.1")
     implementation("com.android.support:support-media-compat:27.1.1")

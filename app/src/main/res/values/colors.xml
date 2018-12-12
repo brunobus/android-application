@@ -12,7 +12,9 @@
     <color name="evaRed">#CB212A</color>
     <color name="evaPurple">#852980</color>
     <color name="evaBlue">#0174B5</color>
+    <color name="evaBlueTrans">#880174B5</color>
     <color name="evaDarkBlue">#2E2B82</color>
+    <color name="evaDarkBlueTrans">#882E2B82</color>
 
     <color name="Transparent">#00000000</color>
     <color name="TranslucentGray">#7c2e2e2e</color>
@@ -56,6 +58,7 @@
     <color name="GhostWhite">#F8F8FF</color>
     <color name="MintCream">#F5FFFA</color>
     <color name="WhiteSmoke">#F5F5F5</color>
+    <color name="WhiteSmokeTrans">#d8f5f5f5</color>
     <color name="Beige">#F5F5DC</color>
     <color name="Wheat">#F5DEB3</color>
     <color name="SandyBrown">#F4A460</color>
@@ -77,7 +80,7 @@
     <color name="Goldenrod">#DAA520</color>
     <color name="Orchid">#DA70D6</color>
     <color name="Thistle">#D8BFD8</color>
-    <color name="LightGray">#D3D3D3</color>
+    <color name="VeryLightGray">#D3D3D3</color>
     <color name="Tan">#D2B48C</color>
     <color name="Chocolate">#D2691E</color>
     <color name="Peru">#CD853F</color>
@@ -94,7 +97,8 @@
     <color name="PaleTurquoise">#AFEEEE</color>
     <color name="GreenYellow">#ADFF2F</color>
     <color name="LightBlue">#ADD8E6</color>
-    <color name="Gray">#A9A9A9</color>
+    <color name="LighterGray">#B4BBC2</color>
+    <color name="LightGray">#A9A9A9</color>
     <color name="Brown">#A52A2A</color>
     <color name="Sienna">#A0522D</color>
     <color name="YellowGreen">#9ACD32</color>
@@ -110,7 +114,7 @@
     <color name="BlueViolet">#8A2BE2</color>
     <color name="LightSkyBlue">#87CEFA</color>
     <color name="SkyBlue">#87CEEB</color>
-    <color name="DarkGray">#808080</color>
+    <color name="Gray">#808080</color>
     <color name="Olive">#808000</color>
     <color name="Purple">#800080</color>
     <color name="Maroon">#800000</color>
@@ -157,7 +161,7 @@
     <color name="DarkBlue">#00008B</color>
     <color name="Navy">#000080</color>
     <color name="Black">#000000</color>
-
+    <color name="DarkGray">#3B3B3B</color>
     <color name="VeryDarkGray">#252525</color>
     <color name="Pinky">#FF69B4</color>
     <color name="SmoothBlue">#6969ff</color>

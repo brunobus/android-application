@@ -15,7 +15,8 @@ import hr.bpervan.novaeva.main.R
  * Created by vpriscan on 04.12.17..
  */
 
-fun sendEmailIntent(context: Context, subject: String, text: String, receivers: Array<String> = arrayOf()) {
+fun sendEmailIntent(context: Context?, subject: String, text: String, receivers: Array<String> = arrayOf()) {
+    context ?: return
     val mailIntent = Intent(Intent.ACTION_SEND)
     mailIntent.type = "message/rfc822"
     mailIntent.putExtra(Intent.EXTRA_SUBJECT, subject)

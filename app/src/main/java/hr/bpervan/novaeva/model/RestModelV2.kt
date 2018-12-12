@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 class EvaDirectoryDTO {
     var directoryId: Long = 0
+    var categoryId: Long = -1
 
     val image: EvaImageDTO? = null
 
@@ -26,6 +27,7 @@ class EvaDirectoryDTO {
 class EvaDirectoryMetadataDTO {
     @SerializedName("cid")
     val directoryId: Long = 0
+    var categoryId: Long = 0
     @SerializedName("name")
     val title: String? = null
 }
@@ -34,6 +36,8 @@ class EvaContentMetadataDTO {
 
     @SerializedName("nid")
     val contentId: Long = -1
+    var directoryId: Long = 0
+    var categoryId: Long = -1
     @SerializedName("attach")
     val attachmentsIndicator: EvaAttachmentsIndicatorDTO? = null
     @SerializedName("datum")
@@ -78,6 +82,8 @@ class EvaContentDTO {
 
     @SerializedName("cid")
     val directoryId: Long = 0
+
+    var categoryId: Long = -1
 
     @SerializedName("prilozi")
     private val _attachments: List<EvaAttachmentDTO>? = null

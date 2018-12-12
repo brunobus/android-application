@@ -10,6 +10,8 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.media.AudioAttributes
+import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.os.Build
 import android.os.IBinder
@@ -21,7 +23,7 @@ import android.support.v4.media.session.PlaybackStateCompat
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ext.mediasession.DefaultPlaybackController
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
-import hr.bpervan.novaeva.NovaEvaApp
+import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.util.plusAssign
 import io.reactivex.disposables.CompositeDisposable
@@ -58,7 +60,7 @@ class AudioPlayerService : Service() {
 
         mediaSessionConnector = MediaSessionConnector(mediaSession, EvaPlaybackController())
 
-        disposables += NovaEvaApp.evaPlayer.playbackChangeSubject.subscribe {
+        disposables += EventPipelines.playbackChanged.subscribe {
 
             val player = it.player
 
@@ -116,35 +118,59 @@ class AudioPlayerService : Service() {
 
     private inner class EvaPlaybackController : DefaultPlaybackController() {
 
-//        fun onAudioFocusChange(player: Player, it: Int) {
-//            when (it) {
-//                AudioManager.AUDIOFOCUS_GAIN -> {
-//                    /*nothing*/
-//                }
-//                AudioManager.AUDIOFOCUS_LOSS,
-//                AudioManager.AUDIOFOCUS_LOSS_TRANSIENT,
-//                AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
-//                    player.playWhenReady = false
-//                }
-//            }
-//        }
+        var audioFocusChangeListener: AudioManager.OnAudioFocusChangeListener? = null
+        var audioFocusRequest: AudioFocusRequest? = null
 
         override fun onPlay(player: Player) {
-//            @Suppress("DEPRECATION")
-//            val focusRequestResult = audioManager.requestAudioFocus({ onAudioFocusChange(player, it) },
-//                    AudioManager.STREAM_MUSIC,
-//                    AudioManager.AUDIOFOCUS_GAIN)
-//
-//            if (focusRequestResult == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-//            }
-            player.playWhenReady = true
+            val focusRequestResult =
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        audioFocusRequest = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+                                .setAudioAttributes(AudioAttributes.Builder()
+                                        .setUsage(AudioAttributes.USAGE_MEDIA)
+                                        .setContentType(AudioAttributes.CONTENT_TYPE_UNKNOWN)
+                                        .build())
+                                .build()
+
+                        audioManager.requestAudioFocus(audioFocusRequest)
+                    } else {
+                        audioFocusChangeListener = AudioManager.OnAudioFocusChangeListener { focusChange ->
+                            when (focusChange) {
+                                AudioManager.AUDIOFOCUS_GAIN -> {
+                                    /*dont autostart*/
+                                }
+                                AudioManager.AUDIOFOCUS_LOSS,
+                                AudioManager.AUDIOFOCUS_LOSS_TRANSIENT,
+                                AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
+                                    player.playWhenReady = false
+                                }
+                            }
+                        }
+
+                        @Suppress("DEPRECATION")
+                        audioManager.requestAudioFocus(audioFocusChangeListener,
+                                AudioManager.STREAM_MUSIC,
+                                AudioManager.AUDIOFOCUS_GAIN)
+                    }
+
+            if (focusRequestResult == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+                player.playWhenReady = true
+            }
         }
 
         override fun onStop(player: Player) {
-            player.playWhenReady = false
             player.stop()
-//            @Suppress("DEPRECATION")
-//            audioManager.abandonAudioFocus(audioFocusChangeListener)
+            player.playWhenReady = false
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                audioFocusRequest?.let {
+                    audioManager.abandonAudioFocusRequest(it)
+                }
+            } else {
+                @Suppress("DEPRECATION")
+                audioFocusChangeListener?.let {
+                    audioManager.abandonAudioFocus(it)
+                }
+            }
         }
 
         override fun onPause(player: Player) {
@@ -161,6 +187,9 @@ class AudioPlayerService : Service() {
         val playPauseIcon = if (playing) R.drawable.exo_controls_pause else R.drawable.exo_controls_play
         val playPauseString = if (playing) getString(R.string.pause) else getString(R.string.play)
 
+        val stopIcon = R.drawable.player_controls_stop
+        val stopText = getString(R.string.stop)
+
         return NotificationCompat.Builder(context, createNotificationChannel())
                 .setLargeIcon(novaEvaBitmap)
                 .setSmallIcon(R.drawable.notification_icon)
@@ -174,6 +203,9 @@ class AudioPlayerService : Service() {
                 .addAction(NotificationCompat.Action(playPauseIcon, playPauseString,
                         MediaButtonReceiver.buildMediaButtonPendingIntent(context,
                                 PlaybackStateCompat.ACTION_PLAY_PAUSE)))
+                .addAction(NotificationCompat.Action(stopIcon, stopText,
+                        MediaButtonReceiver.buildMediaButtonPendingIntent(context,
+                                PlaybackStateCompat.ACTION_STOP)))
                 .setStyle(MediaStyleCompat()
                         .setMediaSession(mediaSession.sessionToken)
                         .setShowActionsInCompactView(0)

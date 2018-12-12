@@ -73,7 +73,11 @@ class EvaBookmarksFragment : EvaBaseFragment() {
         EventPipelines.changeStatusbarColor.onNext(R.color.VeryDarkGray)
         EventPipelines.changeFragmentBackgroundResource.onNext(R.color.White)
 
-        initUI()
+        val recyclerView = evaRecyclerView as RecyclerView
+
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager = LinearLayoutManager(recyclerView.context)
+        recyclerView.itemAnimator = DefaultItemAnimator()
     }
 
     override fun onAttach(context: Context?) {
@@ -87,15 +91,6 @@ class EvaBookmarksFragment : EvaBaseFragment() {
 
         bookmarksList.clear()
         reloadBookmarksFromDb()
-    }
-
-    private fun initUI() {
-
-        val recyclerView = evaRecyclerView as RecyclerView
-
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager = LinearLayoutManager(recyclerView.context)
-        recyclerView.itemAnimator = DefaultItemAnimator()
     }
 
     private fun reloadBookmarksFromDb() {

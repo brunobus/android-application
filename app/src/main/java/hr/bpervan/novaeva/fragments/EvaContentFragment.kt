@@ -26,13 +26,11 @@ import hr.bpervan.novaeva.rest.EvaCategory
 import hr.bpervan.novaeva.model.EvaContent
 import hr.bpervan.novaeva.model.OpenContentEvent
 import hr.bpervan.novaeva.player.EvaPlayer
+import hr.bpervan.novaeva.player.prepareAudioStream
 import hr.bpervan.novaeva.rest.novaEvaServiceV2
 import hr.bpervan.novaeva.storage.EvaContentDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
-import hr.bpervan.novaeva.util.EvaCache
-import hr.bpervan.novaeva.util.SCROLL_PERCENT_KEY
-import hr.bpervan.novaeva.util.networkRequest
-import hr.bpervan.novaeva.util.sendEmailIntent
+import hr.bpervan.novaeva.util.*
 import hr.bpervan.novaeva.views.*
 import io.reactivex.disposables.Disposable
 import io.realm.Realm
@@ -54,8 +52,7 @@ class EvaContentFragment : EvaBaseFragment() {
             return EvaContentFragment().apply {
                 arguments = bundleOf(
                         CONTENT_ID_KEY to initializer.contentMetadata.contentId,
-                        THEME_ID_KEY to initializer.themeId,
-                        CATEGORY_KEY to initializer.category
+                        THEME_ID_KEY to initializer.themeId
                 )
             }
         }
@@ -150,8 +147,9 @@ class EvaContentFragment : EvaBaseFragment() {
             evaContent.audioURL?.let { audioUrl ->
                 imgMp3.setImageResource(R.drawable.vijest_ind_mp3_active)
                 if (audioUrl != this.evaContent?.audioURL) {
-                    prepareAudioStream(context!!, audioUrl, evaContent.contentId.toString(),
-                            evaContent.contentMetadata?.title ?: "nepoznato")
+                    prepareAudioStream(audioUrl, evaContent.contentId.toString(),
+                            evaContent.contentMetadata?.title ?: "nepoznato",
+                            isRadio = false, doAutoPlay = false)
                 }
                 player_view?.apply {
                     NovaEvaApp.evaPlayer.supplyPlayerToView(this, evaContent.contentId.toString())
@@ -159,6 +157,9 @@ class EvaContentFragment : EvaBaseFragment() {
                     requestFocus()
                     showController()
 
+                }
+                imgMp3.setOnClickListener {
+                    startActivity(Intent(Intent.ACTION_VIEW, audioUrl.toUri()))
                 }
             }
 
@@ -172,14 +173,31 @@ class EvaContentFragment : EvaBaseFragment() {
             if (evaContent.attachments.isNotEmpty()) {
                 imgText.setImageResource(R.drawable.vijest_ind_txt_active)
                 imgText.setOnClickListener {
-                    startActivity(Intent.createChooser(Intent(Intent.ACTION_VIEW, evaContent.attachments[0]!!.url.toUri()),
-                            "Otvaranje dokumenta " + evaContent.attachments[0]!!.name))
+                    startActivity(Intent.createChooser(Intent(Intent.ACTION_VIEW,
+                            evaContent.attachments[0]!!.url.toUri()), evaContent.attachments[0]!!.name))
                 }
             }
 
             loadingCircle.isGone = true
 
             this.evaContent = evaContent
+
+            when (evaContent.contentMetadata?.categoryId) {
+                EvaCategory.VOCATION.id -> {
+                    btnPoziv.isVisible = true
+                    btnPoziv.setOnClickListener {
+                        val text = "Hvaljen Isus i Marija, javljam Vam se jer razmišljam o duhovnom pozivu."
+                        sendEmailIntent(context, "Duhovni poziv", text, arrayOf("duhovnipoziv@gmail.com"))
+                    }
+                }
+                EvaCategory.ANSWERS.id -> {
+                    btnPitanje.isVisible = true
+                    btnPitanje.setOnClickListener {
+                        val text = "Hvaljen Isus!"
+                        sendEmailIntent(context, "Imam pitanje", text, arrayOf("novaevangelizacija@gmail.com"))
+                    }
+                }
+            }
         }
     }
 
@@ -214,11 +232,9 @@ class EvaContentFragment : EvaBaseFragment() {
             }
         }
 
-        initUI()
-    }
-
-    private fun initUI() {
-        val ctx = context ?: return
+        baseDisposables += EventPipelines.resizeText.subscribe {
+            vijestWebView?.applyConfiguredFontSize(prefs)
+        }
 
         loadingCircle.isVisible = true
 
@@ -226,27 +242,6 @@ class EvaContentFragment : EvaBaseFragment() {
 
         vijestWebView.applyEvaConfiguration(prefs)
         vijestWebView.loadHtmlText(evaContent?.text)
-
-        if (category == EvaCategory.VOCATION) {
-            btnPoziv.isVisible = true
-            btnPoziv.setOnClickListener {
-                val text = "Hvaljen Isus i Marija, javljam Vam se jer razmišljam o duhovnom pozivu."
-                sendEmailIntent(ctx, "Duhovni poziv", text, arrayOf("duhovnipoziv@gmail.com"))
-            }
-        }
-    }
-
-    private fun prepareAudioStream(context: Context, audioUri: String, contentId: String, contentTitle: String) {
-        val dataSourceFactory = DefaultDataSourceFactory(context,
-                Util.getUserAgent(context, resources.getString(R.string.app_name)),
-                DefaultBandwidthMeter())
-
-//        val factory = ExtractorMediaSource.Factory(dataSourceFactory).setCustomCacheKey(audioUri)
-//        val mediaSource = factory.createMediaSource(streamingUri)
-
-        NovaEvaApp.evaPlayer.prepareIfNeeded(EvaPlayer.PlaybackInfo(contentId, contentTitle), doAutoPlay = false) {
-            ExtractorMediaSource(audioUri.toUri(), dataSourceFactory, DefaultExtractorsFactory(), handler, null, audioUri)
-        }
     }
 
     override fun onDestroy() {

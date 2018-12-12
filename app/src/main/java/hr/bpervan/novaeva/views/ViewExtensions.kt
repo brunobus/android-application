@@ -19,12 +19,16 @@ import hr.bpervan.novaeva.util.defaultTextSize
  *
  */
 fun WebView.applyEvaConfiguration(prefs: SharedPreferences) {
-    settings.defaultFontSize = prefs.getInt(TEXT_SIZE_KEY, defaultTextSize)
+    applyConfiguredFontSize(prefs)
     settings.builtInZoomControls = false
     settings.displayZoomControls = false
     settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.SINGLE_COLUMN
 
     isLongClickable = true
+}
+
+fun WebView.applyConfiguredFontSize(prefs: SharedPreferences){
+    settings.defaultFontSize = prefs.getInt(TEXT_SIZE_KEY, defaultTextSize)
 }
 
 fun PlayerView.applyEvaConfiguration() {

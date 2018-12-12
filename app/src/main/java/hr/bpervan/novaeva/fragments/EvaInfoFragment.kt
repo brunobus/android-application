@@ -10,10 +10,8 @@ import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.util.SCROLL_PERCENT_KEY
-import hr.bpervan.novaeva.views.afterLoadAndLayoutComplete
-import hr.bpervan.novaeva.views.applyEvaConfiguration
-import hr.bpervan.novaeva.views.calcScrollYAbsolute
-import hr.bpervan.novaeva.views.calcScrollYPercent
+import hr.bpervan.novaeva.util.plusAssign
+import hr.bpervan.novaeva.views.*
 import kotlinx.android.synthetic.main.collapsing_content_header.view.*
 import kotlinx.android.synthetic.main.fragment_simple_content.*
 
@@ -57,20 +55,19 @@ class EvaInfoFragment : EvaBaseFragment() {
             }
         }
 
-        initUI()
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        outState.putFloat(SCROLL_PERCENT_KEY, simpleContentScrollView.calcScrollYPercent(webView.height))
-        super.onSaveInstanceState(outState)
-    }
-
-    private fun initUI() {
+        baseDisposables += EventPipelines.resizeText.subscribe {
+            webView?.applyConfiguredFontSize(prefs)
+        }
 
         webView.applyEvaConfiguration(prefs)
 
         webView.loadUrl("file:///android_asset/info.html")
 
         evaCollapsingBar.collapsingToolbar.title = "Nova Eva info"
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putFloat(SCROLL_PERCENT_KEY, simpleContentScrollView.calcScrollYPercent(webView.height))
+        super.onSaveInstanceState(outState)
     }
 }

@@ -6,13 +6,14 @@ import android.support.v4.app.FragmentManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.edit
 import androidx.core.widget.toast
 import hr.bpervan.novaeva.EventPipelines
+import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.storage.EvaContentDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
-import hr.bpervan.novaeva.util.TransitionAnimation
-import hr.bpervan.novaeva.util.shareIntent
+import hr.bpervan.novaeva.util.*
 import io.realm.Realm
 import kotlinx.android.synthetic.main.fragment_options.*
 
@@ -28,7 +29,7 @@ class OptionsFragment : Fragment() {
     }
 
     private lateinit var realm: Realm
-    var contentId: Long = -1L
+    private var contentId: Long? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,23 +50,35 @@ class OptionsFragment : Fragment() {
         btnInfo.setOnClickListener {
             EventPipelines.openInfo.onNext(TransitionAnimation.LEFTWARDS)
         }
-//        btnHelp.setOnClickListener {
-//            context?.toast("Not yet supported")
-//        }
         btnTextSize.setOnClickListener {
-            context?.toast("Not yet supported")
+            val currentTextSize = NovaEvaApp.prefs.getInt(TEXT_SIZE_KEY, defaultTextSize)
+            val newShift = currentTextSize + 2 - minTextSize
+            val width = maxTextSize - minTextSize
+            val newTextSize = newShift % width + minTextSize
+
+            NovaEvaApp.prefs.edit {
+                putInt(TEXT_SIZE_KEY, newTextSize)
+            }
+            EventPipelines.resizeText.onNext(Unit)
         }
         btnChurch.setOnClickListener {
-            context?.toast("Not yet supported")
+            context?.toast(getString(R.string.not_supported))
         }
         btnTheme.setOnClickListener {
-            context?.toast("Not yet supported")
+            context?.toast(getString(R.string.not_supported))
         }
         btnShare.setOnClickListener {
-            shareIntent(context, "http://novaeva.com/node/$contentId")
+            val contentId = contentId
+            if (contentId != null) {
+                shareIntent(context, "http://novaeva.com/node/$contentId")
+            } else {
+                shareIntent(context, getString(R.string.recommendation) + ":\nhttp://novaeva.com/web")
+            }
         }
 
         btnBookmark.setOnClickListener {
+            val contentId = contentId ?: return@setOnClickListener
+
             val wasBookmarked = isContentBookmarked(contentId)
             EvaContentDbAdapter.updateEvaContentMetadataAsync(realm, contentId,
                     updateFunction = {
@@ -106,21 +119,28 @@ class OptionsFragment : Fragment() {
 
             val fragment = fm.findFragmentByTag(backStackEntryAt.name)
 
+            contentId = null
+
             when (fragment) {
                 is EvaContentFragment -> {
                     enableOptions(btnInfo, btnHelp, btnTextSize, btnChurch,
                             btnTheme, btnHome, btnShare, btnBookmark)
 
                     contentId = fragment.contentId
-                    btnBookmark.bookmarked = isContentBookmarked(contentId)
+                    btnBookmark.bookmarked = isContentBookmarked(fragment.contentId)
                 }
-                is EvaDashboardFragment -> {
-                    enableOptions(btnInfo, btnHelp, btnChurch, btnTheme)
-                    disableOptions(btnHome, btnTextSize, btnShare, btnBookmark)
+                is EvaQuotesFragment,
+                is BreviaryContentFragment -> {
+                    enableOptions(btnInfo, btnHelp, btnTextSize, btnChurch, btnTheme, btnHome)
+                    disableOptions(btnShare, btnBookmark)
                 }
                 is EvaInfoFragment -> {
-                    enableOptions(btnHelp, btnChurch, btnTheme, btnHome)
-                    disableOptions(btnInfo, btnTextSize, btnShare, btnBookmark)
+                    enableOptions(btnHelp, btnChurch, btnTheme, btnHome, btnTextSize)
+                    disableOptions(btnInfo, btnShare, btnBookmark)
+                }
+                is EvaDashboardFragment -> {
+                    enableOptions(btnInfo, btnHelp, btnChurch, btnTheme, btnShare)
+                    disableOptions(btnHome, btnTextSize, btnBookmark)
                 }
                 else -> {
                     enableOptions(btnInfo, btnHelp, btnChurch, btnTheme, btnHome)

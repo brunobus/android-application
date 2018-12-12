@@ -30,10 +30,6 @@ class EvaCalendarFragment : EvaBaseFragment() {
         EventPipelines.changeStatusbarColor.onNext(R.color.VeryDarkGray)
         EventPipelines.changeFragmentBackgroundResource.onNext(R.color.White)
 
-        initUI()
-    }
-
-    private fun initUI() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }
