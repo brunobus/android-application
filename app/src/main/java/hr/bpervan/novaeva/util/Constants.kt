@@ -4,7 +4,7 @@ package hr.bpervan.novaeva.util
  *
  */
 const val syncIntervalMillis: Long = 60 * 1000
-const val evictionIntervalMillis: Long = 3 * 24 * 60 * 60 * 1000
+const val evictionIntervalMillis: Long = 2 * 24 * 60 * 60 * 1000
 
 const val defaultTextSize = 16
 const val minTextSize = 12

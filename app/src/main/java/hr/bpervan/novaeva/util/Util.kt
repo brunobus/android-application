@@ -5,7 +5,11 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
+import android.support.design.widget.Snackbar
 import android.util.Log
+import android.view.View
+import hr.bpervan.novaeva.main.R
+import hr.bpervan.novaeva.views.snackbar
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -49,6 +53,9 @@ inline fun <T, R> T?.ifPresent(block: (T) -> R): R? {
     return this?.let(block)
 }
 
+fun <T> Collection<T>?.notNullNorEmpty(): Boolean = orEmpty().isNotEmpty()
+fun String?.notNullNorEmpty(): Boolean = orEmpty().isNotEmpty()
+
 fun logError(throwable: Throwable) {
     Log.e("error", throwable.message, throwable)
 }
@@ -74,4 +81,9 @@ fun Context.networkConnectionExists(): Boolean {
     val cm = this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     val activeNetwork: NetworkInfo? = cm.activeNetworkInfo
     return activeNetwork?.isConnectedOrConnecting == true
+}
+
+fun View.dataErrorSnackbar() {
+    val networkExists = context?.networkConnectionExists() ?: false
+    this.snackbar(if (networkExists) R.string.error_fetching_data else R.string.network_unavailable, Snackbar.LENGTH_SHORT)
 }

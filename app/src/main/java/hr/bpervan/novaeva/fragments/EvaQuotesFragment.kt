@@ -1,7 +1,6 @@
 package hr.bpervan.novaeva.fragments
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
@@ -14,12 +13,12 @@ import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.rest.novaEvaServiceV2
 import hr.bpervan.novaeva.util.NEW_CONTENT_KEY_PREFIX
+import hr.bpervan.novaeva.util.dataErrorSnackbar
 import hr.bpervan.novaeva.util.networkRequest
 import hr.bpervan.novaeva.util.plusAssign
 import hr.bpervan.novaeva.views.applyConfiguredFontSize
 import hr.bpervan.novaeva.views.applyEvaConfiguration
 import hr.bpervan.novaeva.views.loadHtmlText
-import hr.bpervan.novaeva.views.snackbar
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.collapsing_content_header.view.*
 import kotlinx.android.synthetic.main.fragment_eva_quotes.*
@@ -43,8 +42,8 @@ class EvaQuotesFragment : EvaBaseFragment() {
     }
 
     private var quoteTitle: String? = null
-    private var quoteData: String? = null
-    public var quoteId: Long = -1
+    var quoteData: String? = null
+    var quoteId: Long = -1L
 
     private var loadRandomQuoteDisposable: Disposable? = null
         set(value) {
@@ -89,7 +88,7 @@ class EvaQuotesFragment : EvaBaseFragment() {
             showQuote()
         }
 
-        baseDisposables += EventPipelines.resizeText.subscribe {
+        disposables += EventPipelines.resizeText.subscribe {
             webText?.applyConfiguredFontSize(prefs)
         }
 
@@ -99,15 +98,6 @@ class EvaQuotesFragment : EvaBaseFragment() {
         btnObnovi.setOnClickListener {
             fetchRandomQuote()
         }
-
-        //todo move to options drawer
-//        options.btnShare.setOnClickListener {
-//            shareIntent(ctx, "http://novaeva.com/node/$contentId")
-//        }
-//        options.btnMail.setOnClickListener {
-//            sendEmailIntent(ctx, quoteTitle!!, "http://novaeva.com/node/$contentId")
-//        }
-
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -119,21 +109,21 @@ class EvaQuotesFragment : EvaBaseFragment() {
     }
 
     private fun fetchRandomQuote() {
-//        loadRandomQuoteDisposable = novaEvaService.getRandomDirectoryContent(1)
-//                .networkRequest({ directoryContent ->
-//                    val contentMetadataList = directoryContent.contentMetadataList
-//                    if (contentMetadataList.isNotEmpty()) {
-//                        val quoteInfo = contentMetadataList[0]
-//
-//                        quoteTitle = quoteInfo.title
-//                        quoteData = quoteInfo.text
-//                        quoteId = quoteInfo.contentId
-//
-//                        showQuote()
-//                    }
-//                }, onError = {
-//                    view?.snackbar(R.string.network_unavailable, Snackbar.LENGTH_SHORT)
-//                })
+        loadRandomQuoteDisposable = novaEvaServiceV2.getRandomDirectoryContent(1)
+                .networkRequest({ directoryContent ->
+                    val contentMetadataList = directoryContent.contentMetadataList
+                    if (contentMetadataList.isNotEmpty()) {
+                        val quoteInfo = contentMetadataList[0]
+
+                        quoteTitle = quoteInfo.title
+                        quoteData = quoteInfo.text
+                        quoteId = quoteInfo.contentId
+
+                        showQuote()
+                    }
+                }) {
+                    view?.dataErrorSnackbar()
+                }
     }
 
     private fun showQuote() {

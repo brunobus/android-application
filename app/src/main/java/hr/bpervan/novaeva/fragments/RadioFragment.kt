@@ -1,8 +1,6 @@
 package hr.bpervan.novaeva.fragments
 
 import android.os.Bundle
-import android.os.Handler
-import android.support.design.widget.Snackbar
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -11,38 +9,26 @@ import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.net.toUri
 import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
-import com.google.android.exoplayer2.source.ExtractorMediaSource
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
-import com.google.android.exoplayer2.util.Util
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.RadioStationsAdapter
 import hr.bpervan.novaeva.main.R
+import hr.bpervan.novaeva.model.EvaCategoryLegacy
 import hr.bpervan.novaeva.model.EvaContent
-import hr.bpervan.novaeva.model.EvaContentMetadata
-import hr.bpervan.novaeva.model.toDatabaseModel
-import hr.bpervan.novaeva.player.EvaPlayer
-import hr.bpervan.novaeva.player.PlaylistExtractor
-import hr.bpervan.novaeva.rest.novaEvaServiceV2
+import hr.bpervan.novaeva.model.toDbModel
 import hr.bpervan.novaeva.player.getStreamLinksFromPlaylistUri
-import hr.bpervan.novaeva.player.prepareAudioStream
+import hr.bpervan.novaeva.rest.novaEvaServiceV2
+import hr.bpervan.novaeva.util.dataErrorSnackbar
 import hr.bpervan.novaeva.util.networkRequest
 import hr.bpervan.novaeva.util.plusAssign
-import hr.bpervan.novaeva.views.snackbar
 import io.reactivex.Maybe
-import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.collapsing_content_header.view.*
 import kotlinx.android.synthetic.main.fragment_radio.*
-import java.net.HttpURLConnection
-import java.net.URL
 import java.util.concurrent.TimeUnit
 
 
@@ -64,7 +50,7 @@ class RadioFragment : EvaBaseFragment() {
 
     private lateinit var adapter: RadioStationsAdapter
 
-    private val radioStationList: MutableList<EvaContentMetadata> = mutableListOf()
+    private val radioStationList: MutableList<EvaContent> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -100,11 +86,11 @@ class RadioFragment : EvaBaseFragment() {
         recyclerView.itemAnimator = DefaultItemAnimator()
         recyclerView.adapter = adapter
 
-        baseDisposables += EventPipelines.chooseRadioStation
+        disposables += EventPipelines.chooseRadioStation
                 .throttleWithTimeout(200, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .switchMapMaybe {
-                    if (it.contentId.toString() == NovaEvaApp.evaPlayer.currentPlaybackInfo()?.id) {
+                    if (it.contentId == adapter.radioStationPlaying) {
 
                         NovaEvaApp.evaPlayer.stop()
                         Maybe.empty()
@@ -114,21 +100,22 @@ class RadioFragment : EvaBaseFragment() {
                     }
                 }
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext { updateUI(it.toDatabaseModel()) }
+                .doOnNext { updateUI(it.toDbModel()) }
                 .observeOn(Schedulers.io())
                 .switchMap { radioStation ->
                     getStreamLinksFromPlaylistUri(radioStation.audioURL!!)
                             .toObservable()
-                            .map { Pair(it, radioStation) }
+                            .map { Pair(radioStation, it) }
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ stationStreams ->
-                    val streamUris = stationStreams.first
-                    val radioStation = stationStreams.second
+                    val radioStation = stationStreams.first
+                    val streamUris = stationStreams.second
 
                     for (streamUri in streamUris.shuffled()) {
                         try {
-                            prepareAudioStream(streamUri, radioStation.contentId.toString(),
+                            NovaEvaApp.evaPlayer.prepareAudioStream(
+                                    streamUri, radioStation.contentId.toString(),
                                     radioStation.title ?: "nepoznato",
                                     isRadio = true, doAutoPlay = true)
                             break
@@ -138,12 +125,18 @@ class RadioFragment : EvaBaseFragment() {
                     }
                 }, { Log.e("radioError", it.message, it) })
 
-        baseDisposables += EventPipelines.playbackChanged.subscribe {
-            if (it.player.playbackState != Player.STATE_BUFFERING) {
-                adapter.radioStationPlaying = it.playbackInfo?.id?.toLongOrNull()
-                adapter.notifyItemRangeChanged(0, adapter.itemCount)
-            }
-        }
+        disposables += EventPipelines.playbackStartStopPause
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    if (it.player.playbackState == Player.STATE_READY
+                            && it.player.playWhenReady
+                            && it.playbackInfo?.isRadio == true) {
+                        adapter.radioStationPlaying = it.playbackInfo.id.toLongOrNull()
+                    } else {
+                        adapter.radioStationPlaying = null
+                    }
+                    adapter.notifyItemRangeChanged(0, adapter.itemCount)
+                }
     }
 
     private fun updateUI(radioStationDetails: EvaContent) {
@@ -156,13 +149,13 @@ class RadioFragment : EvaBaseFragment() {
     }
 
     private fun fetchRadioStationsFromServer() {
-        fetchFromServerDisposable = novaEvaServiceV2.getDirectoryContent(EvaCategory.RADIO.id, null, 1000)
+        fetchFromServerDisposable = novaEvaServiceV2.getDirectoryContent(EvaCategoryLegacy.RADIO.id, null, 1000)
                 .networkRequest({ evaDirectoryDTO ->
                     radioStationList.clear()
-                    radioStationList.addAll(evaDirectoryDTO.contentMetadataList.map { it.toDatabaseModel() })
+                    radioStationList.addAll(evaDirectoryDTO.contentMetadataList.map { it.toDbModel() })
                     adapter.notifyDataSetChanged()
                 }, onError = {
-                    view?.snackbar(R.string.error_fetching_data, Snackbar.LENGTH_LONG)
+                    view?.dataErrorSnackbar()
                 })
     }
 }

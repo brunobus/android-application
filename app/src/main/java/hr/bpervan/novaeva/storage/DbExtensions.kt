@@ -36,7 +36,7 @@ fun <T : RealmObject> RealmQuery<T>.loadOneAsync(field: String, value: Long,
 }
 
 fun <T : RealmObject> RealmQuery<T>.subscribeToUpdatesAsync(field: String, value: Long,
-                                                            consumer: (T) -> Unit): Disposable? {
+                                                            consumer: (T) -> Unit): Disposable {
     return equalTo(field, value)
             .findFirstAsync()
             .asFlowable<T>()

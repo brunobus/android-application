@@ -9,7 +9,7 @@ import android.widget.TextView
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.adapters.RadioStationsAdapter.RadioStationViewHolder
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.EvaContentMetadata
+import hr.bpervan.novaeva.model.EvaContent
 import hr.bpervan.novaeva.util.EvaTouchFeedback
 import hr.bpervan.novaeva.views.PlayPauseView
 import kotlinx.android.synthetic.main.recycler_item_radio_station.view.*
@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.recycler_item_radio_station.view.*
 /**
  *
  */
-class RadioStationsAdapter(private val radioStations: List<EvaContentMetadata>)
+class RadioStationsAdapter(private val radioStations: List<EvaContent>)
     : RecyclerView.Adapter<RadioStationViewHolder>() {
 
     override fun getItemCount() = radioStations.size
@@ -46,7 +46,7 @@ class RadioStationsAdapter(private val radioStations: List<EvaContentMetadata>)
         private val stationName: TextView = view.stationName
         private val imgPlayPause: PlayPauseView = view.imgPlayPause
 
-        fun bindTo(radioStation: EvaContentMetadata) {
+        fun bindTo(radioStation: EvaContent) {
             stationName.text = radioStation.title
             view.setOnTouchListener(EvaTouchFeedback(view, touchFeedbackColor))
             view.setOnClickListener {

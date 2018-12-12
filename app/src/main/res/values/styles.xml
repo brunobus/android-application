@@ -43,14 +43,14 @@
     <style name="AppThemeBase" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowBackground">@drawable/background_01</item>
         <item name="android:windowNoTitle">true</item>
-        <item name="colorPrimary">@color/evaViolet</item>
-        <item name="colorPrimaryDark">@color/evaViolet</item>
-        <item name="colorAccent">@color/evaViolet</item>
+        <item name="colorPrimary">@color/novaEva</item>
+        <item name="colorPrimaryDark">@color/novaEvaDark</item>
+        <item name="colorAccent">@color/novaEvaDark</item>
         <item name="listItemContentSrc">@drawable/list_row_dir_gold</item>
         <item name="listItemFolderSrc">@drawable/list_row_dir_gold</item>
         <item name="directoryHeaderSrc">@drawable/header_gold</item>
         <item name="categoryIconSrc">@drawable/icon_duhovnost</item>
-        <item name="contentTitleBarSrc">@drawable/bar_gold</item>
+        <item name="contentTitleBarSrc">@drawable/bar_nova_eva</item>
     </style>
 
     <style name="AppTheme" parent="AppThemeBase"/>

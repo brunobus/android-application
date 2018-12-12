@@ -1,28 +1,18 @@
 package hr.bpervan.novaeva.model
 
+import hr.bpervan.novaeva.util.notNullNorEmpty
 import io.realm.RealmList
 
-fun CategoryInfoDto.toDatabaseModel(): EvaDirectoryMetadata {
-    return EvaDirectoryMetadata(id, title ?: "")
-}
+//todo 13.12.
 
-fun ContentDto.extractMeta(): EvaContentMetadata {
-    val attachmentsIndicator = EvaAttachmentsIndicator(
-            video.orEmpty().isNotEmpty(),
-            documents.orEmpty().isNotEmpty(),
-            audio.orEmpty().isNotEmpty(),
-            images.orEmpty().isNotEmpty(),
-            text.orEmpty().isNotBlank() || html.orEmpty().isNotBlank())
-
-    val categoryId = supercategory?.id ?: -1
-
-    return EvaContentMetadata(id, categoryId, -1,
-            attachmentsIndicator, modified, title.orEmpty(), description.orEmpty())
+fun CategoryInfoDto.toDatabaseModel(): EvaDirectory {
+    return EvaDirectory(
+            directoryId = id,
+            title = title.orEmpty()
+    )
 }
 
 fun ContentDto.toDatabaseModel(): EvaContent {
-
-    val contentMeta = extractMeta()
 
     val attachmentsDb = documents.orEmpty()
             .map { doc -> EvaAttachment(doc.title.orEmpty(), doc.link.orEmpty()) }
@@ -30,6 +20,23 @@ fun ContentDto.toDatabaseModel(): EvaContent {
 
     val image = images?.map { image -> EvaImage(image.link.orEmpty(), 0) }?.firstOrNull()
 
-    return EvaContent(id, contentMeta, text
-            ?: "", null, RealmList(*attachmentsDb), image, video?.firstOrNull()?.link, audio?.firstOrNull()?.link)
+    return EvaContent(
+            contentId = id,
+            directoryId = supercategory?.id ?: -1,
+            categoryId = supercategory?.id ?: -1,
+            timestamp = created,
+            preview = description.orEmpty(),
+            title = title.orEmpty(),
+            text = text.orEmpty(),
+            attachments = RealmList(*attachmentsDb),
+            image = image,
+            videoURL = video?.firstOrNull()?.link,
+            audioURL = audio?.firstOrNull()?.link,
+            attachmentsIndicator = AttachmentIndicatorHelper.encode(EvaAttachmentsIndicatorDTO().apply {
+                hasVideo = video.notNullNorEmpty()
+                hasDocuments = documents.notNullNorEmpty()
+                hasMusic = audio.notNullNorEmpty()
+                hasImages = images.notNullNorEmpty()
+                hasText = text.notNullNorEmpty() || html.notNullNorEmpty()
+            }))
 }

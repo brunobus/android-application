@@ -8,10 +8,11 @@ import android.view.ViewGroup
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
+import hr.bpervan.novaeva.main.BuildConfig
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.util.SCROLL_PERCENT_KEY
 import hr.bpervan.novaeva.util.plusAssign
-import hr.bpervan.novaeva.views.*
+import hr.bpervan.novaeva.views.applyConfiguredFontSize
+import hr.bpervan.novaeva.views.applyEvaConfiguration
 import kotlinx.android.synthetic.main.collapsing_content_header.view.*
 import kotlinx.android.synthetic.main.fragment_simple_content.*
 
@@ -48,14 +49,7 @@ class EvaInfoFragment : EvaBaseFragment() {
         EventPipelines.changeStatusbarColor.onNext(R.color.VeryDarkGray)
         EventPipelines.changeFragmentBackgroundResource.onNext(R.color.White)
 
-        val savedScrollPercent = savedInstanceState?.getFloat(SCROLL_PERCENT_KEY, 0f) ?: 0f
-        if (savedScrollPercent > 0) {
-            webView.afterLoadAndLayoutComplete {
-                simpleContentScrollView.scrollY = calcScrollYAbsolute(savedScrollPercent, webView.height)
-            }
-        }
-
-        baseDisposables += EventPipelines.resizeText.subscribe {
+        disposables += EventPipelines.resizeText.subscribe {
             webView?.applyConfiguredFontSize(prefs)
         }
 
@@ -63,11 +57,9 @@ class EvaInfoFragment : EvaBaseFragment() {
 
         webView.loadUrl("file:///android_asset/info.html")
 
-        evaCollapsingBar.collapsingToolbar.title = "Nova Eva info"
-    }
+        val titleText = "${getString(R.string.app_name)} - v${BuildConfig.VERSION_NAME}" +
+                if (BuildConfig.DEBUG) " (debug)" else ""
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        outState.putFloat(SCROLL_PERCENT_KEY, simpleContentScrollView.calcScrollYPercent(webView.height))
-        super.onSaveInstanceState(outState)
+        evaCollapsingBar.collapsingToolbar.title = titleText
     }
 }

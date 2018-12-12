@@ -1,6 +1,7 @@
 package hr.bpervan.novaeva.views
 
 import android.content.Context
+import android.os.Handler
 import android.util.AttributeSet
 import android.widget.LinearLayout
 import androidx.core.view.isVisible
@@ -20,6 +21,8 @@ class EvaRadioBtn(context: Context?, attrs: AttributeSet?) : LinearLayout(contex
             btnRadioOptions.isVisible = expand
             btnRadio.setBackgroundResource(if (expand) R.drawable.button_radio_2 else R.drawable.button_radio_1)
         }
+
+    var loadingHandler = Handler() //todo
 
     fun initialize() {
         expanded = false

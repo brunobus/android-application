@@ -6,27 +6,86 @@ import io.realm.RealmList
  * Created by vpriscan on 19.10.17..
  */
 
-fun EvaDirectoryMetadataDTO.toDatabaseModel(): EvaDirectoryMetadata =
-        EvaDirectoryMetadata(directoryId, categoryId, title ?: "")
+fun EvaDirectoryMetadataDTO.toDbModel(mergeWith: EvaDirectory? = null): EvaDirectory {
+    val dto = this
 
-fun EvaContentMetadataDTO.toDatabaseModel(): EvaContentMetadata =
-        EvaContentMetadata(contentId, directoryId, categoryId,
-                attachmentsIndicator?.toDatabaseModel(),
-                datetime?.toLong() ?: 0, title ?: "", preview)
+    val evaDirectory = mergeWith ?: EvaDirectory().apply {
+        directoryId = dto.directoryId
+    }
 
-fun EvaAttachmentsIndicatorDTO.toDatabaseModel(): EvaAttachmentsIndicator =
-        EvaAttachmentsIndicator(hasVideo, hasDocuments, hasMusic, hasImages, hasText)
+    return evaDirectory.apply {
+        categoryId = dto.categoryId
+        title = dto.title ?: ""
+    }
+}
 
-fun EvaAttachmentDTO.toDatabaseModel(): EvaAttachment = EvaAttachment(naziv ?: "", url ?: "")
+fun EvaContentMetadataDTO.toDbModel(mergeWith: EvaContent? = null): EvaContent {
+    val dto = this
 
-fun EvaImageDTO.toDatabaseModel(): EvaImage? {
+    if (mergeWith != null
+            && dto.contentId != mergeWith.contentId) {
+        throw RuntimeException("Merging wrong EvaContent (expected contentId: ${this.contentId}, actual: ${mergeWith.contentId})")
+    }
+
+    val evaContent = mergeWith ?: EvaContent().apply {
+        contentId = dto.contentId
+    }
+
+
+    return evaContent.apply {
+        directoryId = dto.directoryId
+        categoryId = dto.categoryId
+
+        datetime?.toLong()?.let {
+            timestamp = it
+        }
+
+        preview = dto.preview
+        title = dto.title ?: ""
+        attachmentsIndicator = dto.attachmentsIndicator?.let { AttachmentIndicatorHelper.encode(it) } ?: 0
+    }
+}
+
+fun EvaAttachmentDTO.toDbModel(): EvaAttachment = EvaAttachment(name ?: "", url ?: "")
+
+fun EvaImageDTO.toDbModel(): EvaImage? {
     val imageURL = this.original ?: this.size720 ?: this.size640 ?: return null
     return EvaImage(imageURL, this.timestamp)
 }
 
-fun EvaContentDTO.toDatabaseModel(): EvaContent {
-    val attachmentsDb = attachments.map { it.toDatabaseModel() }.toTypedArray()
-    val image = images.firstOrNull()
-    return EvaContent(contentId, null, text ?: "",
-            null, RealmList(*attachmentsDb), image?.toDatabaseModel(), videoURL, audioURL)
+fun EvaContentDTO.toDbModel(mergeWith: EvaContent? = null): EvaContent {
+    val dto = this
+
+    val evaContent = mergeWith ?: EvaContent().apply {
+        contentId = dto.contentId
+    }
+
+    return evaContent.apply {
+        directoryId = dto.directoryId
+        categoryId = dto.categoryId
+        title = dto.title ?: ""
+        text = dto.text ?: ""
+
+        val attachmentsArray = dto.attachments
+                .map { it.toDbModel() }
+                .map { evaContent.realm?.copyToRealm(it) ?: it }
+                .toTypedArray()
+
+        attachments = RealmList(*attachmentsArray)
+
+        val oldImage = image
+        val candidateImage = dto.images.firstOrNull()
+        when {
+            candidateImage == null -> image = null
+            oldImage == null -> {
+                image = candidateImage.toDbModel()?.let { realm?.copyToRealm(it) ?: it }
+            }
+            oldImage.timestamp != candidateImage.timestamp -> {
+                image = candidateImage.toDbModel()?.let { realm?.copyToRealm(it) ?: it }
+            }
+        }
+
+        videoURL = dto.videoURL
+        audioURL = dto.audioURL
+    }
 }

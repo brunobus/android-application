@@ -26,6 +26,7 @@ import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.util.plusAssign
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 
 typealias MediaStyleCompat = android.support.v4.media.app.NotificationCompat.MediaStyle
@@ -50,7 +51,7 @@ class AudioPlayerService : Service() {
     override fun onCreate() {
         super.onCreate()
 
-        novaEvaBitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_launcher)
+        novaEvaBitmap = BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher_round)
 
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
@@ -60,33 +61,35 @@ class AudioPlayerService : Service() {
 
         mediaSessionConnector = MediaSessionConnector(mediaSession, EvaPlaybackController())
 
-        disposables += EventPipelines.playbackChanged.subscribe {
+        disposables += EventPipelines.playbackStartStopPause
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
 
-            val player = it.player
+                    val player = it.player
 
-            when (player.playbackState) {
-                Player.STATE_READY -> {
-                    if (player.playWhenReady || player.contentPosition > 0) {
+                    when (player.playbackState) {
+                        Player.STATE_READY -> {
+                            if (player.playWhenReady || player.contentPosition > 0) {
 
-                        val notification =
-                                buildNotification(mediaSession,
-                                        player.playWhenReady, it.playbackInfo?.title ?: "")
-                        val notificationId = 33313331
+                                val notification =
+                                        buildNotification(mediaSession,
+                                                player.playWhenReady, it.playbackInfo?.title ?: "")
+                                val notificationId = 33313331
 
-                        startForeground(notificationId, notification)
+                                startForeground(notificationId, notification)
 
-                        if (!player.playWhenReady) {
-                            stopForeground(false)
+                                if (!player.playWhenReady) {
+                                    stopForeground(false)
+                                }
+
+                                mediaSessionConnector.setPlayer(player, null)
+                            }
                         }
-
-                        mediaSessionConnector.setPlayer(player, null)
+                        Player.STATE_IDLE, Player.STATE_ENDED -> {
+                            stopForeground(true)
+                        }
                     }
                 }
-                Player.STATE_IDLE, Player.STATE_ENDED -> {
-                    stopForeground(true)
-                }
-            }
-        }
     }
 
     @SuppressLint("NewApi")

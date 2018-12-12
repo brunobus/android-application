@@ -1,8 +1,8 @@
 package hr.bpervan.novaeva.activities
 
+import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
 import android.support.v4.app.FragmentTransaction
@@ -18,11 +18,12 @@ import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.fragments.*
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.EvaCategory
-import hr.bpervan.novaeva.model.EvaContentMetadata
+import hr.bpervan.novaeva.model.EvaCategoryLegacy
+import hr.bpervan.novaeva.model.EvaContent
 import hr.bpervan.novaeva.model.OpenContentEvent
+import hr.bpervan.novaeva.model.OpenQuotesEvent
 import hr.bpervan.novaeva.player.getStreamLinksFromPlaylistUri
-import hr.bpervan.novaeva.player.prepareAudioStream
+import hr.bpervan.novaeva.rest.EvaCategory
 import hr.bpervan.novaeva.rest.novaEvaServiceV2
 import hr.bpervan.novaeva.util.*
 import hr.bpervan.novaeva.util.TransitionAnimation.*
@@ -31,7 +32,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_eva_main.*
-import kotlinx.android.synthetic.main.fragment_search.*
 import java.util.concurrent.TimeUnit
 
 /**
@@ -60,12 +60,19 @@ class EvaActivity : EvaBaseActivity() {
         if (savedInstanceState == null) {
             openDashboardFragment()
 
-            //todo find which category requested content belongs to
-//            val contentId = intent.data?.lastPathSegment?.toLongOrNull() ?: -1L
-//            if (contentId != -1L) {
-//                openContentFragment(OpenContentEvent(EvaCategory.GOSPEL,
-//                        EvaContentMetadata(contentId, 0, -1)))
-//            }
+            intent.data?.let { uriData ->
+                val contentId = uriData.lastPathSegment?.toLongOrNull() ?: -1L
+
+                if (contentId != -1L) {
+                    if (uriData.fragment == "quote") {
+                        openQuotesFragment(OpenQuotesEvent(contentId))
+                    } else {
+                        openContentFragment(OpenContentEvent(
+                                category = EvaCategory.SERMONS, /*todo 13.12.*/
+                                content = EvaContent(contentId, 0, -1)))
+                    }
+                }
+            }
         }
 
         updateDisplayMetrics()
@@ -83,20 +90,44 @@ class EvaActivity : EvaBaseActivity() {
         windowManager.defaultDisplay.getMetrics(displayMetrics)
     }
 
-    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
-        return if (gestureDetector.onTouchEvent(ev)) true
-        else super.dispatchTouchEvent(ev)
+    private val drawerCloseWait = 200L
+    var lastDownPress: Long = 0
+
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        if (gestureDetector.onTouchEvent(ev)) return true
+
+        if (evaRoot.isDrawerOpen(GravityCompat.END)) {
+
+            val viewRect = Rect()
+            evaOptionsFragmentFrame.getGlobalVisibleRect(viewRect)
+            if (!viewRect.contains(ev.rawX.toInt(), ev.rawY.toInt())) {
+
+                when (ev.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        lastDownPress = System.currentTimeMillis()
+                    }
+                    MotionEvent.ACTION_UP -> {
+                        if (System.currentTimeMillis() - lastDownPress <= drawerCloseWait) {
+                            evaRoot.closeDrawer(GravityCompat.END)
+                        }
+                        return true
+                    }
+                }
+            }
+        }
+
+        return super.dispatchTouchEvent(ev)
     }
 
     inner class SwipeLeftToRightGestureListener(displayMetrics: DisplayMetrics) : SwipeGestureListener(displayMetrics) {
         override fun onSwipeRight(): Boolean {
-            return if (supportFragmentManager.backStackEntryCount > 0
-                    && !evaRoot.isDrawerOpen(GravityCompat.END)) {
-                onBackPressed()
-                true
-            } else {
-                /*drawer already listens for swipe right gesture, don't consume the event here*/
-                false
+            return when {
+                evaRoot.isDrawerOpen(GravityCompat.END) -> false /*drawer already listens for swipe right gesture, don't consume the event here*/
+                supportFragmentManager.backStackEntryCount > 1 -> {
+                    onBackPressed()
+                    true
+                }
+                else -> false
             }
         }
     }
@@ -120,9 +151,7 @@ class EvaActivity : EvaBaseActivity() {
             addToBackStack(mainContainerId, EvaDirectoryFragment, it, it.animation, false)
         }
 
-        disposables += bus.openQuotes.subscribeThrottled {
-            addToBackStack(mainContainerId, EvaQuotesFragment, it.quoteId, it.animation, true)
-        }
+        disposables += bus.openQuotes.subscribeThrottled(this::openQuotesFragment)
 
         disposables += bus.openBreviaryChooser.subscribeThrottled {
             addToBackStack(mainContainerId, BreviaryChooserFragment, it, true)
@@ -136,8 +165,12 @@ class EvaActivity : EvaBaseActivity() {
             addToBackStack(mainContainerId, EvaInfoFragment, it, true)
         }
 
-        disposables += bus.openOptionsDrawer.subscribeThrottled {
-            evaRoot.openDrawer(GravityCompat.END)
+        disposables += bus.toggleOptionsDrawer.subscribeThrottled {
+            if (evaRoot.isDrawerOpen(GravityCompat.END)) {
+                evaRoot.closeDrawer(GravityCompat.END)
+            } else {
+                evaRoot.openDrawer(GravityCompat.END)
+            }
         }
 
         disposables += bus.openPrayerBook.subscribeThrottled {
@@ -184,7 +217,11 @@ class EvaActivity : EvaBaseActivity() {
                 .throttleWithTimeout(10, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext {
-                    NovaEvaApp.evaPlayer.stop() //roaming safeguard
+                    if (!NovaEvaApp.evaPlayer.isStopped()) {
+                        Log.w("networkChange", "Network change detected - stopping audio player")
+                        NovaEvaApp.evaPlayer.stop() //roaming safeguard
+                        evaRoot?.snackbar(R.string.network_changed_player_stopped)
+                    }
                 }
                 .subscribe {
                     fetchBreviaryCoverUrl()
@@ -203,7 +240,7 @@ class EvaActivity : EvaBaseActivity() {
     }
 
     private fun playFirstRadioStation() {
-        novaEvaService.getDirectoryContent(EvaCategory.RADIO.id, null, items = 1)
+        disposables += novaEvaServiceV2.getDirectoryContent(EvaCategoryLegacy.RADIO.id, null, items = 1)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .map { it.contentMetadataList.first() }
@@ -212,19 +249,21 @@ class EvaActivity : EvaBaseActivity() {
                 }
                 .observeOn(Schedulers.io())
                 .flatMap {
-                    novaEvaService.getContentData(it.contentId)
+                    novaEvaServiceV2.getContentData(it.contentId)
                             .subscribeOn(Schedulers.io())
                 }
                 .flatMap { radioStation ->
                     getStreamLinksFromPlaylistUri(radioStation.audioURL!!)
-                            .map { Pair(it, radioStation) }
+                            .map { Pair(radioStation, it) }
                 }
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ stationStreams ->
-                    val streamUris = stationStreams.first
-                    val radioStation = stationStreams.second
+                    val radioStation = stationStreams.first
+                    val streamUris = stationStreams.second
                     for (streamUri in streamUris.shuffled()) {
                         try {
-                            prepareAudioStream(streamUri, radioStation.contentId.toString(),
+                            NovaEvaApp.evaPlayer.prepareAudioStream(
+                                    streamUri, radioStation.contentId.toString(),
                                     radioStation.title ?: "nepoznato",
                                     isRadio = true, doAutoPlay = true)
                             break
@@ -233,7 +272,7 @@ class EvaActivity : EvaBaseActivity() {
                         }
                     }
                 }) {
-                    radioBtn?.snackbar(R.string.error_fetching_data, Snackbar.LENGTH_LONG)
+                    evaRoot?.dataErrorSnackbar()
                 }
     }
 
@@ -245,10 +284,14 @@ class EvaActivity : EvaBaseActivity() {
         addToBackStack(mainContainerId, EvaContentFragment, request, request.animation, false)
     }
 
+    private fun openQuotesFragment(request: OpenQuotesEvent) {
+        addToBackStack(mainContainerId, EvaQuotesFragment, request.quoteId, request.animation, true)
+    }
+
     private fun fetchBreviaryCoverUrl() {
-        novaEvaServiceV2.getDirectoryContent(546, null)
+        disposables += novaEvaServiceV2.getDirectoryContent(546, null)
                 .networkRequest({ directoryContent ->
-                    val image = directoryContent.image?.size640 ?: directoryContent.image?.size640
+                    val image = directoryContent.image?.size640
                     if (image != null) {
                         NovaEvaApp.prefs.edit {
                             putString("hr.bpervan.novaeva.brevijarheaderimage", image)

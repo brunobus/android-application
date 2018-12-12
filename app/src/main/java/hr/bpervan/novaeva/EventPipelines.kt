@@ -20,7 +20,7 @@ object EventPipelines {
     val openBreviaryChooser = PublishSubject.create<TransitionAnimation>()
     val openBreviaryContent = PublishSubject.create<OpenBreviaryContentEvent>()
     val openInfo = PublishSubject.create<TransitionAnimation>()
-    val openOptionsDrawer = PublishSubject.create<Unit>()
+    val toggleOptionsDrawer = PublishSubject.create<Unit>()
     val openPrayerBook = PublishSubject.create<TransitionAnimation>()
     val openPrayerCategory = PublishSubject.create<OpenPrayerCategoryEvent>()
     val openRadio = PublishSubject.create<Unit>()
@@ -40,12 +40,12 @@ object EventPipelines {
 
     //action
     val search = PublishSubject.create<String>()
-    val chooseRadioStation = PublishSubject.create<EvaContentMetadata>()
+    val chooseRadioStation = PublishSubject.create<EvaContent>()
     val playAnyRadioStation = PublishSubject.create<Unit>()
     val resizeText = PublishSubject.create<Unit>()
 
     //event
-    val playbackChanged = BehaviorSubject.create<EvaPlayer.PlaybackChange>()
+    val playbackStartStopPause = BehaviorSubject.create<EvaPlayer.PlaybackChange>()
 
     //network
     val connectedToNetwork = PublishSubject.create<Unit>()

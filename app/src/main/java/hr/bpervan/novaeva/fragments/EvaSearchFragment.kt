@@ -19,9 +19,9 @@ import hr.bpervan.novaeva.util.showFetchErrorDialog
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.rest.EvaCategory
-import hr.bpervan.novaeva.model.EvaContentMetadata
-import hr.bpervan.novaeva.model.toDatabaseModel
 import hr.bpervan.novaeva.rest.novaEvaServiceV2
+import hr.bpervan.novaeva.model.EvaContent
+import hr.bpervan.novaeva.model.toDbModel
 import hr.bpervan.novaeva.util.networkRequest
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.fragment_search.*
@@ -49,7 +49,7 @@ class EvaSearchFragment : EvaBaseFragment() {
             field = safeReplaceDisposable(field, value)
         }
 
-    private val searchResultList = ArrayList<EvaContentMetadata>()
+    private val searchResultList = ArrayList<EvaContent>()
 
     private lateinit var adapter: EvaRecyclerAdapter
     private lateinit var searchString: String
@@ -125,7 +125,7 @@ class EvaSearchFragment : EvaBaseFragment() {
                 .networkRequest({ searchResult ->
                     if (!searchResult.searchResultContentMetadataList.isEmpty()) {
                         searchResultList.addAll(
-                                searchResult.searchResultContentMetadataList.map { it.toDatabaseModel() })
+                                searchResult.searchResultContentMetadataList.map { it.toDbModel() })
 
                         adapter.notifyDataSetChanged()
                     } else {

@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="novaEva">#30A6CC</color>
-    <color name="novaEvaDark">#0487B9</color>
-
+    <color name="novaEva">#033D75</color>
+    <color name="novaEvaDark">#022C5A</color>
     <color name="evaViolet">#1E2D57</color>
     <color name="evaMint">#00B5C0</color>
     <color name="evaLime">#85B841</color>
@@ -18,6 +17,9 @@
 
     <color name="Transparent">#00000000</color>
     <color name="TranslucentGray">#7c2e2e2e</color>
+
+    <!--680000-->
+    <color name="prayerbookColor">#252525</color>
 
     <color name="White">#ffffff</color>
     <color name="Ivory">#FFFFF0</color>

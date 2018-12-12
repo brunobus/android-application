@@ -30,7 +30,7 @@
             android:lines="1"
             android:maxLines="1"
             android:text="@string/title_default"
-            android:textColor="#252525"
+            android:textColor="@color/prayerbookColor"
             android:textSize="24sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

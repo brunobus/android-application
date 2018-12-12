@@ -9,9 +9,12 @@ import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.*
+import hr.bpervan.novaeva.model.EvaDirectory
+import hr.bpervan.novaeva.model.OpenDirectoryEvent
+import hr.bpervan.novaeva.model.OpenQuotesEvent
 import hr.bpervan.novaeva.rest.EvaCategory
-import hr.bpervan.novaeva.util.*
+import hr.bpervan.novaeva.util.TransitionAnimation
+import hr.bpervan.novaeva.util.plusAssign
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 
 /**
@@ -47,7 +50,7 @@ class EvaDashboardFragment : EvaBaseFragment() {
         EventPipelines.changeStatusbarColor.onNext(R.color.Transparent)
         EventPipelines.changeFragmentBackgroundResource.onNext(R.color.Transparent)
 
-        baseDisposables += EventPipelines.dashboardBackground.subscribe {
+        disposables += EventPipelines.dashboardBackground.subscribe {
             EventPipelines.changeWindowBackgroundDrawable.onNext(it)
         }
 
@@ -66,49 +69,49 @@ class EvaDashboardFragment : EvaBaseFragment() {
         btnPjesmarica.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
                     EvaCategory.SONGBOOK,
-                    EvaDirectoryMetadata(1, getString(R.string.songbook)),
+                    EvaDirectory(title = getString(R.string.songbook)),
                     R.style.PjesmaricaTheme))
         }
         btnAktualno.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
                     EvaCategory.TRENDING,
-                    EvaDirectoryMetadata(1, getString(R.string.trending)),
+                    EvaDirectory(title = getString(R.string.trending)),
                     R.style.AktualnoTheme))
         }
         btnPoziv.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
                     EvaCategory.VOCATION,
-                    EvaDirectoryMetadata(1, getString(R.string.vocation)),
+                    EvaDirectory(title = getString(R.string.vocation)),
                     R.style.PozivTheme))
         }
         btnOdgovori.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
                     EvaCategory.ANSWERS,
-                    EvaDirectoryMetadata(1, getString(R.string.answers)),
+                    EvaDirectory(title = getString(R.string.answers)),
                     R.style.OdgovoriTheme))
         }
         btnMultimedia.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
                     EvaCategory.MULTIMEDIA,
-                    EvaDirectoryMetadata(1, getString(R.string.multimedia)),
+                    EvaDirectory(title = getString(R.string.multimedia)),
                     R.style.MultimedijaTheme))
         }
         btnPropovijedi.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
                     EvaCategory.SERMONS,
-                    EvaDirectoryMetadata(1, getString(R.string.sermons)),
+                    EvaDirectory(title = getString(R.string.sermons)),
                     R.style.PropovjediTheme))
         }
         btnDuhovnost.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
                     EvaCategory.SPIRITUALITY,
-                    EvaDirectoryMetadata(1, getString(R.string.spirituality)),
+                    EvaDirectory(title = getString(R.string.spirituality)),
                     R.style.DuhovnostTheme))
         }
         btnCalendar.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
                     EvaCategory.GOSPEL,
-                    EvaDirectoryMetadata(1, getString(R.string.gospel)),
+                    EvaDirectory(title = getString(R.string.gospel)),
                     R.style.EvandjeljeTheme))
         }
 

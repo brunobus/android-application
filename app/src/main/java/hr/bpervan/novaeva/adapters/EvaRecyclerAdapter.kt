@@ -25,7 +25,7 @@ import java.util.*
  * Created by vpriscan on 08.10.17..
  */
 class EvaRecyclerAdapter(val category: EvaCategory,
-                         private val data: List<TreeElementInfo>,
+                         private val data: List<EvaNode>,
                          val isLoadingSupplier: () -> Boolean = { false },
                          val themeId: Int = -1) :
         RecyclerView.Adapter<EvaRecyclerAdapter.BindableViewHolder>() {
@@ -54,7 +54,7 @@ class EvaRecyclerAdapter(val category: EvaCategory,
     override fun getItemViewType(position: Int): Int {
         return when {
             position == data.size -> PROGRESS_VIEW_TYPE
-            data[position] is EvaContentMetadata -> CONTENT_VIEW_TYPE
+            data[position] is EvaContent -> CONTENT_VIEW_TYPE
             else -> SUBDIRECTORY_VIEW_TYPE
         }
     }
@@ -101,7 +101,7 @@ class EvaRecyclerAdapter(val category: EvaCategory,
         }
 
         override fun bindTo(t: Any) {
-            val directoryInfo = t as EvaDirectoryMetadata
+            val directoryInfo = t as EvaDirectory
 
             tvMapaNaslov.text = directoryInfo.title
 
@@ -145,7 +145,7 @@ class EvaRecyclerAdapter(val category: EvaCategory,
         }
 
         override fun bindTo(t: Any) {
-            val contentInfo = t as EvaContentMetadata
+            val contentInfo = t as EvaContent
 
             tvNaslov.text = contentInfo.title
 
@@ -156,9 +156,9 @@ class EvaRecyclerAdapter(val category: EvaCategory,
             val yearHourMinute: String = yearHourMinuteFormat.format(datetime)
 
             contentInfo.attachmentsIndicator.let {
-                imgHasTxt.isVisible = it?.hasDocuments ?: false
-                imgHasLink.isVisible = it?.hasVideo ?: false
-                imgHasAudio.isVisible = it?.hasMusic ?: false
+                imgHasTxt.isVisible = AttachmentIndicatorHelper.hasDocs(it)
+                imgHasLink.isVisible = AttachmentIndicatorHelper.hasVideo(it)
+                imgHasAudio.isVisible = AttachmentIndicatorHelper.hasMusic(it)
             }
 
             tvGodinaSatMinuta.text = yearHourMinute

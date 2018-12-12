@@ -8,12 +8,12 @@ import hr.bpervan.novaeva.util.TransitionAnimation
  */
 
 data class OpenContentEvent(val category: EvaCategory,
-                            val contentMetadata: EvaContentMetadata,
+                            val content: EvaContent,
                             val themeId: Int = -1,
                             val animation: TransitionAnimation = TransitionAnimation.FADE)
 
 data class OpenDirectoryEvent(val category: EvaCategory,
-                              val directoryMetadata: EvaDirectoryMetadata,
+                              val directory: EvaDirectory,
                               val themeId: Int = -1,
                               val animation: TransitionAnimation = TransitionAnimation.FADE)
 

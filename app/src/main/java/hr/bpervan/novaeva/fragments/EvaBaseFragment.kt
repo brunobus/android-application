@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.View
+import com.google.android.exoplayer2.Player
 import com.nostra13.universalimageloader.core.ImageLoader
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
@@ -23,7 +24,7 @@ abstract class EvaBaseFragment : Fragment() {
     /**
      * Fragment's lifecycle bound disposables
      */
-    protected val baseDisposables = CompositeDisposable()
+    protected val disposables = CompositeDisposable()
 
     protected val prefs: SharedPreferences
         get() = NovaEvaApp.prefs
@@ -43,44 +44,46 @@ abstract class EvaBaseFragment : Fragment() {
 
         val evaRadioBtn = (radioBtn as? EvaRadioBtn)
 
-        baseDisposables += EventPipelines.changeFragmentBackgroundResource
+        disposables += EventPipelines.changeFragmentBackgroundResource
                 .distinctUntilChanged()
                 .subscribe {
                     view.setBackgroundResource(it)
                 }
 
         if (evaRadioBtn != null) {
-            baseDisposables += EventPipelines.playbackChanged
+            disposables += EventPipelines.playbackStartStopPause
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe {
                         evaRadioBtn.expanded = it.playbackInfo?.isRadio == true
+                                && it.player.playWhenReady
+                                && it.player.playbackState == Player.STATE_READY
                     }
         }
 
         optionsBtn?.setOnClickListener {
-            EventPipelines.openOptionsDrawer.onNext(Unit)
+            EventPipelines.toggleOptionsDrawer.onNext(Unit)
         }
 
         evaRadioBtn?.initialize()
     }
 
     override fun onDestroyView() {
-        baseDisposables.clear()
+        disposables.clear()
         super.onDestroyView()
     }
 
     override fun onDestroy() {
-        baseDisposables.dispose()
+        disposables.dispose()
         super.onDestroy()
     }
 
     protected fun safeReplaceDisposable(oldDisposable: Disposable?, newDisposable: Disposable?): Disposable? {
         if (oldDisposable != null) {
-            baseDisposables -= oldDisposable
-            oldDisposable.dispose() //do not rely on baseDisposables.remove()
+            disposables -= oldDisposable
+            oldDisposable.dispose() //do not rely on disposables.remove(oldDisposable)
         }
         if (newDisposable != null && !newDisposable.isDisposed) {
-            baseDisposables += newDisposable
+            disposables += newDisposable
         }
         return newDisposable
     }

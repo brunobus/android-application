@@ -3,7 +3,6 @@ package hr.bpervan.novaeva.fragments
 import android.content.res.Configuration
 import android.os.Bundle
 import android.os.Handler
-import android.support.design.widget.Snackbar
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -21,18 +20,14 @@ import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.*
+import hr.bpervan.novaeva.model.EvaNode
+import hr.bpervan.novaeva.model.OpenDirectoryEvent
 import hr.bpervan.novaeva.rest.EvaCategory
 import hr.bpervan.novaeva.rest.novaEvaServiceV3
 import hr.bpervan.novaeva.rest.region
-import hr.bpervan.novaeva.model.EvaCategory
-import hr.bpervan.novaeva.model.OpenDirectoryEvent
-import hr.bpervan.novaeva.model.TIMESTAMP_FIELD
-import hr.bpervan.novaeva.model.TreeElementInfo
 import hr.bpervan.novaeva.storage.EvaDirectoryDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
 import hr.bpervan.novaeva.util.*
-import hr.bpervan.novaeva.views.snackbar
 import io.reactivex.disposables.Disposable
 import io.realm.Realm
 import kotlinx.android.synthetic.main.collapsing_directory_header.view.*
@@ -56,9 +51,9 @@ class EvaDirectoryFragment : EvaBaseFragment() {
             return EvaDirectoryFragment().apply {
                 arguments = bundleOf(
                         CATEGORY_KEY to initializer.category,
-                        directoryIdKey to initializer.directoryMetadata.directoryId,
-                        categoryIdKey to initializer.directoryMetadata.categoryId,
-                        directoryTitleKey to initializer.directoryMetadata.title,
+                        directoryIdKey to initializer.directory.directoryId,
+                        categoryIdKey to initializer.directory.categoryId,
+                        directoryTitleKey to initializer.directory.title,
                         themeIdKey to initializer.themeId
                 )
             }
@@ -84,7 +79,7 @@ class EvaDirectoryFragment : EvaBaseFragment() {
 
     private lateinit var adapter: EvaRecyclerAdapter
 
-    private val elementsList: MutableList<TreeElementInfo> = mutableListOf()
+    private val elementsList: MutableList<EvaNode> = mutableListOf()
     private var hasMore = true
     private var fetchingFromServer = true
     private var loadingFromDb = true
@@ -149,9 +144,9 @@ class EvaDirectoryFragment : EvaBaseFragment() {
 
             elementsList.clear()
 
-            val contentSorted = evaDirectory.contentMetadataList.sortedByDescending { it.timestamp }
+            val contentSorted = evaDirectory.contentsList.sortedByDescending { it.timestamp }
 
-            val subdirectoriesSorted = evaDirectory.subDirectoryMetadataList//.sortedByDescending { todo ON SERVER }
+            val subdirectoriesSorted = evaDirectory.subDirectoriesList//.sortedByDescending { todo ON SERVER }
 
             if (contentSorted.size > 10) {
                 elementsList.addAll(contentSorted.take(10))
@@ -160,6 +155,12 @@ class EvaDirectoryFragment : EvaBaseFragment() {
             } else {
                 elementsList.addAll(contentSorted)
                 elementsList.addAll(subdirectoriesSorted)
+            }
+
+            evaDirectory.image?.let { image ->
+                prefs.edit {
+                    putString("hr.bpervan.novaeva.categoryheader.$category", image.url)
+                }
             }
 
             loadingFromDb = false
@@ -191,8 +192,6 @@ class EvaDirectoryFragment : EvaBaseFragment() {
         EventPipelines.changeStatusbarColor.onNext(R.color.VeryDarkGray)
         EventPipelines.changeFragmentBackgroundResource.onNext(R.color.White)
 
-        val ctx = context!!
-
         evaDirectoryCollapsingBar.izbornikTop.izbornikTopNazivKategorije.apply {
             text = directoryTitle
             typeface = NovaEvaApp.openSansBold
@@ -206,21 +205,26 @@ class EvaDirectoryFragment : EvaBaseFragment() {
         recyclerView.adapter = adapter
         recyclerView.addOnScrollListener(EndlessScrollListener(linearLayoutManager))
 
-        when (categoryId) {
-            EvaCategory.VOCATION.id -> {
+        when (category) {
+            EvaCategory.VOCATION -> {
                 btnPoziv.isVisible = true
                 btnPoziv.setOnClickListener {
-                    val text = "Hvaljen Isus i Marija, javljam Vam se jer razmišljam o duhovnom pozivu."
-                    sendEmailIntent(ctx, "Duhovni poziv", text, arrayOf("duhovnipoziv@gmail.com"))
+                    sendEmailIntent(context,
+                            subject = getString(R.string.thinking_of_vocation),
+                            text = "Hvaljen Isus i Marija, javljam vam se jer razmišljam o duhovnom pozivu.",
+                            receiver = getString(R.string.vocation_email))
                 }
             }
-            EvaCategory.ANSWERS.id -> {
+            EvaCategory.ANSWERS -> {
                 btnPitanje.isVisible = true
                 btnPitanje.setOnClickListener {
-                    val text = "Hvaljen Isus!"
-                    sendEmailIntent(ctx, "Imam pitanje", text, arrayOf("novaevangelizacija@gmail.com"))
+                    sendEmailIntent(context,
+                            subject = getString(R.string.having_a_question),
+                            text = getString(R.string.praise_the_lord),
+                            receiver = getString(R.string.answers_email))
                 }
             }
+            else -> {/*nothing*/}
         }
     }
 
@@ -284,7 +288,7 @@ class EvaDirectoryFragment : EvaBaseFragment() {
 
                     categoryDto.id = directoryId // cache mock data hack
 
-                    EvaCache.cache(realm, categoryDto)
+                    EvaDirectoryDbAdapter.addOrUpdateEvaCategoryAsync(realm, categoryDto)
 
                     handler.postDelayed(4000) {
                         /*if there are no actual new changes from server, data in cache will not be "updated"
@@ -304,7 +308,7 @@ class EvaDirectoryFragment : EvaBaseFragment() {
                         fetchingFromServer = false
                         refreshLoadingCircleState()
 
-                        view?.snackbar(R.string.error_fetching_data, Snackbar.LENGTH_LONG)
+                        view?.dataErrorSnackbar()
                     }
                 })
     }

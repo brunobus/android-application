@@ -3,7 +3,7 @@
     <string name="app_name">Nova Eva</string>
     <string name="prayerbook">Molitvenik</string>
     <string name="breviary">Brevijar</string>
-    <string name="gospel">Evandjelje</string>
+    <string name="gospel">Liturgijska čitanja dana</string>
     <string name="quotes">Izreke</string>
     <string name="sermons">Propovijedi</string>
     <string name="multimedia">Multimedija</string>
@@ -17,16 +17,22 @@
     <string name="to_search">Pretraži</string>
     <string name="title_share_mail">E-pošta</string>
     <string name="title_share">Dijeli</string>
-    <string name="recommendation">Preporučam</string>
+    <string name="recommendation">Aplikacija Nova Eva je hit! Preporučam:</string>
+    <string name="install_instruction">Instaliraj aplikaciju Nova Eva:</string>
+    <string name="app_links">\n\nAndroid: https://play.google.com/store/apps/details?id=hr.bpervan.novaeva.main\n\niOS: https://itunes.apple.com/us/app/nova-eva/id599928807</string>
     <string name="not_supported">Još nije podržano</string>
+    <string name="praise_the_lord">Hvaljen Isus Krist, Sin Božji!</string>
     <string name="thinking_of_vocation">Razmišljam o pozivu</string>
+    <string name="vocation_email">duhovnipoziv@gmail.com</string>
     <string name="having_a_question">Imam pitanje</string>
+    <string name="answers_email">odgovori.novaeva@gmail.com</string>
     <string name="action_settings">Postavke</string>
     <string name="laudato_copyright">Ovaj časoslov se preuzima sa www.laudato.hr</string>
     <string name="ks_copyright">Prijevodi: Copyright KS www.ks.hr</string>
     <string name="introduction_identifier">Uvod:</string>
-    <string name="error_fetching_data">Nije moguće dohvatiti najnovije podatke</string>
+    <string name="error_fetching_data">Dohvaćanje podataka nije uspjelo</string>
     <string name="network_unavailable">Internetska veza nije dostupna</string>
+    <string name="network_changed_player_stopped">Detektirana je promjena mreže - reprodukcija zvuka zaustavljena</string>
     <string name="try_again">Pokušaj ponovno</string>
     <string name="go_back">Povratak</string>
     <string name="error">Greška</string>
@@ -39,7 +45,7 @@
     <string name="help">Pomoć</string>
     <string name="text_plus_minus">Tekst +/-</string>
     <string name="theme">Izgled</string>
-    <string name="share">Dijeli</string>
+    <string name="share">Podijeli</string>
     <string name="bookmarks">Oznake</string>
     <string name="bookmark">Označi</string>
     <string name="unbookmark">Odznači</string>
@@ -47,5 +53,7 @@
     <string name="unbookmarked">Oznaka uklonjena</string>
     <string name="home">Početna</string>
     <string name="church">Crkva</string>
+    <string name="send_email_failed">Slanje e-pošte nije uspjelo</string>
+    <string name="share_failed">Dijeljenje nije uspjelo</string>
 
 </resources>

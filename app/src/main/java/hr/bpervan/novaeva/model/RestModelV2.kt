@@ -5,21 +5,21 @@ import com.google.gson.annotations.SerializedName
 class EvaDirectoryDTO {
     var directoryId: Long = 0
     var categoryId: Long = -1
+    var title: String? = null
+    var image: EvaImageDTO? = null
 
-    val image: EvaImageDTO? = null
-
-    val paket: Int = 0
+    var paket: Int = 0
 
     @SerializedName("jos")
-    val more: Int = 0
+    var more: Int = 0
 
     @SerializedName("subcat")
-    private val _subDirectoryMetadataList: List<EvaDirectoryMetadataDTO>? = null
+    var _subDirectoryMetadataList: List<EvaDirectoryMetadataDTO>? = null
     val subDirectoryMetadataList: List<EvaDirectoryMetadataDTO>
         get() = _subDirectoryMetadataList ?: emptyList()
 
     @SerializedName("vijesti")
-    private val _contentMetadataList: List<EvaContentMetadataDTO>? = null
+    var _contentMetadataList: List<EvaContentMetadataDTO>? = null
     val contentMetadataList: List<EvaContentMetadataDTO>
         get() = _contentMetadataList ?: emptyList()
 }
@@ -65,15 +65,15 @@ class EvaContentMetadataDTO {
 
 class EvaAttachmentsIndicatorDTO {
     @SerializedName("video")
-    val hasVideo: Boolean = false
+    var hasVideo: Boolean = false
     @SerializedName("documents")
-    val hasDocuments: Boolean = false
+    var hasDocuments: Boolean = false
     @SerializedName("music")
-    val hasMusic: Boolean = false
+    var hasMusic: Boolean = false
     @SerializedName("images")
-    val hasImages: Boolean = false
+    var hasImages: Boolean = false
     @SerializedName("text")
-    val hasText: Boolean = false
+    var hasText: Boolean = false
 }
 
 class EvaContentDTO {
@@ -108,7 +108,8 @@ class EvaContentDTO {
 }
 
 class EvaAttachmentDTO {
-    val naziv: String? = null
+    @SerializedName("naziv")
+    val name: String? = null
     val url: String? = null
 }
 

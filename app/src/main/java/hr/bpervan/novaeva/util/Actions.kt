@@ -4,9 +4,11 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.util.Log
 import android.util.TypedValue
 import android.widget.TextView
+import androidx.core.widget.toast
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
@@ -15,23 +17,34 @@ import hr.bpervan.novaeva.main.R
  * Created by vpriscan on 04.12.17..
  */
 
-fun sendEmailIntent(context: Context?, subject: String, text: String, receivers: Array<String> = arrayOf()) {
+fun sendEmailIntent(context: Context?, subject: String, text: String, receiver: String) {
     context ?: return
-    val mailIntent = Intent(Intent.ACTION_SEND)
-    mailIntent.type = "message/rfc822"
-    mailIntent.putExtra(Intent.EXTRA_SUBJECT, subject)
-    mailIntent.putExtra(Intent.EXTRA_TEXT, text)
-    if (receivers.isNotEmpty()) {
-        mailIntent.putExtra(Intent.EXTRA_EMAIL, receivers)
+
+    try {
+        val uriText = "mailto:$receiver" +
+                "?subject=" + Uri.encode(subject) +
+                "&body=" + Uri.encode("$text\n")
+
+        val mailIntent = Intent(Intent.ACTION_SENDTO, Uri.parse(uriText))
+        context.startActivity(Intent.createChooser(mailIntent, context.getString(R.string.title_share_mail)))
+
+    } catch (e: Exception) {
+        context.toast(context.getString(R.string.send_email_failed)).show()
     }
-    context.startActivity(Intent.createChooser(mailIntent, context.getString(R.string.title_share_mail)))
 }
 
 fun shareIntent(context: Context?, text: String) {
-    val shareIntent = Intent(Intent.ACTION_SEND)
-    shareIntent.type = "text/plain"
-    shareIntent.putExtra(Intent.EXTRA_TEXT, text)
-    context?.startActivity(Intent.createChooser(shareIntent, context.getString(R.string.title_share)))
+    context ?: return
+
+    try {
+        val shareIntent = Intent(Intent.ACTION_SEND)
+        shareIntent.type = "text/plain"
+        shareIntent.putExtra(Intent.EXTRA_TEXT, text)
+        context.startActivity(Intent.createChooser(shareIntent, context.getString(R.string.title_share)))
+
+    } catch (e: Exception) {
+        context.toast(context.getString(R.string.share_failed)).show()
+    }
 }
 
 inline fun showFetchErrorDialog(throwable: Throwable?, context: Activity, crossinline onTryAgain: () -> Unit) {
