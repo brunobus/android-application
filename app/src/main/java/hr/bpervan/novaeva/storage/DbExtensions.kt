@@ -4,6 +4,7 @@ import hr.bpervan.novaeva.util.logError
 import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
+import io.realm.RealmList
 import io.realm.RealmObject
 import io.realm.RealmQuery
 
@@ -12,7 +13,7 @@ import io.realm.RealmQuery
  */
 
 fun <T : RealmObject> RealmQuery<T>.loadManyAsync(predicate: (T) -> Boolean,
-                                                  subscriber: (T) -> Unit): Disposable? {
+                                                  subscriber: (T) -> Unit): Disposable {
     return findAllAsync()
             .asFlowable()
             .onBackpressureBuffer()
@@ -24,7 +25,7 @@ fun <T : RealmObject> RealmQuery<T>.loadManyAsync(predicate: (T) -> Boolean,
 }
 
 fun <T : RealmObject> RealmQuery<T>.loadOneAsync(field: String, value: Long,
-                                                 consumer: (T?) -> Unit): Disposable? {
+                                                 consumer: (T?) -> Unit): Disposable {
     return equalTo(field, value)
             .findFirstAsync()
             .asFlowable<T>()
@@ -44,4 +45,8 @@ fun <T : RealmObject> RealmQuery<T>.subscribeToUpdatesAsync(field: String, value
             .filter { it.isLoaded && it.isValid }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(consumer, ::logError)
+}
+
+fun <T> Array<T>.toRealmList(): RealmList<T> {
+    return RealmList(*this)
 }

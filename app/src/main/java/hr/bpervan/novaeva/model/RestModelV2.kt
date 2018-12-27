@@ -1,10 +1,11 @@
 package hr.bpervan.novaeva.model
 
 import com.google.gson.annotations.SerializedName
+import hr.bpervan.novaeva.rest.EvaDomain
 
 class EvaDirectoryDTO {
     var directoryId: Long = 0
-    var categoryId: Long = -1
+    var domain: EvaDomain? = null
     var title: String? = null
     var image: EvaImageDTO? = null
 
@@ -27,7 +28,7 @@ class EvaDirectoryDTO {
 class EvaDirectoryMetadataDTO {
     @SerializedName("cid")
     val directoryId: Long = 0
-    var categoryId: Long = 0
+    var domain: EvaDomain? = null
     @SerializedName("name")
     val title: String? = null
 }
@@ -37,7 +38,7 @@ class EvaContentMetadataDTO {
     @SerializedName("nid")
     val contentId: Long = -1
     var directoryId: Long = 0
-    var categoryId: Long = -1
+    var domain: EvaDomain? = null
     @SerializedName("attach")
     val attachmentsIndicator: EvaAttachmentsIndicatorDTO? = null
     @SerializedName("datum")
@@ -139,21 +140,21 @@ class EvaSearchResultDTO {
 
 class EvaIndicatorsDTO {
     @SerializedName("354")
-    val spirituality: Int? = null
+    val spirituality: Long? = null
     @SerializedName("9")
-    val trending: Int? = null
+    val trending: Long? = null
     @SerializedName("1")
-    val quotes: Int? = null
+    val quotes: Long? = null
     @SerializedName("10")
-    val multimedia: Int? = null
+    val multimedia: Long? = null
     @SerializedName("4")
-    val gospel: Int? = null
+    val gospel: Long? = null
     @SerializedName("7")
-    val sermons: Int? = null
+    val sermons: Long? = null
     @SerializedName("8")
-    val vocation: Int? = null
+    val vocation: Long? = null
     @SerializedName("11")
-    val answers: Int? = null
+    val answers: Long? = null
     @SerializedName("355")
-    val songbook: Int? = null
+    val songbook: Long? = null
 }

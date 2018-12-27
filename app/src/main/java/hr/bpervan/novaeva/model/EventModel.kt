@@ -1,18 +1,18 @@
 package hr.bpervan.novaeva.model
 
-import hr.bpervan.novaeva.rest.EvaCategory
+import hr.bpervan.novaeva.rest.EvaDomain
 import hr.bpervan.novaeva.util.TransitionAnimation
 
 /**
  *
  */
 
-data class OpenContentEvent(val category: EvaCategory,
+data class OpenContentEvent(val domain: EvaDomain,
                             val content: EvaContent,
                             val themeId: Int = -1,
                             val animation: TransitionAnimation = TransitionAnimation.FADE)
 
-data class OpenDirectoryEvent(val category: EvaCategory,
+data class OpenDirectoryEvent(val domain: EvaDomain,
                               val directory: EvaDirectory,
                               val themeId: Int = -1,
                               val animation: TransitionAnimation = TransitionAnimation.FADE)

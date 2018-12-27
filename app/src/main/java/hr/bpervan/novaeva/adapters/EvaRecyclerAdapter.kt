@@ -13,7 +13,7 @@ import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.*
-import hr.bpervan.novaeva.rest.EvaCategory
+import hr.bpervan.novaeva.rest.EvaDomain
 import hr.bpervan.novaeva.util.EvaTouchFeedback
 import hr.bpervan.novaeva.util.TransitionAnimation
 import kotlinx.android.synthetic.main.recycler_item_eva_content.view.*
@@ -24,7 +24,7 @@ import java.util.*
 /**
  * Created by vpriscan on 08.10.17..
  */
-class EvaRecyclerAdapter(val category: EvaCategory,
+class EvaRecyclerAdapter(val domain: EvaDomain,
                          private val data: List<EvaNode>,
                          val isLoadingSupplier: () -> Boolean = { false },
                          val themeId: Int = -1) :
@@ -107,7 +107,7 @@ class EvaRecyclerAdapter(val category: EvaCategory,
 
             view.setOnTouchListener(EvaTouchFeedback(view, themeColorTrans))
             view.setOnClickListener {
-                EventPipelines.openDirectory.onNext(OpenDirectoryEvent(category, directoryInfo, themeId, TransitionAnimation.LEFTWARDS))
+                EventPipelines.openDirectory.onNext(OpenDirectoryEvent(domain, directoryInfo, themeId, TransitionAnimation.LEFTWARDS))
             }
         }
 
@@ -168,7 +168,7 @@ class EvaRecyclerAdapter(val category: EvaCategory,
             view.setOnTouchListener(EvaTouchFeedback(view, themeColorTrans))
 
             view.setOnClickListener {
-                EventPipelines.openContent.onNext(OpenContentEvent(category, contentInfo, themeId, TransitionAnimation.LEFTWARDS))
+                EventPipelines.openContent.onNext(OpenContentEvent(domain, contentInfo, themeId, TransitionAnimation.LEFTWARDS))
             }
         }
     }

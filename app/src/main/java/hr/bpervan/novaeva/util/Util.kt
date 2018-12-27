@@ -60,6 +60,11 @@ fun logError(throwable: Throwable) {
     Log.e("error", throwable.message, throwable)
 }
 
+inline fun <reified T : Enum<T>> enumValueOrNull(name: String?): T? {
+    name ?: return null
+    return T::class.java.enumConstants.firstOrNull { it.name == name }
+}
+
 fun isDarkColor(color: Int): Boolean {
     return 1 - (0.299 * Color.red(color) + 0.587 * Color.green(color) + 0.114 * Color.blue(color)) / 255 >= 0.5
 }

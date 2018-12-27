@@ -11,7 +11,7 @@ import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.rest.novaEvaServiceV2
+import hr.bpervan.novaeva.rest.NovaEvaService
 import hr.bpervan.novaeva.util.NEW_CONTENT_KEY_PREFIX
 import hr.bpervan.novaeva.util.dataErrorSnackbar
 import hr.bpervan.novaeva.util.networkRequest
@@ -109,7 +109,7 @@ class EvaQuotesFragment : EvaBaseFragment() {
     }
 
     private fun fetchRandomQuote() {
-        loadRandomQuoteDisposable = novaEvaServiceV2.getRandomDirectoryContent(1)
+        loadRandomQuoteDisposable = NovaEvaService.v2.getRandomDirectoryContent(1)
                 .networkRequest({ directoryContent ->
                     val contentMetadataList = directoryContent.contentMetadataList
                     if (contentMetadataList.isNotEmpty()) {

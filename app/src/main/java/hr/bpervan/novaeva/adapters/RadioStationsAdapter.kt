@@ -53,7 +53,7 @@ class RadioStationsAdapter(private val radioStations: List<EvaContent>)
                 EventPipelines.chooseRadioStation.onNext(radioStation)
             }
 
-            imgPlayPause.isPlaying = radioStation.contentId == radioStationPlaying
+            imgPlayPause.isPlaying = radioStation.id == radioStationPlaying
         }
     }
 }

@@ -9,7 +9,7 @@ import retrofit2.http.Query
  * Created by Branimir on 28.4.2017..
  */
 
-interface NovaEvaServiceV2 {
+interface NovaEvaApiV2 {
     @GET("json?api=2")
     fun getDirectoryContent(@Query("cid") directoryId: Long,
                             @Query("date") date: Long? = null,

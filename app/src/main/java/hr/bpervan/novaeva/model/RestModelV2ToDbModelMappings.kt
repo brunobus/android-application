@@ -9,12 +9,10 @@ import io.realm.RealmList
 fun EvaDirectoryMetadataDTO.toDbModel(mergeWith: EvaDirectory? = null): EvaDirectory {
     val dto = this
 
-    val evaDirectory = mergeWith ?: EvaDirectory().apply {
-        directoryId = dto.directoryId
-    }
+    val evaDirectory = mergeWith ?: EvaDirectory(id = dto.directoryId)
 
     return evaDirectory.apply {
-        categoryId = dto.categoryId
+        domain = dto.domain?.toString()
         title = dto.title ?: ""
     }
 }
@@ -23,18 +21,15 @@ fun EvaContentMetadataDTO.toDbModel(mergeWith: EvaContent? = null): EvaContent {
     val dto = this
 
     if (mergeWith != null
-            && dto.contentId != mergeWith.contentId) {
-        throw RuntimeException("Merging wrong EvaContent (expected contentId: ${this.contentId}, actual: ${mergeWith.contentId})")
+            && dto.contentId != mergeWith.id) {
+        throw RuntimeException("Merging wrong EvaContent (expected content id: ${this.contentId}, actual: ${mergeWith.id})")
     }
 
-    val evaContent = mergeWith ?: EvaContent().apply {
-        contentId = dto.contentId
-    }
-
+    val evaContent = mergeWith ?: EvaContent(id = dto.contentId)
 
     return evaContent.apply {
         directoryId = dto.directoryId
-        categoryId = dto.categoryId
+        domain = null
 
         datetime?.toLong()?.let {
             timestamp = it
@@ -48,21 +43,19 @@ fun EvaContentMetadataDTO.toDbModel(mergeWith: EvaContent? = null): EvaContent {
 
 fun EvaAttachmentDTO.toDbModel(): EvaAttachment = EvaAttachment(name ?: "", url ?: "")
 
-fun EvaImageDTO.toDbModel(): EvaImage? {
+fun EvaImageDTO.toDbModel(): EvaResource? {
     val imageURL = this.original ?: this.size720 ?: this.size640 ?: return null
-    return EvaImage(imageURL, this.timestamp)
+    return EvaResource(url = imageURL)
 }
 
 fun EvaContentDTO.toDbModel(mergeWith: EvaContent? = null): EvaContent {
     val dto = this
 
-    val evaContent = mergeWith ?: EvaContent().apply {
-        contentId = dto.contentId
-    }
+    val evaContent = mergeWith ?: EvaContent(id = dto.contentId)
 
     return evaContent.apply {
         directoryId = dto.directoryId
-        categoryId = dto.categoryId
+        domain = null
         title = dto.title ?: ""
         text = dto.text ?: ""
 
@@ -75,12 +68,16 @@ fun EvaContentDTO.toDbModel(mergeWith: EvaContent? = null): EvaContent {
 
         val oldImage = image
         val candidateImage = dto.images.firstOrNull()
-        when {
-            candidateImage == null -> image = null
-            oldImage == null -> {
-                image = candidateImage.toDbModel()?.let { realm?.copyToRealm(it) ?: it }
-            }
-            oldImage.timestamp != candidateImage.timestamp -> {
+
+        if (candidateImage == null) {
+            image = null
+        } else if (oldImage == null) {
+            image = candidateImage.toDbModel()?.let { realm?.copyToRealm(it) ?: it }
+        } else {
+            val imageURL = candidateImage.original
+                    ?: candidateImage.size720
+                    ?: candidateImage.size640
+            if (oldImage.url != imageURL) {
                 image = candidateImage.toDbModel()?.let { realm?.copyToRealm(it) ?: it }
             }
         }

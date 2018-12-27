@@ -10,7 +10,7 @@ import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.rest.novaEvaServiceV2
+import hr.bpervan.novaeva.rest.NovaEvaService
 import hr.bpervan.novaeva.util.dataErrorSnackbar
 import hr.bpervan.novaeva.util.networkRequest
 import hr.bpervan.novaeva.util.plusAssign
@@ -116,7 +116,7 @@ class BreviaryContentFragment : EvaBaseFragment() {
 
     private fun fetchBreviary() {
 
-        disposables += novaEvaServiceV2
+        disposables += NovaEvaService.v2
                 .getBreviary(breviaryId.toString())
                 .networkRequest({ breviary ->
                     view ?: return@networkRequest

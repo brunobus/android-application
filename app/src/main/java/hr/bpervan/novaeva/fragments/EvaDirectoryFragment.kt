@@ -22,14 +22,16 @@ import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaNode
 import hr.bpervan.novaeva.model.OpenDirectoryEvent
-import hr.bpervan.novaeva.rest.EvaCategory
-import hr.bpervan.novaeva.rest.novaEvaServiceV3
+import hr.bpervan.novaeva.model.TIMESTAMP_FIELD
+import hr.bpervan.novaeva.rest.EvaDomain
+import hr.bpervan.novaeva.rest.NovaEvaService
 import hr.bpervan.novaeva.rest.region
 import hr.bpervan.novaeva.storage.EvaDirectoryDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
 import hr.bpervan.novaeva.util.*
 import io.reactivex.disposables.Disposable
 import io.realm.Realm
+import io.realm.Sort
 import kotlinx.android.synthetic.main.collapsing_directory_header.view.*
 import kotlinx.android.synthetic.main.fragment_directory_contents.*
 import kotlinx.android.synthetic.main.top_izbornik.view.*
@@ -41,18 +43,16 @@ class EvaDirectoryFragment : EvaBaseFragment() {
 
     companion object : EvaBaseFragment.EvaFragmentFactory<EvaDirectoryFragment, OpenDirectoryEvent> {
 
-        private const val CATEGORY_KEY = "category"
-        private const val directoryIdKey = "directoryId"
-        private const val categoryIdKey = "categoryId"
+        private const val domainKey = "domain"
+        private const val directoryIdKey = "id"
         private const val directoryTitleKey = "directoryTitle"
         private const val themeIdKey = "themeId"
 
         override fun newInstance(initializer: OpenDirectoryEvent): EvaDirectoryFragment {
             return EvaDirectoryFragment().apply {
                 arguments = bundleOf(
-                        CATEGORY_KEY to initializer.category,
-                        directoryIdKey to initializer.directory.directoryId,
-                        categoryIdKey to initializer.directory.categoryId,
+                        domainKey to initializer.domain,
+                        directoryIdKey to initializer.directory.id,
                         directoryTitleKey to initializer.directory.title,
                         themeIdKey to initializer.themeId
                 )
@@ -72,7 +72,7 @@ class EvaDirectoryFragment : EvaBaseFragment() {
             field = safeReplaceDisposable(field, value)
         }
 
-    private lateinit var category: EvaCategory
+    private lateinit var domain: EvaDomain
     private var directoryId: Long = 1
     private lateinit var directoryTitle: String
     private var themeId: Int = -1
@@ -90,12 +90,12 @@ class EvaDirectoryFragment : EvaBaseFragment() {
         super.onCreate(savedInstanceState)
 
         val inState: Bundle = savedInstanceState ?: arguments!!
-        category = inState.getSerializable(CATEGORY_KEY) as EvaCategory
+        domain = inState.getSerializable(domainKey) as EvaDomain
         directoryId = inState.getLong(directoryIdKey)
         directoryTitle = inState.getString(directoryTitleKey)
         themeId = inState.getInt(themeIdKey)
 
-        adapter = EvaRecyclerAdapter(category, elementsList, { loadingFromDb || fetchingFromServer }, themeId)
+        adapter = EvaRecyclerAdapter(domain, elementsList, { loadingFromDb || fetchingFromServer }, themeId)
         adapter.registerAdapterDataObserver(DataChangeLogger())
 
         savedInstanceState ?: NovaEvaApp.defaultTracker
@@ -144,9 +144,9 @@ class EvaDirectoryFragment : EvaBaseFragment() {
 
             elementsList.clear()
 
-            val contentSorted = evaDirectory.contentsList.sortedByDescending { it.timestamp }
+            val contentSorted = evaDirectory.contents.sortedByDescending { it.timestamp }
 
-            val subdirectoriesSorted = evaDirectory.subDirectoriesList//.sortedByDescending { todo ON SERVER }
+            val subdirectoriesSorted = evaDirectory.subCategories//.sortedByDescending { todo ON SERVER }
 
             if (contentSorted.size > 10) {
                 elementsList.addAll(contentSorted.take(10))
@@ -159,7 +159,7 @@ class EvaDirectoryFragment : EvaBaseFragment() {
 
             evaDirectory.image?.let { image ->
                 prefs.edit {
-                    putString("hr.bpervan.novaeva.categoryheader.$category", image.url)
+                    putString("hr.bpervan.novaeva.categoryheader.$domain", image.url)
                 }
             }
 
@@ -170,7 +170,7 @@ class EvaDirectoryFragment : EvaBaseFragment() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putSerializable(CATEGORY_KEY, category)
+        outState.putSerializable(domainKey, domain)
         outState.putLong(directoryIdKey, directoryId)
         outState.putString(directoryTitleKey, directoryTitle)
         outState.putInt(themeIdKey, themeId)
@@ -205,8 +205,8 @@ class EvaDirectoryFragment : EvaBaseFragment() {
         recyclerView.adapter = adapter
         recyclerView.addOnScrollListener(EndlessScrollListener(linearLayoutManager))
 
-        when (category) {
-            EvaCategory.VOCATION -> {
+        when (domain) {
+            EvaDomain.VOCATION -> {
                 btnPoziv.isVisible = true
                 btnPoziv.setOnClickListener {
                     sendEmailIntent(context,
@@ -215,7 +215,7 @@ class EvaDirectoryFragment : EvaBaseFragment() {
                             receiver = getString(R.string.vocation_email))
                 }
             }
-            EvaCategory.ANSWERS -> {
+            EvaDomain.ANSWERS -> {
                 btnPitanje.isVisible = true
                 btnPitanje.setOnClickListener {
                     sendEmailIntent(context,
@@ -224,7 +224,8 @@ class EvaDirectoryFragment : EvaBaseFragment() {
                             receiver = getString(R.string.answers_email))
                 }
             }
-            else -> {/*nothing*/}
+            else -> {/*nothing*/
+            }
         }
     }
 
@@ -261,7 +262,17 @@ class EvaDirectoryFragment : EvaBaseFragment() {
                     fetchingFromServer = true
                     refreshLoadingCircleState()
 
-                    fetchEvaDirectoryDataFromServer(pageOn + 1)
+                    if (domain == EvaDomain.VOCATION) {
+                        fetchEvaDirectoryDataFromServer(pageOn + 1)
+                    } else {
+                        disposables += EvaDirectoryDbAdapter.loadEvaDirectoryAsync(realm, directoryId) { evaDirectory ->
+                            if (evaDirectory != null) {
+                                val oldestTimestamp = evaDirectory.contents.sort(TIMESTAMP_FIELD, Sort.DESCENDING)
+                                        .lastOrNull()?.timestamp
+                                fetchEvaDirectoryDataFromServer_legacy(oldestTimestamp)
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -276,17 +287,54 @@ class EvaDirectoryFragment : EvaBaseFragment() {
 
     private var pageOn: Long = -99
 
+    private fun fetchEvaDirectoryDataFromServer_legacy(timestamp: Long? = null) {
+        fetchingFromServer = true
+        refreshLoadingCircleState()
+
+        fetchFromServerDisposable = NovaEvaService.v2.getDirectoryContent(directoryId, timestamp)
+                .networkRequest({ evaDirectoryDTO ->
+                    loadingFromDb = true
+                    fetchingFromServer = false
+
+                    evaDirectoryDTO.directoryId = directoryId
+                    evaDirectoryDTO.domain = domain
+                    evaDirectoryDTO.title = directoryTitle
+
+                    EvaDirectoryDbAdapter.addOrUpdateEvaDirectoryAsync_legacy(realm, evaDirectoryDTO)
+
+                    handler.postDelayed(4000) {
+                        /*if there are no actual new changes from server, data in cache will not be "updated"
+                        and on update callback (in subscribeToDirectoryUpdates) will not be called,
+                        resulting in progress circle spinning forever
+                        This block kills loading circle after some reasonable time
+                        */
+                        loadingFromDb = false
+                        refreshLoadingCircleState()
+                    }
+
+                    hasMore = evaDirectoryDTO.more > 0
+
+                }, onError = {
+                    handler.postDelayed(2000) {
+                        fetchingFromServer = false
+                        refreshLoadingCircleState()
+
+                        view?.dataErrorSnackbar()
+                    }
+                })
+    }
+
     private fun fetchEvaDirectoryDataFromServer(page: Long = 1) {
         fetchingFromServer = true
         refreshLoadingCircleState()
 
-        fetchFromServerDisposable = novaEvaServiceV3.categoryContent(
-                category.endpointRoot, directoryId, page, region.id)
+        fetchFromServerDisposable = NovaEvaService.v3.categoryContent(
+                domain.domainEndpoint, directoryId, page, region.id)
                 .networkRequest({ categoryDto ->
                     loadingFromDb = true
                     fetchingFromServer = false
 
-                    categoryDto.id = directoryId // cache mock data hack
+                    categoryDto.domain = domain
 
                     EvaDirectoryDbAdapter.addOrUpdateEvaCategoryAsync(realm, categoryDto)
 

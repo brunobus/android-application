@@ -18,13 +18,12 @@ import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.fragments.*
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.EvaCategoryLegacy
 import hr.bpervan.novaeva.model.EvaContent
 import hr.bpervan.novaeva.model.OpenContentEvent
 import hr.bpervan.novaeva.model.OpenQuotesEvent
 import hr.bpervan.novaeva.player.getStreamLinksFromPlaylistUri
-import hr.bpervan.novaeva.rest.EvaCategory
-import hr.bpervan.novaeva.rest.novaEvaServiceV2
+import hr.bpervan.novaeva.rest.EvaDomain
+import hr.bpervan.novaeva.rest.NovaEvaService
 import hr.bpervan.novaeva.util.*
 import hr.bpervan.novaeva.util.TransitionAnimation.*
 import hr.bpervan.novaeva.views.snackbar
@@ -68,8 +67,8 @@ class EvaActivity : EvaBaseActivity() {
                         openQuotesFragment(OpenQuotesEvent(contentId))
                     } else {
                         openContentFragment(OpenContentEvent(
-                                category = EvaCategory.SERMONS, /*todo 13.12.*/
-                                content = EvaContent(contentId, 0, -1)))
+                                domain = EvaDomain.SERMONS, /*todo 13.12.*/
+                                content = EvaContent(contentId, 0)))
                     }
                 }
             }
@@ -240,7 +239,7 @@ class EvaActivity : EvaBaseActivity() {
     }
 
     private fun playFirstRadioStation() {
-        disposables += novaEvaServiceV2.getDirectoryContent(EvaCategoryLegacy.RADIO.id, null, items = 1)
+        disposables += NovaEvaService.v2.getDirectoryContent(EvaDomain.RADIO.legacyId, null, items = 1)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .map { it.contentMetadataList.first() }
@@ -249,7 +248,7 @@ class EvaActivity : EvaBaseActivity() {
                 }
                 .observeOn(Schedulers.io())
                 .flatMap {
-                    novaEvaServiceV2.getContentData(it.contentId)
+                    NovaEvaService.v2.getContentData(it.contentId)
                             .subscribeOn(Schedulers.io())
                 }
                 .flatMap { radioStation ->
@@ -289,7 +288,7 @@ class EvaActivity : EvaBaseActivity() {
     }
 
     private fun fetchBreviaryCoverUrl() {
-        disposables += novaEvaServiceV2.getDirectoryContent(546, null)
+        disposables += NovaEvaService.v2.getDirectoryContent(546, null)
                 .networkRequest({ directoryContent ->
                     val image = directoryContent.image?.size640
                     if (image != null) {

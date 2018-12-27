@@ -14,16 +14,13 @@ import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.rest.EvaCategory
 import hr.bpervan.novaeva.model.EvaContent
 import hr.bpervan.novaeva.model.OpenContentEvent
-import hr.bpervan.novaeva.rest.novaEvaServiceV2
+import hr.bpervan.novaeva.rest.EvaDomain
+import hr.bpervan.novaeva.rest.NovaEvaService
 import hr.bpervan.novaeva.storage.EvaContentDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
-import hr.bpervan.novaeva.util.dataErrorSnackbar
-import hr.bpervan.novaeva.util.networkRequest
-import hr.bpervan.novaeva.util.plusAssign
-import hr.bpervan.novaeva.util.sendEmailIntent
+import hr.bpervan.novaeva.util.*
 import hr.bpervan.novaeva.views.applyConfiguredFontSize
 import hr.bpervan.novaeva.views.applyEvaConfiguration
 import hr.bpervan.novaeva.views.loadHtmlText
@@ -39,13 +36,13 @@ class EvaContentFragment : EvaBaseFragment() {
     companion object : EvaFragmentFactory<EvaContentFragment, OpenContentEvent> {
 
         private const val CATEGORY_KEY = "category"
-        private const val CONTENT_ID_KEY = "contentId"
+        private const val CONTENT_ID_KEY = "id"
         private const val THEME_ID_KEY = "themeId"
 
         override fun newInstance(initializer: OpenContentEvent): EvaContentFragment {
             return EvaContentFragment().apply {
                 arguments = bundleOf(
-                        CONTENT_ID_KEY to initializer.content.contentId,
+                        CONTENT_ID_KEY to initializer.content.id,
                         THEME_ID_KEY to initializer.themeId
                 )
             }
@@ -54,7 +51,7 @@ class EvaContentFragment : EvaBaseFragment() {
 
     private lateinit var realm: Realm
 
-    private lateinit var category: EvaCategory
+    private lateinit var domain: EvaDomain
     public var contentId: Long = 0
     private var evaContent: EvaContent? = null
         set(value) {
@@ -70,7 +67,7 @@ class EvaContentFragment : EvaBaseFragment() {
         super.onCreate(savedInstanceState)
 
         val inState = savedInstanceState ?: arguments!!
-        category = inState.getSerializable(CATEGORY_KEY) as EvaCategory
+        domain = inState.getSerializable(CATEGORY_KEY) as EvaDomain
         contentId = inState.getLong(CONTENT_ID_KEY)
         themeId = inState.getInt(THEME_ID_KEY, -1)
 
@@ -86,7 +83,7 @@ class EvaContentFragment : EvaBaseFragment() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putSerializable(CATEGORY_KEY, category)
+        outState.putSerializable(CATEGORY_KEY, domain)
         outState.putLong(CONTENT_ID_KEY, contentId)
         outState.putInt(THEME_ID_KEY, themeId)
 
@@ -107,7 +104,7 @@ class EvaContentFragment : EvaBaseFragment() {
                 imageLoader.displayImage(coverImageInfo.url, coverImageView)
             }
         } else {
-            val url = prefs.getString("hr.bpervan.novaeva.categoryheader." + evaContent.categoryId, null)
+            val url = prefs.getString("hr.bpervan.novaeva.categoryheader." + evaContent.domain, null)
             if (url != null && coverImageView != null) {
                 imageLoader.displayImage(url, coverImageView)
             }
@@ -118,12 +115,12 @@ class EvaContentFragment : EvaBaseFragment() {
             imgMp3.setImageResource(R.drawable.vijest_ind_mp3_active)
 
             NovaEvaApp.evaPlayer.prepareAudioStream(
-                    audioUrl, evaContent.contentId.toString(),
+                    audioUrl, evaContent.id.toString(),
                     evaContent.title,
                     isRadio = false, doAutoPlay = false)
 
             player_view?.apply {
-                NovaEvaApp.evaPlayer.supplyPlayerToView(this, evaContent.contentId.toString())
+                NovaEvaApp.evaPlayer.supplyPlayerToView(this, evaContent.id.toString())
                 applyEvaConfiguration()
                 requestFocus()
                 showController()
@@ -151,27 +148,29 @@ class EvaContentFragment : EvaBaseFragment() {
 
         loadingCircle.isGone = true
 
-        //todo 13.12.
-//        when (evaContent.categoryId) {
-//            EvaCategory.VOCATION.id -> {
-//                btnPoziv.isVisible = true
-//                btnPoziv.setOnClickListener {
-//                    sendEmailIntent(context,
-//                            subject = getString(R.string.thinking_of_vocation),
-//                            text = "Hvaljen Isus i Marija, javljam vam se jer razmišljam o duhovnom pozivu.",
-//                            receiver = getString(R.string.vocation_email))
-//                }
-//            }
-//            EvaCategory.ANSWERS.id -> {
-//                btnPitanje.isVisible = true
-//                btnPitanje.setOnClickListener {
-//                    sendEmailIntent(context,
-//                            subject = getString(R.string.having_a_question),
-//                            text = getString(R.string.praise_the_lord),
-//                            receiver = getString(R.string.answers_email))
-//                }
-//            }
-//        }
+        when (enumValueOrNull<EvaDomain>(evaContent.domain)) {
+            EvaDomain.VOCATION -> {
+                btnPoziv.isVisible = true
+                btnPoziv.setOnClickListener {
+                    sendEmailIntent(context,
+                            subject = getString(R.string.thinking_of_vocation),
+                            text = "Hvaljen Isus i Marija, javljam vam se jer razmišljam o duhovnom pozivu.",
+                            receiver = getString(R.string.vocation_email))
+                }
+            }
+            EvaDomain.ANSWERS -> {
+                btnPitanje.isVisible = true
+                btnPitanje.setOnClickListener {
+                    sendEmailIntent(context,
+                            subject = getString(R.string.having_a_question),
+                            text = getString(R.string.praise_the_lord),
+                            receiver = getString(R.string.answers_email))
+                }
+            }
+            else -> {
+                /*nothing*/
+            }
+        }
 
         vijestWebView.applyEvaConfiguration(prefs)
         vijestWebView.loadHtmlText(evaContent.text)
@@ -201,7 +200,9 @@ class EvaContentFragment : EvaBaseFragment() {
         val evaContent = EvaContentDbAdapter.loadEvaContent(realm, contentId)
 
         if (evaContent == null || savedInstanceState == null) {
-            fetchContentFromServer(contentId)
+            if (domain != EvaDomain.VOCATION) {
+                fetchContentFromServer_legacy(contentId)
+            }
         } else {
             this.evaContent = evaContent
         }
@@ -212,8 +213,8 @@ class EvaContentFragment : EvaBaseFragment() {
         super.onDestroy()
     }
 
-    private fun fetchContentFromServer(contentId: Long) {
-        disposables += novaEvaServiceV2.getContentData(contentId)
+    private fun fetchContentFromServer_legacy(contentId: Long) {
+        disposables += NovaEvaService.v2.getContentData(contentId)
                 .networkRequest({ contentDataDTO ->
                     EvaContentDbAdapter.addOrUpdateEvaContentAsync(realm, contentDataDTO) {
                         evaContent = EvaContentDbAdapter.loadEvaContent(realm, contentId)

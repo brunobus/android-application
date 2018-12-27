@@ -11,7 +11,7 @@ object RealmConfigProvider {
     val evaDBConfig: RealmConfiguration by lazy {
         RealmConfiguration.Builder()
                 .name("novaEvaDb.realm")
-                .schemaVersion(4)
+                .schemaVersion(5)
                 .deleteRealmIfMigrationNeeded()
                 .build()
     }
