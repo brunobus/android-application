@@ -15,9 +15,9 @@ import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.os.Build
 import android.os.IBinder
-import android.support.v4.app.NotificationCompat
-import android.support.v4.content.ContextCompat
-import android.support.v4.media.session.MediaButtonReceiver
+import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
+import androidx.media.session.MediaButtonReceiver
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import com.google.android.exoplayer2.Player
@@ -29,7 +29,7 @@ import hr.bpervan.novaeva.util.plusAssign
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 
-typealias MediaStyleCompat = android.support.v4.media.app.NotificationCompat.MediaStyle
+typealias MediaStyleCompat = androidx.media.app.NotificationCompat.MediaStyle
 
 /**
  * Created by vpriscan on 08.12.17..
@@ -115,7 +115,7 @@ class AudioPlayerService : Service() {
     class EvaMediaReceiver : BroadcastReceiver() {
 
         override fun onReceive(context: Context, intent: Intent) {
-            MediaButtonReceiver.handleIntent(mediaSession, intent)
+            androidx.media.session.MediaButtonReceiver.handleIntent(mediaSession, intent)
         }
     }
 
@@ -204,17 +204,17 @@ class AudioPlayerService : Service() {
                 .setColor(ContextCompat.getColor(context, R.color.novaEva))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .addAction(NotificationCompat.Action(playPauseIcon, playPauseString,
-                        MediaButtonReceiver.buildMediaButtonPendingIntent(context,
+                        androidx.media.session.MediaButtonReceiver.buildMediaButtonPendingIntent(context,
                                 PlaybackStateCompat.ACTION_PLAY_PAUSE)))
                 .addAction(NotificationCompat.Action(stopIcon, stopText,
-                        MediaButtonReceiver.buildMediaButtonPendingIntent(context,
+                        androidx.media.session.MediaButtonReceiver.buildMediaButtonPendingIntent(context,
                                 PlaybackStateCompat.ACTION_STOP)))
                 .setStyle(MediaStyleCompat()
                         .setMediaSession(mediaSession.sessionToken)
                         .setShowActionsInCompactView(0)
                         .setShowCancelButton(true)
                         .setCancelButtonIntent(
-                                MediaButtonReceiver.buildMediaButtonPendingIntent(context,
+                                androidx.media.session.MediaButtonReceiver.buildMediaButtonPendingIntent(context,
                                         PlaybackStateCompat.ACTION_STOP))
                 )
                 .build()

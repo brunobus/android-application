@@ -2,7 +2,7 @@ package hr.bpervan.novaeva.fragments
 
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import android.view.View
 import com.google.android.exoplayer2.Player
 import com.nostra13.universalimageloader.core.ImageLoader
@@ -19,7 +19,7 @@ import kotlinx.android.synthetic.main.fragment_prayers.*
 /**
  * Created by vpriscan on 26.11.17..
  */
-abstract class EvaBaseFragment : Fragment() {
+abstract class EvaBaseFragment : androidx.fragment.app.Fragment() {
 
     /**
      * Fragment's lifecycle bound disposables
@@ -32,7 +32,7 @@ abstract class EvaBaseFragment : Fragment() {
     protected val imageLoader: ImageLoader
         get() = NovaEvaApp.imageLoader
 
-    interface EvaFragmentFactory<out T : Fragment, in K> {
+    interface EvaFragmentFactory<out T : androidx.fragment.app.Fragment, in K> {
         val tag: String
             get() = javaClass.canonicalName
 

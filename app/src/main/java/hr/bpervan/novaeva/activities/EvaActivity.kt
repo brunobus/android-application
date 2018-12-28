@@ -3,12 +3,12 @@ package hr.bpervan.novaeva.activities
 import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
-import android.support.v4.app.FragmentTransaction
-import android.support.v4.content.ContextCompat
-import android.support.v4.view.GestureDetectorCompat
-import android.support.v4.view.GravityCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
+import androidx.fragment.app.FragmentTransaction
+import androidx.core.content.ContextCompat
+import androidx.core.view.GestureDetectorCompat
+import androidx.core.view.GravityCompat
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.MotionEvent
@@ -335,7 +335,7 @@ class EvaActivity : EvaBaseActivity() {
         super.onDestroy()
     }
 
-    private fun <T : Fragment, K> addToBackStack(
+    private fun <T : androidx.fragment.app.Fragment, K> addToBackStack(
             containerViewId: Int,
             evaFragmentFactory: EvaBaseFragment.EvaFragmentFactory<T, K>,
             fragmentInitializer: K, animation: TransitionAnimation = NONE,
@@ -352,14 +352,14 @@ class EvaActivity : EvaBaseActivity() {
                 .commitAllowingStateLoss()
     }
 
-    private fun <T : Fragment> addToBackStack(
+    private fun <T : androidx.fragment.app.Fragment> addToBackStack(
             containerViewId: Int,
             evaFragmentFactory: EvaBaseFragment.EvaFragmentFactory<T, Unit>, animation: TransitionAnimation = NONE,
             popUpToLastOfSameTypeInclusive: Boolean) {
         return addToBackStack(containerViewId, evaFragmentFactory, Unit, animation, popUpToLastOfSameTypeInclusive)
     }
 
-    private fun FragmentTransaction.setCustomAnimation(animation: TransitionAnimation): FragmentTransaction {
+    private fun androidx.fragment.app.FragmentTransaction.setCustomAnimation(animation: TransitionAnimation): androidx.fragment.app.FragmentTransaction {
         return when (animation) {
             LEFTWARDS ->
                 setCustomAnimations(R.anim.move_right_in, R.anim.move_left_out, R.anim.move_left_in, R.anim.move_right_out)

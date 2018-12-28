@@ -1,8 +1,8 @@
 package hr.bpervan.novaeva.fragments
 
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
@@ -71,16 +71,16 @@ class PrayerListFragment : EvaBaseFragment() {
         EventPipelines.changeStatusbarColor.onNext(R.color.VeryDarkGray)
         EventPipelines.changeFragmentBackgroundResource.onNext(R.color.White)
 
-        val recyclerView = evaRecyclerView as RecyclerView
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        val recyclerView = evaRecyclerView as androidx.recyclerview.widget.RecyclerView
+        recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
         recyclerView.adapter = adapter
 
         prayerTitleTextView.text = prayerCategory.title
         prayerTitleTextView.typeface = NovaEvaApp.openSansBold
 
         if (savedInstanceState != null) {
-            val savedExpandedItemPos = savedInstanceState.getInt(expandedItemKey, RecyclerView.NO_POSITION)
-            if (savedExpandedItemPos != RecyclerView.NO_POSITION) {
+            val savedExpandedItemPos = savedInstanceState.getInt(expandedItemKey, androidx.recyclerview.widget.RecyclerView.NO_POSITION)
+            if (savedExpandedItemPos != androidx.recyclerview.widget.RecyclerView.NO_POSITION) {
                 recyclerView.onLayoutComplete {
                     adapter.expandedItemPos = savedExpandedItemPos
                 }

@@ -1,7 +1,7 @@
 package hr.bpervan.novaeva.adapters
 
 import android.graphics.Color
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -18,13 +18,13 @@ import hr.bpervan.novaeva.util.TransitionAnimation
 import kotlinx.android.synthetic.main.recycler_item_prayer_category.view.*
 
 class PrayerBookRecyclerAdapter(private val prayerCategoryList: List<PrayerCategory>) :
-        RecyclerView.Adapter<PrayerCategoryViewHolder>() {
+        androidx.recyclerview.widget.RecyclerView.Adapter<PrayerCategoryViewHolder>() {
 
     override fun getItemCount(): Int = prayerCategoryList.size
 
     private var themeColorTrans: Int = 0
 
-    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+    override fun onAttachedToRecyclerView(recyclerView: androidx.recyclerview.widget.RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
 
         val typedVal = TypedValue()
@@ -43,7 +43,7 @@ class PrayerBookRecyclerAdapter(private val prayerCategoryList: List<PrayerCateg
         holder.bindTo(prayerCategoryList[position])
     }
 
-    inner class PrayerCategoryViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+    inner class PrayerCategoryViewHolder(val view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
         private val prayerCategoryTitle: TextView = view.prayerCategoryTitleTextView
 
         init {

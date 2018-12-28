@@ -1,9 +1,9 @@
 package hr.bpervan.novaeva.fragments
 
 import android.os.Bundle
-import android.support.v7.widget.DefaultItemAnimator
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
@@ -81,10 +81,10 @@ class RadioFragment : EvaBaseFragment() {
 
         collapsingRadioHeader.collapsingToolbar.title = getString(R.string.radio_stations)
 
-        val recyclerView = evaRecyclerView as RecyclerView
-        val linearLayoutManager = LinearLayoutManager(context)
+        val recyclerView = evaRecyclerView as androidx.recyclerview.widget.RecyclerView
+        val linearLayoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
         recyclerView.layoutManager = linearLayoutManager
-        recyclerView.itemAnimator = DefaultItemAnimator()
+        recyclerView.itemAnimator = androidx.recyclerview.widget.DefaultItemAnimator()
         recyclerView.adapter = adapter
 
         disposables += EventPipelines.chooseRadioStation

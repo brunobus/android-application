@@ -1,7 +1,7 @@
 package hr.bpervan.novaeva.adapters
 
-import android.support.v4.content.ContextCompat
-import android.support.v7.widget.RecyclerView
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,7 +18,7 @@ import kotlinx.android.synthetic.main.recycler_item_radio_station.view.*
  *
  */
 class RadioStationsAdapter(private val radioStations: List<EvaContent>)
-    : RecyclerView.Adapter<RadioStationViewHolder>() {
+    : androidx.recyclerview.widget.RecyclerView.Adapter<RadioStationViewHolder>() {
 
     override fun getItemCount() = radioStations.size
 
@@ -26,7 +26,7 @@ class RadioStationsAdapter(private val radioStations: List<EvaContent>)
 
     private var touchFeedbackColor: Int = 0
 
-    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+    override fun onAttachedToRecyclerView(recyclerView: androidx.recyclerview.widget.RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
 
         touchFeedbackColor = ContextCompat.getColor(recyclerView.context, R.color.TranslucentGray)
@@ -42,7 +42,7 @@ class RadioStationsAdapter(private val radioStations: List<EvaContent>)
         holder.bindTo(radioStations[position])
     }
 
-    inner class RadioStationViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+    inner class RadioStationViewHolder(val view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
         private val stationName: TextView = view.stationName
         private val imgPlayPause: PlayPauseView = view.imgPlayPause
 

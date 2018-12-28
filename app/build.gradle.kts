@@ -46,29 +46,27 @@ dependencies {
     testImplementation("junit:junit:4.12")
     testImplementation("com.google.code.gson:gson:2.8.5")
 
-    implementation("com.android.support:support-v4:28.0.0")
-    implementation("com.android.support:support-compat:28.0.0")
-    implementation("com.android.support:support-media-compat:28.0.0")
-    implementation("com.android.support:appcompat-v7:28.0.0")
-    implementation("com.android.support:design:28.0.0")
-    implementation("com.android.support:recyclerview-v7:28.0.0")
-    implementation("com.android.support.constraint:constraint-layout:1.1.3")
+    implementation("androidx.core:core:1.0.1")
+    implementation("androidx.core:core-ktx:1.0.1")
+    implementation("androidx.media:media:1.0.0")
+    implementation("androidx.appcompat:appcompat:1.0.2")
+    implementation("androidx.recyclerview:recyclerview:1.0.0")
+    implementation("androidx.constraintlayout:constraintlayout:1.1.3")
 
     implementation(kotlin("stdlib-jdk7", KotlinCompilerVersion.VERSION))
-    implementation("androidx.core:core-ktx:0.3")
     implementation("io.reactivex.rxjava2:rxjava:2.2.3")
     implementation("io.reactivex.rxjava2:rxandroid:2.1.0")
 
-    implementation("com.nostra13.universalimageloader:universal-image-loader:1.9.5")
+    implementation("com.google.android.material:material:1.0.0")
     implementation("com.google.android.gms:play-services-analytics:16.0.5")
     implementation("com.google.android.gms:play-services-location:16.0.0")
+    implementation("com.google.android.exoplayer:exoplayer:2.7.0")
+    implementation("com.google.android.exoplayer:extension-mediasession:2.7.0")
 
     implementation("com.squareup.retrofit2:retrofit:2.4.0")
     implementation("com.squareup.retrofit2:converter-gson:2.4.0")
     implementation("com.squareup.retrofit2:adapter-rxjava2:2.4.0")
 
-    implementation("com.google.android.exoplayer:exoplayer:2.7.0")
-    implementation("com.google.android.exoplayer:extension-mediasession:2.7.0")
-
     implementation("net.cachapa.expandablelayout:expandablelayout:2.9.2")
+    implementation("com.nostra13.universalimageloader:universal-image-loader:1.9.5")
 }

@@ -1,15 +1,14 @@
 package hr.bpervan.novaeva.fragments
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.edit
 import androidx.core.view.isVisible
-import androidx.core.widget.toast
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
@@ -22,7 +21,7 @@ import kotlinx.android.synthetic.main.fragment_options.*
 /**
  *
  */
-class OptionsFragment : Fragment() {
+class OptionsFragment : androidx.fragment.app.Fragment() {
     companion object : EvaBaseFragment.EvaFragmentFactory<OptionsFragment, Unit> {
 
         override fun newInstance(initializer: Unit): OptionsFragment {
@@ -157,10 +156,10 @@ class OptionsFragment : Fragment() {
         }
     }
 
-    private fun getTopFragment(): Fragment? {
+    private fun getTopFragment(): androidx.fragment.app.Fragment? {
         val fm = activity?.supportFragmentManager
         return if (fm != null && fm.backStackEntryCount > 0) {
-            val backStackEntryAt: FragmentManager.BackStackEntry = fm
+            val backStackEntryAt: androidx.fragment.app.FragmentManager.BackStackEntry = fm
                     .getBackStackEntryAt(fm.backStackEntryCount - 1)
 
             fm.findFragmentByTag(backStackEntryAt.name)

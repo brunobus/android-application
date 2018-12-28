@@ -3,9 +3,9 @@ package hr.bpervan.novaeva.fragments
 import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
-import android.support.v7.widget.DefaultItemAnimator
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -72,11 +72,11 @@ class EvaBookmarksFragment : EvaBaseFragment() {
         EventPipelines.changeStatusbarColor.onNext(R.color.VeryDarkGray)
         EventPipelines.changeFragmentBackgroundResource.onNext(R.color.White)
 
-        val recyclerView = evaRecyclerView as RecyclerView
+        val recyclerView = evaRecyclerView as androidx.recyclerview.widget.RecyclerView
 
         recyclerView.adapter = adapter
-        recyclerView.layoutManager = LinearLayoutManager(recyclerView.context)
-        recyclerView.itemAnimator = DefaultItemAnimator()
+        recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(recyclerView.context)
+        recyclerView.itemAnimator = androidx.recyclerview.widget.DefaultItemAnimator()
     }
 
     override fun onAttach(context: Context?) {

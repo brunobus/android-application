@@ -3,9 +3,9 @@ package hr.bpervan.novaeva.fragments
 import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
-import android.support.v7.widget.DefaultItemAnimator
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
@@ -90,10 +90,10 @@ class EvaSearchFragment : EvaBaseFragment() {
 
 //        btnSearch.setOnClickListener(this)
 
-        val recyclerView = evaRecyclerView as RecyclerView
+        val recyclerView = evaRecyclerView as androidx.recyclerview.widget.RecyclerView
         recyclerView.adapter = adapter
-        recyclerView.layoutManager = LinearLayoutManager(evaRecyclerView.evaRecyclerView.context)
-        recyclerView.itemAnimator = DefaultItemAnimator()
+        recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(evaRecyclerView.evaRecyclerView.context)
+        recyclerView.itemAnimator = androidx.recyclerview.widget.DefaultItemAnimator()
     }
 
     private fun showSearchPopup() {

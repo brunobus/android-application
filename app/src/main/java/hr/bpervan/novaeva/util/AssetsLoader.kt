@@ -11,8 +11,8 @@ object AssetsLoader {
 
     fun loadPrayerBook(context: Context): List<PrayerCategory> {
         val basePath = "molitve"
-        return context.assets.list(basePath)
-                .map { Pair(it, context.assets.list("$basePath/$it")) }
+        return context.assets.list(basePath).orEmpty()
+                .map { Pair(it, context.assets.list("$basePath/$it").orEmpty()) }
                 .filter { it.second.isNotEmpty() }
                 .map { pair ->
                     val prayerCategoryDir = pair.first

@@ -8,7 +8,6 @@ import android.net.Uri
 import android.util.Log
 import android.util.TypedValue
 import android.widget.TextView
-import androidx.core.widget.toast
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
@@ -29,7 +28,7 @@ fun sendEmailIntent(context: Context?, subject: String, text: String, receiver: 
         context.startActivity(Intent.createChooser(mailIntent, context.getString(R.string.title_share_mail)))
 
     } catch (e: Exception) {
-        context.toast(context.getString(R.string.send_email_failed)).show()
+        context.toast(context.getString(R.string.send_email_failed))
     }
 }
 
@@ -43,7 +42,7 @@ fun shareIntent(context: Context?, text: String) {
         context.startActivity(Intent.createChooser(shareIntent, context.getString(R.string.title_share)))
 
     } catch (e: Exception) {
-        context.toast(context.getString(R.string.share_failed)).show()
+        context.toast(context.getString(R.string.share_failed))
     }
 }
 

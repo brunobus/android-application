@@ -3,7 +3,7 @@ package hr.bpervan.novaeva.player
 import android.content.Context
 import android.content.Intent
 import android.os.Handler
-import android.support.v4.content.ContextCompat
+import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.ExoPlayerFactory

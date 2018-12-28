@@ -1,6 +1,6 @@
 package hr.bpervan.novaeva.activities
 
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.analytics.GoogleAnalytics
 
 /**

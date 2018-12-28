@@ -1,7 +1,7 @@
 package hr.bpervan.novaeva.adapters
 
 import android.graphics.Color
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -26,7 +26,7 @@ import java.util.*
 class EvaRecyclerAdapter(private val data: List<EvaNode>,
                          val isLoadingSupplier: () -> Boolean = { false },
                          val themeId: Int = -1) :
-        RecyclerView.Adapter<EvaRecyclerAdapter.BindableViewHolder>() {
+        androidx.recyclerview.widget.RecyclerView.Adapter<EvaRecyclerAdapter.BindableViewHolder>() {
 
     companion object {
         val dayMonthFormat = SimpleDateFormat("d.M.", Locale.US)
@@ -40,7 +40,7 @@ class EvaRecyclerAdapter(private val data: List<EvaNode>,
     private var themeColor: Int = 0
     private var themeColorTrans: Int = 0
 
-    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+    override fun onAttachedToRecyclerView(recyclerView: androidx.recyclerview.widget.RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
 
         val typedVal = TypedValue()
@@ -87,7 +87,7 @@ class EvaRecyclerAdapter(private val data: List<EvaNode>,
         holder.bindTo(subject)
     }
 
-    inner abstract class BindableViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+    inner abstract class BindableViewHolder(val view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
         abstract fun bindTo(t: Any)
     }
 

@@ -1,7 +1,7 @@
 package hr.bpervan.novaeva.adapters
 
 import android.graphics.Color
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -25,11 +25,11 @@ import hr.bpervan.novaeva.adapters.PrayerCategoryRecyclerAdapter.PrayerViewHolde
  * Created by vpriscan on 03.01.18..
  */
 class PrayerCategoryRecyclerAdapter(private val prayerCategory: PrayerCategory) :
-        RecyclerView.Adapter<PrayerViewHolder>() {
+        androidx.recyclerview.widget.RecyclerView.Adapter<PrayerViewHolder>() {
 
     override fun getItemCount(): Int = prayerCategory.prayerList.size
 
-    var expandedItemPos: Int = RecyclerView.NO_POSITION
+    var expandedItemPos: Int = androidx.recyclerview.widget.RecyclerView.NO_POSITION
         set(newValue) {
             val oldValue = field
             field = newValue
@@ -40,9 +40,9 @@ class PrayerCategoryRecyclerAdapter(private val prayerCategory: PrayerCategory) 
 
     private var themeColorTrans: Int = 0
 
-    private var recyclerView: RecyclerView? = null
+    private var recyclerView: androidx.recyclerview.widget.RecyclerView? = null
 
-    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+    override fun onAttachedToRecyclerView(recyclerView: androidx.recyclerview.widget.RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
 
         val typedVal = TypedValue()
@@ -63,7 +63,7 @@ class PrayerCategoryRecyclerAdapter(private val prayerCategory: PrayerCategory) 
         holder.bindTo(prayerCategory.prayerList[position])
     }
 
-    inner class PrayerViewHolder(val view: View) : RecyclerView.ViewHolder(view), View.OnClickListener {
+    inner class PrayerViewHolder(val view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view), View.OnClickListener {
         val expandableLayout: ExpandableLayout = view.expandableLayout
         private val prayerTitle: TextView = view.prayerTitleTextView
         private val prayerContent: WebView = view.prayerContentView
@@ -87,13 +87,13 @@ class PrayerCategoryRecyclerAdapter(private val prayerCategory: PrayerCategory) 
         }
 
         override fun onClick(v: View?) {
-            expandedItemPos = if (adapterPosition != expandedItemPos) adapterPosition else RecyclerView.NO_POSITION
+            expandedItemPos = if (adapterPosition != expandedItemPos) adapterPosition else androidx.recyclerview.widget.RecyclerView.NO_POSITION
         }
 
     }
 
     private fun collapseHolderAtPosition(position: Int) {
-        if (position != RecyclerView.NO_POSITION) {
+        if (position != androidx.recyclerview.widget.RecyclerView.NO_POSITION) {
             val currentlyExpandedViewHolder =
                     recyclerView?.findViewHolderForAdapterPosition(position) as? PrayerViewHolder
             currentlyExpandedViewHolder?.expandableLayout?.collapse()
@@ -101,7 +101,7 @@ class PrayerCategoryRecyclerAdapter(private val prayerCategory: PrayerCategory) 
     }
 
     private fun expandHolderAtPosition(position: Int) {
-        if (position != RecyclerView.NO_POSITION) {
+        if (position != androidx.recyclerview.widget.RecyclerView.NO_POSITION) {
             val currentlyExpandedViewHolder =
                     recyclerView?.findViewHolderForAdapterPosition(position) as? PrayerViewHolder
             currentlyExpandedViewHolder?.expandableLayout?.expand()

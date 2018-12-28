@@ -1,10 +1,10 @@
 package hr.bpervan.novaeva.views
 
 import android.content.SharedPreferences
-import android.support.annotation.StringRes
-import android.support.design.widget.Snackbar
-import android.support.v4.view.ViewCompat
-import android.support.v4.widget.NestedScrollView
+import androidx.annotation.StringRes
+import com.google.android.material.snackbar.Snackbar
+import androidx.core.view.ViewCompat
+import androidx.core.widget.NestedScrollView
 import android.view.View
 import android.view.ViewTreeObserver
 import android.webkit.WebSettings

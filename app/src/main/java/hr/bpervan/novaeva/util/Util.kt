@@ -5,9 +5,11 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
-import android.support.design.widget.Snackbar
 import android.util.Log
 import android.view.View
+import android.widget.Toast
+import androidx.annotation.StringRes
+import com.google.android.material.snackbar.Snackbar
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.views.snackbar
 import io.reactivex.Observable
@@ -91,4 +93,12 @@ fun Context.networkConnectionExists(): Boolean {
 fun View.dataErrorSnackbar() {
     val networkExists = context?.networkConnectionExists() ?: false
     this.snackbar(if (networkExists) R.string.error_fetching_data else R.string.network_unavailable, Snackbar.LENGTH_SHORT)
+}
+
+fun Context.toast(text: CharSequence, long: Boolean = false) {
+    Toast.makeText(this.applicationContext, text, if (long) Toast.LENGTH_LONG else Toast.LENGTH_SHORT).show()
+}
+
+fun Context.toast(@StringRes text: Int, long: Boolean = false) {
+    Toast.makeText(this.applicationContext, text, if (long) Toast.LENGTH_LONG else Toast.LENGTH_SHORT).show()
 }

@@ -3,9 +3,9 @@ package hr.bpervan.novaeva.fragments
 import android.content.res.Configuration
 import android.os.Bundle
 import android.os.Handler
-import android.support.v7.widget.DefaultItemAnimator
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
@@ -203,11 +203,11 @@ class EvaDirectoryFragment : EvaBaseFragment() {
             typeface = NovaEvaApp.openSansBold
         }
 
-        val recyclerView = evaRecyclerView as RecyclerView
+        val recyclerView = evaRecyclerView as androidx.recyclerview.widget.RecyclerView
 
-        val linearLayoutManager = LinearLayoutManager(context)
+        val linearLayoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
         recyclerView.layoutManager = linearLayoutManager
-        recyclerView.itemAnimator = DefaultItemAnimator()
+        recyclerView.itemAnimator = androidx.recyclerview.widget.DefaultItemAnimator()
         recyclerView.adapter = adapter
         recyclerView.addOnScrollListener(EndlessScrollListener(linearLayoutManager))
 
@@ -248,16 +248,16 @@ class EvaDirectoryFragment : EvaBaseFragment() {
         realm.close()
     }
 
-    class DataChangeLogger : RecyclerView.AdapterDataObserver() {
+    class DataChangeLogger : androidx.recyclerview.widget.RecyclerView.AdapterDataObserver() {
         override fun onChanged() {
             Log.d("recyclerDataChanged", "RecyclerView data changed")
         }
     }
 
-    inner class EndlessScrollListener(private val linearLayoutManager: LinearLayoutManager) : RecyclerView.OnScrollListener() {
+    inner class EndlessScrollListener(private val linearLayoutManager: androidx.recyclerview.widget.LinearLayoutManager) : androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
         private val visibleThreshold = 2
 
-        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+        override fun onScrolled(recyclerView: androidx.recyclerview.widget.RecyclerView, dx: Int, dy: Int) {
             val visibleItemCount = recyclerView.childCount
             val totalItemCount = linearLayoutManager.itemCount
             val firstVisibleItem = linearLayoutManager.findFirstVisibleItemPosition()
