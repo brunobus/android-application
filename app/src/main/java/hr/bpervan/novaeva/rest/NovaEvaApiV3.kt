@@ -13,9 +13,10 @@ interface NovaEvaApiV3 {
     fun latest(): Single<LatestByDomainDto>
 
 
-    @GET("{domain}/categories/{domain}/include-subs")
+    @GET("{domain}/categories/{categoryId}/include-subs?is_active=true")
     fun categoryContent(@Path("domain") domain: String,
-                        @Path("domain") categoryId: Long,
-                        @Query("page") page: Long,
-                        @Query("region") region: Long): Single<CategoryDto>
+                        @Path("categoryId") categoryId: Long = 0,
+                        @Query("page") page: Long = 1,
+                        @Query("items") items: Long = 20,
+                        @Query("region") region: Long = THIS_REGION.id): Single<CategoryDto>
 }

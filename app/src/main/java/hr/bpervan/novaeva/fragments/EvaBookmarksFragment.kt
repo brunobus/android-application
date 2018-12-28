@@ -58,7 +58,7 @@ class EvaBookmarksFragment : EvaBaseFragment() {
 
         realm = Realm.getInstance(RealmConfigProvider.evaDBConfig)
 
-        adapter = EvaRecyclerAdapter(EvaDomain.GOSPEL, bookmarksList)
+        adapter = EvaRecyclerAdapter(bookmarksList)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

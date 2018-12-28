@@ -9,7 +9,7 @@ import io.realm.annotations.PrimaryKey
 
 const val CONTENT_ID_FIELD = "id"
 const val DIRECTORY_ID_FIELD = "id"
-const val TIMESTAMP_FIELD = "timestamp"
+const val TIMESTAMP_FIELD = "created"
 
 interface EvaNode
 
@@ -29,6 +29,8 @@ open class EvaDirectory(
         @PrimaryKey
         var id: Long = -1,
         var domain: String? = null,
+//        var created: Long = 0,
+//        var modified: Long = created,
         var title: String = "",
         var image: EvaResource? = null,
         var subCategories: RealmList<EvaDirectory> = RealmList(),
@@ -40,7 +42,8 @@ open class EvaContent(
         var id: Long = -1,
         var directoryId: Long = -1,
         var domain: String? = null,
-        var timestamp: Long = 0,
+        var created: Long = 0,
+        var modified: Long = created,
         var preview: String = "",
         var title: String = "",
         var text: String = "",

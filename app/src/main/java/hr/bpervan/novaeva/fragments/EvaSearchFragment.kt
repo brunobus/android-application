@@ -60,8 +60,7 @@ class EvaSearchFragment : EvaBaseFragment() {
         val inState: Bundle = savedInstanceState ?: arguments!!
         searchString = inState.getString(searchStringKey)
 
-        //todo fixme find which category search results belong to
-        adapter = EvaRecyclerAdapter(EvaDomain.GOSPEL, searchResultList)
+        adapter = EvaRecyclerAdapter(searchResultList)
 
         savedInstanceState ?: NovaEvaApp.defaultTracker
                 .send(HitBuilders.EventBuilder()

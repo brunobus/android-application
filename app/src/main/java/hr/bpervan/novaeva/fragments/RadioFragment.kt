@@ -20,6 +20,7 @@ import hr.bpervan.novaeva.model.toDbModel
 import hr.bpervan.novaeva.player.getStreamLinksFromPlaylistUri
 import hr.bpervan.novaeva.rest.EvaDomain
 import hr.bpervan.novaeva.rest.NovaEvaService
+import hr.bpervan.novaeva.rest.serverByDomain
 import hr.bpervan.novaeva.util.dataErrorSnackbar
 import hr.bpervan.novaeva.util.networkRequest
 import hr.bpervan.novaeva.util.plusAssign
@@ -117,7 +118,9 @@ class RadioFragment : EvaBaseFragment() {
                             NovaEvaApp.evaPlayer.prepareAudioStream(
                                     streamUri, radioStation.contentId.toString(),
                                     radioStation.title ?: "nepoznato",
-                                    isRadio = true, doAutoPlay = true)
+                                    isRadio = true,
+                                    doAutoPlay = true,
+                                    auth = serverByDomain(EvaDomain.RADIO).auth)
                             break
                         } catch (e: Exception) {
                             /*continue*/

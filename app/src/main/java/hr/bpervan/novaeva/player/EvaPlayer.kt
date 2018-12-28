@@ -8,14 +8,13 @@ import androidx.core.net.toUri
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.EventPipelines.playbackStartStopPause
@@ -83,19 +82,26 @@ class EvaPlayer(context: Context) {
 
     private val handler = Handler()
 
-    fun prepareAudioStream(audioUri: String, contentId: String, contentTitle: String, isRadio: Boolean, doAutoPlay: Boolean) {
+    fun prepareAudioStream(audioUri: String,
+                           contentId: String,
+                           contentTitle: String,
+                           isRadio: Boolean,
+                           doAutoPlay: Boolean,
+                           auth: String?) {
 
         val context = NovaEvaApp.instance ?: return
 
         prepareIfNeeded(EvaPlayer.PlaybackInfo(contentId, contentTitle, isRadio), doAutoPlay) {
-            //        val factory = ExtractorMediaSource.Factory(dataSourceFactory).setCustomCacheKey(audioUri)
-//        val mediaSource = factory.createMediaSource(streamingUri)
-            val dataSourceFactory = DefaultDataSourceFactory(context,
+
+            val dataSourceFactory = DefaultHttpDataSourceFactory(
                     Util.getUserAgent(context, context.resources.getString(R.string.app_name)),
                     DefaultBandwidthMeter())
 
-            ExtractorMediaSource(audioUri.toUri(), dataSourceFactory, DefaultExtractorsFactory(),
-                    handler, null, audioUri)
+            if (auth != null) {
+                dataSourceFactory.defaultRequestProperties.set("Authorization", auth)
+            }
+
+            ExtractorMediaSource.Factory(dataSourceFactory).createMediaSource(audioUri.toUri(), handler, null)
         }
     }
 

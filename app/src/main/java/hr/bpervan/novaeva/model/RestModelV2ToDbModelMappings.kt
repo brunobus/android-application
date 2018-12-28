@@ -29,10 +29,10 @@ fun EvaContentMetadataDTO.toDbModel(mergeWith: EvaContent? = null): EvaContent {
 
     return evaContent.apply {
         directoryId = dto.directoryId
-        domain = null
+        domain = dto.domain?.toString()
 
-        datetime?.toLong()?.let {
-            timestamp = it
+        dto.datetime?.toLong()?.let { datetime ->
+            created = 1000 * datetime
         }
 
         preview = dto.preview
@@ -55,7 +55,7 @@ fun EvaContentDTO.toDbModel(mergeWith: EvaContent? = null): EvaContent {
 
     return evaContent.apply {
         directoryId = dto.directoryId
-        domain = null
+        domain = dto.domain?.toString()
         title = dto.title ?: ""
         text = dto.text ?: ""
 

@@ -18,6 +18,7 @@ import hr.bpervan.novaeva.model.EvaContent
 import hr.bpervan.novaeva.model.OpenContentEvent
 import hr.bpervan.novaeva.rest.EvaDomain
 import hr.bpervan.novaeva.rest.NovaEvaService
+import hr.bpervan.novaeva.rest.serverByDomain
 import hr.bpervan.novaeva.storage.EvaContentDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
 import hr.bpervan.novaeva.util.*
@@ -35,13 +36,14 @@ class EvaContentFragment : EvaBaseFragment() {
 
     companion object : EvaFragmentFactory<EvaContentFragment, OpenContentEvent> {
 
-        private const val CATEGORY_KEY = "category"
+        private const val DOMAIN_KEY = "domain"
         private const val CONTENT_ID_KEY = "id"
         private const val THEME_ID_KEY = "themeId"
 
         override fun newInstance(initializer: OpenContentEvent): EvaContentFragment {
             return EvaContentFragment().apply {
                 arguments = bundleOf(
+                        DOMAIN_KEY to enumValueOf<EvaDomain>(initializer.content.domain!!),
                         CONTENT_ID_KEY to initializer.content.id,
                         THEME_ID_KEY to initializer.themeId
                 )
@@ -67,8 +69,8 @@ class EvaContentFragment : EvaBaseFragment() {
         super.onCreate(savedInstanceState)
 
         val inState = savedInstanceState ?: arguments!!
-        domain = inState.getSerializable(CATEGORY_KEY) as EvaDomain
-        contentId = inState.getLong(CONTENT_ID_KEY)
+        domain = inState.getSerializable(DOMAIN_KEY) as EvaDomain
+        contentId = inState.getLong(CONTENT_ID_KEY, -1L)
         themeId = inState.getInt(THEME_ID_KEY, -1)
 
         savedInstanceState ?: NovaEvaApp.defaultTracker
@@ -83,7 +85,7 @@ class EvaContentFragment : EvaBaseFragment() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putSerializable(CATEGORY_KEY, domain)
+        outState.putSerializable(DOMAIN_KEY, domain)
         outState.putLong(CONTENT_ID_KEY, contentId)
         outState.putInt(THEME_ID_KEY, themeId)
 
@@ -117,7 +119,9 @@ class EvaContentFragment : EvaBaseFragment() {
             NovaEvaApp.evaPlayer.prepareAudioStream(
                     audioUrl, evaContent.id.toString(),
                     evaContent.title,
-                    isRadio = false, doAutoPlay = false)
+                    isRadio = false,
+                    doAutoPlay = false,
+                    auth = serverByDomain(domain).auth)
 
             player_view?.apply {
                 NovaEvaApp.evaPlayer.supplyPlayerToView(this, evaContent.id.toString())
@@ -199,10 +203,9 @@ class EvaContentFragment : EvaBaseFragment() {
 
         val evaContent = EvaContentDbAdapter.loadEvaContent(realm, contentId)
 
-        if (evaContent == null || savedInstanceState == null) {
-            if (domain != EvaDomain.VOCATION) {
-                fetchContentFromServer_legacy(contentId)
-            }
+        if ((evaContent == null || savedInstanceState == null)
+                && domain != EvaDomain.VOCATION) {
+            fetchContentFromServer_legacy(contentId)
         } else {
             this.evaContent = evaContent
         }
@@ -216,7 +219,8 @@ class EvaContentFragment : EvaBaseFragment() {
     private fun fetchContentFromServer_legacy(contentId: Long) {
         disposables += NovaEvaService.v2.getContentData(contentId)
                 .networkRequest({ contentDataDTO ->
-                    EvaContentDbAdapter.addOrUpdateEvaContentAsync(realm, contentDataDTO) {
+                    contentDataDTO.domain = domain
+                    EvaContentDbAdapter.addOrUpdateEvaContentAsync_legacy(realm, contentDataDTO) {
                         evaContent = EvaContentDbAdapter.loadEvaContent(realm, contentId)
                     }
                 }) {

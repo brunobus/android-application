@@ -1,6 +1,5 @@
 package hr.bpervan.novaeva.model
 
-import com.google.gson.annotations.SerializedName
 import hr.bpervan.novaeva.rest.EvaDomain
 
 /**

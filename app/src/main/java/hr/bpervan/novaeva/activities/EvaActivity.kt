@@ -24,6 +24,7 @@ import hr.bpervan.novaeva.model.OpenQuotesEvent
 import hr.bpervan.novaeva.player.getStreamLinksFromPlaylistUri
 import hr.bpervan.novaeva.rest.EvaDomain
 import hr.bpervan.novaeva.rest.NovaEvaService
+import hr.bpervan.novaeva.rest.serverByDomain
 import hr.bpervan.novaeva.util.*
 import hr.bpervan.novaeva.util.TransitionAnimation.*
 import hr.bpervan.novaeva.views.snackbar
@@ -67,8 +68,7 @@ class EvaActivity : EvaBaseActivity() {
                         openQuotesFragment(OpenQuotesEvent(contentId))
                     } else {
                         openContentFragment(OpenContentEvent(
-                                domain = EvaDomain.SERMONS, /*todo 13.12.*/
-                                content = EvaContent(contentId, 0)))
+                                EvaContent(contentId, domain = EvaDomain.SERMONS.toString())))
                     }
                 }
             }
@@ -264,7 +264,9 @@ class EvaActivity : EvaBaseActivity() {
                             NovaEvaApp.evaPlayer.prepareAudioStream(
                                     streamUri, radioStation.contentId.toString(),
                                     radioStation.title ?: "nepoznato",
-                                    isRadio = true, doAutoPlay = true)
+                                    isRadio = true,
+                                    doAutoPlay = true,
+                                    auth = serverByDomain(EvaDomain.RADIO).auth)
                             break
                         } catch (e: Exception) {
                             /*continue*/

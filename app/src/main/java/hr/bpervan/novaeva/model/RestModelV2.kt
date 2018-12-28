@@ -84,7 +84,7 @@ class EvaContentDTO {
     @SerializedName("cid")
     val directoryId: Long = 0
 
-    var categoryId: Long = -1
+    var domain: EvaDomain? = null
 
     @SerializedName("prilozi")
     private val _attachments: List<EvaAttachmentDTO>? = null

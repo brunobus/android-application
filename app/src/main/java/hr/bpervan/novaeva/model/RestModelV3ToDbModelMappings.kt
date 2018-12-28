@@ -29,21 +29,19 @@ fun ContentDto.toDbModel(mergeWith: EvaContent? = null): EvaContent {
     return evaContent.apply {
         directoryId = dto.supercategory?.id ?: -1
         domain = dto.domain?.toString()
-        timestamp = dto.created
+        created = dto.created
         preview = dto.description.orEmpty()
         title = dto.title.orEmpty()
         text = dto.text.orEmpty()
         attachments = documents.orEmpty()
                 .map { doc -> EvaAttachment(doc.title.orEmpty(), doc.link.orEmpty()) }
+                .map { evaContent.realm?.copyToRealm(it) ?: it }
                 .toTypedArray()
                 .toRealmList()
         image = dto.images.orEmpty()
-                .map { image ->
-                    EvaResource(
-                            id = image.id,
-                            title = image.title,
-                            url = image.link.orEmpty())
-                }.firstOrNull()
+                .firstOrNull()
+                ?.toDbModel()
+                ?.let { realm?.copyToRealm(it) ?: it }
         videoURL = dto.video?.firstOrNull()?.link
         audioURL = dto.audio?.firstOrNull()?.link
         attachmentsIndicator = AttachmentIndicatorHelper.encode(EvaAttachmentsIndicatorDTO().apply {

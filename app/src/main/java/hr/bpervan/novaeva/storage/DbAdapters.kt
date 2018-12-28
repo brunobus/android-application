@@ -171,9 +171,9 @@ object EvaContentDbAdapter {
         return realm.where<EvaContent>().equalTo(CONTENT_ID_FIELD, contentId).findFirst()
     }
 
-    fun addOrUpdateEvaContentAsync(realm: Realm,
-                                   evaContentDTO: EvaContentDTO,
-                                   onSuccess: () -> Unit = {}) {
+    fun addOrUpdateEvaContentAsync_legacy(realm: Realm,
+                                          evaContentDTO: EvaContentDTO,
+                                          onSuccess: () -> Unit = {}) {
         realm.executeTransactionAsync({ realmInTrans ->
             val evaContent = loadEvaContent(realmInTrans, evaContentDTO.contentId)
             val updated = evaContentDTO.toDbModel(mergeWith = evaContent)

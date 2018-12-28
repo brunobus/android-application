@@ -13,7 +13,6 @@ import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.*
-import hr.bpervan.novaeva.rest.EvaDomain
 import hr.bpervan.novaeva.util.EvaTouchFeedback
 import hr.bpervan.novaeva.util.TransitionAnimation
 import kotlinx.android.synthetic.main.recycler_item_eva_content.view.*
@@ -24,8 +23,7 @@ import java.util.*
 /**
  * Created by vpriscan on 08.10.17..
  */
-class EvaRecyclerAdapter(val domain: EvaDomain,
-                         private val data: List<EvaNode>,
+class EvaRecyclerAdapter(private val data: List<EvaNode>,
                          val isLoadingSupplier: () -> Boolean = { false },
                          val themeId: Int = -1) :
         RecyclerView.Adapter<EvaRecyclerAdapter.BindableViewHolder>() {
@@ -107,7 +105,7 @@ class EvaRecyclerAdapter(val domain: EvaDomain,
 
             view.setOnTouchListener(EvaTouchFeedback(view, themeColorTrans))
             view.setOnClickListener {
-                EventPipelines.openDirectory.onNext(OpenDirectoryEvent(domain, directoryInfo, themeId, TransitionAnimation.LEFTWARDS))
+                EventPipelines.openDirectory.onNext(OpenDirectoryEvent(directoryInfo, themeId, TransitionAnimation.LEFTWARDS))
             }
         }
 
@@ -149,7 +147,7 @@ class EvaRecyclerAdapter(val domain: EvaDomain,
 
             tvNaslov.text = contentInfo.title
 
-            val datetime = Date(1000 * contentInfo.timestamp)
+            val datetime = Date(contentInfo.created)
 
             //todo move formatted datetime to DB
             val dayMonth: String = dayMonthFormat.format(datetime)
@@ -168,7 +166,7 @@ class EvaRecyclerAdapter(val domain: EvaDomain,
             view.setOnTouchListener(EvaTouchFeedback(view, themeColorTrans))
 
             view.setOnClickListener {
-                EventPipelines.openContent.onNext(OpenContentEvent(domain, contentInfo, themeId, TransitionAnimation.LEFTWARDS))
+                EventPipelines.openContent.onNext(OpenContentEvent(contentInfo, themeId, TransitionAnimation.LEFTWARDS))
             }
         }
     }
