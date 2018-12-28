@@ -10,13 +10,13 @@ plugins {
 }
 
 android {
-    compileSdkVersion(27)
-    buildToolsVersion = "27.0.3"
+    compileSdkVersion(28)
+    buildToolsVersion = "28.0.3"
 
     defaultConfig {
         applicationId = "hr.bpervan.novaeva.main"
         minSdkVersion(16)
-        targetSdkVersion(27)
+        targetSdkVersion(28)
         versionCode = 160030002
         versionName = "3.0.2"
     }
@@ -46,25 +46,26 @@ dependencies {
     testImplementation("junit:junit:4.12")
     testImplementation("com.google.code.gson:gson:2.8.5")
 
-    implementation("com.android.support:support-compat:27.1.1")
-    implementation("com.android.support:support-media-compat:27.1.1")
-    implementation("com.android.support:appcompat-v7:27.1.1")
-    implementation("com.android.support:design:27.1.1")
-    implementation("com.android.support:recyclerview-v7:27.1.1")
-    implementation("com.android.support.constraint:constraint-layout:1.1.2")
+    implementation("com.android.support:support-v4:28.0.0")
+    implementation("com.android.support:support-compat:28.0.0")
+    implementation("com.android.support:support-media-compat:28.0.0")
+    implementation("com.android.support:appcompat-v7:28.0.0")
+    implementation("com.android.support:design:28.0.0")
+    implementation("com.android.support:recyclerview-v7:28.0.0")
+    implementation("com.android.support.constraint:constraint-layout:1.1.3")
 
     implementation(kotlin("stdlib-jdk7", KotlinCompilerVersion.VERSION))
     implementation("androidx.core:core-ktx:0.3")
-    implementation("io.reactivex.rxjava2:rxjava:2.1.14")
-    implementation("io.reactivex.rxjava2:rxandroid:2.0.2")
+    implementation("io.reactivex.rxjava2:rxjava:2.2.3")
+    implementation("io.reactivex.rxjava2:rxandroid:2.1.0")
 
     implementation("com.nostra13.universalimageloader:universal-image-loader:1.9.5")
-    implementation("com.google.android.gms:play-services-analytics:12.0.1")
-    implementation("com.google.android.gms:play-services-location:12.0.1")
+    implementation("com.google.android.gms:play-services-analytics:16.0.5")
+    implementation("com.google.android.gms:play-services-location:16.0.0")
 
-    implementation("com.squareup.retrofit2:retrofit:2.3.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.3.0")
-    implementation("com.squareup.retrofit2:adapter-rxjava2:2.3.0")
+    implementation("com.squareup.retrofit2:retrofit:2.4.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.4.0")
+    implementation("com.squareup.retrofit2:adapter-rxjava2:2.4.0")
 
     implementation("com.google.android.exoplayer:exoplayer:2.7.0")
     implementation("com.google.android.exoplayer:extension-mediasession:2.7.0")
