@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal">
 
     <ImageButton
@@ -13,6 +14,9 @@
         android:adjustViewBounds="true"
         android:background="@drawable/button_radio_1"
         android:contentDescription="@string/dummyDesc"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         android:scaleType="center"/>
 
     <ImageButton
@@ -23,7 +27,36 @@
         android:adjustViewBounds="true"
         android:background="@drawable/button_radio_options"
         android:contentDescription="@string/dummyDesc"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/btnRadio"
         android:scaleType="center"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        />
+
+    <Space
+        android:id="@+id/radioBtnCentralSpot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/btnRadio"
+        app:layout_constraintBottom_toBottomOf="@id/btnRadio"
+        app:layout_constraintStart_toStartOf="@id/btnRadio"
+        app:layout_constraintEnd_toEndOf="@id/btnRadio"
+        android:visibility="invisible"
+        />
+
+    <ProgressBar
+        android:id="@+id/radioLoadingCircle"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:indeterminate="true"
+        android:indeterminateOnly="true"
+        android:theme="@style/WhiteTheme"
+        app:layout_constraintStart_toEndOf="@id/radioBtnCentralSpot"
+        app:layout_constraintEnd_toEndOf="@id/btnRadio"
+        app:layout_constraintTop_toTopOf="@id/btnRadio"
+        app:layout_constraintBottom_toBottomOf="@id/btnRadio"
+        android:visibility="visible"
+        />
 
 </hr.bpervan.novaeva.views.EvaRadioBtn>

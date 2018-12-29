@@ -2,7 +2,6 @@ package hr.bpervan.novaeva.fragments
 
 import android.content.SharedPreferences
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.View
 import com.google.android.exoplayer2.Player
 import com.nostra13.universalimageloader.core.ImageLoader
@@ -54,9 +53,20 @@ abstract class EvaBaseFragment : androidx.fragment.app.Fragment() {
             disposables += EventPipelines.playbackStartStopPause
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe {
-                        evaRadioBtn.expanded = it.playbackInfo?.isRadio == true
-                                && it.player.playWhenReady
-                                && it.player.playbackState == Player.STATE_READY
+                        when {
+                            it.playbackInfo?.isRadio == true
+                                    && it.player.playWhenReady
+                                    && it.player.playbackState == Player.STATE_READY -> {
+                                evaRadioBtn.radioBtnState = EvaRadioBtn.RadioBtnState.PLAYING
+                            }
+                            it.player.playWhenReady
+                                    && it.player.playbackState == Player.STATE_BUFFERING -> {
+                                if (evaRadioBtn.radioBtnState != EvaRadioBtn.RadioBtnState.NOT_PLAYING) {
+                                    evaRadioBtn.radioBtnState = EvaRadioBtn.RadioBtnState.BUFFERING
+                                }
+                            }
+                            else -> evaRadioBtn.radioBtnState = EvaRadioBtn.RadioBtnState.NOT_PLAYING
+                        }
                     }
         }
 

@@ -77,6 +77,10 @@
         <item name="contentTitleBarSrc">@drawable/bar_violet</item>
     </style>
 
+    <style name="WhiteTheme">
+        <item name="colorAccent">@color/White</item>
+    </style>
+
     <style name="DarkBlueTheme" parent="AppTheme">
         <item name="colorPrimary">@color/evaDarkBlue</item>
         <item name="colorPrimaryDark">@color/evaDarkBlue</item>

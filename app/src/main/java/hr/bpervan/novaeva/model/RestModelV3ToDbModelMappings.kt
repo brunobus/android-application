@@ -32,7 +32,7 @@ fun ContentDto.toDbModel(mergeWith: EvaContent? = null): EvaContent {
         created = dto.created
         preview = dto.description.orEmpty()
         title = dto.title.orEmpty()
-        text = dto.text.orEmpty()
+        text = dto.html ?: dto.text.orEmpty()
         attachments = documents.orEmpty()
                 .map { doc -> EvaAttachment(doc.title.orEmpty(), doc.link.orEmpty()) }
                 .map { evaContent.realm?.copyToRealm(it) ?: it }
