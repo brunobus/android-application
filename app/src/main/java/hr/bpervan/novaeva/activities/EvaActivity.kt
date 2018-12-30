@@ -316,7 +316,7 @@ class EvaActivity : EvaBaseActivity() {
         if (evaRoot.isDrawerOpen(GravityCompat.END)) {
             evaRoot.closeDrawer(GravityCompat.END)
         } else {
-            supportFragmentManager.ifPresent {
+            supportFragmentManager?.let {
                 if (it.backStackEntryCount == 1) {
                     it.popBackStack()
                 }

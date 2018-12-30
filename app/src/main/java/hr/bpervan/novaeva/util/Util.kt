@@ -51,10 +51,6 @@ operator fun CompositeDisposable.plusAssign(oldDisposable: Disposable) {
     add(oldDisposable)
 }
 
-inline fun <T, R> T?.ifPresent(block: (T) -> R): R? {
-    return this?.let(block)
-}
-
 fun <T> Collection<T>?.notNullNorEmpty(): Boolean = orEmpty().isNotEmpty()
 fun String?.notNullNorEmpty(): Boolean = orEmpty().isNotEmpty()
 

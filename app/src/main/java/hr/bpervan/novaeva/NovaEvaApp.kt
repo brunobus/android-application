@@ -33,7 +33,6 @@ class NovaEvaApp : Application() {
         instance = this
 
         Realm.init(this)
-        ImageLoaderConfigurator.doInit(this)
 
         val analytics = GoogleAnalytics.getInstance(this).apply {
             setDryRun(BuildConfig.DEBUG)
@@ -66,7 +65,9 @@ class NovaEvaApp : Application() {
         lateinit var defaultTracker: Tracker
 
         val imageLoader: ImageLoader by lazy {
-            ImageLoader.getInstance()
+            ImageLoader.getInstance().apply {
+                init(ImageLoaderConfigurator.createConfiguration(instance!!))
+            }
         }
 
         val prefs: SharedPreferences by lazy {
