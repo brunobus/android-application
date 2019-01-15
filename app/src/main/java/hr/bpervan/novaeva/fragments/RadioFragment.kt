@@ -1,9 +1,6 @@
 package hr.bpervan.novaeva.fragments
 
 import android.os.Bundle
-import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
@@ -152,7 +149,7 @@ class RadioFragment : EvaBaseFragment() {
     }
 
     private fun fetchRadioStationsFromServer() {
-        fetchFromServerDisposable = NovaEvaService.v2.getDirectoryContent(EvaDomain.RADIO.legacyId, null, 1000)
+        fetchFromServerDisposable = NovaEvaService.v2.getDirectoryContent(EvaDomain.RADIO.rootId, null, 1000)
                 .networkRequest({ evaDirectoryDTO ->
                     radioStationList.clear()
                     radioStationList.addAll(evaDirectoryDTO.contentMetadataList.map { it.toDbModel() })

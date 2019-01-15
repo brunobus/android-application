@@ -3,9 +3,7 @@ package hr.bpervan.novaeva.activities
 import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
-import androidx.fragment.app.FragmentTransaction
 import androidx.core.content.ContextCompat
 import androidx.core.view.GestureDetectorCompat
 import androidx.core.view.GravityCompat
@@ -239,7 +237,7 @@ class EvaActivity : EvaBaseActivity() {
     }
 
     private fun playFirstRadioStation() {
-        disposables += NovaEvaService.v2.getDirectoryContent(EvaDomain.RADIO.legacyId, null, items = 1)
+        disposables += NovaEvaService.v2.getDirectoryContent(EvaDomain.RADIO.rootId, null, items = 1)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .map { it.contentMetadataList.first() }

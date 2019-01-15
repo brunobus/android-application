@@ -17,8 +17,8 @@ android {
         applicationId = "hr.bpervan.novaeva.main"
         minSdkVersion(16)
         targetSdkVersion(28)
-        versionCode = 160030003
-        versionName = "3.0.3"
+        versionCode = 160030004
+        versionName = "3.0.4"
     }
 
     buildTypes {
@@ -31,8 +31,33 @@ android {
         getByName("release") {
             isShrinkResources = true
             isMinifyEnabled = true
-            isUseProguard = true
+            isUseProguard = false
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
+        }
+    }
+
+    flavorDimensions("server")
+
+    productFlavors {
+        create("development") {
+            dimension = "server"
+
+            applicationIdSuffix = ".dev"
+            versionNameSuffix = "-dev"
+
+            buildConfigField("long", "VOCATION_ROOT_ID", "3214")
+            buildConfigField("String", "V2_SERVER_URI", "\"http://novaeva.com\"")
+            buildConfigField("String", "V3_SERVER_URI", "\"http://vps423121.ovh.net:8080\"")
+            buildConfigField("String", "V3_SERVER_AUTH", "\"Basic Z2FsYWRyaWVsMTozU0t5Szg=\"")
+        }
+
+        create("production") {
+            dimension = "server"
+
+            buildConfigField("long", "VOCATION_ROOT_ID", "2603")
+            buildConfigField("String", "V2_SERVER_URI", "\"http://novaeva.com\"")
+            buildConfigField("String", "V3_SERVER_URI", "\"http://ns3115316.ip-54-38-194.eu:8080\"")
+            buildConfigField("String", "V3_SERVER_AUTH", "\"Basic QW5kUm9pRDAwMTpkM2JXYXdnRFpqcXFWV2dESlJLag==\"")
         }
     }
 
@@ -58,7 +83,7 @@ dependencies {
     implementation("io.reactivex.rxjava2:rxandroid:2.1.0")
 
     implementation("com.google.android.material:material:1.0.0")
-    implementation("com.google.android.gms:play-services-analytics:16.0.5")
+    implementation("com.google.android.gms:play-services-analytics:16.0.6")
     implementation("com.google.android.gms:play-services-location:16.0.0")
     implementation("com.google.android.exoplayer:exoplayer:2.7.0")
     implementation("com.google.android.exoplayer:extension-mediasession:2.7.0")

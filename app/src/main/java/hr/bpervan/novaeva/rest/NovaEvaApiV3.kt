@@ -18,5 +18,5 @@ interface NovaEvaApiV3 {
                         @Path("categoryId") categoryId: Long = 0,
                         @Query("page") page: Long = 1,
                         @Query("items") items: Long = 20,
-                        @Query("region") region: Long = THIS_REGION.id): Single<CategoryDto>
+                        @Query("region") region: Long = Region.id): Single<CategoryDto>
 }

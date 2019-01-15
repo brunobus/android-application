@@ -3,9 +3,6 @@ package hr.bpervan.novaeva.fragments
 import android.content.res.Configuration
 import android.os.Bundle
 import android.os.Handler
-import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
@@ -92,7 +89,7 @@ class EvaDirectoryFragment : EvaBaseFragment() {
         domain = inState.getSerializable(DOMAIN_KEY) as EvaDomain
         directoryId = inState.getLong(DIRECTORY_ID_KEY, -1L)
         if (directoryId == -1L) {
-            directoryId = domain.rootCategoryId
+            directoryId = domain.rootId
         }
         directoryTitle = inState.getString(DIRECTORY_TITLE_KEY)
         themeId = inState.getInt(THEME_ID_KEY)

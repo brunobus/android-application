@@ -11,7 +11,7 @@ import com.nostra13.universalimageloader.core.assist.ImageScaleType
 import com.nostra13.universalimageloader.core.decode.BaseImageDecoder
 import com.nostra13.universalimageloader.core.download.BaseImageDownloader
 import com.nostra13.universalimageloader.utils.StorageUtils
-import hr.bpervan.novaeva.rest.SERVER_V3
+import hr.bpervan.novaeva.rest.Server
 import java.net.HttpURLConnection
 
 object ImageLoaderConfigurator {
@@ -35,7 +35,7 @@ object ImageLoaderConfigurator {
                         .considerExifParams(false)
                         .imageScaleType(ImageScaleType.IN_SAMPLE_POWER_OF_2)
                         .bitmapConfig(Bitmap.Config.ARGB_8888)
-                        .extraForDownloader(SERVER_V3.auth)
+                        .extraForDownloader(Server.V3.auth)
                         .build())
                 .writeDebugLogs()
                 .build()

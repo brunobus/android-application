@@ -148,11 +148,11 @@ class EvaDashboardFragment : EvaBaseFragment() {
     private fun checkLatestContentId(domain: EvaDomain, receivedLatestContentId: Long?) {
         receivedLatestContentId ?: return
 
-        val savedLatestContentId = prefs.getLong("$LATEST_CONTENT_ID_KEY_PREFIX${domain.legacyId}", 0)
+        val savedLatestContentId = prefs.getLong("$LATEST_CONTENT_ID_KEY_PREFIX${domain.rootId}", 0)
         if (savedLatestContentId != receivedLatestContentId) {
             prefs.edit {
-                putLong("$LATEST_CONTENT_ID_KEY_PREFIX${domain.legacyId}", receivedLatestContentId)
-                putBoolean("$NEW_CONTENT_KEY_PREFIX${domain.legacyId}", true)
+                putLong("$LATEST_CONTENT_ID_KEY_PREFIX${domain.rootId}", receivedLatestContentId)
+                putBoolean("$NEW_CONTENT_KEY_PREFIX${domain.rootId}", true)
             }
         }
     }
@@ -164,13 +164,13 @@ class EvaDashboardFragment : EvaBaseFragment() {
     private fun updateUI() {
         view ?: return
 
-        btnDuhovnost.indicateNews = hasNewContent(EvaDomain.SPIRITUALITY.legacyId)
-        btnIzreke.indicateNews = hasNewContent(EvaDomain.QUOTES.legacyId)
-        btnAktualno.indicateNews = hasNewContent(EvaDomain.TRENDING.legacyId)
-        btnMultimedia.indicateNews = hasNewContent(EvaDomain.MULTIMEDIA.legacyId)
-        btnPropovijedi.indicateNews = hasNewContent(EvaDomain.SERMONS.legacyId)
-        btnOdgovori.indicateNews = hasNewContent(EvaDomain.ANSWERS.legacyId)
-        btnPoziv.indicateNews = hasNewContent(EvaDomain.VOCATION.legacyId)
-        btnPjesmarica.indicateNews = hasNewContent(EvaDomain.SONGBOOK.legacyId)
+        btnDuhovnost.indicateNews = hasNewContent(EvaDomain.SPIRITUALITY.rootId)
+        btnIzreke.indicateNews = hasNewContent(EvaDomain.QUOTES.rootId)
+        btnAktualno.indicateNews = hasNewContent(EvaDomain.TRENDING.rootId)
+        btnMultimedia.indicateNews = hasNewContent(EvaDomain.MULTIMEDIA.rootId)
+        btnPropovijedi.indicateNews = hasNewContent(EvaDomain.SERMONS.rootId)
+        btnOdgovori.indicateNews = hasNewContent(EvaDomain.ANSWERS.rootId)
+        btnPoziv.indicateNews = hasNewContent(EvaDomain.VOCATION.rootId)
+        btnPjesmarica.indicateNews = hasNewContent(EvaDomain.SONGBOOK.rootId)
     }
 }
