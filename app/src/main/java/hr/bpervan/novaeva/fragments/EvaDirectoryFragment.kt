@@ -271,7 +271,7 @@ class EvaDirectoryFragment : EvaBaseFragment() {
                         disposables += EvaDirectoryDbAdapter.loadEvaDirectoryAsync(realm, directoryId) { evaDirectory ->
                             if (evaDirectory != null) {
                                 val oldestTimestamp = evaDirectory.contents.sort(TIMESTAMP_FIELD, Sort.DESCENDING)
-                                        .lastOrNull()?.created
+                                        .lastOrNull()?.created?.let { it / 1000 }
                                 fetchEvaDirectoryDataFromServer_legacy(oldestTimestamp)
                             }
                         }
