@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Nova Eva</string>
     <string name="prayerbook">Molitvenik</string>
     <string name="breviary">Brevijar</string>
     <string name="gospel">Liturgijska čitanja dana</string>

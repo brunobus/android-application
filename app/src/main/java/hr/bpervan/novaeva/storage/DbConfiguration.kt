@@ -1,5 +1,6 @@
 package hr.bpervan.novaeva.storage
 
+import hr.bpervan.novaeva.main.BuildConfig
 import io.realm.RealmConfiguration
 
 /**
@@ -10,7 +11,7 @@ object RealmConfigProvider {
 
     val evaDBConfig: RealmConfiguration by lazy {
         RealmConfiguration.Builder()
-                .name("novaEvaDb.realm")
+                .name(BuildConfig.DB_NAME)
                 .schemaVersion(6)
                 .deleteRealmIfMigrationNeeded()
                 .build()

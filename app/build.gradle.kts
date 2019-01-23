@@ -45,19 +45,25 @@ android {
             applicationIdSuffix = ".dev"
             versionNameSuffix = "-dev"
 
+            resValue("string", "app_name", "Dev Eva")
+
             buildConfigField("long", "VOCATION_ROOT_ID", "3214")
             buildConfigField("String", "V2_SERVER_URI", "\"http://novaeva.com\"")
             buildConfigField("String", "V3_SERVER_URI", "\"http://vps423121.ovh.net:8080\"")
             buildConfigField("String", "V3_SERVER_AUTH", "\"Basic Z2FsYWRyaWVsMTozU0t5Szg=\"")
+            buildConfigField("String", "DB_NAME", "\"NovaEvaDb_dev.realm\"")
         }
 
         create("production") {
             dimension = "server"
 
+            resValue("string", "app_name", "Nova Eva")
+
             buildConfigField("long", "VOCATION_ROOT_ID", "2603")
             buildConfigField("String", "V2_SERVER_URI", "\"http://novaeva.com\"")
             buildConfigField("String", "V3_SERVER_URI", "\"http://ns3115316.ip-54-38-194.eu:8080\"")
             buildConfigField("String", "V3_SERVER_AUTH", "\"Basic QW5kUm9pRDAwMTpkM2JXYXdnRFpqcXFWV2dESlJLag==\"")
+            buildConfigField("String", "DB_NAME", "\"NovaEvaDb_prod.realm\"")
         }
     }
 
