@@ -9,6 +9,7 @@ import hr.bpervan.novaeva.rest.EvaDomain
 class ContentInfoDto {
     var id: Long = -1
     var title: String? = null
+    var domain: EvaDomain? = null
 }
 
 typealias CategoryInfoDto = ContentInfoDto

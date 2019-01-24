@@ -10,6 +10,7 @@ fun CategoryInfoDto.toDbModel(mergeWith: EvaDirectory? = null): EvaDirectory {
 
     return evaDirectory.apply {
         title = dto.title.orEmpty()
+        domain = dto.domain?.toString()
     }
 }
 
