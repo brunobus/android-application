@@ -11,6 +11,7 @@ import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.rest.NovaEvaService
+import hr.bpervan.novaeva.util.BREVIARY_IMAGE_KEY
 import hr.bpervan.novaeva.util.dataErrorSnackbar
 import hr.bpervan.novaeva.util.networkRequest
 import hr.bpervan.novaeva.util.plusAssign
@@ -51,7 +52,7 @@ class BreviaryContentFragment : EvaBaseFragment() {
 
         val inState = savedInstanceState ?: arguments!!
         breviaryId = inState.getInt(BREVIARY_ID_KEY, 4)
-        coverImageUrl = prefs.getString("hr.bpervan.novaeva.brevijarheaderimage", null)
+        coverImageUrl = prefs.getString(BREVIARY_IMAGE_KEY, null)
         breviaryName = "Brevijar - " + when (breviaryId) {
             1 -> "Jučer, Jutarnja"
             2 -> "Jučer, Večernja"

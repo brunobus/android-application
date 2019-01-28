@@ -11,8 +11,9 @@ import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
+import hr.bpervan.novaeva.rest.EvaDomain
 import hr.bpervan.novaeva.rest.NovaEvaService
-import hr.bpervan.novaeva.util.NEW_CONTENT_KEY_PREFIX
+import hr.bpervan.novaeva.util.HAS_NEW_CONTENT_KEY_PREFIX
 import hr.bpervan.novaeva.util.dataErrorSnackbar
 import hr.bpervan.novaeva.util.networkRequest
 import hr.bpervan.novaeva.util.plusAssign
@@ -66,7 +67,7 @@ class EvaQuotesFragment : EvaBaseFragment() {
                         .build())
 
         prefs.edit {
-            remove("${NEW_CONTENT_KEY_PREFIX}1")
+            remove("$HAS_NEW_CONTENT_KEY_PREFIX${EvaDomain.QUOTES.rootId}")
         }
     }
 

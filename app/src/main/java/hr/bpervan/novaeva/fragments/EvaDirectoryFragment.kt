@@ -108,16 +108,16 @@ class EvaDirectoryFragment : EvaBaseFragment() {
         realm = Realm.getInstance(RealmConfigProvider.evaDBConfig)
 
         prefs.edit {
-            remove("$NEW_CONTENT_KEY_PREFIX$directoryId")
+            remove("$HAS_NEW_CONTENT_KEY_PREFIX$directoryId")
         }
 
         if (context?.networkConnectionExists() == true) {
-            val lastEvictionTime = prefs.getLong(LAST_EVICTION_TIME_MILLIS_KEY + directoryId, 0L)
+            val lastEvictionTime = prefs.getLong("$LAST_EVICTION_TIME_MILLIS_KEY_PREFIX$directoryId", 0L)
             if (System.currentTimeMillis() - lastEvictionTime > evictionIntervalMillis) {
                 EvaDirectoryDbAdapter.deleteDirectoryContent(realm, directoryId)
 
                 prefs.edit {
-                    putLong(LAST_EVICTION_TIME_MILLIS_KEY + directoryId, System.currentTimeMillis())
+                    putLong("$LAST_EVICTION_TIME_MILLIS_KEY_PREFIX$directoryId", System.currentTimeMillis())
                 }
             }
         }

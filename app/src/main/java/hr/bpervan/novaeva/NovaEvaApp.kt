@@ -19,7 +19,7 @@ import hr.bpervan.novaeva.receivers.ConnectionDetector
 import hr.bpervan.novaeva.util.AssetsLoader
 import hr.bpervan.novaeva.util.ImageLoaderConfigurator
 import hr.bpervan.novaeva.util.LifecycleLogger
-import hr.bpervan.novaeva.util.NOVA_EVA_PREFS_NAME
+import hr.bpervan.novaeva.util.NOVA_EVA_PREFS
 import io.realm.Realm
 
 /**
@@ -54,7 +54,6 @@ class NovaEvaApp : Application() {
     }
 
     companion object {
-        private const val evaThemeKey = "EVA_THEME"
         private const val NOVA_EVA_TRACKER_ID = "UA-40344870-1"
         var instance: NovaEvaApp? = null
 
@@ -71,7 +70,7 @@ class NovaEvaApp : Application() {
         }
 
         val prefs: SharedPreferences by lazy {
-            instance!!.getSharedPreferences(NOVA_EVA_PREFS_NAME, Context.MODE_PRIVATE)
+            instance!!.getSharedPreferences(NOVA_EVA_PREFS, Context.MODE_PRIVATE)
         }
 
         val openSansBold: Typeface? by lazy {

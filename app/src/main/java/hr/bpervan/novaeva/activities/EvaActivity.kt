@@ -293,7 +293,7 @@ class EvaActivity : EvaBaseActivity() {
                     val image = directoryContent.image?.size640
                     if (image != null) {
                         NovaEvaApp.prefs.edit {
-                            putString("hr.bpervan.novaeva.brevijarheaderimage", image)
+                            putString(BREVIARY_IMAGE_KEY, image)
                         }
                     }
                 }, onError = {})

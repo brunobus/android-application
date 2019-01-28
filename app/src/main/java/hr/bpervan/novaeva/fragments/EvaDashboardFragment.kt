@@ -148,17 +148,17 @@ class EvaDashboardFragment : EvaBaseFragment() {
     private fun checkLatestContentId(domain: EvaDomain, receivedLatestContentId: Long?) {
         receivedLatestContentId ?: return
 
-        val savedLatestContentId = prefs.getLong("$LATEST_CONTENT_ID_KEY_PREFIX${domain.rootId}", 0)
+        val savedLatestContentId = prefs.getLong("$LATEST_CONTENT_ID_KEY_PREFIX${domain.rootId}", -1L)
         if (savedLatestContentId != receivedLatestContentId) {
             prefs.edit {
                 putLong("$LATEST_CONTENT_ID_KEY_PREFIX${domain.rootId}", receivedLatestContentId)
-                putBoolean("$NEW_CONTENT_KEY_PREFIX${domain.rootId}", true)
+                putBoolean("$HAS_NEW_CONTENT_KEY_PREFIX${domain.rootId}", true)
             }
         }
     }
 
     private fun hasNewContent(categoryId: Long): Boolean {
-        return prefs.getBoolean("$NEW_CONTENT_KEY_PREFIX$categoryId", false)
+        return prefs.getBoolean("$HAS_NEW_CONTENT_KEY_PREFIX$categoryId", false)
     }
 
     private fun updateUI() {

@@ -10,6 +10,7 @@ import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.OpenBreviaryContentEvent
+import hr.bpervan.novaeva.util.BREVIARY_IMAGE_KEY
 import hr.bpervan.novaeva.util.TransitionAnimation
 import kotlinx.android.synthetic.main.fragment_breviary_chooser.*
 import kotlinx.android.synthetic.main.collapsing_breviary_header.*
@@ -59,7 +60,7 @@ class BreviaryChooserFragment : EvaBaseFragment() {
         val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale("hr", "HR"))
         imgDanas.text = dateFormat.format(Date())
 
-        val headerUrl = prefs.getString("hr.bpervan.novaeva.brevijarheaderimage", null)
+        val headerUrl = prefs.getString(BREVIARY_IMAGE_KEY, null)
 
         if (headerUrl != null && breviaryCoverImage != null) {
             imageLoader.displayImage(headerUrl, breviaryCoverImage)
