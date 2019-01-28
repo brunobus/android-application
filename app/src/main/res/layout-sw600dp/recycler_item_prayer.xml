@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
+    android:orientation="vertical"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -42,7 +43,7 @@
     <net.cachapa.expandablelayout.ExpandableLayout
         android:id="@+id/expandableLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:background="@color/White"
         app:el_duration="1000"
         app:el_expanded="false"
@@ -58,11 +59,11 @@
             <WebView
                 android:id="@+id/prayerContentView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:text="Content"
                 android:textColor="#000000"/>
         </FrameLayout>
 
     </net.cachapa.expandablelayout.ExpandableLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

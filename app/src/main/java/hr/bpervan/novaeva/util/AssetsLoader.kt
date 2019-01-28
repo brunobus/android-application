@@ -19,13 +19,13 @@ object AssetsLoader {
                     val prayerFiles = pair.second
 
                     val prayerCategoryId = prayerCategoryDir.substringBefore(' ').toInt()
-                    val prayerCategoryName = prayerCategoryDir.substringAfter(' ')
+                    val prayerCategoryName = prayerCategoryDir//.substringAfter(' ')
 
                     val prayers = prayerFiles.map { prayerFile ->
                         val prayerId = prayerFile.substringBefore(' ').toInt()
                         val prayerName = prayerFile
                                 .substringBeforeLast('.')
-                                .substringAfter(' ')
+                                //.substringAfter(' ')
 
                         Prayer(prayerId, prayerName, "$basePath/$prayerCategoryDir/$prayerFile")
                     }.sortedBy { it.id }

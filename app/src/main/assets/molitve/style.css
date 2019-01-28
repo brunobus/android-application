@@ -19,17 +19,17 @@
 /* Style Definitions */
 
 body {
+
     background-color: rgb(255, 255, 255);
     -webkit-locale: "HR";
     display: block;
-    margin: 8px 0px 8px 0px;
-    
+    margin: 10px 5px 10px 5px;
+
 }
 
 a {
-    font-family: "Calibri";
     font-size: 14pt;
-    font-style: regular;
+    font-style: normal;
     color: #252525;
     text-decoration: none;
 }
@@ -45,8 +45,8 @@ a {
     font-size:18.0pt;
     /*font-family:"Calibri","sans-serif";*/
     /*color:#17365D;*/
-    
-    font-family: "Calibri"; 
+
+    font-family: "Calibri";
     color: #252525;
     font-style: bold;
     /*text-transform:uppercase;*/
@@ -67,7 +67,7 @@ a {
     line-height:100%;
     font-size:14.0pt;
     font-weight: bold;
-    font-family:"Arial","sans-serif"; 
+    font-family:"Arial";
     color:black;
 
     text-transform:none;
@@ -82,57 +82,41 @@ a {
     margin-left:0in;*/
     margin: 20px 0px 5px 20px;
     line-height:150%;
-    font-size:16.0pt;
-    font-family:"Calibri","sans-serif"; 
-    color:#548DD4;
+    font-size:12.0pt;
+    font-family:"Open Sans", sans-serif;
+    color:#252525;
     font-weight:bold;
-
-    margin-top:0in;
-    text-indent:0in;
     text-transform:none;
     font-style:normal;
-}
+    text-align: left;
 
-.MsoNormal
-{
-    margin: 5px 5px 5px 5px;
 }
 
 .PlainTekst
 {
-    /*margin:0in;
-    margin-bottom:.0001pt;
-    margin-top:0in;
-    margin-right:0in;
-    margin-left:0in;*/
     margin: 10px 0px 5px 20px;
-    /*text-indent:.1in;*/
     line-height:150%;
-    font-size:14.0pt;
-    font-family:"Calibri","sans-serif"; 
-
-    color:#252525;
+    font-size:10.0pt;
+    font-family: "Open Sans", sans-serif;
+    color: #252525;
     font-weight:normal;
     text-transform:none;
-    font-style:regular;
+    font-style:normal;
+    text-align: justify;
+
+
+
 }
 
 .Comment {
-    /*margin:0in;
-    margin-bottom:.0001pt;*/
     margin: 10px 0px 5px 52px;
-    line-height:150%;
-    font-size:12.0pt;
-    font-family:"Calibri","sans-serif";
+    line-height:160%;
+    font-size:8.0pt;
+    font-family:"Open Sans", sans-serif;
     color:#252525;;
     text-transform:uppercase;
     font-style:italic;
 
-    /*margin-top:0in;
-    margin-right:0in;
-    margin-left:0in;*/
-    /*text-indent:0in;*/
-    font-weight:normal;
 }
 
 .Quote {
@@ -142,18 +126,17 @@ a {
     margin-left:27.35pt;
     margin-bottom:.0001pt;
     line-height:150%;
-    font-size:14.0pt;
-    font-family:"Calibri","sans-serif";
+    font-size:10.0pt;
+    font-family:"Open Sans", sans-serif;
     font-style:italic;
-
     text-indent:0in;
     font-weight:normal;
-    color:WindowText;
+    color:#252525;
     text-transform:none;
 }
 
 .Explanation {
-    font-family:"Calibri","sans-serif";
+    font-family:"Open Sans", sans-serif;
     color:#17365D;
     text-transform:uppercase;
     font-weight:bold;
@@ -161,13 +144,6 @@ a {
     font-size: 11.0pt;
     line-height: 150%;
 
-    text-indent: .1in;
-
-    margin:0in;
-    margin-bottom:0in;
-    margin-top:0in;
-    margin-right:0in;
-    margin-left:0in;
 }
 
 .Highlighted {
@@ -177,13 +153,13 @@ a {
     text-indent: .1in;
     line-height: 150%;
     font-size: 14.0pt;
-    font-family: "Calibri","sans-serif"; 
+    font-family: "Open Sans", sans-serif;
     font-weight: bold;
     font-style: italic;
 }
 
 .Template {
-    font-family: "Calibri","sans-serif";
+    font-family: "Open Sans", sans-serif;
     color: #17365D;
     text-transform: uppercase;
     font-weight: bold;
@@ -195,40 +171,45 @@ a {
 }
 
 .Author {
-    /*margin: 0in;
-    margin-bottom: .0001pt;*/
     margin: 10px 0px 5px 45px;
     text-align: left;
-    text-indent: .1in;
+    text-indent: 0.1in;
     line-height: 150%;
-    font-size: 11.0pt;
-    font-family: "Calibri","sans-serif";
-    color: #252525;
+    font-size: 8.0pt;
+    font-family: "Open Sans Semi Bold Italic", sans-serif;
+    font-weight: bold;
     font-style: italic;
+    color: #252525;
+
+
 }
+
+.Author img{
+    width: 20px;
+    margin: 0px 10px -5px 0px;
+}
+
 
 /*same as .PlainTekst */
 .Collection {
+    margin: 10px 0px 5px 20px;
     margin:0in;
     margin-bottom:.0001pt;
     text-indent:.1in;
     line-height:150%;
-    font-size:14.0pt;
-    font-family:"Calibri","sans-serif";
+    font-size:10.0pt;
+    font-family: "Open Sans", sans-serif;
+    color: #252525;
 }
 
 /* same as .PlainTekst */
 .NumberedCollection {
+    margin: 10px 0px 5px 20px;
     margin:0in;
     margin-bottom:.0001pt;
     text-indent:.1in;
     line-height:150%;
-    font-size:14.0pt;
-    font-family:"Calibri","sans-serif";
-}
-
-pre {
-    white-space: pre-wrap;
-    word-break: keep-all;
-    overflow: auto;
+    font-size:10.0pt;
+    font-family: "Open Sans", sans-serif;
+    color: #252525;
 }
