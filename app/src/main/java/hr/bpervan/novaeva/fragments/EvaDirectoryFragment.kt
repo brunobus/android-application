@@ -353,9 +353,9 @@ class EvaDirectoryFragment : EvaBaseFragment() {
                         refreshLoadingCircleState()
                     }
 
-                    hasMore = page < categoryDto.totalPages
+                    hasMore = categoryDto.pagingInfo?.hasNext ?: false
+                    pageOn = categoryDto.pagingInfo?.pageNumber ?: 1
 
-                    pageOn = page
                 }, onError = {
                     handler.postDelayed(2000) {
                         fetchingFromServer = false

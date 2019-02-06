@@ -34,9 +34,16 @@ open class ContentDto {
 }
 
 class CategoryDto : ContentDto() {
-    var totalPages: Long = -1
+    var pagingInfo: PagingInfo? = null
     var subcategories: List<CategoryInfoDto>? = null
     var content: List<ContentDto>? = null
+}
+
+class PagingInfo {
+    var totalPages: Long = 1
+    var hasPrev: Boolean = false
+    var pageNumber: Long = 1
+    var hasNext: Boolean = false
 }
 
 open class LinkDto {
