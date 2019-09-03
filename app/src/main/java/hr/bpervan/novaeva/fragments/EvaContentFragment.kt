@@ -203,8 +203,7 @@ class EvaContentFragment : EvaBaseFragment() {
 
         val evaContent = EvaContentDbAdapter.loadEvaContent(realm, contentId)
 
-        if ((evaContent == null || savedInstanceState == null)
-                && domain != EvaDomain.VOCATION) {
+        if ((evaContent == null || savedInstanceState == null) && domain.isLegacy()) {
             fetchContentFromServer_legacy(contentId)
         } else {
             this.evaContent = evaContent

@@ -125,10 +125,10 @@ class EvaDirectoryFragment : EvaBaseFragment() {
         createIfMissingAndSubscribeToEvaDirectoryUpdates()
 
         if (savedInstanceState == null) {
-            if (domain == EvaDomain.VOCATION) {
-                fetchEvaDirectoryDataFromServer()
-            } else {
+            if (domain.isLegacy()) {
                 fetchEvaDirectoryDataFromServer_legacy()
+            } else {
+                fetchEvaDirectoryDataFromServer()
             }
         }
     }
@@ -265,9 +265,7 @@ class EvaDirectoryFragment : EvaBaseFragment() {
                     fetchingFromServer = true
                     refreshLoadingCircleState()
 
-                    if (domain == EvaDomain.VOCATION) {
-                        fetchEvaDirectoryDataFromServer(pageOn + 1)
-                    } else {
+                    if (domain.isLegacy()) {
                         disposables += EvaDirectoryDbAdapter.loadEvaDirectoryAsync(realm, directoryId) { evaDirectory ->
                             if (evaDirectory != null) {
                                 val oldestTimestamp = evaDirectory.contents.sort(TIMESTAMP_FIELD, Sort.DESCENDING)
@@ -275,6 +273,8 @@ class EvaDirectoryFragment : EvaBaseFragment() {
                                 fetchEvaDirectoryDataFromServer_legacy(oldestTimestamp)
                             }
                         }
+                    } else {
+                        fetchEvaDirectoryDataFromServer(pageOn + 1)
                     }
                 }
             }

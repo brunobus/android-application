@@ -110,18 +110,13 @@ class EvaQuotesFragment : EvaBaseFragment() {
     }
 
     private fun fetchRandomQuote() {
-        loadRandomQuoteDisposable = NovaEvaService.v2.getRandomDirectoryContent(1)
-                .networkRequest({ directoryContent ->
-                    val contentMetadataList = directoryContent.contentMetadataList
-                    if (contentMetadataList.isNotEmpty()) {
-                        val quoteInfo = contentMetadataList[0]
+        loadRandomQuoteDisposable = NovaEvaService.v3.random()
+                .networkRequest({ content ->
+                    quoteTitle = content.title
+                    quoteData = content.html ?: content.text ?: ""
+                    quoteId = content.id
 
-                        quoteTitle = quoteInfo.title
-                        quoteData = quoteInfo.text
-                        quoteId = quoteInfo.contentId
-
-                        showQuote()
-                    }
+                    showQuote()
                 }) {
                     view?.dataErrorSnackbar()
                 }

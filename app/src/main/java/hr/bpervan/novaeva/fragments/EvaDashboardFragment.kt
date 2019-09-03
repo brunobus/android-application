@@ -120,57 +120,65 @@ class EvaDashboardFragment : EvaBaseFragment() {
                     R.style.EvandjeljeTheme))
         }
 
+        updateUI()
+
         val lastSyncTimeMillis = prefs.getLong(LAST_SYNC_TIME_MILLIS_KEY, 0L)
         if (System.currentTimeMillis() - lastSyncTimeMillis > syncIntervalMillis) {
-            NovaEvaService.v2.getNewStuff().networkRequest({ indicatorsDTO ->
 
-                checkLatestContentId(EvaDomain.SPIRITUALITY, indicatorsDTO.spirituality)
-                checkLatestContentId(EvaDomain.QUOTES, indicatorsDTO.quotes)
-                checkLatestContentId(EvaDomain.TRENDING, indicatorsDTO.trending)
-                checkLatestContentId(EvaDomain.MULTIMEDIA, indicatorsDTO.multimedia)
-                checkLatestContentId(EvaDomain.SERMONS, indicatorsDTO.sermons)
-                checkLatestContentId(EvaDomain.ANSWERS, indicatorsDTO.answers)
-                checkLatestContentId(EvaDomain.SONGBOOK, indicatorsDTO.songbook)
+            NovaEvaService.v2.getNewStuff().networkRequest({ indicatorsDTO ->
                 checkLatestContentId(EvaDomain.GOSPEL, indicatorsDTO.gospel)
+                checkLatestContentId(EvaDomain.SONGBOOK, indicatorsDTO.songbook)
 
                 updateUI()
                 prefs.edit {
                     putLong(LAST_SYNC_TIME_MILLIS_KEY, System.currentTimeMillis())
                 }
             }, onError = {})
+
             NovaEvaService.v3.latest().networkRequest(onSuccess = { latest ->
+                checkLatestContentId(EvaDomain.SPIRITUALITY, latest.spirituality.content)
+//                checkLatestContentId(EvaDomain.QUOTES, latest.proverbs.content)
+                checkLatestContentId(EvaDomain.TRENDING, latest.trending.content)
+                checkLatestContentId(EvaDomain.MULTIMEDIA, latest.multimedia.content)
+                checkLatestContentId(EvaDomain.SERMONS, latest.sermons.content)
+                checkLatestContentId(EvaDomain.ANSWERS, latest.answers.content)
                 checkLatestContentId(EvaDomain.VOCATION, latest.vocation.content)
+
+                updateUI()
+                prefs.edit {
+                    putLong(LAST_SYNC_TIME_MILLIS_KEY, System.currentTimeMillis())
+                }
             }, onError = {})
         }
-        updateUI()
     }
 
     private fun checkLatestContentId(domain: EvaDomain, receivedLatestContentId: Long?) {
         receivedLatestContentId ?: return
 
-        val savedLatestContentId = prefs.getLong("$LATEST_CONTENT_ID_KEY_PREFIX${domain.rootId}", -1L)
+        val savedLatestContentId = prefs.getLong("$LATEST_CONTENT_ID_KEY_PREFIX$domain", -1L)
         if (savedLatestContentId != receivedLatestContentId) {
             prefs.edit {
-                putLong("$LATEST_CONTENT_ID_KEY_PREFIX${domain.rootId}", receivedLatestContentId)
-                putBoolean("$HAS_NEW_CONTENT_KEY_PREFIX${domain.rootId}", true)
+                putLong("$LATEST_CONTENT_ID_KEY_PREFIX$domain", receivedLatestContentId)
+                putBoolean("$HAS_NEW_CONTENT_KEY_PREFIX$domain", true)
             }
         }
     }
 
-    private fun hasNewContent(categoryId: Long): Boolean {
-        return prefs.getBoolean("$HAS_NEW_CONTENT_KEY_PREFIX$categoryId", false)
+    private fun hasNewContent(domain: EvaDomain): Boolean {
+        return prefs.getBoolean("$HAS_NEW_CONTENT_KEY_PREFIX$domain", false)
     }
 
     private fun updateUI() {
         view ?: return
 
-        btnDuhovnost.indicateNews = hasNewContent(EvaDomain.SPIRITUALITY.rootId)
-        btnIzreke.indicateNews = hasNewContent(EvaDomain.QUOTES.rootId)
-        btnAktualno.indicateNews = hasNewContent(EvaDomain.TRENDING.rootId)
-        btnMultimedia.indicateNews = hasNewContent(EvaDomain.MULTIMEDIA.rootId)
-        btnPropovijedi.indicateNews = hasNewContent(EvaDomain.SERMONS.rootId)
-        btnOdgovori.indicateNews = hasNewContent(EvaDomain.ANSWERS.rootId)
-        btnPoziv.indicateNews = hasNewContent(EvaDomain.VOCATION.rootId)
-        btnPjesmarica.indicateNews = hasNewContent(EvaDomain.SONGBOOK.rootId)
+//        btnCalendar.indicateNews = hasNewContent(EvaDomain.GOSPEL)
+        btnDuhovnost.indicateNews = hasNewContent(EvaDomain.SPIRITUALITY)
+        btnIzreke.indicateNews = hasNewContent(EvaDomain.QUOTES)
+        btnAktualno.indicateNews = hasNewContent(EvaDomain.TRENDING)
+        btnMultimedia.indicateNews = hasNewContent(EvaDomain.MULTIMEDIA)
+        btnPropovijedi.indicateNews = hasNewContent(EvaDomain.SERMONS)
+        btnOdgovori.indicateNews = hasNewContent(EvaDomain.ANSWERS)
+        btnPoziv.indicateNews = hasNewContent(EvaDomain.VOCATION)
+        btnPjesmarica.indicateNews = hasNewContent(EvaDomain.SONGBOOK)
     }
 }

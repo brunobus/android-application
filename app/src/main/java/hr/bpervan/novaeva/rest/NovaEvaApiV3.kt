@@ -1,6 +1,7 @@
 package hr.bpervan.novaeva.rest
 
 import hr.bpervan.novaeva.model.CategoryDto
+import hr.bpervan.novaeva.model.ContentDto
 import hr.bpervan.novaeva.model.LatestByDomainDto
 import io.reactivex.Single
 import retrofit2.http.GET
@@ -19,4 +20,8 @@ interface NovaEvaApiV3 {
                         @Query("page") page: Long = 1,
                         @Query("items") items: Long = 20,
                         @Query("region") region: Long = Region.id): Single<CategoryDto>
+
+    @GET("{domain}/random")
+    fun random(@Path("domain") domain: String = EvaDomain.QUOTES.domainEndpoint,
+               @Query("region") region: Long = Region.id): Single<ContentDto>
 }

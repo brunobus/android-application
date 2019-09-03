@@ -17,19 +17,23 @@ enum class Server(val baseUrl: String, val auth: String?) {
     V3(baseUrl = BuildConfig.V3_SERVER_URI, auth = BuildConfig.V3_SERVER_AUTH)
 }
 
-enum class EvaDomain(val domainEndpoint: String, val rootId: Long) {
+enum class EvaDomain(val domainEndpoint: String, val rootId: Long = 0) {
 
-    SPIRITUALITY("spirituality", 354),
-    TRENDING("trending", 9),
-    QUOTES("quotes", 1),
-    MULTIMEDIA("multimedia", 10),
+    SPIRITUALITY("spirituality"),
+    TRENDING("trending"),
+    QUOTES("proverbs", 1),
+    MULTIMEDIA("multimedia"),
     GOSPEL("gospel", 4),
-    SERMONS("sermons", 7),
-    VOCATION("vocation", BuildConfig.VOCATION_ROOT_ID),
-    ANSWERS("answers", 11),
+    SERMONS("sermons"),
+    VOCATION("vocation"),
+    ANSWERS("answers"),
     SONGBOOK("songbook", 355),
     RADIO("radio", 473),
     PRAYERS("prayers", -1);
+
+    fun isLegacy(): Boolean {
+        return this == EvaDomain.GOSPEL || this == EvaDomain.SONGBOOK || this == EvaDomain.RADIO
+    }
 }
 
 fun serverByDomain(domain: EvaDomain): Server {
