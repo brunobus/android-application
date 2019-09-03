@@ -3,6 +3,9 @@ package hr.bpervan.novaeva.rest
 import hr.bpervan.novaeva.main.BuildConfig
 import hr.bpervan.novaeva.rest.EvaDomain.VOCATION
 import okhttp3.OkHttpClient
+import java.security.cert.X509Certificate
+import javax.net.ssl.SSLContext
+import javax.net.ssl.X509TrustManager
 
 /**
  * Todo multiple regions
@@ -52,18 +55,39 @@ object NovaEvaService {
     val v3: NovaEvaApiV3 by lazy {
         val server = Server.V3
         ServiceBuilder.build<NovaEvaApiV3>(server.baseUrl) { builder ->
-            builder.client(OkHttpClient.Builder()
-                    .apply {
-                        if (server.auth != null) {
-                            addInterceptor { chain ->
-                                chain.proceed(chain.request()
-                                        .newBuilder()
-                                        .header("Authorization", server.auth)
-                                        .build())
-                            }
+            builder.client(buildHttpClient(server))
+        }
+    }
+
+    private fun buildHttpClient(server: Server): OkHttpClient {
+
+        val trustAllCerts = arrayOf<X509TrustManager>(object : X509TrustManager {
+            override fun getAcceptedIssuers(): Array<X509Certificate> {
+                return arrayOf()
+            }
+            override fun checkClientTrusted(chain: Array<java.security.cert.X509Certificate>, authType: String) {
+            }
+
+            override fun checkServerTrusted(chain: Array<java.security.cert.X509Certificate>, authType: String) {
+            }
+        })
+        val sslContext = SSLContext.getInstance("SSL")
+        sslContext.init(null, trustAllCerts, java.security.SecureRandom())
+        val sslSocketFactory = sslContext.socketFactory
+
+        return OkHttpClient.Builder()
+                .apply {
+                    if (server.auth != null) {
+                        addInterceptor { chain ->
+                            chain.proceed(chain.request()
+                                    .newBuilder()
+                                    .header("Authorization", server.auth)
+                                    .build())
                         }
                     }
-                    .build())
-        }
+                }
+                .sslSocketFactory(sslSocketFactory, trustAllCerts[0])
+                .hostnameVerifier { _, _ -> true }
+                .build()
     }
 }
