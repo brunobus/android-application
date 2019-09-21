@@ -67,7 +67,7 @@ class EvaQuotesFragment : EvaBaseFragment() {
                         .build())
 
         prefs.edit {
-            remove("$HAS_NEW_CONTENT_KEY_PREFIX${EvaDomain.QUOTES.rootId}")
+            remove("$HAS_NEW_CONTENT_KEY_PREFIX.${EvaDomain.QUOTES}")
         }
     }
 

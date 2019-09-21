@@ -69,53 +69,57 @@ class EvaDashboardFragment : EvaBaseFragment() {
         }
         btnPjesmarica.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
-                    EvaDirectory(title = getString(R.string.songbook),
+                    EvaDirectory(
+                            title = getString(EvaDomain.SONGBOOK.title),
                             domain = EvaDomain.SONGBOOK.toString()),
                     R.style.PjesmaricaTheme))
         }
         btnAktualno.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
-                    EvaDirectory(title = getString(R.string.trending),
+                    EvaDirectory(
+                            title = getString(EvaDomain.TRENDING.title),
                             domain = EvaDomain.TRENDING.toString()),
                     R.style.AktualnoTheme))
         }
         btnPoziv.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
-                    EvaDirectory(title = getString(R.string.vocation),
+                    EvaDirectory(
+                            title = getString(EvaDomain.VOCATION.title),
                             domain = EvaDomain.VOCATION.toString()),
                     R.style.PozivTheme))
         }
         btnOdgovori.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
-                    EvaDirectory(title = getString(R.string.answers),
+                    EvaDirectory(
+                            title = getString(EvaDomain.ANSWERS.title),
                             domain = EvaDomain.ANSWERS.toString()),
                     R.style.OdgovoriTheme))
         }
         btnMultimedia.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
                     EvaDirectory(
-                            title = getString(R.string.multimedia),
+                            title = getString(EvaDomain.MULTIMEDIA.title),
                             domain = EvaDomain.MULTIMEDIA.toString()),
                     R.style.MultimedijaTheme))
         }
         btnPropovijedi.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
                     EvaDirectory(
-                            title = getString(R.string.sermons),
+                            title = getString(EvaDomain.SERMONS.title),
                             domain = EvaDomain.SERMONS.toString()),
                     R.style.PropovjediTheme))
         }
         btnDuhovnost.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
                     EvaDirectory(
-                            title = getString(R.string.spirituality),
+                            title = getString(EvaDomain.SPIRITUALITY.title),
                             domain = EvaDomain.SPIRITUALITY.toString()),
                     R.style.DuhovnostTheme))
         }
         btnCalendar.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
                     EvaDirectory(
-                            title = getString(R.string.gospel),
+                            title = getString(EvaDomain.GOSPEL.title),
                             domain = EvaDomain.GOSPEL.toString()),
                     R.style.EvandjeljeTheme))
         }
@@ -155,17 +159,17 @@ class EvaDashboardFragment : EvaBaseFragment() {
     private fun checkLatestContentId(domain: EvaDomain, receivedLatestContentId: Long?) {
         receivedLatestContentId ?: return
 
-        val savedLatestContentId = prefs.getLong("$LATEST_CONTENT_ID_KEY_PREFIX$domain", -1L)
+        val savedLatestContentId = prefs.getLong("$LATEST_CONTENT_ID_KEY_PREFIX.$domain", -1L)
         if (savedLatestContentId != receivedLatestContentId) {
             prefs.edit {
-                putLong("$LATEST_CONTENT_ID_KEY_PREFIX$domain", receivedLatestContentId)
-                putBoolean("$HAS_NEW_CONTENT_KEY_PREFIX$domain", true)
+                putLong("$LATEST_CONTENT_ID_KEY_PREFIX.$domain", receivedLatestContentId)
+                putBoolean("$HAS_NEW_CONTENT_KEY_PREFIX.$domain", true)
             }
         }
     }
 
     private fun hasNewContent(domain: EvaDomain): Boolean {
-        return prefs.getBoolean("$HAS_NEW_CONTENT_KEY_PREFIX$domain", false)
+        return prefs.getBoolean("$HAS_NEW_CONTENT_KEY_PREFIX.$domain", false)
     }
 
     private fun updateUI() {

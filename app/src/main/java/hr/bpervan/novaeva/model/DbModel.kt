@@ -37,6 +37,13 @@ open class EvaDirectory(
         var contents: RealmList<EvaContent> = RealmList()
 ) : RealmObject(), EvaNode
 
+open class EvaDomainInfo(
+        @PrimaryKey
+        var domain: String? = null,
+        var endpointRoot: String = "",
+        var rootCategoryId: Long = 0
+) : RealmObject()
+
 open class EvaContent(
         @PrimaryKey
         var id: Long = -1,

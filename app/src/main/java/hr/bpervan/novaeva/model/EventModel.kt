@@ -4,7 +4,7 @@ import hr.bpervan.novaeva.rest.EvaDomain
 import hr.bpervan.novaeva.util.TransitionAnimation
 
 /**
- *
+ * todo implement Parcelable
  */
 
 data class OpenContentEvent(val content: EvaContent,

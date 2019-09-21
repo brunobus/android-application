@@ -1,6 +1,8 @@
 package hr.bpervan.novaeva.rest
 
+import androidx.annotation.StringRes
 import hr.bpervan.novaeva.main.BuildConfig
+import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.rest.EvaDomain.VOCATION
 import okhttp3.OkHttpClient
 import java.security.cert.X509Certificate
@@ -20,19 +22,21 @@ enum class Server(val baseUrl: String, val auth: String?) {
     V3(baseUrl = BuildConfig.V3_SERVER_URI, auth = BuildConfig.V3_SERVER_AUTH)
 }
 
-enum class EvaDomain(val domainEndpoint: String, val rootId: Long = 0) {
+enum class EvaDomain(@StringRes val title: Int,
+                     val domainEndpoint: String,
+                     val rootId: Long = 0) {
 
-    SPIRITUALITY("spirituality"),
-    TRENDING("trending"),
-    QUOTES("proverbs", 1),
-    MULTIMEDIA("multimedia"),
-    GOSPEL("gospel", 4),
-    SERMONS("sermons"),
-    VOCATION("vocation"),
-    ANSWERS("answers"),
-    SONGBOOK("songbook", 355),
-    RADIO("radio", 473),
-    PRAYERS("prayers", -1);
+    SPIRITUALITY(R.string.spirituality, "spirituality"),
+    TRENDING(R.string.trending, "trending"),
+    QUOTES(R.string.quotes, "proverbs", -1),
+    MULTIMEDIA(R.string.multimedia, "multimedia"),
+    GOSPEL(R.string.gospel, "gospel", 4),
+    SERMONS(R.string.sermons, "sermons"),
+    VOCATION(R.string.vocation, "vocation"),
+    ANSWERS(R.string.answers, "answers"),
+    SONGBOOK(R.string.songbook, "songbook", 355),
+    RADIO(R.string.radio, "radio", 473),
+    PRAYERS(R.string.prayerbook, "prayers", -1);
 
     fun isLegacy(): Boolean {
         return this == EvaDomain.GOSPEL || this == EvaDomain.SONGBOOK || this == EvaDomain.RADIO
@@ -65,6 +69,7 @@ object NovaEvaService {
             override fun getAcceptedIssuers(): Array<X509Certificate> {
                 return arrayOf()
             }
+
             override fun checkClientTrusted(chain: Array<java.security.cert.X509Certificate>, authType: String) {
             }
 

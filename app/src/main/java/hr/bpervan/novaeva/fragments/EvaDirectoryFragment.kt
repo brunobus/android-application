@@ -17,6 +17,7 @@ import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
+import hr.bpervan.novaeva.model.EvaDomainInfo
 import hr.bpervan.novaeva.model.EvaNode
 import hr.bpervan.novaeva.model.OpenDirectoryEvent
 import hr.bpervan.novaeva.model.TIMESTAMP_FIELD
@@ -28,6 +29,7 @@ import hr.bpervan.novaeva.util.*
 import io.reactivex.disposables.Disposable
 import io.realm.Realm
 import io.realm.Sort
+import io.realm.kotlin.where
 import kotlinx.android.synthetic.main.collapsing_directory_header.view.*
 import kotlinx.android.synthetic.main.fragment_directory_contents.*
 import kotlinx.android.synthetic.main.top_izbornik.view.*
@@ -89,9 +91,13 @@ class EvaDirectoryFragment : EvaBaseFragment() {
         domain = inState.getSerializable(DOMAIN_KEY) as EvaDomain
         directoryId = inState.getLong(DIRECTORY_ID_KEY, -1L)
         if (directoryId == -1L) {
-            directoryId = domain.rootId
+            directoryId = realm.where<EvaDomainInfo>()
+                    .equalTo("domain", domain.toString())
+                    .findFirst()
+                    ?.rootCategoryId
+                    ?: domain.rootId
         }
-        directoryTitle = inState.getString(DIRECTORY_TITLE_KEY)
+        directoryTitle = inState.getString(DIRECTORY_TITLE_KEY, "")
         themeId = inState.getInt(THEME_ID_KEY)
 
         adapter = EvaRecyclerAdapter(elementsList, { loadingFromDb || fetchingFromServer }, themeId)
@@ -108,16 +114,18 @@ class EvaDirectoryFragment : EvaBaseFragment() {
         realm = Realm.getInstance(RealmConfigProvider.evaDBConfig)
 
         prefs.edit {
-            remove("$HAS_NEW_CONTENT_KEY_PREFIX$directoryId")
+            remove("$HAS_NEW_CONTENT_KEY_PREFIX.$domain")
         }
 
         if (context?.networkConnectionExists() == true) {
-            val lastEvictionTime = prefs.getLong("$LAST_EVICTION_TIME_MILLIS_KEY_PREFIX$directoryId", 0L)
+            val lastEvictionTime = prefs
+                    .getLong("$LAST_EVICTION_TIME_MILLIS_KEY_PREFIX.$domain.$directoryId", 0L)
+
             if (System.currentTimeMillis() - lastEvictionTime > evictionIntervalMillis) {
                 EvaDirectoryDbAdapter.deleteDirectoryContent(realm, directoryId)
 
                 prefs.edit {
-                    putLong("$LAST_EVICTION_TIME_MILLIS_KEY_PREFIX$directoryId", System.currentTimeMillis())
+                    putLong("$LAST_EVICTION_TIME_MILLIS_KEY_PREFIX.$domain.$directoryId", System.currentTimeMillis())
                 }
             }
         }

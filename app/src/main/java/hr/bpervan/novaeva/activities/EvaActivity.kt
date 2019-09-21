@@ -3,32 +3,36 @@ package hr.bpervan.novaeva.activities
 import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
-import androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
-import androidx.core.content.ContextCompat
-import androidx.core.view.GestureDetectorCompat
-import androidx.core.view.GravityCompat
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.MotionEvent
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.content.edit
+import androidx.core.view.GestureDetectorCompat
+import androidx.core.view.GravityCompat
+import androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.fragments.*
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaContent
+import hr.bpervan.novaeva.model.EvaDomainInfo
 import hr.bpervan.novaeva.model.OpenContentEvent
 import hr.bpervan.novaeva.model.OpenQuotesEvent
 import hr.bpervan.novaeva.player.getStreamLinksFromPlaylistUri
 import hr.bpervan.novaeva.rest.EvaDomain
 import hr.bpervan.novaeva.rest.NovaEvaService
 import hr.bpervan.novaeva.rest.serverByDomain
+import hr.bpervan.novaeva.storage.RealmConfigProvider
 import hr.bpervan.novaeva.util.*
 import hr.bpervan.novaeva.util.TransitionAnimation.*
 import hr.bpervan.novaeva.views.snackbar
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import io.realm.Realm
+import io.realm.kotlin.where
 import kotlinx.android.synthetic.main.activity_eva_main.*
 import java.util.concurrent.TimeUnit
 
@@ -48,10 +52,16 @@ class EvaActivity : EvaBaseActivity() {
 
     private val displayMetrics = DisplayMetrics()
 
+    private lateinit var realm: Realm
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_eva_main)
+
+        realm = Realm.getInstance(RealmConfigProvider.evaDBConfig)
+
+        updateAllDomainRoots()
 
         initGui()
 
@@ -81,6 +91,40 @@ class EvaActivity : EvaBaseActivity() {
                 evaRoot.closeDrawer(GravityCompat.END)
             }
         }
+    }
+
+    private fun updateAllDomainRoots() {
+        @Suppress("USELESS_CAST")
+        realm.where<EvaDomainInfo>()
+                .notEqualTo("rootCategoryId", -1 as Int)
+                .findAll()
+                .forEach { domainInfo ->
+                    updateDomainRoot(domainInfo)
+                }
+    }
+
+    private fun updateMissingDomainRoots() {
+        @Suppress("USELESS_CAST")
+        realm.where<EvaDomainInfo>()
+                .equalTo("rootCategoryId", 0 as Int)
+                .findAll()
+                .forEach { domainInfo ->
+                    updateDomainRoot(domainInfo)
+                }
+    }
+
+    private fun updateDomainRoot(domainInfo: EvaDomainInfo) {
+        NovaEvaService.v3.categoryContent(domainInfo.endpointRoot, categoryId = 0, page = 1, items = 0)
+                .networkRequest(
+                        onSuccess = { categoryDto ->
+                            realm.executeTransaction { transRealm ->
+                                domainInfo.rootCategoryId = categoryDto.id
+                                transRealm.copyToRealmOrUpdate(domainInfo)
+                            }
+                        },
+                        onError = {
+                            Log.e("categoryRootId", it.message, it)
+                        })
     }
 
     private fun updateDisplayMetrics() {
@@ -214,11 +258,14 @@ class EvaActivity : EvaBaseActivity() {
                 .throttleWithTimeout(10, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext {
+
                     if (!NovaEvaApp.evaPlayer.isStopped()) {
                         Log.w("networkChange", "Network change detected - stopping audio player")
                         NovaEvaApp.evaPlayer.stop() //roaming safeguard
                         evaRoot?.snackbar(R.string.network_changed_player_stopped)
                     }
+
+                    updateMissingDomainRoots()
                 }
                 .subscribe {
                     fetchBreviaryCoverUrl()
@@ -330,6 +377,8 @@ class EvaActivity : EvaBaseActivity() {
 
     override fun onDestroy() {
         disposables.dispose()
+
+        realm.close()
         super.onDestroy()
     }
 

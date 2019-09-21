@@ -17,9 +17,9 @@ const val SCROLL_PERCENT_KEY = "$NOVA_EVA_PREFS.scrollPercent"
 const val FLOATING_MODE_KEY = "$NOVA_EVA_PREFS.floatingMode"
 const val EVA_THEME_KEY = "$NOVA_EVA_PREFS.evaTheme"
 
-const val HAS_NEW_CONTENT_KEY_PREFIX = "$NOVA_EVA_PREFS.hasNewContent."
-const val LATEST_CONTENT_ID_KEY_PREFIX = "$NOVA_EVA_PREFS.latestContentId."
-const val LAST_EVICTION_TIME_MILLIS_KEY_PREFIX = "$NOVA_EVA_PREFS.lastEvictionTime."
+const val HAS_NEW_CONTENT_KEY_PREFIX = "$NOVA_EVA_PREFS.hasNewContent"
+const val LATEST_CONTENT_ID_KEY_PREFIX = "$NOVA_EVA_PREFS.latestContentId"
+const val LAST_EVICTION_TIME_MILLIS_KEY_PREFIX = "$NOVA_EVA_PREFS.lastEvictionTime"
 
 const val BREVIARY_IMAGE_KEY = "$NOVA_EVA_PREFS.breviaryheaderimage"
 
