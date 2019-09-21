@@ -36,16 +36,10 @@ class EvaContentFragment : EvaBaseFragment() {
 
     companion object : EvaFragmentFactory<EvaContentFragment, OpenContentEvent> {
 
-        private const val DOMAIN_KEY = "domain"
-        private const val CONTENT_ID_KEY = "id"
-        private const val THEME_ID_KEY = "themeId"
-
         override fun newInstance(initializer: OpenContentEvent): EvaContentFragment {
             return EvaContentFragment().apply {
                 arguments = bundleOf(
-                        DOMAIN_KEY to enumValueOf<EvaDomain>(initializer.content.domain!!),
-                        CONTENT_ID_KEY to initializer.content.id,
-                        THEME_ID_KEY to initializer.themeId
+                        EvaFragmentFactory.INITIALIZER to initializer
                 )
             }
         }
@@ -53,8 +47,11 @@ class EvaContentFragment : EvaBaseFragment() {
 
     private lateinit var realm: Realm
 
+    private lateinit var initializer: OpenContentEvent
     private lateinit var domain: EvaDomain
+    private var themeId = -1
     public var contentId: Long = 0
+
     private var evaContent: EvaContent? = null
         set(value) {
             field = value
@@ -63,15 +60,16 @@ class EvaContentFragment : EvaBaseFragment() {
             }
         }
 
-    private var themeId = -1
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val inState = savedInstanceState ?: arguments!!
-        domain = inState.getSerializable(DOMAIN_KEY) as EvaDomain
-        contentId = inState.getLong(CONTENT_ID_KEY, -1L)
-        themeId = inState.getInt(THEME_ID_KEY, -1)
+
+        initializer = inState.getParcelable(EvaFragmentFactory.INITIALIZER)!!
+
+        domain = initializer.domain
+        contentId = initializer.contentId
+        themeId = initializer.theme
 
         savedInstanceState ?: NovaEvaApp.defaultTracker
                 .send(HitBuilders.EventBuilder()
@@ -85,10 +83,7 @@ class EvaContentFragment : EvaBaseFragment() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putSerializable(DOMAIN_KEY, domain)
-        outState.putLong(CONTENT_ID_KEY, contentId)
-        outState.putInt(THEME_ID_KEY, themeId)
-
+        outState.putParcelable(EvaFragmentFactory.INITIALIZER, initializer)
         super.onSaveInstanceState(outState)
     }
 

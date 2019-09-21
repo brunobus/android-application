@@ -95,6 +95,7 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.4.0")
     implementation("com.squareup.retrofit2:converter-gson:2.4.0")
     implementation("com.squareup.retrofit2:adapter-rxjava2:2.4.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:3.12.5")
 
     implementation("net.cachapa.expandablelayout:expandablelayout:2.9.2")
     implementation("com.nostra13.universalimageloader:universal-image-loader:1.9.5")

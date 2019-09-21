@@ -32,8 +32,13 @@ abstract class EvaBaseFragment : androidx.fragment.app.Fragment() {
         get() = NovaEvaApp.imageLoader
 
     interface EvaFragmentFactory<out T : androidx.fragment.app.Fragment, in K> {
+
+        companion object {
+            const val INITIALIZER = "initializer"
+        }
+
         val tag: String
-            get() = javaClass.canonicalName
+            get() = javaClass.canonicalName!!
 
         fun newInstance(initializer: K): T
     }

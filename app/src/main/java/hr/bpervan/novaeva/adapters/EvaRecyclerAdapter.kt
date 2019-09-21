@@ -1,7 +1,6 @@
 package hr.bpervan.novaeva.adapters
 
 import android.graphics.Color
-import androidx.recyclerview.widget.RecyclerView
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -9,8 +8,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.isVisible
-import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.EventPipelines
+import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.*
 import hr.bpervan.novaeva.util.EvaTouchFeedback
@@ -105,7 +104,12 @@ class EvaRecyclerAdapter(private val data: List<EvaNode>,
 
             view.setOnTouchListener(EvaTouchFeedback(view, themeColorTrans))
             view.setOnClickListener {
-                EventPipelines.openDirectory.onNext(OpenDirectoryEvent(directoryInfo, themeId, TransitionAnimation.LEFTWARDS))
+                EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
+                        directoryId = directoryInfo.id,
+                        domain = enumValueOf(directoryInfo.domain!!),
+                        title = directoryInfo.title,
+                        theme = themeId,
+                        animation = TransitionAnimation.LEFTWARDS))
             }
         }
 
@@ -166,7 +170,12 @@ class EvaRecyclerAdapter(private val data: List<EvaNode>,
             view.setOnTouchListener(EvaTouchFeedback(view, themeColorTrans))
 
             view.setOnClickListener {
-                EventPipelines.openContent.onNext(OpenContentEvent(contentInfo, themeId, TransitionAnimation.LEFTWARDS))
+                EventPipelines.openContent.onNext(
+                        OpenContentEvent(
+                                contentId = contentInfo.id,
+                                domain = enumValueOf(contentInfo.domain!!),
+                                theme = themeId,
+                                animation = TransitionAnimation.LEFTWARDS))
             }
         }
     }

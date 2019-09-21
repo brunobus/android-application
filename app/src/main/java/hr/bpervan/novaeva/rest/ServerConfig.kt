@@ -5,6 +5,7 @@ import hr.bpervan.novaeva.main.BuildConfig
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.rest.EvaDomain.VOCATION
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import java.security.cert.X509Certificate
 import javax.net.ssl.SSLContext
 import javax.net.ssl.X509TrustManager
@@ -81,6 +82,8 @@ object NovaEvaService {
         val sslSocketFactory = sslContext.socketFactory
 
         return OkHttpClient.Builder()
+                .addInterceptor(HttpLoggingInterceptor()
+                        .setLevel(HttpLoggingInterceptor.Level.BODY))
                 .apply {
                     if (server.auth != null) {
                         addInterceptor { chain ->

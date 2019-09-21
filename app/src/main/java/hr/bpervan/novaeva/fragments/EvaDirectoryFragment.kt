@@ -41,18 +41,10 @@ class EvaDirectoryFragment : EvaBaseFragment() {
 
     companion object : EvaBaseFragment.EvaFragmentFactory<EvaDirectoryFragment, OpenDirectoryEvent> {
 
-        private const val DOMAIN_KEY = "domain"
-        private const val DIRECTORY_ID_KEY = "id"
-        private const val DIRECTORY_TITLE_KEY = "directoryTitle"
-        private const val THEME_ID_KEY = "themeId"
-
         override fun newInstance(initializer: OpenDirectoryEvent): EvaDirectoryFragment {
             return EvaDirectoryFragment().apply {
                 arguments = bundleOf(
-                        DOMAIN_KEY to enumValueOrNull<EvaDomain>(initializer.directory.domain),
-                        DIRECTORY_ID_KEY to initializer.directory.id,
-                        DIRECTORY_TITLE_KEY to initializer.directory.title,
-                        THEME_ID_KEY to initializer.themeId
+                        EvaFragmentFactory.INITIALIZER to initializer
                 )
             }
         }
@@ -70,6 +62,7 @@ class EvaDirectoryFragment : EvaBaseFragment() {
             field = safeReplaceDisposable(field, value)
         }
 
+    private lateinit var initializer: OpenDirectoryEvent
     private lateinit var domain: EvaDomain
     private var directoryId: Long = -1
     private lateinit var directoryTitle: String
@@ -88,8 +81,12 @@ class EvaDirectoryFragment : EvaBaseFragment() {
         super.onCreate(savedInstanceState)
 
         val inState: Bundle = savedInstanceState ?: arguments!!
-        domain = inState.getSerializable(DOMAIN_KEY) as EvaDomain
-        directoryId = inState.getLong(DIRECTORY_ID_KEY, -1L)
+
+        initializer = inState.getParcelable(EvaFragmentFactory.INITIALIZER)!!
+
+        domain = initializer.domain
+        directoryId = initializer.directoryId
+
         if (directoryId == -1L) {
             directoryId = realm.where<EvaDomainInfo>()
                     .equalTo("domain", domain.toString())
@@ -97,8 +94,8 @@ class EvaDirectoryFragment : EvaBaseFragment() {
                     ?.rootCategoryId
                     ?: domain.rootId
         }
-        directoryTitle = inState.getString(DIRECTORY_TITLE_KEY, "")
-        themeId = inState.getInt(THEME_ID_KEY)
+        directoryTitle = initializer.title
+        themeId = initializer.theme
 
         adapter = EvaRecyclerAdapter(elementsList, { loadingFromDb || fetchingFromServer }, themeId)
         adapter.registerAdapterDataObserver(DataChangeLogger())
@@ -181,11 +178,7 @@ class EvaDirectoryFragment : EvaBaseFragment() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putSerializable(DOMAIN_KEY, domain)
-        outState.putLong(DIRECTORY_ID_KEY, directoryId)
-        outState.putString(DIRECTORY_TITLE_KEY, directoryTitle)
-        outState.putInt(THEME_ID_KEY, themeId)
-
+        outState.putParcelable(EvaFragmentFactory.INITIALIZER, initializer)
         super.onSaveInstanceState(outState)
     }
 

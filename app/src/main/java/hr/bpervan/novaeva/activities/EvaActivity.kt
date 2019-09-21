@@ -16,7 +16,6 @@ import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.fragments.*
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.EvaContent
 import hr.bpervan.novaeva.model.EvaDomainInfo
 import hr.bpervan.novaeva.model.OpenContentEvent
 import hr.bpervan.novaeva.model.OpenQuotesEvent
@@ -76,7 +75,8 @@ class EvaActivity : EvaBaseActivity() {
                         openQuotesFragment(OpenQuotesEvent(contentId))
                     } else {
                         openContentFragment(OpenContentEvent(
-                                EvaContent(contentId, domain = EvaDomain.SERMONS.toString())))
+                                contentId = contentId,
+                                domain = EvaDomain.SERMONS))
                     }
                 }
             }

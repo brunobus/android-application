@@ -10,7 +10,6 @@ import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.EvaDirectory
 import hr.bpervan.novaeva.model.OpenDirectoryEvent
 import hr.bpervan.novaeva.model.OpenQuotesEvent
 import hr.bpervan.novaeva.rest.EvaDomain
@@ -69,59 +68,51 @@ class EvaDashboardFragment : EvaBaseFragment() {
         }
         btnPjesmarica.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
-                    EvaDirectory(
-                            title = getString(EvaDomain.SONGBOOK.title),
-                            domain = EvaDomain.SONGBOOK.toString()),
-                    R.style.PjesmaricaTheme))
+                    title = getString(EvaDomain.SONGBOOK.title),
+                    domain = EvaDomain.SONGBOOK,
+                    theme = R.style.PjesmaricaTheme))
         }
         btnAktualno.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
-                    EvaDirectory(
-                            title = getString(EvaDomain.TRENDING.title),
-                            domain = EvaDomain.TRENDING.toString()),
-                    R.style.AktualnoTheme))
+                    title = getString(EvaDomain.TRENDING.title),
+                    domain = EvaDomain.TRENDING,
+                    theme = R.style.AktualnoTheme))
         }
         btnPoziv.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
-                    EvaDirectory(
-                            title = getString(EvaDomain.VOCATION.title),
-                            domain = EvaDomain.VOCATION.toString()),
-                    R.style.PozivTheme))
+                    title = getString(EvaDomain.VOCATION.title),
+                    domain = EvaDomain.VOCATION,
+                    theme = R.style.PozivTheme))
         }
         btnOdgovori.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
-                    EvaDirectory(
-                            title = getString(EvaDomain.ANSWERS.title),
-                            domain = EvaDomain.ANSWERS.toString()),
-                    R.style.OdgovoriTheme))
+                    title = getString(EvaDomain.ANSWERS.title),
+                    domain = EvaDomain.ANSWERS,
+                    theme = R.style.OdgovoriTheme))
         }
         btnMultimedia.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
-                    EvaDirectory(
-                            title = getString(EvaDomain.MULTIMEDIA.title),
-                            domain = EvaDomain.MULTIMEDIA.toString()),
-                    R.style.MultimedijaTheme))
+                    title = getString(EvaDomain.MULTIMEDIA.title),
+                    domain = EvaDomain.MULTIMEDIA,
+                    theme = R.style.MultimedijaTheme))
         }
         btnPropovijedi.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
-                    EvaDirectory(
-                            title = getString(EvaDomain.SERMONS.title),
-                            domain = EvaDomain.SERMONS.toString()),
-                    R.style.PropovjediTheme))
+                    title = getString(EvaDomain.SERMONS.title),
+                    domain = EvaDomain.SERMONS,
+                    theme = R.style.PropovjediTheme))
         }
         btnDuhovnost.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
-                    EvaDirectory(
-                            title = getString(EvaDomain.SPIRITUALITY.title),
-                            domain = EvaDomain.SPIRITUALITY.toString()),
-                    R.style.DuhovnostTheme))
+                    title = getString(EvaDomain.SPIRITUALITY.title),
+                    domain = EvaDomain.SPIRITUALITY,
+                    theme = R.style.DuhovnostTheme))
         }
         btnCalendar.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
-                    EvaDirectory(
-                            title = getString(EvaDomain.GOSPEL.title),
-                            domain = EvaDomain.GOSPEL.toString()),
-                    R.style.EvandjeljeTheme))
+                    title = getString(EvaDomain.GOSPEL.title),
+                    domain = EvaDomain.GOSPEL,
+                    theme = R.style.EvandjeljeTheme))
         }
 
         updateUI()
