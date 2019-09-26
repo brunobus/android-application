@@ -354,8 +354,6 @@ class EvaDirectoryFragment : EvaBaseFragment() {
                     loadingFromDb = true
                     fetchingFromServer = false
 
-                    categoryDto.domain = domain
-
                     if (directoryId == 0L) {
                         directoryId = categoryDto.id
                         createIfMissingAndSubscribeToEvaDirectoryUpdates()

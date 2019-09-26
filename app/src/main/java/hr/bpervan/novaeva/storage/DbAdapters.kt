@@ -72,7 +72,6 @@ object EvaDirectoryDbAdapter {
 
             evaCategoryDto.content.orEmpty()
                     .map {
-                        it.domain = evaCategoryDto.domain
                         it.toDbModel(EvaContentDbAdapter.loadEvaContent(realmInTrans, contentId = it.id))
                     }
                     .forEach { candidate ->
@@ -86,7 +85,6 @@ object EvaDirectoryDbAdapter {
 
             evaCategoryDto.subcategories.orEmpty()
                     .map {
-                        it.domain = evaCategoryDto.domain
                         it.toDbModel(EvaDirectoryDbAdapter.loadEvaDirectory(realmInTrans, directoryId = it.id))
                     }
                     .forEach { candidate ->
