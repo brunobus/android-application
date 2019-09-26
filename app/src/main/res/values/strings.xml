@@ -20,7 +20,8 @@
     <string name="install_instruction">Instaliraj aplikaciju Nova Eva:</string>
     <string name="app_links">\n\nAndroid: https://play.google.com/store/apps/details?id=hr.bpervan.novaeva.main\n\niOS: https://itunes.apple.com/us/app/nova-eva/id599928807</string>
     <string name="not_supported">Još nije podržano</string>
-    <string name="praise_the_lord">Hvaljen Isus Krist, Sin Božji!</string>
+    <string name="mail_preamble_praise_the_lord">Hvaljen Isus,\n</string>
+    <string name="mail_intro_vocation">javljam vam se jer razmišljam o duhovnom pozivu.</string>
     <string name="thinking_of_vocation">Razmišljam o pozivu</string>
     <string name="vocation_email">duhovnipoziv@gmail.com</string>
     <string name="having_a_question">Imam pitanje</string>

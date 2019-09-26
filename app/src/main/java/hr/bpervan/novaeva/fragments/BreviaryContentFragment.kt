@@ -1,6 +1,7 @@
 package hr.bpervan.novaeva.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
@@ -13,11 +14,13 @@ import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.rest.NovaEvaService
 import hr.bpervan.novaeva.util.BREVIARY_IMAGE_KEY
 import hr.bpervan.novaeva.util.dataErrorSnackbar
-import hr.bpervan.novaeva.util.networkRequest
 import hr.bpervan.novaeva.util.plusAssign
 import hr.bpervan.novaeva.views.applyConfiguredFontSize
 import hr.bpervan.novaeva.views.applyEvaConfiguration
 import hr.bpervan.novaeva.views.loadHtmlText
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.collapsing_content_header.view.*
 import kotlinx.android.synthetic.main.fragment_simple_content.*
 
@@ -119,13 +122,16 @@ class BreviaryContentFragment : EvaBaseFragment() {
 
         disposables += NovaEvaService.v2
                 .getBreviary(breviaryId.toString())
-                .networkRequest({ breviary ->
-                    view ?: return@networkRequest
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(onSuccess = { breviary ->
+                    view ?: return@subscribeBy
                     breviaryText = breviary.text ?: ""
                     showBreviary()
-                }) {
+                }, onError = {
+                    Log.e("breviaryError", it.message, it)
                     view?.dataErrorSnackbar()
-                }
+                })
     }
 
     private fun showBreviary() {

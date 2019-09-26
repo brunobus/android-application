@@ -26,7 +26,10 @@ import hr.bpervan.novaeva.rest.NovaEvaService
 import hr.bpervan.novaeva.storage.EvaDirectoryDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
 import hr.bpervan.novaeva.util.*
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
+import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
 import io.realm.Sort
 import io.realm.kotlin.where
@@ -96,6 +99,7 @@ class EvaDirectoryFragment : EvaBaseFragment() {
                     ?.rootCategoryId
                     ?: domain.rootId
         }
+
         directoryTitle = initializer.title
         themeId = initializer.theme
 
@@ -127,7 +131,9 @@ class EvaDirectoryFragment : EvaBaseFragment() {
             }
         }
 
-        createIfMissingAndSubscribeToEvaDirectoryUpdates()
+        if (directoryId > 0L) {
+            createIfMissingAndSubscribeToEvaDirectoryUpdates()
+        }
 
         if (savedInstanceState == null) {
             if (domain.isLegacy()) {
@@ -139,11 +145,13 @@ class EvaDirectoryFragment : EvaBaseFragment() {
     }
 
     private fun createIfMissingAndSubscribeToEvaDirectoryUpdates() {
-        EvaDirectoryDbAdapter.createIfMissingEvaDirectoryAsync(realm, directoryId, {
-            it.title = directoryTitle
-        }) {
-            subscribeToDirectoryUpdates()
-        }
+        EvaDirectoryDbAdapter.createIfMissingEvaDirectoryAsync(realm, directoryId,
+                valuesApplier = {
+                    it.title = directoryTitle
+                },
+                onSuccess = {
+                    subscribeToDirectoryUpdates()
+                })
     }
 
     private fun subscribeToDirectoryUpdates() {
@@ -215,7 +223,8 @@ class EvaDirectoryFragment : EvaBaseFragment() {
                 btnPoziv.setOnClickListener {
                     sendEmailIntent(context,
                             subject = getString(R.string.thinking_of_vocation),
-                            text = "Hvaljen Isus i Marija, javljam vam se jer razmišljam o duhovnom pozivu.",
+                            text = getString(R.string.mail_preamble_praise_the_lord)
+                                    + getString(R.string.mail_intro_vocation),
                             receiver = getString(R.string.vocation_email))
                 }
             }
@@ -224,7 +233,7 @@ class EvaDirectoryFragment : EvaBaseFragment() {
                 btnPitanje.setOnClickListener {
                     sendEmailIntent(context,
                             subject = getString(R.string.having_a_question),
-                            text = getString(R.string.praise_the_lord),
+                            text = getString(R.string.mail_preamble_praise_the_lord),
                             receiver = getString(R.string.answers_email))
                 }
             }
@@ -296,7 +305,9 @@ class EvaDirectoryFragment : EvaBaseFragment() {
         refreshLoadingCircleState()
 
         fetchFromServerDisposable = NovaEvaService.v2.getDirectoryContent(directoryId, timestamp)
-                .networkRequest({ evaDirectoryDTO ->
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(onSuccess = { evaDirectoryDTO ->
                     loadingFromDb = true
                     fetchingFromServer = false
 
@@ -319,6 +330,7 @@ class EvaDirectoryFragment : EvaBaseFragment() {
                     hasMore = evaDirectoryDTO.more > 0
 
                 }, onError = {
+                    Log.e("fetchDirectoryLegacy", it.message, it)
                     handler.postDelayed(2000) {
                         fetchingFromServer = false
                         refreshLoadingCircleState()
@@ -336,11 +348,18 @@ class EvaDirectoryFragment : EvaBaseFragment() {
                 domain = domain.domainEndpoint,
                 categoryId = directoryId,
                 page = page)
-                .networkRequest({ categoryDto ->
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(onSuccess = { categoryDto ->
                     loadingFromDb = true
                     fetchingFromServer = false
 
                     categoryDto.domain = domain
+
+                    if (directoryId == 0L) {
+                        directoryId = categoryDto.id
+                        createIfMissingAndSubscribeToEvaDirectoryUpdates()
+                    }
 
                     EvaDirectoryDbAdapter.addOrUpdateEvaCategoryAsync(realm, categoryDto)
 
@@ -358,6 +377,7 @@ class EvaDirectoryFragment : EvaBaseFragment() {
                     pageOn = categoryDto.pagingInfo?.pageNumber ?: 1
 
                 }, onError = {
+                    Log.e("fetchDirectory", it.message, it)
                     handler.postDelayed(2000) {
                         fetchingFromServer = false
                         refreshLoadingCircleState()

@@ -15,12 +15,14 @@ import hr.bpervan.novaeva.rest.EvaDomain
 import hr.bpervan.novaeva.rest.NovaEvaService
 import hr.bpervan.novaeva.util.HAS_NEW_CONTENT_KEY_PREFIX
 import hr.bpervan.novaeva.util.dataErrorSnackbar
-import hr.bpervan.novaeva.util.networkRequest
 import hr.bpervan.novaeva.util.plusAssign
 import hr.bpervan.novaeva.views.applyConfiguredFontSize
 import hr.bpervan.novaeva.views.applyEvaConfiguration
 import hr.bpervan.novaeva.views.loadHtmlText
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
+import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.collapsing_content_header.view.*
 import kotlinx.android.synthetic.main.fragment_eva_quotes.*
 
@@ -111,15 +113,17 @@ class EvaQuotesFragment : EvaBaseFragment() {
 
     private fun fetchRandomQuote() {
         loadRandomQuoteDisposable = NovaEvaService.v3.random()
-                .networkRequest({ content ->
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(onSuccess = { content ->
                     quoteTitle = content.title
                     quoteData = content.html ?: content.text ?: ""
                     quoteId = content.id
 
                     showQuote()
-                }) {
+                }, onError = {
                     view?.dataErrorSnackbar()
-                }
+                })
     }
 
     private fun showQuote() {

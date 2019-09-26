@@ -1,5 +1,6 @@
 package hr.bpervan.novaeva.rest
 
+import android.util.Log
 import androidx.annotation.StringRes
 import hr.bpervan.novaeva.main.BuildConfig
 import hr.bpervan.novaeva.main.R
@@ -82,8 +83,9 @@ object NovaEvaService {
         val sslSocketFactory = sslContext.socketFactory
 
         return OkHttpClient.Builder()
-                .addInterceptor(HttpLoggingInterceptor()
-                        .setLevel(HttpLoggingInterceptor.Level.BODY))
+                .addInterceptor(HttpLoggingInterceptor {
+                    Log.i("evaHttp", it)
+                }.setLevel(HttpLoggingInterceptor.Level.BODY))
                 .apply {
                     if (server.auth != null) {
                         addInterceptor { chain ->

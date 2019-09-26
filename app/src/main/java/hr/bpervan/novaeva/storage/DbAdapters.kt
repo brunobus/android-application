@@ -102,6 +102,7 @@ object EvaDirectoryDbAdapter {
         }, onSuccess)
     }
 
+    @Deprecated("legacy")
     fun addOrUpdateEvaDirectoryAsync_legacy(realm: Realm, evaDirectoryDTO: EvaDirectoryDTO,
                                             onSuccess: () -> Unit = {}) {
 
@@ -172,6 +173,7 @@ object EvaContentDbAdapter {
         return realm.where<EvaContent>().equalTo(CONTENT_ID_FIELD, contentId).findFirst()
     }
 
+    @Deprecated("legacy")
     fun addOrUpdateEvaContentAsync_legacy(realm: Realm,
                                           evaContentDTO: EvaContentDTO,
                                           onSuccess: () -> Unit = {}) {
@@ -191,9 +193,9 @@ object EvaContentDbAdapter {
         }, onSuccess)
     }
 
-    fun loadManyEvaContentMetadata(realm: Realm,
-                                   predicate: (EvaContent) -> Boolean,
-                                   subscriber: (EvaContent) -> Unit): Disposable {
+    fun loadManyEvaContents(realm: Realm,
+                            predicate: (EvaContent) -> Boolean,
+                            subscriber: (EvaContent) -> Unit): Disposable {
         return realm
                 .where<EvaContent>()
                 .loadManyAsync(predicate, subscriber)

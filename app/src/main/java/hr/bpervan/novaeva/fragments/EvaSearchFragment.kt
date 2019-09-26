@@ -3,9 +3,6 @@ package hr.bpervan.novaeva.fragments
 import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
-import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
@@ -15,17 +12,18 @@ import androidx.core.os.bundleOf
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
-import hr.bpervan.novaeva.util.showFetchErrorDialog
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.rest.EvaDomain
 import hr.bpervan.novaeva.model.EvaContent
 import hr.bpervan.novaeva.model.toDbModel
 import hr.bpervan.novaeva.rest.NovaEvaService
-import hr.bpervan.novaeva.util.networkRequest
+import hr.bpervan.novaeva.util.showFetchErrorDialog
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
-import kotlinx.android.synthetic.main.fragment_search.*
+import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.eva_recycler_view.view.*
+import kotlinx.android.synthetic.main.fragment_search.*
 import java.util.*
 
 /**
@@ -121,7 +119,9 @@ class EvaSearchFragment : EvaBaseFragment() {
         adapter.notifyDataSetChanged()
 
         searchForContentDisposable = NovaEvaService.v2.searchForContent(searchString)
-                .networkRequest({ searchResult ->
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(onSuccess = { searchResult ->
                     if (!searchResult.searchResultContentMetadataList.isEmpty()) {
                         searchResultList.addAll(
                                 searchResult.searchResultContentMetadataList.map { it.toDbModel() })

@@ -2,6 +2,7 @@ package hr.bpervan.novaeva.fragments
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
@@ -21,10 +22,16 @@ import hr.bpervan.novaeva.rest.NovaEvaService
 import hr.bpervan.novaeva.rest.serverByDomain
 import hr.bpervan.novaeva.storage.EvaContentDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
-import hr.bpervan.novaeva.util.*
+import hr.bpervan.novaeva.util.dataErrorSnackbar
+import hr.bpervan.novaeva.util.enumValueOrNull
+import hr.bpervan.novaeva.util.plusAssign
+import hr.bpervan.novaeva.util.sendEmailIntent
 import hr.bpervan.novaeva.views.applyConfiguredFontSize
 import hr.bpervan.novaeva.views.applyEvaConfiguration
 import hr.bpervan.novaeva.views.loadHtmlText
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
 import kotlinx.android.synthetic.main.collapsing_content_header.view.*
 import kotlinx.android.synthetic.main.fragment_eva_content.*
@@ -162,7 +169,7 @@ class EvaContentFragment : EvaBaseFragment() {
                 btnPitanje.setOnClickListener {
                     sendEmailIntent(context,
                             subject = getString(R.string.having_a_question),
-                            text = getString(R.string.praise_the_lord),
+                            text = getString(R.string.mail_preamble_praise_the_lord),
                             receiver = getString(R.string.answers_email))
                 }
             }
@@ -212,15 +219,18 @@ class EvaContentFragment : EvaBaseFragment() {
 
     private fun fetchContentFromServer_legacy(contentId: Long) {
         disposables += NovaEvaService.v2.getContentData(contentId)
-                .networkRequest({ contentDataDTO ->
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(onSuccess = { contentDataDTO ->
                     contentDataDTO.domain = domain
                     EvaContentDbAdapter.addOrUpdateEvaContentAsync_legacy(realm, contentDataDTO) {
                         evaContent = EvaContentDbAdapter.loadEvaContent(realm, contentId)
                     }
-                }) {
+                }, onError = {
+                    Log.e("fetchContentLegacy", it.message, it)
                     view?.dataErrorSnackbar()
                     //load old
                     evaContent = EvaContentDbAdapter.loadEvaContent(realm, contentId)
-                }
+                })
     }
 }

@@ -1,6 +1,7 @@
 package hr.bpervan.novaeva.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +16,9 @@ import hr.bpervan.novaeva.model.OpenQuotesEvent
 import hr.bpervan.novaeva.rest.EvaDomain
 import hr.bpervan.novaeva.rest.NovaEvaService
 import hr.bpervan.novaeva.util.*
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 
 /**
@@ -120,34 +124,45 @@ class EvaDashboardFragment : EvaBaseFragment() {
         val lastSyncTimeMillis = prefs.getLong(LAST_SYNC_TIME_MILLIS_KEY, 0L)
         if (System.currentTimeMillis() - lastSyncTimeMillis > syncIntervalMillis) {
 
-            NovaEvaService.v2.getNewStuff().networkRequest({ indicatorsDTO ->
-                checkLatestContentId(EvaDomain.GOSPEL, indicatorsDTO.gospel)
-                checkLatestContentId(EvaDomain.SONGBOOK, indicatorsDTO.songbook)
+            disposables += NovaEvaService.v2.getNewStuff()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeBy(onSuccess = { indicatorsDTO ->
+                        updateLatestContentId(EvaDomain.GOSPEL, indicatorsDTO.gospel)
+                        updateLatestContentId(EvaDomain.SONGBOOK, indicatorsDTO.songbook)
 
-                updateUI()
-                prefs.edit {
-                    putLong(LAST_SYNC_TIME_MILLIS_KEY, System.currentTimeMillis())
-                }
-            }, onError = {})
+                        updateUI()
+                        prefs.edit {
+                            putLong(LAST_SYNC_TIME_MILLIS_KEY, System.currentTimeMillis())
+                        }
+                    }, onError = {
+                        Log.e("fetchLatestLegacy", it.message, it)
+                    })
 
-            NovaEvaService.v3.latest().networkRequest(onSuccess = { latest ->
-                checkLatestContentId(EvaDomain.SPIRITUALITY, latest.spirituality.content)
-//                checkLatestContentId(EvaDomain.QUOTES, latest.proverbs.content)
-                checkLatestContentId(EvaDomain.TRENDING, latest.trending.content)
-                checkLatestContentId(EvaDomain.MULTIMEDIA, latest.multimedia.content)
-                checkLatestContentId(EvaDomain.SERMONS, latest.sermons.content)
-                checkLatestContentId(EvaDomain.ANSWERS, latest.answers.content)
-                checkLatestContentId(EvaDomain.VOCATION, latest.vocation.content)
+            disposables += NovaEvaService.v3.latest()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeBy(onSuccess = { latest ->
+                        updateLatestContentId(EvaDomain.SPIRITUALITY, latest.spirituality.content)
+//                      updateLatestContentId(EvaDomain.QUOTES, latest.proverbs.content)
+                        updateLatestContentId(EvaDomain.TRENDING, latest.trending.content)
+                        updateLatestContentId(EvaDomain.MULTIMEDIA, latest.multimedia.content)
+                        updateLatestContentId(EvaDomain.SERMONS, latest.sermons.content)
+                        updateLatestContentId(EvaDomain.ANSWERS, latest.answers.content)
+                        updateLatestContentId(EvaDomain.VOCATION, latest.vocation.content)
 
-                updateUI()
-                prefs.edit {
-                    putLong(LAST_SYNC_TIME_MILLIS_KEY, System.currentTimeMillis())
-                }
-            }, onError = {})
+                        updateUI()
+
+                        prefs.edit {
+                            putLong(LAST_SYNC_TIME_MILLIS_KEY, System.currentTimeMillis())
+                        }
+                    }, onError = {
+                        Log.e("fetchLatest", it.message, it)
+                    })
         }
     }
 
-    private fun checkLatestContentId(domain: EvaDomain, receivedLatestContentId: Long?) {
+    private fun updateLatestContentId(domain: EvaDomain, receivedLatestContentId: Long?) {
         receivedLatestContentId ?: return
 
         val savedLatestContentId = prefs.getLong("$LATEST_CONTENT_ID_KEY_PREFIX.$domain", -1L)

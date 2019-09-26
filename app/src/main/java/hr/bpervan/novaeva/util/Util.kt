@@ -13,26 +13,15 @@ import com.google.android.material.snackbar.Snackbar
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.views.snackbar
 import io.reactivex.Observable
-import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
 
 /**
  * Created by vpriscan on 16.10.17..
  */
-
-fun <T> Single<T>.networkRequest(onSuccess: (T) -> Unit, onError: (Throwable) -> Unit): Disposable {
-    return subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnError {
-                Log.e("evaNetworkError", it.message, it)
-            }
-            .subscribe(onSuccess, onError)
-}
 
 fun <T> Observable<T>.subscribeThrottled(consumer: (T) -> Unit): Disposable {
     return throttleFirst(500, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())

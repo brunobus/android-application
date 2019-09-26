@@ -45,7 +45,7 @@ android {
             applicationIdSuffix = ".dev"
             versionNameSuffix = "-dev"
 
-            resValue("string", "app_name", "Dev Eva")
+            resValue("string", "app_name", "Nova Deva")
 
             buildConfigField("String", "V2_SERVER_URI", "\"http://novaeva.com\"")
             buildConfigField("String", "V3_SERVER_URI", "\"https://api.hr.novaeva.xyz\"")
@@ -83,8 +83,10 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:1.1.3")
 
     implementation(kotlin("stdlib-jdk7", KotlinCompilerVersion.VERSION))
-    implementation("io.reactivex.rxjava2:rxjava:2.2.3")
-    implementation("io.reactivex.rxjava2:rxandroid:2.1.0")
+
+    implementation("io.reactivex.rxjava2:rxjava:2.2.10")
+    implementation("io.reactivex.rxjava2:rxkotlin:2.4.0")
+    implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
 
     implementation("com.google.android.material:material:1.0.0")
     implementation("com.google.android.gms:play-services-analytics:16.0.6")

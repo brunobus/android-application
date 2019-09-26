@@ -19,11 +19,11 @@ import hr.bpervan.novaeva.rest.EvaDomain
 import hr.bpervan.novaeva.rest.NovaEvaService
 import hr.bpervan.novaeva.rest.serverByDomain
 import hr.bpervan.novaeva.util.dataErrorSnackbar
-import hr.bpervan.novaeva.util.networkRequest
 import hr.bpervan.novaeva.util.plusAssign
 import io.reactivex.Maybe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
+import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.collapsing_content_header.view.*
 import kotlinx.android.synthetic.main.fragment_radio.*
@@ -150,7 +150,9 @@ class RadioFragment : EvaBaseFragment() {
 
     private fun fetchRadioStationsFromServer() {
         fetchFromServerDisposable = NovaEvaService.v2.getDirectoryContent(EvaDomain.RADIO.rootId, null, 1000)
-                .networkRequest({ evaDirectoryDTO ->
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(onSuccess = { evaDirectoryDTO ->
                     radioStationList.clear()
                     radioStationList.addAll(evaDirectoryDTO.contentMetadataList.map { it.toDbModel() })
                     adapter.notifyDataSetChanged()

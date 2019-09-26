@@ -29,6 +29,7 @@ import hr.bpervan.novaeva.util.TransitionAnimation.*
 import hr.bpervan.novaeva.views.snackbar
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
 import io.realm.kotlin.where
@@ -94,9 +95,8 @@ class EvaActivity : EvaBaseActivity() {
     }
 
     private fun updateAllDomainRoots() {
-        @Suppress("USELESS_CAST")
         realm.where<EvaDomainInfo>()
-                .notEqualTo("rootCategoryId", -1 as Int)
+                .notEqualTo("rootCategoryId", -1L)
                 .findAll()
                 .forEach { domainInfo ->
                     updateDomainRoot(domainInfo)
@@ -104,9 +104,8 @@ class EvaActivity : EvaBaseActivity() {
     }
 
     private fun updateMissingDomainRoots() {
-        @Suppress("USELESS_CAST")
         realm.where<EvaDomainInfo>()
-                .equalTo("rootCategoryId", 0 as Int)
+                .equalTo("rootCategoryId", 0L)
                 .findAll()
                 .forEach { domainInfo ->
                     updateDomainRoot(domainInfo)
@@ -114,18 +113,18 @@ class EvaActivity : EvaBaseActivity() {
     }
 
     private fun updateDomainRoot(domainInfo: EvaDomainInfo) {
-        NovaEvaService.v3.categoryContent(domainInfo.endpointRoot,
-                categoryId = 0, page = 1, items = 20)
-                .networkRequest(
-                        onSuccess = { categoryDto ->
-                            realm.executeTransaction { transRealm ->
-                                domainInfo.rootCategoryId = categoryDto.id
-                                transRealm.copyToRealmOrUpdate(domainInfo)
-                            }
-                        },
-                        onError = {
-                            Log.e("categoryRootId", it.message, it)
-                        })
+        disposables += NovaEvaService.v3.categoryContent(domainInfo.endpointRoot,
+                categoryId = 0, page = 1, items = 1)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(onSuccess = { categoryDto ->
+                    realm.executeTransaction { transRealm ->
+                        domainInfo.rootCategoryId = categoryDto.id
+                        transRealm.copyToRealmOrUpdate(domainInfo)
+                    }
+                }, onError = {
+                    Log.e("categoryRootId", it.message, it)
+                })
     }
 
     private fun updateDisplayMetrics() {
@@ -337,14 +336,18 @@ class EvaActivity : EvaBaseActivity() {
 
     private fun fetchBreviaryCoverUrl() {
         disposables += NovaEvaService.v2.getDirectoryContent(546, null)
-                .networkRequest({ directoryContent ->
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(onSuccess = { directoryContent ->
                     val image = directoryContent.image?.size640
                     if (image != null) {
                         NovaEvaApp.prefs.edit {
                             putString(BREVIARY_IMAGE_KEY, image)
                         }
                     }
-                }, onError = {})
+                }, onError = {
+                    Log.e("breviaryCover", it.message, it)
+                })
     }
 
     private fun fetchDashboardBackgroundUrl() {
