@@ -82,6 +82,8 @@ class EvaDirectoryFragment : EvaBaseFragment() {
 
         val inState: Bundle = savedInstanceState ?: arguments!!
 
+        realm = Realm.getInstance(RealmConfigProvider.evaDBConfig)
+
         initializer = inState.getParcelable(EvaFragmentFactory.INITIALIZER)!!
 
         domain = initializer.domain
@@ -107,8 +109,6 @@ class EvaDirectoryFragment : EvaBaseFragment() {
                         .setLabel(directoryTitle)
                         .setValue(directoryId)
                         .build())
-
-        realm = Realm.getInstance(RealmConfigProvider.evaDBConfig)
 
         prefs.edit {
             remove("$HAS_NEW_CONTENT_KEY_PREFIX.$domain")

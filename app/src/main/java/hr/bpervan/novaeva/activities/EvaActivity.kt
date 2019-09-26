@@ -114,7 +114,8 @@ class EvaActivity : EvaBaseActivity() {
     }
 
     private fun updateDomainRoot(domainInfo: EvaDomainInfo) {
-        NovaEvaService.v3.categoryContent(domainInfo.endpointRoot, categoryId = 0, page = 1, items = 0)
+        NovaEvaService.v3.categoryContent(domainInfo.endpointRoot,
+                categoryId = 0, page = 1, items = 20)
                 .networkRequest(
                         onSuccess = { categoryDto ->
                             realm.executeTransaction { transRealm ->
