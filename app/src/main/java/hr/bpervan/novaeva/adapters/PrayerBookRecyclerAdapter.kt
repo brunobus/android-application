@@ -1,23 +1,23 @@
 package hr.bpervan.novaeva.adapters
 
 import android.graphics.Color
-import androidx.recyclerview.widget.RecyclerView
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import hr.bpervan.novaeva.NovaEvaApp
-import hr.bpervan.novaeva.model.OpenPrayerCategoryEvent
 import hr.bpervan.novaeva.EventPipelines
+import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.PrayerBookRecyclerAdapter.PrayerCategoryViewHolder
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.PrayerCategory
+import hr.bpervan.novaeva.model.EvaDirectory
+import hr.bpervan.novaeva.model.EvaNode
+import hr.bpervan.novaeva.model.OpenPrayerDirectoryEvent
 import hr.bpervan.novaeva.util.EvaTouchFeedback
 import hr.bpervan.novaeva.util.TransitionAnimation
 import kotlinx.android.synthetic.main.recycler_item_prayer_category.view.*
 
-class PrayerBookRecyclerAdapter(private val prayerCategoryList: List<PrayerCategory>) :
+class PrayerBookRecyclerAdapter(private val prayerCategoryList: List<EvaNode>) :
         androidx.recyclerview.widget.RecyclerView.Adapter<PrayerCategoryViewHolder>() {
 
     override fun getItemCount(): Int = prayerCategoryList.size
@@ -50,12 +50,17 @@ class PrayerBookRecyclerAdapter(private val prayerCategoryList: List<PrayerCateg
             prayerCategoryTitle.typeface = NovaEvaApp.openSansRegular
         }
 
-        fun bindTo(prayerCategory: PrayerCategory) {
+        fun bindTo(prayerCategory: EvaNode) {
+            prayerCategory as EvaDirectory
+
             prayerCategoryTitle.text = prayerCategory.title
 
             view.setOnTouchListener(EvaTouchFeedback(view, themeColorTrans))
             view.setOnClickListener {
-                EventPipelines.openPrayerCategory.onNext(OpenPrayerCategoryEvent(prayerCategory, TransitionAnimation.LEFTWARDS))
+                EventPipelines.openPrayerCategory.onNext(OpenPrayerDirectoryEvent(
+                        directoryId = prayerCategory.id,
+                        title = prayerCategory.title,
+                        animation = TransitionAnimation.LEFTWARDS))
             }
         }
     }

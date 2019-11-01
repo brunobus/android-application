@@ -12,6 +12,7 @@ import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.OpenDirectoryEvent
+import hr.bpervan.novaeva.model.OpenPrayerDirectoryEvent
 import hr.bpervan.novaeva.model.OpenQuotesEvent
 import hr.bpervan.novaeva.rest.EvaDomain
 import hr.bpervan.novaeva.rest.NovaEvaService
@@ -62,7 +63,9 @@ class EvaDashboardFragment : EvaBaseFragment() {
             EventPipelines.openBreviaryChooser.onNext(TransitionAnimation.FADE)
         }
         btnMolitvenik.setOnClickListener {
-            EventPipelines.openPrayerBook.onNext(TransitionAnimation.FADE)
+            EventPipelines.openPrayerBook.onNext(OpenPrayerDirectoryEvent(
+                    title = getString(EvaDomain.PRAYERS.title)
+            ))
         }
         btnBookmarks.setOnClickListener {
             EventPipelines.openBookmarks.onNext(TransitionAnimation.FADE)

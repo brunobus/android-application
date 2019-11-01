@@ -1,61 +1,59 @@
 package hr.bpervan.novaeva.fragments
 
 import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.PrayerCategoryRecyclerAdapter
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.PrayerCategory
+import hr.bpervan.novaeva.model.EvaContent
+import hr.bpervan.novaeva.model.EvaDirectory
+import hr.bpervan.novaeva.model.OpenPrayerDirectoryEvent
+import hr.bpervan.novaeva.rest.EvaDomain
 import hr.bpervan.novaeva.views.onLayoutComplete
 import kotlinx.android.synthetic.main.fragment_prayers.*
 import kotlinx.android.synthetic.main.top_prayerbook.*
 
-class PrayerListFragment : EvaBaseFragment() {
+class PrayerListFragment : EvaAbstractDirectoryFragment() {
 
-    companion object : EvaFragmentFactory<PrayerListFragment, Int> {
+    companion object : EvaFragmentFactory<PrayerListFragment, OpenPrayerDirectoryEvent> {
 
-        private const val prayerCategoryIdKey = "prayerCategoryId"
         private const val expandedItemKey = "expandedItem"
 
-        override fun newInstance(initializer: Int): PrayerListFragment {
+        override fun newInstance(initializer: OpenPrayerDirectoryEvent): PrayerListFragment {
             return PrayerListFragment().apply {
-                arguments = bundleOf(prayerCategoryIdKey to initializer)
+                arguments = bundleOf(EvaFragmentFactory.INITIALIZER to initializer)
             }
         }
     }
 
-    private lateinit var prayerCategory: PrayerCategory
-    private lateinit var adapter: PrayerCategoryRecyclerAdapter
+    private lateinit var initializer: OpenPrayerDirectoryEvent
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
 
         val inState = savedInstanceState ?: arguments!!
-        prayerCategory = NovaEvaApp.prayerBook[inState.getInt(prayerCategoryIdKey)]!!
+        initializer = inState.getParcelable(EvaFragmentFactory.INITIALIZER)!!
 
-        adapter = PrayerCategoryRecyclerAdapter(prayerCategory)
+        domain = EvaDomain.PRAYERS
+        directoryId = initializer.directoryId
+        directoryTitle = initializer.title
 
-        savedInstanceState ?: NovaEvaApp.defaultTracker.send(
-                HitBuilders.EventBuilder()
-                        .setCategory("Molitvenik")
-                        .setAction("OtvorenaGrupaMolitvi")
-                        .setLabel(prayerCategory.title)
-                        .setValue(prayerCategory.id.toLong())
-                        .build()
-        )
+        fetchItems = 1000
+
+        adapter = PrayerCategoryRecyclerAdapter(elementsList)
+
+        super.onCreate(savedInstanceState)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putInt(prayerCategoryIdKey, prayerCategory.id)
-        outState.putInt(expandedItemKey, adapter.expandedItemPos)
+        outState.putParcelable(EvaFragmentFactory.INITIALIZER, initializer)
+        outState.putInt(expandedItemKey, (adapter as PrayerCategoryRecyclerAdapter).expandedItemPos)
         super.onSaveInstanceState(outState)
     }
 
@@ -75,16 +73,24 @@ class PrayerListFragment : EvaBaseFragment() {
         recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
         recyclerView.adapter = adapter
 
-        prayerTitleTextView.text = prayerCategory.title
+        prayerTitleTextView.text = directoryTitle
         prayerTitleTextView.typeface = NovaEvaApp.openSansBold
 
         if (savedInstanceState != null) {
             val savedExpandedItemPos = savedInstanceState.getInt(expandedItemKey, androidx.recyclerview.widget.RecyclerView.NO_POSITION)
             if (savedExpandedItemPos != androidx.recyclerview.widget.RecyclerView.NO_POSITION) {
                 recyclerView.onLayoutComplete {
-                    adapter.expandedItemPos = savedExpandedItemPos
+                    (adapter as PrayerCategoryRecyclerAdapter).expandedItemPos = savedExpandedItemPos
                 }
             }
         }
+    }
+
+    override fun fillElements(evaDirectory: EvaDirectory) {
+        elementsList.clear()
+
+        val contentSorted = evaDirectory.contents.sortedBy { it.title }
+
+        elementsList.addAll(contentSorted)
     }
 }

@@ -215,11 +215,11 @@ class EvaActivity : EvaBaseActivity() {
         }
 
         disposables += bus.openPrayerBook.subscribeThrottled {
-            addToBackStack(mainContainerId, PrayerBookFragment, it, true)
+            addToBackStack(mainContainerId, PrayerBookFragment, it, it.animation, true)
         }
 
         disposables += bus.openPrayerCategory.subscribeThrottled {
-            addToBackStack(mainContainerId, PrayerListFragment, it.prayerCategory.id, it.animation, true)
+            addToBackStack(mainContainerId, PrayerListFragment, it, it.animation, true)
         }
 
         disposables += bus.openRadio.subscribeThrottled {

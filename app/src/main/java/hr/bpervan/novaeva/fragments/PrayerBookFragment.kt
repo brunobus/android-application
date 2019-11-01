@@ -1,46 +1,57 @@
 package hr.bpervan.novaeva.fragments
 
 import android.os.Bundle
-import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.core.view.isInvisible
-import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.PrayerBookRecyclerAdapter
 import hr.bpervan.novaeva.main.R
+import hr.bpervan.novaeva.model.EvaDirectory
+import hr.bpervan.novaeva.model.OpenPrayerDirectoryEvent
+import hr.bpervan.novaeva.rest.EvaDomain
 import kotlinx.android.synthetic.main.fragment_prayers.*
 import kotlinx.android.synthetic.main.top_prayerbook.*
 
 /**
  * Created by vpriscan on 11.12.17..
  */
-class PrayerBookFragment : EvaBaseFragment() {
+class PrayerBookFragment : EvaAbstractDirectoryFragment() {
 
-    companion object : EvaFragmentFactory<PrayerBookFragment, Unit> {
-        override fun newInstance(initializer: Unit): PrayerBookFragment {
-            return PrayerBookFragment()
+    companion object : EvaFragmentFactory<PrayerBookFragment, OpenPrayerDirectoryEvent> {
+        override fun newInstance(initializer: OpenPrayerDirectoryEvent): PrayerBookFragment {
+            return PrayerBookFragment().apply {
+                arguments = bundleOf(EvaFragmentFactory.INITIALIZER to initializer)
+            }
         }
     }
 
-
-    private lateinit var adapter: PrayerBookRecyclerAdapter
+    private lateinit var initializer: OpenPrayerDirectoryEvent
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        val inState: Bundle = savedInstanceState ?: arguments!!
+
+        initializer = inState.getParcelable(EvaFragmentFactory.INITIALIZER)!!
+
+        domain = EvaDomain.PRAYERS
+        directoryId = initializer.directoryId
+        directoryTitle = initializer.title
+
+        fetchItems = 1000
+
+        adapter = PrayerBookRecyclerAdapter(elementsList)
+
         super.onCreate(savedInstanceState)
+    }
 
-        adapter = PrayerBookRecyclerAdapter(NovaEvaApp.prayerBook.values.toList())
-
-        savedInstanceState ?: NovaEvaApp.defaultTracker
-                .send(HitBuilders.EventBuilder()
-                        .setCategory("Molitvenik")
-                        .setAction("OtvorenMolitvenik")
-                        .build())
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putParcelable(EvaFragmentFactory.INITIALIZER, initializer)
+        super.onSaveInstanceState(outState)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -55,11 +66,9 @@ class PrayerBookFragment : EvaBaseFragment() {
         EventPipelines.changeStatusbarColor.onNext(R.color.VeryDarkGray)
         EventPipelines.changeFragmentBackgroundResource.onNext(R.color.White)
 
-        val title = "Molitvenik"
-
         prayerArrow.isInvisible = true
         prayerTitleTextView.apply {
-            text = title
+            text = directoryTitle
             typeface = NovaEvaApp.openSansBold
         }
 
@@ -68,5 +77,13 @@ class PrayerBookFragment : EvaBaseFragment() {
         recyclerView.layoutManager = linearLayoutManager
         recyclerView.itemAnimator = androidx.recyclerview.widget.DefaultItemAnimator()
         recyclerView.adapter = adapter
+    }
+
+    override fun fillElements(evaDirectory: EvaDirectory) {
+        elementsList.clear()
+
+        val subcategoriesSorted = evaDirectory.subCategories.sortedBy { it.title }
+
+        elementsList.addAll(subcategoriesSorted)
     }
 }

@@ -65,8 +65,28 @@ data class OpenDirectoryEvent(val directoryId: Long = -1,
     }
 }
 
-data class OpenPrayerCategoryEvent(val prayerCategory: PrayerCategory,
-                                   val animation: TransitionAnimation = TransitionAnimation.FADE)
+data class OpenPrayerDirectoryEvent(val directoryId: Long = -1,
+                                    val title: String = "",
+                                    val animation: TransitionAnimation = TransitionAnimation.FADE) : Parcelable {
+    constructor(parcel: Parcel) : this(
+            parcel.readLong(),
+            parcel.readString()!!,
+            parcel.readSerializable() as TransitionAnimation)
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeLong(directoryId)
+        parcel.writeString(title)
+        parcel.writeSerializable(animation)
+    }
+
+    override fun describeContents(): Int = 0
+
+    companion object CREATOR : Parcelable.Creator<OpenPrayerDirectoryEvent> {
+        override fun createFromParcel(parcel: Parcel): OpenPrayerDirectoryEvent = OpenPrayerDirectoryEvent(parcel)
+
+        override fun newArray(size: Int): Array<OpenPrayerDirectoryEvent?> = arrayOfNulls(size)
+    }
+}
 
 data class OpenQuotesEvent(val quoteId: Long = -1,
                            val animation: TransitionAnimation = TransitionAnimation.FADE)

@@ -1,7 +1,6 @@
 package hr.bpervan.novaeva.adapters
 
 import android.graphics.Color
-import androidx.recyclerview.widget.RecyclerView
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -9,25 +8,26 @@ import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
 import android.webkit.WebView
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import hr.bpervan.novaeva.NovaEvaApp
+import hr.bpervan.novaeva.adapters.PrayerCategoryRecyclerAdapter.PrayerViewHolder
 import hr.bpervan.novaeva.main.R
+import hr.bpervan.novaeva.model.EvaContent
+import hr.bpervan.novaeva.model.EvaNode
 import hr.bpervan.novaeva.util.ASSETS_DIR_PATH
-import hr.bpervan.novaeva.model.Prayer
-import hr.bpervan.novaeva.model.PrayerCategory
 import hr.bpervan.novaeva.util.EvaTouchFeedback
+import hr.bpervan.novaeva.views.loadHtmlText
 import kotlinx.android.synthetic.main.recycler_item_prayer.view.*
 import net.cachapa.expandablelayout.ExpandableLayout
-
-import hr.bpervan.novaeva.adapters.PrayerCategoryRecyclerAdapter.PrayerViewHolder
 
 
 /**
  * Created by vpriscan on 03.01.18..
  */
-class PrayerCategoryRecyclerAdapter(private val prayerCategory: PrayerCategory) :
+class PrayerCategoryRecyclerAdapter(private val prayerCategory: List<EvaNode>) :
         androidx.recyclerview.widget.RecyclerView.Adapter<PrayerViewHolder>() {
 
-    override fun getItemCount(): Int = prayerCategory.prayerList.size
+    override fun getItemCount(): Int = prayerCategory.size
 
     var expandedItemPos: Int = androidx.recyclerview.widget.RecyclerView.NO_POSITION
         set(newValue) {
@@ -60,7 +60,7 @@ class PrayerCategoryRecyclerAdapter(private val prayerCategory: PrayerCategory) 
     }
 
     override fun onBindViewHolder(holder: PrayerViewHolder, position: Int) {
-        holder.bindTo(prayerCategory.prayerList[position])
+        holder.bindTo(prayerCategory[position])
     }
 
     inner class PrayerViewHolder(val view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view), View.OnClickListener {
@@ -74,9 +74,11 @@ class PrayerCategoryRecyclerAdapter(private val prayerCategory: PrayerCategory) 
             prayerTitle.typeface = NovaEvaApp.openSansRegular
         }
 
-        fun bindTo(prayer: Prayer) {
+        fun bindTo(prayer: EvaNode) {
+            prayer as EvaContent
+
             prayerTitle.text = prayer.title
-            prayerContent.loadUrl("$ASSETS_DIR_PATH${prayer.filePath}")
+            prayerContent.loadHtmlText(prayer.text)
 
             expandableLayout.setExpanded(false, false)
 

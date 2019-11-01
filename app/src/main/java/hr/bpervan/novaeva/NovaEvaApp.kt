@@ -6,17 +6,15 @@ import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
-import androidx.core.content.ContextCompat
 import android.util.Log
+import androidx.core.content.ContextCompat
 import com.google.android.gms.analytics.GoogleAnalytics
 import com.google.android.gms.analytics.Tracker
 import com.nostra13.universalimageloader.core.ImageLoader
 import hr.bpervan.novaeva.main.BuildConfig
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.PrayerCategory
 import hr.bpervan.novaeva.player.EvaPlayer
 import hr.bpervan.novaeva.receivers.ConnectionDetector
-import hr.bpervan.novaeva.util.AssetsLoader
 import hr.bpervan.novaeva.util.ImageLoaderConfigurator
 import hr.bpervan.novaeva.util.LifecycleLogger
 import hr.bpervan.novaeva.util.NOVA_EVA_PREFS
@@ -93,10 +91,6 @@ class NovaEvaApp : Application() {
             } catch (e: Exception) {
                 null
             }
-        }
-
-        val prayerBook: Map<Int, PrayerCategory> by lazy {
-            AssetsLoader.loadPrayerBook(instance!!).associateBy { it.id }
         }
 
         val defaultDashboardBackground: Drawable by lazy {
