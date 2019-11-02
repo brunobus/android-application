@@ -6,6 +6,7 @@ import io.realm.RealmList
  * Created by vpriscan on 19.10.17..
  */
 
+@Deprecated("legacy v2 api")
 fun EvaDirectoryMetadataDTO.toDbModel(mergeWith: EvaDirectory? = null): EvaDirectory {
     val dto = this
 
@@ -17,6 +18,7 @@ fun EvaDirectoryMetadataDTO.toDbModel(mergeWith: EvaDirectory? = null): EvaDirec
     }
 }
 
+@Deprecated("legacy v2 api")
 fun EvaContentMetadataDTO.toDbModel(mergeWith: EvaContent? = null): EvaContent {
     val dto = this
 
@@ -41,13 +43,16 @@ fun EvaContentMetadataDTO.toDbModel(mergeWith: EvaContent? = null): EvaContent {
     }
 }
 
+@Deprecated("legacy v2 api")
 fun EvaAttachmentDTO.toDbModel(): EvaAttachment = EvaAttachment(name ?: "", url ?: "")
 
+@Deprecated("legacy v2 api")
 fun EvaImageDTO.toDbModel(): EvaResource? {
     val imageURL = this.original ?: this.size720 ?: this.size640 ?: return null
     return EvaResource(url = imageURL)
 }
 
+@Deprecated("legacy v2 api")
 fun EvaContentDTO.toDbModel(mergeWith: EvaContent? = null): EvaContent {
     val dto = this
 

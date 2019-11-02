@@ -3,6 +3,7 @@ package hr.bpervan.novaeva.model
 import com.google.gson.annotations.SerializedName
 import hr.bpervan.novaeva.rest.EvaDomain
 
+@Deprecated("legacy v2 api")
 class EvaDirectoryDTO {
     var directoryId: Long = 0
     var domain: EvaDomain? = null
@@ -25,6 +26,7 @@ class EvaDirectoryDTO {
         get() = _contentMetadataList ?: emptyList()
 }
 
+@Deprecated("legacy v2 api")
 class EvaDirectoryMetadataDTO {
     @SerializedName("cid")
     val directoryId: Long = 0
@@ -33,6 +35,7 @@ class EvaDirectoryMetadataDTO {
     val title: String? = null
 }
 
+@Deprecated("legacy v2 api")
 class EvaContentMetadataDTO {
 
     @SerializedName("nid")
@@ -64,6 +67,7 @@ class EvaContentMetadataDTO {
 
 }
 
+@Deprecated("legacy v2 api")
 class EvaAttachmentsIndicatorDTO {
     @SerializedName("video")
     var hasVideo: Boolean = false
@@ -77,6 +81,7 @@ class EvaAttachmentsIndicatorDTO {
     var hasText: Boolean = false
 }
 
+@Deprecated("legacy v2 api")
 class EvaContentDTO {
     @SerializedName("nid")
     val contentId: Long = 0
@@ -108,12 +113,14 @@ class EvaContentDTO {
     val datetime: String? = null
 }
 
+@Deprecated("legacy v2 api")
 class EvaAttachmentDTO {
     @SerializedName("naziv")
     val name: String? = null
     val url: String? = null
 }
 
+@Deprecated("legacy v2 api")
 class EvaImageDTO {
     @SerializedName("640")
     val size640: String? = null
@@ -124,11 +131,13 @@ class EvaImageDTO {
     val original: String? = null
 }
 
+@Deprecated("legacy v2 api")
 class EvaBreviaryDTO {
     @SerializedName("tekst")
     val text: String? = null
 }
 
+@Deprecated("legacy v2 api")
 class EvaSearchResultDTO {
     val paket: Int = 0
 
@@ -138,6 +147,7 @@ class EvaSearchResultDTO {
         get() = _searchResultContentMetadataList ?: emptyList()
 }
 
+@Deprecated("legacy v2 api")
 class EvaIndicatorsDTO {
     @SerializedName("354")
     val spirituality: Long? = null

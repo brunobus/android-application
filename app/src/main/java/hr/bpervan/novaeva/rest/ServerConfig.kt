@@ -53,6 +53,8 @@ fun serverByDomain(domain: EvaDomain): Server {
 }
 
 object NovaEvaService {
+
+    @Deprecated("legacy v2 api")
     val v2: NovaEvaApiV2 by lazy {
         val server = Server.V2
         ServiceBuilder.build<NovaEvaApiV2>(server.baseUrl)
