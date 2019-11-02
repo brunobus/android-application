@@ -14,7 +14,6 @@ import hr.bpervan.novaeva.adapters.PrayerCategoryRecyclerAdapter.PrayerViewHolde
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaContent
 import hr.bpervan.novaeva.model.EvaNode
-import hr.bpervan.novaeva.util.ASSETS_DIR_PATH
 import hr.bpervan.novaeva.util.EvaTouchFeedback
 import hr.bpervan.novaeva.views.loadHtmlText
 import kotlinx.android.synthetic.main.recycler_item_prayer.view.*
@@ -25,24 +24,24 @@ import net.cachapa.expandablelayout.ExpandableLayout
  * Created by vpriscan on 03.01.18..
  */
 class PrayerCategoryRecyclerAdapter(private val prayerCategory: List<EvaNode>) :
-        androidx.recyclerview.widget.RecyclerView.Adapter<PrayerViewHolder>() {
+        RecyclerView.Adapter<PrayerViewHolder>() {
 
     override fun getItemCount(): Int = prayerCategory.size
 
-    var expandedItemPos: Int = androidx.recyclerview.widget.RecyclerView.NO_POSITION
+    var expandedItemPos: Int = RecyclerView.NO_POSITION
         set(newValue) {
             val oldValue = field
             field = newValue
 
-            collapseHolderAtPosition(oldValue)
-            expandHolderAtPosition(newValue)
+            setExpanded(position = oldValue, expand = false)
+            setExpanded(position = newValue, expand = true)
         }
 
     private var themeColorTrans: Int = 0
 
-    private var recyclerView: androidx.recyclerview.widget.RecyclerView? = null
+    private var recyclerView: RecyclerView? = null
 
-    override fun onAttachedToRecyclerView(recyclerView: androidx.recyclerview.widget.RecyclerView) {
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
 
         val typedVal = TypedValue()
@@ -63,7 +62,7 @@ class PrayerCategoryRecyclerAdapter(private val prayerCategory: List<EvaNode>) :
         holder.bindTo(prayerCategory[position])
     }
 
-    inner class PrayerViewHolder(val view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view), View.OnClickListener {
+    inner class PrayerViewHolder(val view: View) : RecyclerView.ViewHolder(view), View.OnClickListener {
         val expandableLayout: ExpandableLayout = view.expandableLayout
         private val prayerTitle: TextView = view.prayerTitleTextView
         private val prayerContent: WebView = view.prayerContentView
@@ -80,7 +79,7 @@ class PrayerCategoryRecyclerAdapter(private val prayerCategory: List<EvaNode>) :
             prayerTitle.text = prayer.title
             prayerContent.loadHtmlText(prayer.text)
 
-            expandableLayout.setExpanded(false, false)
+            expandableLayout.setExpanded(adapterPosition == expandedItemPos, false)
 
             view.prayerTitleConstraintLayout.let {
                 it.setOnTouchListener(EvaTouchFeedback(it, themeColorTrans))
@@ -89,24 +88,17 @@ class PrayerCategoryRecyclerAdapter(private val prayerCategory: List<EvaNode>) :
         }
 
         override fun onClick(v: View?) {
-            expandedItemPos = if (adapterPosition != expandedItemPos) adapterPosition else androidx.recyclerview.widget.RecyclerView.NO_POSITION
+            expandedItemPos =
+                    if (adapterPosition != expandedItemPos) adapterPosition
+                    else RecyclerView.NO_POSITION
         }
 
     }
 
-    private fun collapseHolderAtPosition(position: Int) {
-        if (position != androidx.recyclerview.widget.RecyclerView.NO_POSITION) {
-            val currentlyExpandedViewHolder =
-                    recyclerView?.findViewHolderForAdapterPosition(position) as? PrayerViewHolder
-            currentlyExpandedViewHolder?.expandableLayout?.collapse()
-        }
-    }
-
-    private fun expandHolderAtPosition(position: Int) {
-        if (position != androidx.recyclerview.widget.RecyclerView.NO_POSITION) {
-            val currentlyExpandedViewHolder =
-                    recyclerView?.findViewHolderForAdapterPosition(position) as? PrayerViewHolder
-            currentlyExpandedViewHolder?.expandableLayout?.expand()
+    private fun setExpanded(position: Int, expand: Boolean, animate: Boolean = true) {
+        if (position != RecyclerView.NO_POSITION) {
+            val viewHolder = recyclerView?.findViewHolderForAdapterPosition(position) as? PrayerViewHolder
+            viewHolder?.expandableLayout?.setExpanded(expand, animate)
         }
     }
 }
