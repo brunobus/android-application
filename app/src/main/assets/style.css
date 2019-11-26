@@ -1,0 +1,215 @@
+/* Font Definitions */
+@font-face
+{font-family:Wingdings;
+    panose-1:5 0 0 0 0 0 0 0 0 0;}
+@font-face
+{font-family:"Cambria Math";
+    panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+{font-family:Cambria;
+    panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+{font-family:Calibri;
+    panose-1:2 15 5 2 2 2 4 3 2 4;}
+@font-face
+{font-family:Tahoma;
+    panose-1:2 11 6 4 3 5 4 4 2 4;}
+@font-face
+{font-family:"Geometr231 Hv BT";}
+/* Style Definitions */
+
+body {
+
+    background-color: rgb(255, 255, 255);
+    -webkit-locale: "HR";
+    display: block;
+    margin: 10px 5px 10px 5px;
+
+}
+
+a {
+    font-size: 14pt;
+    font-style: normal;
+    color: #252525;
+    text-decoration: none;
+}
+
+.MolitvenikTitle
+{
+    /*margin:0in;
+    margin-right:0in;
+    margin-left:0in;
+    margin-bottom:.0001pt;*/
+    margin: 0px 0px 0px 20px;
+    line-height:150%;
+    font-size:18.0pt;
+    /*font-family:"Calibri","sans-serif";*/
+    /*color:#17365D;*/
+
+    font-family: "Calibri";
+    color: #252525;
+    font-style: bold;
+    /*text-transform:uppercase;*/
+    font-weight:bold;
+
+    text-indent:0in;
+    /*font-style:normal;*/
+}
+
+.Title
+{
+    /*margin:0in;
+    margin-top:.25in;
+    margin-right:0in;
+    margin-left:0in;
+    margin-bottom:.0001pt;*/
+    margin: 20px 0px 5px 20px;
+    line-height:100%;
+    font-size:14.0pt;
+    font-weight: bold;
+    font-family:"Arial";
+    color:black;
+
+    text-transform:none;
+    text-indent:0in;
+    font-style:normal;
+}
+.Subtitle
+{
+    /*margin:0in;
+    margin-bottom:.0001pt;
+    margin-right:0in;
+    margin-left:0in;*/
+    margin: 20px 0px 5px 20px;
+    line-height:150%;
+    font-size:12.0pt;
+    font-family:"Open Sans", sans-serif;
+    color:#252525;
+    font-weight:bold;
+    text-transform:none;
+    font-style:normal;
+    text-align: left;
+
+}
+
+.PlainTekst
+{
+    margin: 10px 0px 5px 20px;
+    line-height:150%;
+    font-size:10.0pt;
+    font-family: "Open Sans", sans-serif;
+    color: #252525;
+    font-weight:normal;
+    text-transform:none;
+    font-style:normal;
+    text-align: justify;
+
+
+
+}
+
+.Comment {
+    margin: 10px 0px 5px 52px;
+    line-height:160%;
+    font-size:8.0pt;
+    font-family:"Open Sans", sans-serif;
+    color:#252525;;
+    text-transform:uppercase;
+    font-style:italic;
+
+}
+
+.Quote {
+    margin-top:0in;
+    margin-right:0in;
+    margin-bottom:0in;
+    margin-left:27.35pt;
+    margin-bottom:.0001pt;
+    line-height:150%;
+    font-size:10.0pt;
+    font-family:"Open Sans", sans-serif;
+    font-style:italic;
+    text-indent:0in;
+    font-weight:normal;
+    color:#252525;
+    text-transform:none;
+}
+
+.Explanation {
+    font-family:"Open Sans", sans-serif;
+    color:#17365D;
+    text-transform:uppercase;
+    font-weight:bold;
+    font-style:italic;
+    font-size: 11.0pt;
+    line-height: 150%;
+
+}
+
+.Highlighted {
+    /*margin: 0in;
+    margin-bottom: .0001pt;*/
+    margin: 10px 0px 5px 20px;
+    text-indent: .1in;
+    line-height: 150%;
+    font-size: 14.0pt;
+    font-family: "Open Sans", sans-serif;
+    font-weight: bold;
+    font-style: italic;
+}
+
+.Template {
+    font-family: "Open Sans", sans-serif;
+    color: #17365D;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-style: italic;
+    text-indent: .1in;
+    line-height: 150%;
+    font-size: 11.0pt;
+    line-height: 150%;
+}
+
+.Author {
+    margin: 10px 0px 5px 45px;
+    text-align: left;
+    text-indent: 0.1in;
+    line-height: 150%;
+    font-size: 8.0pt;
+    font-family: "Open Sans Semi Bold Italic", sans-serif;
+    font-weight: bold;
+    font-style: italic;
+    color: #252525;
+
+
+}
+
+.Author img{
+    width: 20px;
+    margin: 0px 10px -5px 0px;
+}
+
+
+/*same as .PlainTekst */
+.Collection {
+    margin: 10px 0px 5px 20px;
+    margin:0in;
+    margin-bottom:.0001pt;
+    text-indent:.1in;
+    line-height:150%;
+    font-size:10.0pt;
+    font-family: "Open Sans", sans-serif;
+    color: #252525;
+}
+
+/* same as .PlainTekst */
+.NumberedCollection {
+    margin: 10px 0px 5px 20px;
+    margin:0in;
+    margin-bottom:.0001pt;
+    text-indent:.1in;
+    line-height:150%;
+    font-size:10.0pt;
+    font-family: "Open Sans", sans-serif;
+    color: #252525;
+}
