@@ -10,6 +10,7 @@ class ContentInfoDto {
     var id: Long = -1
     var title: String? = null
     var domain: EvaDomain? = null
+    var position: Long = 1
 }
 
 typealias CategoryInfoDto = ContentInfoDto
@@ -31,6 +32,7 @@ open class ContentDto {
     var video: List<LinkDto>? = null
     var links: List<LinkDto>? = null
     var supercategory: ContentInfoDto? = null
+    var position: Long = 1
 }
 
 class CategoryDto : ContentDto() {

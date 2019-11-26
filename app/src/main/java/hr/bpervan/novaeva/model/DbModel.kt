@@ -34,7 +34,8 @@ open class EvaDirectory(
         var title: String = "",
         var image: EvaResource? = null,
         var subCategories: RealmList<EvaDirectory> = RealmList(),
-        var contents: RealmList<EvaContent> = RealmList()
+        var contents: RealmList<EvaContent> = RealmList(),
+        var position: Long = 1
 ) : RealmObject(), EvaNode
 
 open class EvaDomainInfo(
@@ -59,5 +60,6 @@ open class EvaContent(
         var attachments: RealmList<EvaAttachment> = RealmList(),
         var image: EvaResource? = null,
         var videoURL: String? = null,
-        var audioURL: String? = null
+        var audioURL: String? = null,
+        var position: Long = 1
 ) : RealmObject(), EvaNode

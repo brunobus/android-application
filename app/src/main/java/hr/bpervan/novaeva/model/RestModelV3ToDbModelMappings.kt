@@ -11,6 +11,7 @@ fun CategoryInfoDto.toDbModel(mergeWith: EvaDirectory? = null): EvaDirectory {
     return evaDirectory.apply {
         title = dto.title.orEmpty()
         domain = dto.domain?.toString()
+        position = dto.position
     }
 }
 
@@ -52,5 +53,6 @@ fun ContentDto.toDbModel(mergeWith: EvaContent? = null): EvaContent {
             hasImages = dto.images.notNullNorEmpty()
             hasText = dto.text.notNullNorEmpty() || html.notNullNorEmpty()
         })
+        position = dto.position
     }
 }

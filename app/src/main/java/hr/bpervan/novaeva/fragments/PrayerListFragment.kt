@@ -89,7 +89,7 @@ class PrayerListFragment : EvaAbstractDirectoryFragment() {
     override fun fillElements(evaDirectory: EvaDirectory) {
         elementsList.clear()
 
-        val contentSorted = evaDirectory.contents.sortedBy { it.title }
+        val contentSorted = evaDirectory.contents.sortedByDescending { it.position }
 
         elementsList.addAll(contentSorted)
     }

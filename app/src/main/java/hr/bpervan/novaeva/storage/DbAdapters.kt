@@ -67,7 +67,8 @@ object EvaDirectoryDbAdapter {
                         id = directoryId,
                         domain = evaCategoryDto.domain?.toString(),
                         title = evaCategoryDto.title ?: "",
-                        image = evaCategoryDto.images?.firstOrNull()?.toDbModel())
+                        image = evaCategoryDto.images?.firstOrNull()?.toDbModel(),
+                        position = evaCategoryDto.position)
             }
 
             evaCategoryDto.content.orEmpty()

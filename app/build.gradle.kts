@@ -49,7 +49,7 @@ android {
 
             buildConfigField("String", "V2_SERVER_URI", "\"http://novaeva.com\"")
             buildConfigField("String", "V3_SERVER_URI", "\"https://api.hr.novaeva.xyz\"")
-            buildConfigField("String", "V3_SERVER_AUTH", "\"Basic Z2FsYWRyaWVsMTozU0t5Szg=\"")
+            buildConfigField("String", "V3_SERVER_AUTH", "\"Basic cmFESW8wMDE6OUtoSjk5MlZSQ0d1bU5hRzlTeWI=\"")
             buildConfigField("String", "DB_NAME", "\"NovaEvaDb_dev.realm\"")
         }
 
