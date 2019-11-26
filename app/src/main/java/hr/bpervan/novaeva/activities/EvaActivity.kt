@@ -19,7 +19,7 @@ import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaDomainInfo
 import hr.bpervan.novaeva.model.OpenContentEvent
 import hr.bpervan.novaeva.model.OpenQuotesEvent
-import hr.bpervan.novaeva.player.getStreamLinksFromPlaylistUri
+import hr.bpervan.novaeva.player.getStreamLinksFromPlaylist
 import hr.bpervan.novaeva.rest.EvaDomain
 import hr.bpervan.novaeva.rest.NovaEvaService
 import hr.bpervan.novaeva.rest.serverByDomain
@@ -284,20 +284,17 @@ class EvaActivity : EvaBaseActivity() {
     }
 
     private fun playFirstRadioStation() {
-        disposables += NovaEvaService.v2.getDirectoryContent(EvaDomain.RADIO.rootId, null, items = 1)
+        disposables += NovaEvaService.v3.categoryContent(EvaDomain.RADIO.domainEndpoint, items = 1000)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .map { it.contentMetadataList.first() }
+                .map { it.content!!.first() }
                 .doOnError {
                     Log.e("evaNetworkError", it.message, it)
                 }
                 .observeOn(Schedulers.io())
-                .flatMap {
-                    NovaEvaService.v2.getContentData(it.contentId)
-                            .subscribeOn(Schedulers.io())
-                }
                 .flatMap { radioStation ->
-                    getStreamLinksFromPlaylistUri(radioStation.audioURL!!)
+                    val playlist = radioStation.audio!!.first()
+                    getStreamLinksFromPlaylist(playlist.link!!, playlist.title!!)
                             .map { Pair(radioStation, it) }
                 }
                 .observeOn(AndroidSchedulers.mainThread())
@@ -307,7 +304,7 @@ class EvaActivity : EvaBaseActivity() {
                     for (streamUri in streamUris.shuffled()) {
                         try {
                             NovaEvaApp.evaPlayer.prepareAudioStream(
-                                    streamUri, radioStation.contentId.toString(),
+                                    streamUri, radioStation.id.toString(),
                                     radioStation.title ?: "nepoznato",
                                     isRadio = true,
                                     doAutoPlay = true,

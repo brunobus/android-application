@@ -7,7 +7,7 @@ import java.net.URL
 /**
  *
  */
-fun getStreamLinksFromPlaylistUri(playlistFileUri: String): Single<List<String>> {
+fun getStreamLinksFromPlaylist(playlistFileUri: String, playlistFileName: String): Single<List<String>> {
     return Single
             .create<List<String>> { emitter ->
                 val url = URL(playlistFileUri)
@@ -17,7 +17,7 @@ fun getStreamLinksFromPlaylistUri(playlistFileUri: String): Single<List<String>>
                     if (httpConnection.responseCode == HttpURLConnection.HTTP_OK) {
                         httpConnection.inputStream.bufferedReader().useLines {
                             val streamUris = extractStreamLinksFromPlaylist(
-                                    it.toList(), playlistFileUri)
+                                    it.toList(), playlistFileName)
                             emitter.onSuccess(streamUris)
                         }
                     } else throw RuntimeException("Http error ${httpConnection.responseCode} for $playlistFileUri")

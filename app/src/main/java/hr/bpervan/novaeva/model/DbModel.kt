@@ -59,7 +59,8 @@ open class EvaContent(
         var attachmentsIndicator: Int = 0,
         var attachments: RealmList<EvaAttachment> = RealmList(),
         var image: EvaResource? = null,
-        var videoURL: String? = null,
-        var audioURL: String? = null,
+        var videoURL: String? = null, //todo replace with EvaResource
+        var audioURL: String? = null, //todo replace with EvaResource
+        var audioTitle: String? = null, //todo replace with EvaResource
         var position: Long = 1
 ) : RealmObject(), EvaNode

@@ -46,6 +46,7 @@ fun ContentDto.toDbModel(mergeWith: EvaContent? = null): EvaContent {
                 ?.let { realm?.copyToRealm(it) ?: it }
         videoURL = dto.video?.firstOrNull()?.link
         audioURL = dto.audio?.firstOrNull()?.link
+        audioTitle = dto.audio?.firstOrNull()?.title
         attachmentsIndicator = AttachmentIndicatorHelper.encode(EvaAttachmentsIndicatorDTO().apply {
             hasVideo = dto.video.notNullNorEmpty()
             hasDocuments = dto.documents.notNullNorEmpty()

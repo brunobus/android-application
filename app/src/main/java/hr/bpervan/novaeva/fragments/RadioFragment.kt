@@ -14,7 +14,7 @@ import hr.bpervan.novaeva.adapters.RadioStationsAdapter
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaContent
 import hr.bpervan.novaeva.model.toDbModel
-import hr.bpervan.novaeva.player.getStreamLinksFromPlaylistUri
+import hr.bpervan.novaeva.player.getStreamLinksFromPlaylist
 import hr.bpervan.novaeva.rest.EvaDomain
 import hr.bpervan.novaeva.rest.NovaEvaService
 import hr.bpervan.novaeva.rest.serverByDomain
@@ -93,15 +93,14 @@ class RadioFragment : EvaBaseFragment() {
                         NovaEvaApp.evaPlayer.stop()
                         Maybe.empty()
                     } else {
-                        NovaEvaService.v2.getContentData(it.id).toMaybe()
-                                .subscribeOn(Schedulers.io())
+                        Maybe.just(it)
                     }
                 }
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext { updateUI(it.toDbModel()) }
+                .doOnNext { updateUI(it) }
                 .observeOn(Schedulers.io())
                 .switchMap { radioStation ->
-                    getStreamLinksFromPlaylistUri(radioStation.audioURL!!)
+                    getStreamLinksFromPlaylist(radioStation.audioURL!!, radioStation.audioTitle!!)
                             .toObservable()
                             .map { Pair(radioStation, it) }
                 }
@@ -113,8 +112,8 @@ class RadioFragment : EvaBaseFragment() {
                     for (streamUri in streamUris.shuffled()) {
                         try {
                             NovaEvaApp.evaPlayer.prepareAudioStream(
-                                    streamUri, radioStation.contentId.toString(),
-                                    radioStation.title ?: "nepoznato",
+                                    streamUri, radioStation.id.toString(),
+                                    radioStation.title.ifEmpty { "nepoznato" },
                                     isRadio = true,
                                     doAutoPlay = true,
                                     auth = serverByDomain(EvaDomain.RADIO).auth)
@@ -149,12 +148,12 @@ class RadioFragment : EvaBaseFragment() {
     }
 
     private fun fetchRadioStationsFromServer() {
-        fetchFromServerDisposable = NovaEvaService.v2.getDirectoryContent(EvaDomain.RADIO.rootId, null, 1000)
+        fetchFromServerDisposable = NovaEvaService.v3.categoryContent(EvaDomain.RADIO.domainEndpoint, items = 1000)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onSuccess = { evaDirectoryDTO ->
+                .subscribeBy(onSuccess = { categoryDto ->
                     radioStationList.clear()
-                    radioStationList.addAll(evaDirectoryDTO.contentMetadataList.map { it.toDbModel() })
+                    radioStationList.addAll(categoryDto.content!!.map { it.toDbModel() })
                     adapter.notifyDataSetChanged()
                 }, onError = {
                     view?.dataErrorSnackbar()
