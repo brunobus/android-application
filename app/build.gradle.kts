@@ -25,13 +25,11 @@ android {
         getByName("debug") {
             isShrinkResources = false
             isMinifyEnabled = true
-            isUseProguard = false
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
         getByName("release") {
             isShrinkResources = true
             isMinifyEnabled = true
-            isUseProguard = false
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
     }
@@ -89,10 +87,12 @@ dependencies {
     implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
 
     implementation("com.google.android.material:material:1.0.0")
+
     implementation("com.google.android.gms:play-services-analytics:16.0.6")
     implementation("com.google.android.gms:play-services-location:16.0.0")
-    implementation("com.google.android.exoplayer:exoplayer:2.7.0")
-    implementation("com.google.android.exoplayer:extension-mediasession:2.7.0")
+
+    implementation("com.google.android.exoplayer:exoplayer:2.11.1")
+    implementation("com.google.android.exoplayer:extension-mediasession:2.11.1")
 
     implementation("com.squareup.retrofit2:retrofit:2.4.0")
     implementation("com.squareup.retrofit2:converter-gson:2.4.0")

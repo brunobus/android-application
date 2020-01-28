@@ -21,7 +21,7 @@ import androidx.media.session.MediaButtonReceiver
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.ext.mediasession.DefaultPlaybackController
+import com.google.android.exoplayer2.DefaultControlDispatcher
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.main.R
@@ -59,7 +59,8 @@ class AudioPlayerService : Service() {
         mediaSession.setMediaButtonReceiver(null)
         mediaSession.isActive = true
 
-        mediaSessionConnector = MediaSessionConnector(mediaSession, EvaPlaybackController())
+        mediaSessionConnector = MediaSessionConnector(mediaSession)
+        mediaSessionConnector.setControlDispatcher(EvaPlaybackController())
 
         disposables += EventPipelines.playbackStartStopPause
                 .observeOn(AndroidSchedulers.mainThread())
@@ -82,7 +83,7 @@ class AudioPlayerService : Service() {
                                     stopForeground(false)
                                 }
 
-                                mediaSessionConnector.setPlayer(player, null)
+                                mediaSessionConnector.setPlayer(player)
                             }
                         }
                         Player.STATE_IDLE, Player.STATE_ENDED -> {
@@ -119,12 +120,16 @@ class AudioPlayerService : Service() {
         }
     }
 
-    private inner class EvaPlaybackController : DefaultPlaybackController() {
+    private inner class EvaPlaybackController : DefaultControlDispatcher() {
 
         var audioFocusChangeListener: AudioManager.OnAudioFocusChangeListener? = null
         var audioFocusRequest: AudioFocusRequest? = null
 
-        override fun onPlay(player: Player) {
+        override fun dispatchSetPlayWhenReady(player: Player, playWhenReady: Boolean): Boolean {
+            if (!playWhenReady) {
+                player.playWhenReady = false
+                return true;
+            }
             val focusRequestResult =
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         audioFocusRequest = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
@@ -157,10 +162,13 @@ class AudioPlayerService : Service() {
 
             if (focusRequestResult == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
                 player.playWhenReady = true
+                return true;
             }
+
+            return false;
         }
 
-        override fun onStop(player: Player) {
+        override fun dispatchStop(player: Player, reset: Boolean): Boolean {
             player.stop()
             player.playWhenReady = false
 
@@ -174,10 +182,7 @@ class AudioPlayerService : Service() {
                     audioManager.abandonAudioFocus(it)
                 }
             }
-        }
-
-        override fun onPause(player: Player) {
-            player.playWhenReady = false
+            return true;
         }
     }
 
