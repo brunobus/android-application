@@ -7,7 +7,6 @@ import android.util.Log
 import androidx.core.content.edit
 import androidx.core.os.postDelayed
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.gms.analytics.HitBuilders
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.model.EvaDirectory
 import hr.bpervan.novaeva.model.EvaDomainInfo
@@ -61,14 +60,6 @@ abstract class EvaAbstractDirectoryFragment : EvaBaseFragment() {
         super.onCreate(savedInstanceState)
 
         realm = Realm.getInstance(RealmConfigProvider.evaDBConfig)
-
-        savedInstanceState ?: NovaEvaApp.defaultTracker
-                .send(HitBuilders.EventBuilder()
-                        .setCategory("Direktorij")
-                        .setAction("OtvorenDirektorij")
-                        .setLabel(directoryTitle)
-                        .setValue(directoryId)
-                        .build())
 
         prefs.edit {
             remove("$HAS_NEW_CONTENT_KEY_PREFIX.$domain")

@@ -10,19 +10,22 @@ import hr.bpervan.novaeva.util.TransitionAnimation
  * todo implement Parcelable
  */
 
-data class OpenContentEvent(val contentId: Long = -1,
+data class OpenContentEvent(val contentId: Long,
+                            val title: String,
                             val domain: EvaDomain,
                             @StyleRes val theme: Int = -1,
                             val animation: TransitionAnimation = TransitionAnimation.FADE) : Parcelable {
 
     constructor(parcel: Parcel) : this(
             parcel.readLong(),
+            parcel.readString()!!,
             parcel.readSerializable() as EvaDomain,
             parcel.readInt(),
             parcel.readSerializable() as TransitionAnimation)
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeLong(contentId)
+        parcel.writeString(title)
         parcel.writeSerializable(domain)
         parcel.writeInt(theme)
         parcel.writeSerializable(animation)

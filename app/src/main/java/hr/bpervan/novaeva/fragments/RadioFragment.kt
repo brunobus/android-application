@@ -6,8 +6,9 @@ import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import com.google.android.exoplayer2.Player
-import com.google.android.gms.analytics.HitBuilders
+import com.google.firebase.analytics.FirebaseAnalytics
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.RadioStationsAdapter
@@ -34,7 +35,7 @@ import java.util.concurrent.TimeUnit
  *
  */
 class RadioFragment : EvaBaseFragment() {
-    companion object : EvaBaseFragment.EvaFragmentFactory<RadioFragment, Unit> {
+    companion object : EvaFragmentFactory<RadioFragment, Unit> {
 
         override fun newInstance(initializer: Unit): RadioFragment {
             return RadioFragment()
@@ -54,12 +55,6 @@ class RadioFragment : EvaBaseFragment() {
         super.onCreate(savedInstanceState)
 
         adapter = RadioStationsAdapter(radioStationList)
-
-        savedInstanceState ?: NovaEvaApp.defaultTracker
-                .send(HitBuilders.EventBuilder()
-                        .setCategory("Radio")
-                        .setAction("OtvorenRadioIzbornik")
-                        .build())
 
         fetchRadioStationsFromServer()
     }
@@ -87,7 +82,7 @@ class RadioFragment : EvaBaseFragment() {
         disposables += EventPipelines.chooseRadioStation
                 .throttleWithTimeout(200, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
-                .switchMapMaybe {
+                .flatMapMaybe {
                     if (it.id == adapter.radioStationPlaying) {
 
                         NovaEvaApp.evaPlayer.stop()
@@ -98,6 +93,12 @@ class RadioFragment : EvaBaseFragment() {
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext { updateUI(it) }
+                .doOnNext {
+                    FirebaseAnalytics.getInstance(requireContext())
+                            .logEvent("RadioStationSelected", bundleOf(
+                                    "title" to it.title.ifEmpty { it.audioTitle }
+                            ))
+                }
                 .observeOn(Schedulers.io())
                 .switchMap { radioStation ->
                     getStreamLinksFromPlaylist(radioStation.audioURL!!, radioStation.audioTitle!!)
@@ -136,6 +137,13 @@ class RadioFragment : EvaBaseFragment() {
                     }
                     adapter.notifyItemRangeChanged(0, adapter.itemCount)
                 }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        FirebaseAnalytics.getInstance(requireContext())
+                .setCurrentScreen(requireActivity(), "Radio", "Radio")
     }
 
     private fun updateUI(radioStationDetails: EvaContent) {

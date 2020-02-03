@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import com.google.firebase.analytics.FirebaseAnalytics
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
@@ -114,6 +115,13 @@ class EvaDirectoryFragment : EvaAbstractDirectoryFragment() {
             else -> {/*nothing*/
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        FirebaseAnalytics.getInstance(requireContext())
+                .setCurrentScreen(requireActivity(), "Kategorija '$directoryTitle'".take(36), "Category")
     }
 
     override fun fillElements(evaDirectory: EvaDirectory) {

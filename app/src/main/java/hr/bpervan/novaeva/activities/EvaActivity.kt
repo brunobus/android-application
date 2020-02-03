@@ -77,6 +77,7 @@ class EvaActivity : EvaBaseActivity() {
                     } else {
                         openContentFragment(OpenContentEvent(
                                 contentId = contentId,
+                                title = contentId.toString(),
                                 domain = EvaDomain.SERMONS))
                     }
                 }

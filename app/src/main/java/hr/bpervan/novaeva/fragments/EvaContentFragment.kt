@@ -11,7 +11,7 @@ import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
-import com.google.android.gms.analytics.HitBuilders
+import com.google.firebase.analytics.FirebaseAnalytics
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
@@ -77,14 +77,6 @@ class EvaContentFragment : EvaBaseFragment() {
         domain = initializer.domain
         contentId = initializer.contentId
         themeId = initializer.theme
-
-        savedInstanceState ?: NovaEvaApp.defaultTracker
-                .send(HitBuilders.EventBuilder()
-                        .setCategory("Vijesti")
-                        .setAction("OtvorenaVijest")
-                        .setLabel(contentId.toString())
-                        .setValue(contentId)
-                        .build())
 
         realm = Realm.getInstance(RealmConfigProvider.evaDBConfig)
     }
@@ -210,6 +202,13 @@ class EvaContentFragment : EvaBaseFragment() {
         } else {
             this.evaContent = evaContent
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        FirebaseAnalytics.getInstance(requireContext())
+                .setCurrentScreen(requireActivity(), "Sadržaj '${initializer.title}'".take(36), "Content")
     }
 
     override fun onDestroy() {

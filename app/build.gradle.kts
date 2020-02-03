@@ -9,6 +9,8 @@ plugins {
     id("com.getkeepsafe.dexcount")
 }
 
+apply(plugin = "com.google.gms.google-services")
+
 android {
     compileSdkVersion(28)
     buildToolsVersion = "28.0.3"
@@ -88,8 +90,9 @@ dependencies {
 
     implementation("com.google.android.material:material:1.0.0")
 
-    implementation("com.google.android.gms:play-services-analytics:16.0.6")
-    implementation("com.google.android.gms:play-services-location:16.0.0")
+    implementation("com.google.firebase:firebase-analytics:17.2.2")
+//    implementation("com.google.android.gms:play-services-tagmanager:17.0.0")
+//    implementation("com.google.android.gms:play-services-location:16.0.0")
 
     implementation("com.google.android.exoplayer:exoplayer:2.11.1")
     implementation("com.google.android.exoplayer:extension-mediasession:2.11.1")

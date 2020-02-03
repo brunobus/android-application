@@ -5,7 +5,7 @@ import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.google.android.gms.analytics.HitBuilders
+import com.google.firebase.analytics.FirebaseAnalytics
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.BuildConfig
@@ -25,16 +25,6 @@ class EvaInfoFragment : EvaBaseFragment() {
         override fun newInstance(initializer: Unit): EvaInfoFragment {
             return EvaInfoFragment()
         }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        savedInstanceState ?: NovaEvaApp.defaultTracker
-                .send(HitBuilders.EventBuilder()
-                        .setCategory("Informacije")
-                        .setAction("OtvoreneInformacije")
-                        .build())
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -61,5 +51,12 @@ class EvaInfoFragment : EvaBaseFragment() {
                 if (BuildConfig.DEBUG) " (debug)" else ""
 
         evaCollapsingBar.collapsingToolbar.title = titleText
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        FirebaseAnalytics.getInstance(requireContext())
+                .setCurrentScreen(requireActivity(), "Informacije", "Information")
     }
 }

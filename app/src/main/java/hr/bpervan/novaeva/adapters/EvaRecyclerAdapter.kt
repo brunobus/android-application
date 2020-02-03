@@ -173,6 +173,7 @@ class EvaRecyclerAdapter(private val data: List<EvaNode>,
                 EventPipelines.openContent.onNext(
                         OpenContentEvent(
                                 contentId = contentInfo.id,
+                                title = contentInfo.title,
                                 domain = enumValueOf(contentInfo.domain!!),
                                 theme = themeId,
                                 animation = TransitionAnimation.LEFTWARDS))

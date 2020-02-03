@@ -5,7 +5,7 @@ import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.google.android.gms.analytics.HitBuilders
+import com.google.firebase.analytics.FirebaseAnalytics
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
@@ -26,16 +26,6 @@ class BreviaryChooserFragment : EvaBaseFragment() {
         override fun newInstance(initializer: Unit): BreviaryChooserFragment {
             return BreviaryChooserFragment()
         }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        savedInstanceState ?: NovaEvaApp.defaultTracker
-                .send(HitBuilders.EventBuilder()
-                        .setCategory("Brevijar")
-                        .setAction("OtvorenBrevijarIzbornik")
-                        .build())
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -77,6 +67,13 @@ class BreviaryChooserFragment : EvaBaseFragment() {
         btnSutraJutarnja.setOnClickListener(BreviaryClickListener(7))
         btnSutraVecernja.setOnClickListener(BreviaryClickListener(8))
         btnSutraPovecerje.setOnClickListener(BreviaryClickListener(9))
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        FirebaseAnalytics.getInstance(requireContext())
+                .setCurrentScreen(requireActivity(), "Brevijar izbornik", "BreviaryChooser")
     }
 
     inner class BreviaryClickListener(private val breviaryId: Int) : View.OnClickListener {

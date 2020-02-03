@@ -50,6 +50,7 @@ captures/
 
 # Google Services (e.g. APIs or Firebase)
 google-services.json
+GTM-*.json
 
 # Freeline
 freeline.py

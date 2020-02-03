@@ -9,7 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.core.os.bundleOf
-import com.google.android.gms.analytics.HitBuilders
+import com.google.firebase.analytics.FirebaseAnalytics
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
@@ -56,22 +56,15 @@ class EvaSearchFragment : EvaBaseFragment() {
         super.onCreate(savedInstanceState)
 
         val inState: Bundle = savedInstanceState ?: arguments!!
-        searchString = inState.getString(searchStringKey)
+        searchString = inState.getString(searchStringKey, "Isus")
 
         adapter = EvaRecyclerAdapter(searchResultList)
-
-        savedInstanceState ?: NovaEvaApp.defaultTracker
-                .send(HitBuilders.EventBuilder()
-                        .setCategory("Pretraga")
-                        .setAction("KljucneRijeci")
-                        .setLabel(searchString)
-                        .build())
     }
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
 
-        activity?.title = "Pretraga: " + searchString
+        activity?.title = "Pretraga: $searchString"
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -92,6 +85,13 @@ class EvaSearchFragment : EvaBaseFragment() {
         recyclerView.adapter = adapter
         recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(evaRecyclerView.evaRecyclerView.context)
         recyclerView.itemAnimator = androidx.recyclerview.widget.DefaultItemAnimator()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        FirebaseAnalytics.getInstance(requireContext())
+                .setCurrentScreen(requireActivity(), "Pretraga '$searchString'".take(36), "Search")
     }
 
     private fun showSearchPopup() {

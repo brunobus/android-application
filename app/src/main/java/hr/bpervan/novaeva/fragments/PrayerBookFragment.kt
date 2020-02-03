@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.view.isInvisible
+import com.google.firebase.analytics.FirebaseAnalytics
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.PrayerBookRecyclerAdapter
@@ -77,6 +78,13 @@ class PrayerBookFragment : EvaAbstractDirectoryFragment() {
         recyclerView.layoutManager = linearLayoutManager
         recyclerView.itemAnimator = androidx.recyclerview.widget.DefaultItemAnimator()
         recyclerView.adapter = adapter
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        FirebaseAnalytics.getInstance(requireContext())
+                .setCurrentScreen(requireActivity(), "Molitvenik", "PrayerBook")
     }
 
     override fun fillElements(evaDirectory: EvaDirectory) {

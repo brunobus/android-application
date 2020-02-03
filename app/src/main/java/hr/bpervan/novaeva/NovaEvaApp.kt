@@ -8,8 +8,6 @@ import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.util.Log
 import androidx.core.content.ContextCompat
-import com.google.android.gms.analytics.GoogleAnalytics
-import com.google.android.gms.analytics.Tracker
 import com.nostra13.universalimageloader.core.ImageLoader
 import hr.bpervan.novaeva.main.BuildConfig
 import hr.bpervan.novaeva.main.R
@@ -32,14 +30,6 @@ class NovaEvaApp : Application() {
 
         Realm.init(this)
 
-        val analytics = GoogleAnalytics.getInstance(this).apply {
-            setDryRun(BuildConfig.DEBUG)
-        }
-
-        defaultTracker = analytics.newTracker(NOVA_EVA_TRACKER_ID).apply {
-            enableAdvertisingIdCollection(false)
-        }
-
         val filter = IntentFilter()
         filter.addAction("android.net.wifi.supplicant.CONNECTION_CHANGE")
         filter.addAction("android.net.wifi.STATE_CHANGE")
@@ -52,14 +42,11 @@ class NovaEvaApp : Application() {
     }
 
     companion object {
-        private const val NOVA_EVA_TRACKER_ID = "UA-40344870-1"
         var instance: NovaEvaApp? = null
 
         val evaPlayer: EvaPlayer by lazy {
             EvaPlayer(instance!!)
         }
-
-        lateinit var defaultTracker: Tracker
 
         val imageLoader: ImageLoader by lazy {
             ImageLoader.getInstance().apply {

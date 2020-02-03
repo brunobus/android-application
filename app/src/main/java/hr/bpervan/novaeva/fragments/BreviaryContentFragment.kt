@@ -7,7 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
-import com.google.android.gms.analytics.HitBuilders
+import com.google.firebase.analytics.FirebaseAnalytics
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
@@ -67,14 +67,6 @@ class BreviaryContentFragment : EvaBaseFragment() {
             8 -> "Sutra, Večernja"
             else -> "Sutra, Povečerje"
         }
-
-        savedInstanceState ?: NovaEvaApp.defaultTracker
-                .send(HitBuilders.EventBuilder()
-                        .setCategory("Brevijar")
-                        .setAction("OtvorenBrevijar")
-                        .setLabel(breviaryName)
-                        .setValue(breviaryId.toLong())
-                        .build())
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -110,6 +102,13 @@ class BreviaryContentFragment : EvaBaseFragment() {
         if (coverImageUrl != null && coverImageView != null) {
             imageLoader.displayImage(coverImageUrl, coverImageView)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        FirebaseAnalytics.getInstance(requireContext())
+                .setCurrentScreen(requireActivity(), breviaryName.take(36), "BreviaryContent")
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
