@@ -56,5 +56,6 @@
     <string name="church">Crkva</string>
     <string name="send_email_failed">Slanje e-pošte nije uspjelo</string>
     <string name="share_failed">Dijeljenje nije uspjelo</string>
+    <string name="default_live_title">PRIJENOS UŽIVO</string>
 
 </resources>

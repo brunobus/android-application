@@ -2,6 +2,7 @@ package hr.bpervan.novaeva.model
 
 import com.google.gson.annotations.SerializedName
 import hr.bpervan.novaeva.rest.EvaDomain
+import hr.bpervan.novaeva.util.stripTrimAndEllipsizeText
 
 @Deprecated("legacy v2 api")
 class EvaDirectoryDTO {
@@ -52,20 +53,11 @@ class EvaContentMetadataDTO {
     val text: String? = null
 
     val preview: String by lazy {
-        if (text != null) {
-            val stripped = text.replace(Regex("<[^>]+>"), "")
-
-            val trimmed = when {
-                stripped.length > 50 -> stripped.substring(0, 50)
-                else -> stripped
-            }
-            "$trimmed..."
-        } else {
-            "null"
-        }
+        stripTrimAndEllipsizeText(50, text) ?: "-"
     }
-
 }
+
+
 
 @Deprecated("legacy v2 api")
 class EvaAttachmentsIndicatorDTO {
@@ -84,10 +76,10 @@ class EvaAttachmentsIndicatorDTO {
 @Deprecated("legacy v2 api")
 class EvaContentDTO {
     @SerializedName("nid")
-    val contentId: Long = 0
+    var contentId: Long = 0
 
     @SerializedName("cid")
-    val directoryId: Long = 0
+    var directoryId: Long = 0
 
     var domain: EvaDomain? = null
 

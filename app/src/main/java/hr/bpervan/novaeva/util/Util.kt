@@ -87,3 +87,17 @@ fun Context.toast(text: CharSequence, long: Boolean = false) {
 fun Context.toast(@StringRes text: Int, long: Boolean = false) {
     Toast.makeText(this.applicationContext, text, if (long) Toast.LENGTH_LONG else Toast.LENGTH_SHORT).show()
 }
+
+fun stripTrimAndEllipsizeText(take: Int, text: String?): String? {
+    return if (text != null) {
+        val stripped = text.replace(Regex("<[^>]+>"), "")
+
+        val trimmed = when {
+            stripped.length > take -> stripped.take(take) + "..."
+            else -> stripped
+        }
+        trimmed
+    } else {
+        null
+    }
+}

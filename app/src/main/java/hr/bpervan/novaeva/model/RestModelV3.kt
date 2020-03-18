@@ -21,6 +21,7 @@ open class ContentDto {
     var domain: EvaDomain? = null
     var created: Long = -1
     var modified: Long = -1
+    var active: Boolean = false
     var author: String? = null
     var text: String? = null
     var html: String? = null

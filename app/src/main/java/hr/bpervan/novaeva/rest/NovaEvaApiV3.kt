@@ -21,6 +21,10 @@ interface NovaEvaApiV3 {
                         @Query("items") items: Long = 20,
                         @Query("region") region: Long = Region.id): Single<CategoryDto>
 
+    @GET("{domain}/{contentId}")
+    fun content(@Path("domain") domain: String,
+                @Path("contentId") contentId: Long): Single<ContentDto>
+
     @GET("{domain}/random")
     fun random(@Path("domain") domain: String = EvaDomain.QUOTES.domainEndpoint,
                @Query("region") region: Long = Region.id): Single<ContentDto>
