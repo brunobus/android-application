@@ -20,7 +20,6 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
--keep class hr.bpervan.novaeva.model.** {
-  *;
-}
+-keep class hr.bpervan.novaeva.** { *; }
+-keep class io.realm.** { *; }
 -ignorewarnings

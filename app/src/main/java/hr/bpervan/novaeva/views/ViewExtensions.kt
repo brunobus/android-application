@@ -1,10 +1,10 @@
 package hr.bpervan.novaeva.views
 
 import android.content.SharedPreferences
-import android.support.annotation.StringRes
-import android.support.design.widget.Snackbar
-import android.support.v4.view.ViewCompat
-import android.support.v4.widget.NestedScrollView
+import androidx.annotation.StringRes
+import com.google.android.material.snackbar.Snackbar
+import androidx.core.view.ViewCompat
+import androidx.core.widget.NestedScrollView
 import android.view.View
 import android.view.ViewTreeObserver
 import android.webkit.WebSettings
@@ -19,12 +19,16 @@ import hr.bpervan.novaeva.util.defaultTextSize
  *
  */
 fun WebView.applyEvaConfiguration(prefs: SharedPreferences) {
-    settings.defaultFontSize = prefs.getInt(TEXT_SIZE_KEY, defaultTextSize)
+    applyConfiguredFontSize(prefs)
     settings.builtInZoomControls = false
     settings.displayZoomControls = false
     settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.SINGLE_COLUMN
 
     isLongClickable = true
+}
+
+fun WebView.applyConfiguredFontSize(prefs: SharedPreferences){
+    settings.defaultFontSize = prefs.getInt(TEXT_SIZE_KEY, defaultTextSize)
 }
 
 fun PlayerView.applyEvaConfiguration() {

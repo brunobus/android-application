@@ -3,19 +3,16 @@ package hr.bpervan.novaeva.fragments
 import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
-import android.support.v7.widget.DefaultItemAnimator
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import com.google.android.gms.analytics.HitBuilders
+import com.google.firebase.analytics.FirebaseAnalytics
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.EvaContentMetadata
+import hr.bpervan.novaeva.model.EvaContent
 import hr.bpervan.novaeva.storage.EvaContentDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
 import io.reactivex.disposables.Disposable
@@ -42,18 +39,12 @@ class EvaBookmarksFragment : EvaBaseFragment() {
         }
 
     private lateinit var adapter: EvaRecyclerAdapter
-    private var bookmarksList: MutableList<EvaContentMetadata> = ArrayList()
+    private var bookmarksList: MutableList<EvaContent> = ArrayList()
 
     private lateinit var realm: Realm
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        savedInstanceState ?: NovaEvaApp.defaultTracker
-                .send(HitBuilders.EventBuilder()
-                        .setCategory("Zabiljeske")
-                        .setAction("OtvoreneZabiljeske")
-                        .build())
 
         realm = Realm.getInstance(RealmConfigProvider.evaDBConfig)
 
@@ -71,7 +62,11 @@ class EvaBookmarksFragment : EvaBaseFragment() {
         EventPipelines.changeStatusbarColor.onNext(R.color.VeryDarkGray)
         EventPipelines.changeFragmentBackgroundResource.onNext(R.color.White)
 
-        initUI()
+        val recyclerView = evaRecyclerView as androidx.recyclerview.widget.RecyclerView
+
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(recyclerView.context)
+        recyclerView.itemAnimator = androidx.recyclerview.widget.DefaultItemAnimator()
     }
 
     override fun onAttach(context: Context?) {
@@ -85,21 +80,15 @@ class EvaBookmarksFragment : EvaBaseFragment() {
 
         bookmarksList.clear()
         reloadBookmarksFromDb()
-    }
 
-    private fun initUI() {
-
-        val recyclerView = evaRecyclerView as RecyclerView
-
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager = LinearLayoutManager(recyclerView.context)
-        recyclerView.itemAnimator = DefaultItemAnimator()
+        FirebaseAnalytics.getInstance(requireContext())
+                .setCurrentScreen(requireActivity(), "Zabilješke", "Bookmarks")
     }
 
     private fun reloadBookmarksFromDb() {
         bookmarksList.clear()
         loadBookmarksFromDbDisposable =
-                EvaContentDbAdapter.loadManyEvaContentMetadata(realm, { it.bookmark }) {
+                EvaContentDbAdapter.loadManyEvaContents(realm, predicate = { it.bookmarked }) {
                     bookmarksList.add(it)
                     adapter.notifyDataSetChanged()
                 }

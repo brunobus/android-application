@@ -1,29 +1,27 @@
 package hr.bpervan.novaeva.util
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.util.Log
+import android.view.View
+import android.widget.Toast
+import androidx.annotation.StringRes
+import com.google.android.material.snackbar.Snackbar
+import hr.bpervan.novaeva.main.R
+import hr.bpervan.novaeva.views.snackbar
 import io.reactivex.Observable
-import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
 
 /**
  * Created by vpriscan on 16.10.17..
  */
-
-fun <T> Single<T>.networkRequest(onSuccess: (T) -> Unit, onError: (Throwable) -> Unit): Disposable {
-    return subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnError {
-                Log.e("evaNetworkError", it.message, it)
-            }
-            .subscribe(onSuccess, onError)
-}
 
 fun <T> Observable<T>.subscribeThrottled(consumer: (T) -> Unit): Disposable {
     return throttleFirst(500, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
@@ -42,12 +40,16 @@ operator fun CompositeDisposable.plusAssign(oldDisposable: Disposable) {
     add(oldDisposable)
 }
 
-inline fun <T, R> T?.ifPresent(block: (T) -> R): R? {
-    return this?.let(block)
-}
+fun <T> Collection<T>?.notNullNorEmpty(): Boolean = orEmpty().isNotEmpty()
+fun String?.notNullNorEmpty(): Boolean = orEmpty().isNotEmpty()
 
 fun logError(throwable: Throwable) {
     Log.e("error", throwable.message, throwable)
+}
+
+inline fun <reified T : Enum<T>> enumValueOrNull(name: String?): T? {
+    name ?: return null
+    return T::class.java.enumConstants.firstOrNull { it.name == name }
 }
 
 fun isDarkColor(color: Int): Boolean {
@@ -66,3 +68,36 @@ fun isDarkBitmap(bitmap: Bitmap): Boolean {
 }
 
 fun String.vertical() = this.asSequence().joinToString(separator = "\n")
+
+fun Context.networkConnectionExists(): Boolean {
+    val cm = this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    val activeNetwork: NetworkInfo? = cm.activeNetworkInfo
+    return activeNetwork?.isConnectedOrConnecting == true
+}
+
+fun View.dataErrorSnackbar() {
+    val networkExists = context?.networkConnectionExists() ?: false
+    this.snackbar(if (networkExists) R.string.error_fetching_data else R.string.network_unavailable, Snackbar.LENGTH_SHORT)
+}
+
+fun Context.toast(text: CharSequence, long: Boolean = false) {
+    Toast.makeText(this.applicationContext, text, if (long) Toast.LENGTH_LONG else Toast.LENGTH_SHORT).show()
+}
+
+fun Context.toast(@StringRes text: Int, long: Boolean = false) {
+    Toast.makeText(this.applicationContext, text, if (long) Toast.LENGTH_LONG else Toast.LENGTH_SHORT).show()
+}
+
+fun stripTrimAndEllipsizeText(take: Int, text: String?): String? {
+    return if (text != null) {
+        val stripped = text.replace(Regex("<[^>]+>"), "")
+
+        val trimmed = when {
+            stripped.length > take -> stripped.take(take) + "..."
+            else -> stripped
+        }
+        trimmed
+    } else {
+        null
+    }
+}

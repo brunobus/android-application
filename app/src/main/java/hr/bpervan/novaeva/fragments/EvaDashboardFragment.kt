@@ -1,27 +1,40 @@
 package hr.bpervan.novaeva.fragments
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.edit
-import com.google.android.gms.analytics.HitBuilders
+import androidx.core.net.toUri
+import com.google.firebase.analytics.FirebaseAnalytics
 import hr.bpervan.novaeva.EventPipelines
-import hr.bpervan.novaeva.NovaEvaApp
+import hr.bpervan.novaeva.main.BuildConfig
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.EvaCategory
-import hr.bpervan.novaeva.model.EvaDirectoryMetadata
+import hr.bpervan.novaeva.model.ContentDto
 import hr.bpervan.novaeva.model.OpenDirectoryEvent
+import hr.bpervan.novaeva.model.OpenPrayerDirectoryEvent
 import hr.bpervan.novaeva.model.OpenQuotesEvent
-import hr.bpervan.novaeva.services.novaEvaService
+import hr.bpervan.novaeva.rest.EvaDomain
+import hr.bpervan.novaeva.rest.NovaEvaService
+import hr.bpervan.novaeva.storage.EvaContentDbAdapter
+import hr.bpervan.novaeva.storage.RealmConfigProvider
 import hr.bpervan.novaeva.util.*
+import io.reactivex.Completable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.schedulers.Schedulers
+import io.realm.Realm
 import kotlinx.android.synthetic.main.fragment_dashboard.*
+import java.util.concurrent.TimeUnit
 
 /**
  *
  */
 class EvaDashboardFragment : EvaBaseFragment() {
+
     companion object : EvaFragmentFactory<EvaDashboardFragment, Unit> {
 
         override fun newInstance(initializer: Unit): EvaDashboardFragment {
@@ -29,16 +42,16 @@ class EvaDashboardFragment : EvaBaseFragment() {
         }
     }
 
-    private val syncIntervalMillis: Long = 20 * 1000
+    private lateinit var liveContentTitle: String
+
+    private lateinit var realm: Realm
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        savedInstanceState ?: NovaEvaApp.defaultTracker
-                .send(HitBuilders.EventBuilder()
-                        .setCategory("PocetniEkran")
-                        .setAction("OtvorenPocetniEkran")
-                        .build())
+        liveContentTitle = getString(R.string.default_live_title)
+
+        realm = Realm.getInstance(RealmConfigProvider.evaDBConfig)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -53,16 +66,17 @@ class EvaDashboardFragment : EvaBaseFragment() {
         EventPipelines.changeStatusbarColor.onNext(R.color.Transparent)
         EventPipelines.changeFragmentBackgroundResource.onNext(R.color.Transparent)
 
-        baseDisposables += EventPipelines.dashboardBackground.subscribe {
+        disposables += EventPipelines.dashboardBackground.subscribe {
             EventPipelines.changeWindowBackgroundDrawable.onNext(it)
         }
-
 
         btnBrevijar.setOnClickListener {
             EventPipelines.openBreviaryChooser.onNext(TransitionAnimation.FADE)
         }
         btnMolitvenik.setOnClickListener {
-            EventPipelines.openPrayerBook.onNext(TransitionAnimation.FADE)
+            EventPipelines.openPrayerBook.onNext(OpenPrayerDirectoryEvent(
+                    title = getString(EvaDomain.PRAYERS.title)
+            ))
         }
         btnBookmarks.setOnClickListener {
             EventPipelines.openBookmarks.onNext(TransitionAnimation.FADE)
@@ -72,95 +86,185 @@ class EvaDashboardFragment : EvaBaseFragment() {
         }
         btnPjesmarica.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
-                    EvaDirectoryMetadata(EvaCategory.SONGBOOK.id, getString(R.string.songbook)),
-                    R.style.PjesmaricaTheme))
+                    title = getString(EvaDomain.SONGBOOK.title),
+                    domain = EvaDomain.SONGBOOK,
+                    theme = R.style.PjesmaricaTheme))
         }
         btnAktualno.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
-                    EvaDirectoryMetadata(EvaCategory.TRENDING.id, getString(R.string.trending)),
-                    R.style.AktualnoTheme))
+                    title = getString(EvaDomain.TRENDING.title),
+                    domain = EvaDomain.TRENDING,
+                    theme = R.style.AktualnoTheme))
         }
         btnPoziv.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
-                    EvaDirectoryMetadata(EvaCategory.VOCATION.id, getString(R.string.vocation)),
-                    R.style.PozivTheme))
+                    title = getString(EvaDomain.VOCATION.title),
+                    domain = EvaDomain.VOCATION,
+                    theme = R.style.PozivTheme))
         }
         btnOdgovori.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
-                    EvaDirectoryMetadata(EvaCategory.ANSWERS.id, getString(R.string.answers)),
-                    R.style.OdgovoriTheme))
+                    title = getString(EvaDomain.ANSWERS.title),
+                    domain = EvaDomain.ANSWERS,
+                    theme = R.style.OdgovoriTheme))
         }
         btnMultimedia.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
-                    EvaDirectoryMetadata(EvaCategory.MULTIMEDIA.id, getString(R.string.multimedia)),
-                    R.style.MultimedijaTheme))
+                    title = getString(EvaDomain.MULTIMEDIA.title),
+                    domain = EvaDomain.MULTIMEDIA,
+                    theme = R.style.MultimedijaTheme))
         }
         btnPropovijedi.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
-                    EvaDirectoryMetadata(EvaCategory.SERMONS.id, getString(R.string.sermons)),
-                    R.style.PropovjediTheme))
+                    title = getString(EvaDomain.SERMONS.title),
+                    domain = EvaDomain.SERMONS,
+                    theme = R.style.PropovjediTheme))
         }
         btnDuhovnost.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
-                    EvaDirectoryMetadata(EvaCategory.SPIRITUALITY.id, getString(R.string.spirituality)),
-                    R.style.DuhovnostTheme))
+                    title = getString(EvaDomain.SPIRITUALITY.title),
+                    domain = EvaDomain.SPIRITUALITY,
+                    theme = R.style.DuhovnostTheme))
         }
         btnCalendar.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
-                    EvaDirectoryMetadata(EvaCategory.GOSPEL.id, getString(R.string.gospel)),
-                    R.style.EvandjeljeTheme))
+                    title = getString(EvaDomain.GOSPEL.title),
+                    domain = EvaDomain.GOSPEL,
+                    theme = R.style.EvandjeljeTheme))
         }
+
+        btnLive?.setOnClickListener {
+            EvaContentDbAdapter.loadEvaContent(realm, BuildConfig.V3_LIVE_ID)
+                    ?.videoURL
+                    ?.let { videoUrl ->
+                        startActivity(Intent(Intent.ACTION_VIEW, videoUrl.toUri()))
+                    }
+        }
+
+        disposables += EventPipelines.connectedToNetwork
+                .throttleWithTimeout(3, TimeUnit.SECONDS)
+                .flatMapCompletable { liveContentCompletable() }
+                .subscribe()
+
+        updateUI()
 
         val lastSyncTimeMillis = prefs.getLong(LAST_SYNC_TIME_MILLIS_KEY, 0L)
         if (System.currentTimeMillis() - lastSyncTimeMillis > syncIntervalMillis) {
-            novaEvaService.getNewStuff().networkRequest({ indicatorsDTO ->
 
-                checkLatestContentId(EvaCategory.SPIRITUALITY, indicatorsDTO.spirituality)
-                checkLatestContentId(EvaCategory.QUOTES, indicatorsDTO.quotes)
-                checkLatestContentId(EvaCategory.TRENDING, indicatorsDTO.trending)
-                checkLatestContentId(EvaCategory.MULTIMEDIA, indicatorsDTO.multimedia)
-                checkLatestContentId(EvaCategory.SERMONS, indicatorsDTO.sermons)
-                checkLatestContentId(EvaCategory.VOCATION, indicatorsDTO.vocation)
-                checkLatestContentId(EvaCategory.ANSWERS, indicatorsDTO.answers)
-                checkLatestContentId(EvaCategory.SONGBOOK, indicatorsDTO.songbook)
-                checkLatestContentId(EvaCategory.GOSPEL, indicatorsDTO.gospel)
+            disposables += NovaEvaService.v2.getNewStuff()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeBy(onSuccess = { indicatorsDTO ->
+                        updateLatestContentId(EvaDomain.GOSPEL, indicatorsDTO.gospel)
+                        updateLatestContentId(EvaDomain.SONGBOOK, indicatorsDTO.songbook)
 
-                updateUI()
-                prefs.edit {
-                    putLong(LAST_SYNC_TIME_MILLIS_KEY, System.currentTimeMillis())
-                }
-            }, onError = {})
+                        updateUI()
+                        prefs.edit {
+                            putLong(LAST_SYNC_TIME_MILLIS_KEY, System.currentTimeMillis())
+                        }
+                    }, onError = {
+                        Log.e("fetchLatestLegacy", it.message, it)
+                    })
+
+            disposables += NovaEvaService.v3.latest()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeBy(onSuccess = { latest ->
+                        updateLatestContentId(EvaDomain.SPIRITUALITY, latest.spirituality.content)
+//                      updateLatestContentId(EvaDomain.QUOTES, latest.proverbs.content)
+                        updateLatestContentId(EvaDomain.TRENDING, latest.trending.content)
+                        updateLatestContentId(EvaDomain.MULTIMEDIA, latest.multimedia.content)
+                        updateLatestContentId(EvaDomain.SERMONS, latest.sermons.content)
+                        updateLatestContentId(EvaDomain.ANSWERS, latest.answers.content)
+                        updateLatestContentId(EvaDomain.VOCATION, latest.vocation.content)
+
+                        updateUI()
+
+                        prefs.edit {
+                            putLong(LAST_SYNC_TIME_MILLIS_KEY, System.currentTimeMillis())
+                        }
+                    }, onError = {
+                        Log.e("fetchLatest", it.message, it)
+                    })
         }
-
-        updateUI()
     }
 
-    private fun checkLatestContentId(category: EvaCategory, receivedLatestContentId: Int?) {
-        receivedLatestContentId ?: return
+    private fun liveContentCompletable(): Completable {
+        return NovaEvaService.v3.content(EvaDomain.VOCATION.domainEndpoint, BuildConfig.V3_LIVE_ID)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSuccess { onLiveContentReceived(it) }
+                .doOnError { disableLive() }
+                .ignoreElement()
+                .onErrorComplete()
+    }
 
-        val savedLatestContentId = prefs.getInt("$LATEST_CONTENT_ID_KEY_PREFIX${category.id}", 0)
-        if (savedLatestContentId != receivedLatestContentId) {
-            prefs.edit {
-                putInt("$LATEST_CONTENT_ID_KEY_PREFIX${category.id}", receivedLatestContentId)
-                putBoolean("$NEW_CONTENT_KEY_PREFIX${category.id}", true)
+    private fun onLiveContentReceived(liveContent: ContentDto){
+        EvaContentDbAdapter.addOrUpdateEvaContentAsync(realm, liveContent) {
+            if (!liveContent.active) {
+                disableLive()
+            } else {
+                val title = liveContent.title?.toUpperCase()
+                        ?: getString(R.string.default_live_title)
+                val preview = stripTrimAndEllipsizeText(25, liveContent.html) ?: ""
+                enableLive(title, preview)
             }
         }
     }
 
-    private fun hasNewContent(categoryId: Long): Boolean {
-        return prefs.getBoolean("$NEW_CONTENT_KEY_PREFIX$categoryId", false)
+    fun enableLive(title: String, preview: String) {
+        btnLive?.isEnabled = true
+        btnLive?.text = "$title\n$preview"
+        liveContentTitle = title
+    }
+
+    fun disableLive(){
+        btnLive?.text = ""
+        btnLive?.isEnabled = false
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        FirebaseAnalytics.getInstance(requireContext())
+                .setCurrentScreen(requireActivity(), "Glavni izbornik", "Dashboard")
+
+        disposables += liveContentCompletable().subscribe()
+    }
+
+    private fun updateLatestContentId(domain: EvaDomain, receivedLatestContentId: Long?) {
+        receivedLatestContentId ?: return
+
+        val savedLatestContentId = prefs.getLong("$LATEST_CONTENT_ID_KEY_PREFIX.$domain", -1L)
+        if (savedLatestContentId != receivedLatestContentId) {
+            prefs.edit {
+                putLong("$LATEST_CONTENT_ID_KEY_PREFIX.$domain", receivedLatestContentId)
+                putBoolean("$HAS_NEW_CONTENT_KEY_PREFIX.$domain", true)
+            }
+        }
+    }
+
+    private fun hasNewContent(domain: EvaDomain): Boolean {
+        return prefs.getBoolean("$HAS_NEW_CONTENT_KEY_PREFIX.$domain", false)
     }
 
     private fun updateUI() {
         view ?: return
 
-        btnDuhovnost.indicateNews = hasNewContent(EvaCategory.SPIRITUALITY.id)
-        btnIzreke.indicateNews = hasNewContent(EvaCategory.QUOTES.id)
-        btnAktualno.indicateNews = hasNewContent(EvaCategory.TRENDING.id)
-        btnMultimedia.indicateNews = hasNewContent(EvaCategory.MULTIMEDIA.id)
-        btnPropovijedi.indicateNews = hasNewContent(EvaCategory.SERMONS.id)
-        btnOdgovori.indicateNews = hasNewContent(EvaCategory.ANSWERS.id)
-        btnPoziv.indicateNews = hasNewContent(EvaCategory.VOCATION.id)
-        btnPjesmarica.indicateNews = hasNewContent(EvaCategory.SONGBOOK.id)
+//        btnCalendar.indicateNews = hasNewContent(EvaDomain.GOSPEL)
+        btnDuhovnost.indicateNews = hasNewContent(EvaDomain.SPIRITUALITY)
+        btnIzreke.indicateNews = hasNewContent(EvaDomain.QUOTES)
+        btnAktualno.indicateNews = hasNewContent(EvaDomain.TRENDING)
+        btnMultimedia.indicateNews = hasNewContent(EvaDomain.MULTIMEDIA)
+        btnPropovijedi.indicateNews = hasNewContent(EvaDomain.SERMONS)
+        btnOdgovori.indicateNews = hasNewContent(EvaDomain.ANSWERS)
+        btnPoziv.indicateNews = hasNewContent(EvaDomain.VOCATION)
+        btnPjesmarica.indicateNews = hasNewContent(EvaDomain.SONGBOOK)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        realm.close()
     }
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/evaContentRow"
@@ -66,7 +66,7 @@
         app:layout_constraintTop_toBottomOf="@id/tvNaslov"
         app:layout_constraintVertical_bias="0"/>
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/infoConstraintLayout"
         android:layout_width="62dp"
         android:layout_height="60dp"
@@ -140,6 +140,6 @@
             app:layout_constraintStart_toEndOf="@+id/imgViewLink"
             app:layout_constraintTop_toBottomOf="@id/tvGodinaSatMinuta"/>
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

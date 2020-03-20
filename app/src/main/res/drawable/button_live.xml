@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector
+    xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:drawable="@drawable/layer_live_btn_press"
+          android:state_pressed="true"
+          android:state_enabled="true"
+          />
+    <item android:drawable="@drawable/live_btn"
+          android:state_pressed="false"
+          android:state_enabled="true"
+          />
+    <item android:drawable="@drawable/live_btn_no_action"
+          android:state_enabled="false"
+          />
+</selector>

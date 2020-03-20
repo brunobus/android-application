@@ -1,47 +1,33 @@
 package hr.bpervan.novaeva.fragments
 
 import android.os.Bundle
-import android.os.Handler
-import android.support.design.widget.Snackbar
-import android.support.v7.widget.DefaultItemAnimator
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.net.toUri
+import androidx.core.os.bundleOf
 import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
-import com.google.android.exoplayer2.source.ExtractorMediaSource
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
-import com.google.android.exoplayer2.util.Util
-import com.google.android.gms.analytics.HitBuilders
+import com.google.firebase.analytics.FirebaseAnalytics
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.RadioStationsAdapter
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.EvaCategory
 import hr.bpervan.novaeva.model.EvaContent
-import hr.bpervan.novaeva.model.EvaContentMetadata
-import hr.bpervan.novaeva.model.toDatabaseModel
-import hr.bpervan.novaeva.player.EvaPlayer
-import hr.bpervan.novaeva.player.PlaylistExtractor
-import hr.bpervan.novaeva.services.novaEvaService
-import hr.bpervan.novaeva.util.networkRequest
+import hr.bpervan.novaeva.model.toDbModel
+import hr.bpervan.novaeva.player.getStreamLinksFromPlaylist
+import hr.bpervan.novaeva.rest.EvaDomain
+import hr.bpervan.novaeva.rest.NovaEvaService
+import hr.bpervan.novaeva.rest.serverByDomain
+import hr.bpervan.novaeva.util.dataErrorSnackbar
 import hr.bpervan.novaeva.util.plusAssign
-import hr.bpervan.novaeva.views.snackbar
 import io.reactivex.Maybe
-import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
+import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.collapsing_content_header.view.*
 import kotlinx.android.synthetic.main.fragment_radio.*
-import java.net.HttpURLConnection
-import java.net.URL
 import java.util.concurrent.TimeUnit
 
 
@@ -49,7 +35,7 @@ import java.util.concurrent.TimeUnit
  *
  */
 class RadioFragment : EvaBaseFragment() {
-    companion object : EvaBaseFragment.EvaFragmentFactory<RadioFragment, Unit> {
+    companion object : EvaFragmentFactory<RadioFragment, Unit> {
 
         override fun newInstance(initializer: Unit): RadioFragment {
             return RadioFragment()
@@ -63,18 +49,12 @@ class RadioFragment : EvaBaseFragment() {
 
     private lateinit var adapter: RadioStationsAdapter
 
-    private val radioStationList: MutableList<EvaContentMetadata> = mutableListOf()
+    private val radioStationList: MutableList<EvaContent> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         adapter = RadioStationsAdapter(radioStationList)
-
-        savedInstanceState ?: NovaEvaApp.defaultTracker
-                .send(HitBuilders.EventBuilder()
-                        .setCategory("Radio")
-                        .setAction("OtvorenRadioIzbornik")
-                        .build())
 
         fetchRadioStationsFromServer()
     }
@@ -91,38 +71,53 @@ class RadioFragment : EvaBaseFragment() {
         EventPipelines.changeStatusbarColor.onNext(R.color.VeryDarkGray)
         EventPipelines.changeFragmentBackgroundResource.onNext(R.color.Transparent)
 
-        initUI()
+        collapsingRadioHeader.collapsingToolbar.title = getString(R.string.radio_stations)
 
-        baseDisposables += EventPipelines.chooseRadioStation
+        val recyclerView = evaRecyclerView as androidx.recyclerview.widget.RecyclerView
+        val linearLayoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
+        recyclerView.layoutManager = linearLayoutManager
+        recyclerView.itemAnimator = androidx.recyclerview.widget.DefaultItemAnimator()
+        recyclerView.adapter = adapter
+
+        disposables += EventPipelines.chooseRadioStation
                 .throttleWithTimeout(200, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
-                .switchMapMaybe {
-                    if (it.contentId.toString() == NovaEvaApp.evaPlayer.currentPlaybackInfo()?.id) {
+                .flatMapMaybe {
+                    if (it.id == adapter.radioStationPlaying) {
 
                         NovaEvaApp.evaPlayer.stop()
                         Maybe.empty()
                     } else {
-                        novaEvaService.getContentData(it.contentId).toMaybe()
-                                .subscribeOn(Schedulers.io())
+                        Maybe.just(it)
                     }
                 }
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext { updateUI(it.toDatabaseModel()) }
+                .doOnNext { updateUI(it) }
+                .doOnNext {
+                    FirebaseAnalytics.getInstance(requireContext())
+                            .logEvent("RadioStationSelected", bundleOf(
+                                    "title" to it.title.ifEmpty { it.audioTitle }
+                            ))
+                }
                 .observeOn(Schedulers.io())
                 .switchMap { radioStation ->
-                    getStreamLinksFromPlaylistUri(radioStation.audioURL!!)
+                    getStreamLinksFromPlaylist(radioStation.audioURL!!, radioStation.audioTitle!!)
                             .toObservable()
-                            .map { Pair(it, radioStation) }
+                            .map { Pair(radioStation, it) }
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ stationStreams ->
-                    val streamUris = stationStreams.first
-                    val radioStation = stationStreams.second
+                    val radioStation = stationStreams.first
+                    val streamUris = stationStreams.second
 
                     for (streamUri in streamUris.shuffled()) {
                         try {
-                            prepareAndPlayRadioStream(streamUri, radioStation.contentId.toString(),
-                                    radioStation.title ?: "nepoznato")
+                            NovaEvaApp.evaPlayer.prepareAudioStream(
+                                    streamUri, radioStation.id.toString(),
+                                    radioStation.title.ifEmpty { "nepoznato" },
+                                    isRadio = true,
+                                    doAutoPlay = true,
+                                    auth = serverByDomain(EvaDomain.RADIO).auth)
                             break
                         } catch (e: Exception) {
                             /*continue*/
@@ -130,12 +125,25 @@ class RadioFragment : EvaBaseFragment() {
                     }
                 }, { Log.e("radioError", it.message, it) })
 
-        baseDisposables += NovaEvaApp.evaPlayer.playbackChangeSubject.subscribe {
-            if (it.player.playbackState != Player.STATE_BUFFERING) {
-                adapter.radioStationPlaying = it.playbackInfo?.id?.toLongOrNull()
-                adapter.notifyItemRangeChanged(0, adapter.itemCount)
-            }
-        }
+        disposables += EventPipelines.playbackStartStopPause
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    if (it.player.playbackState == Player.STATE_READY
+                            && it.player.playWhenReady
+                            && it.playbackInfo?.isRadio == true) {
+                        adapter.radioStationPlaying = it.playbackInfo.id.toLongOrNull()
+                    } else {
+                        adapter.radioStationPlaying = null
+                    }
+                    adapter.notifyItemRangeChanged(0, adapter.itemCount)
+                }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        FirebaseAnalytics.getInstance(requireContext())
+                .setCurrentScreen(requireActivity(), "Radio", "Radio")
     }
 
     private fun updateUI(radioStationDetails: EvaContent) {
@@ -147,64 +155,16 @@ class RadioFragment : EvaBaseFragment() {
         }
     }
 
-    private fun initUI() {
-
-        collapsingRadioHeader.collapsingToolbar.title = getString(R.string.radio_stations)
-
-        val recyclerView = evaRecyclerView as RecyclerView
-        val linearLayoutManager = LinearLayoutManager(context)
-        recyclerView.layoutManager = linearLayoutManager
-        recyclerView.itemAnimator = DefaultItemAnimator()
-        recyclerView.adapter = adapter
-
-    }
-
-    private val handler = Handler()
-
-    private fun getStreamLinksFromPlaylistUri(playlistFileUri: String): Single<List<String>> {
-        return Single
-                .create<List<String>> { emitter ->
-                    val url = URL(playlistFileUri)
-                    val httpConnection = url.openConnection() as HttpURLConnection
-
-                    try {
-                        if (httpConnection.responseCode == HttpURLConnection.HTTP_OK) {
-                            httpConnection.inputStream.bufferedReader().useLines {
-                                val streamUris = PlaylistExtractor.extractStreamLinksFromPlaylist(
-                                        it.toList(), playlistFileUri)
-                                emitter.onSuccess(streamUris)
-                            }
-                        } else throw RuntimeException("Http error ${httpConnection.responseCode} for $playlistFileUri")
-                    } finally {
-                        httpConnection.disconnect()
-                    }
-                }
-    }
-
-    private fun prepareAndPlayRadioStream(streamUri: String, stationId: String, stationTitle: String) {
-
-        val context = context ?: return
-        val dataSourceFactory = DefaultDataSourceFactory(context,
-                Util.getUserAgent(context, resources.getString(R.string.app_name)),
-                DefaultBandwidthMeter())
-
-//        val factory = ExtractorMediaSource.Factory(dataSourceFactory).setCustomCacheKey(streamUri)
-//        val mediaSource = factory.createMediaSource(streamingUri)
-
-        NovaEvaApp.evaPlayer.prepareIfNeeded(EvaPlayer.PlaybackInfo(stationId, stationTitle), doAutoPlay = true) {
-            ExtractorMediaSource(streamUri.toUri(), dataSourceFactory, DefaultExtractorsFactory(),
-                    handler, null, streamUri)
-        }
-    }
-
-    private fun fetchRadioStationsFromServer(timestamp: Long? = null) {
-        fetchFromServerDisposable = novaEvaService.getDirectoryContent(EvaCategory.RADIO.id, timestamp, 1000)
-                .networkRequest({ evaDirectoryDTO ->
+    private fun fetchRadioStationsFromServer() {
+        fetchFromServerDisposable = NovaEvaService.v3.categoryContent(EvaDomain.RADIO.domainEndpoint, items = 1000)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(onSuccess = { categoryDto ->
                     radioStationList.clear()
-                    radioStationList.addAll(evaDirectoryDTO.contentMetadataList.map { it.toDatabaseModel() })
+                    radioStationList.addAll(categoryDto.content!!.map { it.toDbModel() })
                     adapter.notifyDataSetChanged()
                 }, onError = {
-                    view?.snackbar(R.string.error_fetching_data, Snackbar.LENGTH_LONG)
+                    view?.dataErrorSnackbar()
                 })
     }
 }

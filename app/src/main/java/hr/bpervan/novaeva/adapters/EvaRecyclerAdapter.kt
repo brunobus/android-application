@@ -1,7 +1,6 @@
 package hr.bpervan.novaeva.adapters
 
 import android.graphics.Color
-import android.support.v7.widget.RecyclerView
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -9,14 +8,10 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.isVisible
-import hr.bpervan.novaeva.NovaEvaApp
-import hr.bpervan.novaeva.model.OpenContentEvent
-import hr.bpervan.novaeva.model.OpenDirectoryEvent
 import hr.bpervan.novaeva.EventPipelines
+import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.EvaContentMetadata
-import hr.bpervan.novaeva.model.EvaDirectoryMetadata
-import hr.bpervan.novaeva.model.TreeElementInfo
+import hr.bpervan.novaeva.model.*
 import hr.bpervan.novaeva.util.EvaTouchFeedback
 import hr.bpervan.novaeva.util.TransitionAnimation
 import kotlinx.android.synthetic.main.recycler_item_eva_content.view.*
@@ -27,10 +22,10 @@ import java.util.*
 /**
  * Created by vpriscan on 08.10.17..
  */
-class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
+class EvaRecyclerAdapter(private val data: List<EvaNode>,
                          val isLoadingSupplier: () -> Boolean = { false },
                          val themeId: Int = -1) :
-        RecyclerView.Adapter<EvaRecyclerAdapter.BindableViewHolder>() {
+        androidx.recyclerview.widget.RecyclerView.Adapter<EvaRecyclerAdapter.BindableViewHolder>() {
 
     companion object {
         val dayMonthFormat = SimpleDateFormat("d.M.", Locale.US)
@@ -44,7 +39,7 @@ class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
     private var themeColor: Int = 0
     private var themeColorTrans: Int = 0
 
-    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+    override fun onAttachedToRecyclerView(recyclerView: androidx.recyclerview.widget.RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
 
         val typedVal = TypedValue()
@@ -56,7 +51,7 @@ class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
     override fun getItemViewType(position: Int): Int {
         return when {
             position == data.size -> PROGRESS_VIEW_TYPE
-            data[position] is EvaContentMetadata -> CONTENT_VIEW_TYPE
+            data[position] is EvaContent -> CONTENT_VIEW_TYPE
             else -> SUBDIRECTORY_VIEW_TYPE
         }
     }
@@ -91,7 +86,7 @@ class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
         holder.bindTo(subject)
     }
 
-    inner abstract class BindableViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+    inner abstract class BindableViewHolder(val view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
         abstract fun bindTo(t: Any)
     }
 
@@ -103,13 +98,18 @@ class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
         }
 
         override fun bindTo(t: Any) {
-            val directoryInfo = t as EvaDirectoryMetadata
+            val directoryInfo = t as EvaDirectory
 
             tvMapaNaslov.text = directoryInfo.title
 
             view.setOnTouchListener(EvaTouchFeedback(view, themeColorTrans))
             view.setOnClickListener {
-                EventPipelines.openDirectory.onNext(OpenDirectoryEvent(directoryInfo, themeId, TransitionAnimation.LEFTWARDS))
+                EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
+                        directoryId = directoryInfo.id,
+                        domain = enumValueOf(directoryInfo.domain!!),
+                        title = directoryInfo.title,
+                        theme = themeId,
+                        animation = TransitionAnimation.LEFTWARDS))
             }
         }
 
@@ -147,20 +147,20 @@ class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
         }
 
         override fun bindTo(t: Any) {
-            val contentInfo = t as EvaContentMetadata
+            val contentInfo = t as EvaContent
 
             tvNaslov.text = contentInfo.title
 
-            val datetime = Date(1000 * contentInfo.timestamp)
+            val datetime = Date(contentInfo.created)
 
             //todo move formatted datetime to DB
             val dayMonth: String = dayMonthFormat.format(datetime)
             val yearHourMinute: String = yearHourMinuteFormat.format(datetime)
 
             contentInfo.attachmentsIndicator.let {
-                imgHasTxt.isVisible = it?.hasDocuments ?: false
-                imgHasLink.isVisible = it?.hasVideo ?: false
-                imgHasAudio.isVisible = it?.hasMusic ?: false
+                imgHasTxt.isVisible = AttachmentIndicatorHelper.hasDocs(it)
+                imgHasLink.isVisible = AttachmentIndicatorHelper.hasVideo(it)
+                imgHasAudio.isVisible = AttachmentIndicatorHelper.hasMusic(it)
             }
 
             tvGodinaSatMinuta.text = yearHourMinute
@@ -170,7 +170,13 @@ class EvaRecyclerAdapter(private val data: List<TreeElementInfo>,
             view.setOnTouchListener(EvaTouchFeedback(view, themeColorTrans))
 
             view.setOnClickListener {
-                EventPipelines.openContent.onNext(OpenContentEvent(contentInfo, themeId, TransitionAnimation.LEFTWARDS))
+                EventPipelines.openContent.onNext(
+                        OpenContentEvent(
+                                contentId = contentInfo.id,
+                                title = contentInfo.title,
+                                domain = enumValueOf(contentInfo.domain!!),
+                                theme = themeId,
+                                animation = TransitionAnimation.LEFTWARDS))
             }
         }
     }

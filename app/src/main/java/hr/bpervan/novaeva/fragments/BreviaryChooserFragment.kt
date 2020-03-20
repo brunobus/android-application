@@ -5,11 +5,12 @@ import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.google.android.gms.analytics.HitBuilders
+import com.google.firebase.analytics.FirebaseAnalytics
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.OpenBreviaryContentEvent
+import hr.bpervan.novaeva.util.BREVIARY_IMAGE_KEY
 import hr.bpervan.novaeva.util.TransitionAnimation
 import kotlinx.android.synthetic.main.fragment_breviary_chooser.*
 import kotlinx.android.synthetic.main.collapsing_breviary_header.*
@@ -27,16 +28,6 @@ class BreviaryChooserFragment : EvaBaseFragment() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        savedInstanceState ?: NovaEvaApp.defaultTracker
-                .send(HitBuilders.EventBuilder()
-                        .setCategory("Brevijar")
-                        .setAction("OtvorenBrevijarIzbornik")
-                        .build())
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.cloneInContext(ContextThemeWrapper(activity, R.style.BreviaryTheme))
                 .inflate(R.layout.fragment_breviary_chooser, container, false)
@@ -50,11 +41,6 @@ class BreviaryChooserFragment : EvaBaseFragment() {
         EventPipelines.changeStatusbarColor.onNext(R.color.Transparent)
         EventPipelines.changeFragmentBackgroundResource.onNext(R.color.Transparent)
 
-        initUI()
-    }
-
-    private fun initUI() {
-
         val openSansRegular = NovaEvaApp.openSansRegular
         if (openSansRegular != null) {
             txtKs.typeface = openSansRegular
@@ -64,7 +50,7 @@ class BreviaryChooserFragment : EvaBaseFragment() {
         val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale("hr", "HR"))
         imgDanas.text = dateFormat.format(Date())
 
-        val headerUrl = prefs.getString("hr.bpervan.novaeva.brevijarheaderimage", null)
+        val headerUrl = prefs.getString(BREVIARY_IMAGE_KEY, null)
 
         if (headerUrl != null && breviaryCoverImage != null) {
             imageLoader.displayImage(headerUrl, breviaryCoverImage)
@@ -81,6 +67,13 @@ class BreviaryChooserFragment : EvaBaseFragment() {
         btnSutraJutarnja.setOnClickListener(BreviaryClickListener(7))
         btnSutraVecernja.setOnClickListener(BreviaryClickListener(8))
         btnSutraPovecerje.setOnClickListener(BreviaryClickListener(9))
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        FirebaseAnalytics.getInstance(requireContext())
+                .setCurrentScreen(requireActivity(), "Brevijar izbornik", "BreviaryChooser")
     }
 
     inner class BreviaryClickListener(private val breviaryId: Int) : View.OnClickListener {

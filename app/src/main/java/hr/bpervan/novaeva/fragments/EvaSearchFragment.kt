@@ -3,28 +3,27 @@ package hr.bpervan.novaeva.fragments
 import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
-import android.support.v7.widget.DefaultItemAnimator
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.core.os.bundleOf
-import com.google.android.gms.analytics.HitBuilders
+import com.google.firebase.analytics.FirebaseAnalytics
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
-import hr.bpervan.novaeva.util.showFetchErrorDialog
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.EvaContentMetadata
-import hr.bpervan.novaeva.model.toDatabaseModel
-import hr.bpervan.novaeva.services.novaEvaService
-import hr.bpervan.novaeva.util.networkRequest
+import hr.bpervan.novaeva.model.EvaContent
+import hr.bpervan.novaeva.model.toDbModel
+import hr.bpervan.novaeva.rest.NovaEvaService
+import hr.bpervan.novaeva.util.showFetchErrorDialog
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
-import kotlinx.android.synthetic.main.fragment_search.*
+import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.eva_recycler_view.view.*
+import kotlinx.android.synthetic.main.fragment_search.*
 import java.util.*
 
 /**
@@ -48,7 +47,7 @@ class EvaSearchFragment : EvaBaseFragment() {
             field = safeReplaceDisposable(field, value)
         }
 
-    private val searchResultList = ArrayList<EvaContentMetadata>()
+    private val searchResultList = ArrayList<EvaContent>()
 
     private lateinit var adapter: EvaRecyclerAdapter
     private lateinit var searchString: String
@@ -57,22 +56,15 @@ class EvaSearchFragment : EvaBaseFragment() {
         super.onCreate(savedInstanceState)
 
         val inState: Bundle = savedInstanceState ?: arguments!!
-        searchString = inState.getString(searchStringKey)
+        searchString = inState.getString(searchStringKey, "Isus")
 
         adapter = EvaRecyclerAdapter(searchResultList)
-
-        savedInstanceState ?: NovaEvaApp.defaultTracker
-                .send(HitBuilders.EventBuilder()
-                        .setCategory("Pretraga")
-                        .setAction("KljucneRijeci")
-                        .setLabel(searchString)
-                        .build())
     }
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
 
-        activity?.title = "Pretraga: " + searchString
+        activity?.title = "Pretraga: $searchString"
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -87,16 +79,19 @@ class EvaSearchFragment : EvaBaseFragment() {
         EventPipelines.changeStatusbarColor.onNext(R.color.VeryDarkGray)
         EventPipelines.changeFragmentBackgroundResource.onNext(R.color.White)
 
-        initUI()
-    }
-
-    private fun initUI() {
 //        btnSearch.setOnClickListener(this)
 
-        val recyclerView = evaRecyclerView as RecyclerView
+        val recyclerView = evaRecyclerView as androidx.recyclerview.widget.RecyclerView
         recyclerView.adapter = adapter
-        recyclerView.layoutManager = LinearLayoutManager(evaRecyclerView.evaRecyclerView.context)
-        recyclerView.itemAnimator = DefaultItemAnimator()
+        recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(evaRecyclerView.evaRecyclerView.context)
+        recyclerView.itemAnimator = androidx.recyclerview.widget.DefaultItemAnimator()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        FirebaseAnalytics.getInstance(requireContext())
+                .setCurrentScreen(requireActivity(), "Pretraga '$searchString'".take(36), "Search")
     }
 
     private fun showSearchPopup() {
@@ -123,11 +118,13 @@ class EvaSearchFragment : EvaBaseFragment() {
         searchResultList.clear()
         adapter.notifyDataSetChanged()
 
-        searchForContentDisposable = novaEvaService.searchForContent(searchString)
-                .networkRequest({ searchResult ->
+        searchForContentDisposable = NovaEvaService.v2.searchForContent(searchString)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(onSuccess = { searchResult ->
                     if (!searchResult.searchResultContentMetadataList.isEmpty()) {
                         searchResultList.addAll(
-                                searchResult.searchResultContentMetadataList.map { it.toDatabaseModel() })
+                                searchResult.searchResultContentMetadataList.map { it.toDbModel() })
 
                         adapter.notifyDataSetChanged()
                     } else {

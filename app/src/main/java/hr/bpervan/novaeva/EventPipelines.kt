@@ -2,6 +2,7 @@ package hr.bpervan.novaeva
 
 import android.graphics.drawable.Drawable
 import hr.bpervan.novaeva.model.*
+import hr.bpervan.novaeva.player.EvaPlayer
 import hr.bpervan.novaeva.util.TransitionAnimation
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
@@ -11,8 +12,6 @@ import io.reactivex.subjects.PublishSubject
  */
 object EventPipelines {
 
-    val chooseRadioStation = PublishSubject.create<EvaContentMetadata>()
-
     //navigation
     val goHome = PublishSubject.create<TransitionAnimation>()
     val openContent = PublishSubject.create<OpenContentEvent>()
@@ -21,9 +20,9 @@ object EventPipelines {
     val openBreviaryChooser = PublishSubject.create<TransitionAnimation>()
     val openBreviaryContent = PublishSubject.create<OpenBreviaryContentEvent>()
     val openInfo = PublishSubject.create<TransitionAnimation>()
-    val openOptionsDrawer = PublishSubject.create<Unit>()
-    val openPrayerBook = PublishSubject.create<TransitionAnimation>()
-    val openPrayerCategory = PublishSubject.create<OpenPrayerCategoryEvent>()
+    val toggleOptionsDrawer = PublishSubject.create<Unit>()
+    val openPrayerBook = PublishSubject.create<OpenPrayerDirectoryEvent>()
+    val openPrayerCategory = PublishSubject.create<OpenPrayerDirectoryEvent>()
     val openRadio = PublishSubject.create<Unit>()
     val openCalendar = PublishSubject.create<TransitionAnimation>()
     val openBookmarks = PublishSubject.create<TransitionAnimation>()
@@ -41,6 +40,12 @@ object EventPipelines {
 
     //action
     val search = PublishSubject.create<String>()
+    val chooseRadioStation = PublishSubject.create<EvaContent>()
+    val playAnyRadioStation = PublishSubject.create<Unit>()
+    val resizeText = PublishSubject.create<Unit>()
+
+    //event
+    val playbackStartStopPause = BehaviorSubject.create<EvaPlayer.PlaybackChange>()
 
     //network
     val connectedToNetwork = PublishSubject.create<Unit>()

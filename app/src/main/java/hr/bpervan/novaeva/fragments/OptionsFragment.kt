@@ -1,25 +1,27 @@
 package hr.bpervan.novaeva.fragments
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.widget.toast
+import androidx.core.content.edit
+import androidx.core.view.isVisible
 import hr.bpervan.novaeva.EventPipelines
+import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.storage.EvaContentDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
-import hr.bpervan.novaeva.util.TransitionAnimation
-import hr.bpervan.novaeva.util.shareIntent
+import hr.bpervan.novaeva.util.*
 import io.realm.Realm
 import kotlinx.android.synthetic.main.fragment_options.*
 
 /**
  *
  */
-class OptionsFragment : Fragment() {
+class OptionsFragment : androidx.fragment.app.Fragment() {
     companion object : EvaBaseFragment.EvaFragmentFactory<OptionsFragment, Unit> {
 
         override fun newInstance(initializer: Unit): OptionsFragment {
@@ -28,7 +30,6 @@ class OptionsFragment : Fragment() {
     }
 
     private lateinit var realm: Realm
-    var contentId: Long = -1L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,32 +50,53 @@ class OptionsFragment : Fragment() {
         btnInfo.setOnClickListener {
             EventPipelines.openInfo.onNext(TransitionAnimation.LEFTWARDS)
         }
-//        btnHelp.setOnClickListener {
-//            context?.toast("Not yet supported")
-//        }
         btnTextSize.setOnClickListener {
-            context?.toast("Not yet supported")
+            val currentTextSize = NovaEvaApp.prefs.getInt(TEXT_SIZE_KEY, defaultTextSize)
+            val newShift = currentTextSize + 2 - minTextSize
+            val width = maxTextSize - minTextSize
+            val newTextSize = newShift % width + minTextSize
+
+            NovaEvaApp.prefs.edit {
+                putInt(TEXT_SIZE_KEY, newTextSize)
+            }
+            EventPipelines.resizeText.onNext(Unit)
         }
         btnChurch.setOnClickListener {
-            context?.toast("Not yet supported")
+            context?.toast(getString(R.string.not_supported))
         }
         btnTheme.setOnClickListener {
-            context?.toast("Not yet supported")
+            context?.toast(getString(R.string.not_supported))
         }
         btnShare.setOnClickListener {
-            shareIntent(context, "http://novaeva.com/node/$contentId")
+
+            val topFragment = getTopFragment()
+
+            val shareString = when (topFragment) {
+                is EvaContentFragment -> "http://novaeva.com/node/${topFragment.contentId}"
+                is EvaQuotesFragment -> {
+                    @Suppress("DEPRECATION")
+                    val quoteText = Html.fromHtml(topFragment.quoteData).toString().trim()
+                    "$quoteText\n\nhttp://novaeva.com/node/${topFragment.quoteId}#quote"
+                }
+                else -> getString(R.string.recommendation) + getString(R.string.app_links)
+
+            }
+            shareIntent(context, shareString)
         }
 
-        btnBookmark.setOnClickListener {
-            val wasBookmarked = isContentBookmarked(contentId)
-            EvaContentDbAdapter.updateEvaContentMetadataAsync(realm, contentId,
-                    updateFunction = {
-                        it.bookmark = !wasBookmarked
-                    },
-                    onSuccess = {
-                        context?.toast(if (!wasBookmarked) R.string.bookmarked else R.string.unbookmarked)
-                        btnBookmark.bookmarked = !wasBookmarked
-                    })
+        btnBookmark.setOnClickListener { _ ->
+
+            val topFragment = getTopFragment()
+            if (topFragment is EvaContentFragment) {
+                val contentId = topFragment.contentId
+                val wasBookmarked = isContentBookmarked(contentId)
+                EvaContentDbAdapter.updateEvaContentIfExistsAsync(realm, contentId,
+                        updateFunc = { it.bookmarked = !wasBookmarked },
+                        onSuccess = {
+                            context?.toast(if (!wasBookmarked) R.string.bookmarked else R.string.unbookmarked)
+                            btnBookmark.bookmarked = !wasBookmarked
+                        })
+            }
         }
         btnHome.setOnClickListener {
             EventPipelines.goHome.onNext(TransitionAnimation.FADE)
@@ -82,8 +104,7 @@ class OptionsFragment : Fragment() {
     }
 
     private fun isContentBookmarked(contentId: Long): Boolean {
-        val evaContentMetadata = EvaContentDbAdapter.loadEvaContentMetadata(realm, contentId)
-        return evaContentMetadata?.bookmark ?: false
+        return EvaContentDbAdapter.loadEvaContent(realm, contentId)?.bookmarked ?: false
     }
 
     override fun onDestroyView() {
@@ -99,38 +120,53 @@ class OptionsFragment : Fragment() {
     }
 
     private val topFragmentChecker: () -> Unit = {
-        val fm = activity?.supportFragmentManager
-        if (fm != null && fm.backStackEntryCount > 0) {
-            val backStackEntryAt: FragmentManager.BackStackEntry = fm
-                    .getBackStackEntryAt(fm.backStackEntryCount - 1)
 
-            val fragment = fm.findFragmentByTag(backStackEntryAt.name)
+        val fragment = getTopFragment()
+
+        if (fragment != null) {
 
             when (fragment) {
                 is EvaContentFragment -> {
-                    enableOptions(btnInfo, btnHelp, btnTextSize, btnChurch,
-                            btnTheme, btnHome, btnShare, btnBookmark)
+                    showOptions(btnInfo, /*btnHelp, */btnTextSize, /*btnChurch,
+                            btnTheme, */btnHome, btnShare, btnBookmark)
 
-                    contentId = fragment.contentId
-                    btnBookmark.bookmarked = isContentBookmarked(contentId)
+                    btnBookmark.bookmarked = isContentBookmarked(fragment.contentId)
                 }
-                is EvaDashboardFragment -> {
-                    enableOptions(btnInfo, btnHelp, btnChurch, btnTheme)
-                    disableOptions(btnHome, btnTextSize, btnShare, btnBookmark)
+                is EvaQuotesFragment -> {
+                    showOptions(btnInfo, /*btnHelp, */btnTextSize, /*btnChurch, btnTheme, */btnHome, btnShare)
+                    hideOptions(btnBookmark)
+                }
+                is BreviaryContentFragment -> {
+                    showOptions(btnInfo, /*btnHelp, */btnTextSize, /*btnChurch, btnTheme, */btnHome)
+                    hideOptions(btnShare, btnBookmark)
                 }
                 is EvaInfoFragment -> {
-                    enableOptions(btnHelp, btnChurch, btnTheme, btnHome)
-                    disableOptions(btnInfo, btnTextSize, btnShare, btnBookmark)
+                    showOptions(/*btnHelp, btnChurch, btnTheme, */btnHome, btnTextSize)
+                    hideOptions(btnInfo, btnShare, btnBookmark)
+                }
+                is EvaDashboardFragment -> {
+                    showOptions(btnInfo, /*btnHelp, btnChurch, btnTheme, */btnShare)
+                    hideOptions(btnHome, btnTextSize, btnBookmark)
                 }
                 else -> {
-                    enableOptions(btnInfo, btnHelp, btnChurch, btnTheme, btnHome)
-                    disableOptions(btnTextSize, btnShare, btnBookmark)
+                    showOptions(btnInfo, /*btnHelp, btnChurch, btnTheme, */btnHome)
+                    hideOptions(btnTextSize, btnShare, btnBookmark)
                 }
             }
         }
     }
 
-    private fun disableOptions(vararg views: View) = views.forEach { it.isEnabled = false }
+    private fun getTopFragment(): androidx.fragment.app.Fragment? {
+        val fm = activity?.supportFragmentManager
+        return if (fm != null && fm.backStackEntryCount > 0) {
+            val backStackEntryAt: androidx.fragment.app.FragmentManager.BackStackEntry = fm
+                    .getBackStackEntryAt(fm.backStackEntryCount - 1)
 
-    private fun enableOptions(vararg views: View) = views.forEach { it.isEnabled = true }
+            fm.findFragmentByTag(backStackEntryAt.name)
+        } else null
+    }
+
+    private fun hideOptions(vararg views: View) = views.forEach { it.isVisible = false }
+
+    private fun showOptions(vararg views: View) = views.forEach { it.isVisible = true }
 }

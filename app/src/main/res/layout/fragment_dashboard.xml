@@ -1,24 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.constraint.Guideline
+    <androidx.constraintlayout.widget.Guideline
         android:id="@+id/horizontalScreenGuideline"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.55"/>
+        app:layout_constraintGuide_percent="0.58"/>
 
-    <android.support.constraint.Guideline
+    <androidx.constraintlayout.widget.Guideline
         android:id="@+id/verticalScreenGuideline"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.5"/>
+
+    <TextView
+        android:id="@+id/btnLive"
+        android:background="@drawable/button_live"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/btnMolitvenik"
+        android:maxLines="2"
+        android:text=""
+        android:enabled="false"
+        android:textStyle="bold"
+        android:textColor="@color/White"
+        android:paddingTop="3dp"
+        android:paddingStart="60dp"
+        android:paddingLeft="60dp"
+        android:paddingRight="15dp"
+        android:paddingEnd="15dp"
+        android:gravity="top|center_horizontal"
+        />
 
     <TextView
         android:id="@+id/btnMolitvenik"
@@ -39,7 +61,8 @@
         app:layout_constraintEnd_toStartOf="@+id/verticalScreenGuideline"
         app:layout_constraintHorizontal_bias="1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/btnLive"
+        />
 
     <TextView
         android:id="@+id/btnBrevijar"
@@ -56,11 +79,12 @@
         android:text="@string/breviary"
         android:textAllCaps="false"
         android:textColor="@color/White"
-        app:layout_constraintBottom_toTopOf="@+id/btnPropovijedi"
+        app:layout_constraintTop_toTopOf="@id/btnMolitvenik"
+        app:layout_constraintBottom_toBottomOf="@id/btnMolitvenik"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toEndOf="@+id/verticalScreenGuideline"
-        app:layout_constraintTop_toTopOf="parent"/>
+        />
 
     <hr.bpervan.novaeva.views.EvaCategoryView
         android:id="@+id/btnPropovijedi"
@@ -271,4 +295,4 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnPjesmarica"/>
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

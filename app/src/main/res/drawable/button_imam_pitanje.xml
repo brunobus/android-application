@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/btn_over_odgovori"
-          android:state_pressed="true" />
-    <item android:drawable="@drawable/btn_over_odgovori"
-          android:state_focused="true" />
-    <item android:drawable="@drawable/btn_normal_odgovori" />
+    <item android:state_pressed="true">
+        <shape xmlns:android="http://schemas.android.com/apk/res/android">
+            <stroke android:width="1px" android:color="@color/Black"/>
+            <solid android:color="@color/evaDarkBlueTrans"/>
+            <corners android:radius="25dp"/>
+        </shape>
+    </item>
+    <item>
+        <shape xmlns:android="http://schemas.android.com/apk/res/android">
+            <stroke android:width="1px" android:color="@color/Black"/>
+            <solid android:color="@color/evaDarkBlue"/>
+            <corners android:radius="25dp"/>
+        </shape>
+    </item>
 </selector>

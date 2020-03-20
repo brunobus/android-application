@@ -6,20 +6,16 @@ import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
-import android.support.v4.content.ContextCompat
 import android.util.Log
-import com.google.android.gms.analytics.GoogleAnalytics
-import com.google.android.gms.analytics.Tracker
+import androidx.core.content.ContextCompat
 import com.nostra13.universalimageloader.core.ImageLoader
 import hr.bpervan.novaeva.main.BuildConfig
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.PrayerCategory
 import hr.bpervan.novaeva.player.EvaPlayer
 import hr.bpervan.novaeva.receivers.ConnectionDetector
-import hr.bpervan.novaeva.util.AssetsLoader
 import hr.bpervan.novaeva.util.ImageLoaderConfigurator
 import hr.bpervan.novaeva.util.LifecycleLogger
-import hr.bpervan.novaeva.util.NOVA_EVA_PREFS_NAME
+import hr.bpervan.novaeva.util.NOVA_EVA_PREFS
 import io.realm.Realm
 
 /**
@@ -33,15 +29,6 @@ class NovaEvaApp : Application() {
         instance = this
 
         Realm.init(this)
-        ImageLoaderConfigurator.doInit(this)
-
-        val analytics = GoogleAnalytics.getInstance(this).apply {
-            setDryRun(BuildConfig.DEBUG)
-        }
-
-        defaultTracker = analytics.newTracker(NOVA_EVA_TRACKER_ID).apply {
-            enableAdvertisingIdCollection(false)
-        }
 
         val filter = IntentFilter()
         filter.addAction("android.net.wifi.supplicant.CONNECTION_CHANGE")
@@ -55,22 +42,20 @@ class NovaEvaApp : Application() {
     }
 
     companion object {
-        private const val evaThemeKey = "EVA_THEME"
-        private const val NOVA_EVA_TRACKER_ID = "UA-40344870-1"
         var instance: NovaEvaApp? = null
 
         val evaPlayer: EvaPlayer by lazy {
             EvaPlayer(instance!!)
         }
 
-        lateinit var defaultTracker: Tracker
-
         val imageLoader: ImageLoader by lazy {
-            ImageLoader.getInstance()
+            ImageLoader.getInstance().apply {
+                init(ImageLoaderConfigurator.createConfiguration(instance!!))
+            }
         }
 
         val prefs: SharedPreferences by lazy {
-            instance!!.getSharedPreferences(NOVA_EVA_PREFS_NAME, Context.MODE_PRIVATE)
+            instance!!.getSharedPreferences(NOVA_EVA_PREFS, Context.MODE_PRIVATE)
         }
 
         val openSansBold: Typeface? by lazy {
@@ -93,10 +78,6 @@ class NovaEvaApp : Application() {
             } catch (e: Exception) {
                 null
             }
-        }
-
-        val prayerBook: Map<Int, PrayerCategory> by lazy {
-            AssetsLoader.loadPrayerBook(instance!!).associateBy { it.id }
         }
 
         val defaultDashboardBackground: Drawable by lazy {

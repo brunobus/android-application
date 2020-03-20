@@ -10,23 +10,26 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.media.AudioAttributes
+import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.os.Build
 import android.os.IBinder
-import android.support.v4.app.NotificationCompat
-import android.support.v4.content.ContextCompat
-import android.support.v4.media.session.MediaButtonReceiver
+import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
+import androidx.media.session.MediaButtonReceiver
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.ext.mediasession.DefaultPlaybackController
+import com.google.android.exoplayer2.DefaultControlDispatcher
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
-import hr.bpervan.novaeva.NovaEvaApp
+import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.util.plusAssign
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 
-typealias MediaStyleCompat = android.support.v4.media.app.NotificationCompat.MediaStyle
+typealias MediaStyleCompat = androidx.media.app.NotificationCompat.MediaStyle
 
 /**
  * Created by vpriscan on 08.12.17..
@@ -48,7 +51,7 @@ class AudioPlayerService : Service() {
     override fun onCreate() {
         super.onCreate()
 
-        novaEvaBitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_launcher)
+        novaEvaBitmap = BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher_round)
 
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
@@ -56,35 +59,38 @@ class AudioPlayerService : Service() {
         mediaSession.setMediaButtonReceiver(null)
         mediaSession.isActive = true
 
-        mediaSessionConnector = MediaSessionConnector(mediaSession, EvaPlaybackController())
+        mediaSessionConnector = MediaSessionConnector(mediaSession)
+        mediaSessionConnector.setControlDispatcher(EvaPlaybackController())
 
-        disposables += NovaEvaApp.evaPlayer.playbackChangeSubject.subscribe {
+        disposables += EventPipelines.playbackStartStopPause
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
 
-            val player = it.player
+                    val player = it.player
 
-            when (player.playbackState) {
-                Player.STATE_READY -> {
-                    if (player.playWhenReady || player.contentPosition > 0) {
+                    when (player.playbackState) {
+                        Player.STATE_READY -> {
+                            if (player.playWhenReady || player.contentPosition > 0) {
 
-                        val notification =
-                                buildNotification(mediaSession,
-                                        player.playWhenReady, it.playbackInfo?.title ?: "")
-                        val notificationId = 33313331
+                                val notification =
+                                        buildNotification(mediaSession,
+                                                player.playWhenReady, it.playbackInfo?.title ?: "")
+                                val notificationId = 33313331
 
-                        startForeground(notificationId, notification)
+                                startForeground(notificationId, notification)
 
-                        if (!player.playWhenReady) {
-                            stopForeground(false)
+                                if (!player.playWhenReady) {
+                                    stopForeground(false)
+                                }
+
+                                mediaSessionConnector.setPlayer(player)
+                            }
                         }
-
-                        mediaSessionConnector.setPlayer(player, null)
+                        Player.STATE_IDLE, Player.STATE_ENDED -> {
+                            stopForeground(true)
+                        }
                     }
                 }
-                Player.STATE_IDLE, Player.STATE_ENDED -> {
-                    stopForeground(true)
-                }
-            }
-        }
     }
 
     @SuppressLint("NewApi")
@@ -110,45 +116,73 @@ class AudioPlayerService : Service() {
     class EvaMediaReceiver : BroadcastReceiver() {
 
         override fun onReceive(context: Context, intent: Intent) {
-            MediaButtonReceiver.handleIntent(mediaSession, intent)
+            androidx.media.session.MediaButtonReceiver.handleIntent(mediaSession, intent)
         }
     }
 
-    private inner class EvaPlaybackController : DefaultPlaybackController() {
+    private inner class EvaPlaybackController : DefaultControlDispatcher() {
 
-//        fun onAudioFocusChange(player: Player, it: Int) {
-//            when (it) {
-//                AudioManager.AUDIOFOCUS_GAIN -> {
-//                    /*nothing*/
-//                }
-//                AudioManager.AUDIOFOCUS_LOSS,
-//                AudioManager.AUDIOFOCUS_LOSS_TRANSIENT,
-//                AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
-//                    player.playWhenReady = false
-//                }
-//            }
-//        }
+        var audioFocusChangeListener: AudioManager.OnAudioFocusChangeListener? = null
+        var audioFocusRequest: AudioFocusRequest? = null
 
-        override fun onPlay(player: Player) {
-//            @Suppress("DEPRECATION")
-//            val focusRequestResult = audioManager.requestAudioFocus({ onAudioFocusChange(player, it) },
-//                    AudioManager.STREAM_MUSIC,
-//                    AudioManager.AUDIOFOCUS_GAIN)
-//
-//            if (focusRequestResult == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-//            }
-            player.playWhenReady = true
+        override fun dispatchSetPlayWhenReady(player: Player, playWhenReady: Boolean): Boolean {
+            if (!playWhenReady) {
+                player.playWhenReady = false
+                return true;
+            }
+            val focusRequestResult =
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        audioFocusRequest = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+                                .setAudioAttributes(AudioAttributes.Builder()
+                                        .setUsage(AudioAttributes.USAGE_MEDIA)
+                                        .setContentType(AudioAttributes.CONTENT_TYPE_UNKNOWN)
+                                        .build())
+                                .build()
+
+                        audioManager.requestAudioFocus(audioFocusRequest)
+                    } else {
+                        audioFocusChangeListener = AudioManager.OnAudioFocusChangeListener { focusChange ->
+                            when (focusChange) {
+                                AudioManager.AUDIOFOCUS_GAIN -> {
+                                    /*dont autostart*/
+                                }
+                                AudioManager.AUDIOFOCUS_LOSS,
+                                AudioManager.AUDIOFOCUS_LOSS_TRANSIENT,
+                                AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
+                                    player.playWhenReady = false
+                                }
+                            }
+                        }
+
+                        @Suppress("DEPRECATION")
+                        audioManager.requestAudioFocus(audioFocusChangeListener,
+                                AudioManager.STREAM_MUSIC,
+                                AudioManager.AUDIOFOCUS_GAIN)
+                    }
+
+            if (focusRequestResult == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+                player.playWhenReady = true
+                return true;
+            }
+
+            return false;
         }
 
-        override fun onStop(player: Player) {
-            player.playWhenReady = false
+        override fun dispatchStop(player: Player, reset: Boolean): Boolean {
             player.stop()
-//            @Suppress("DEPRECATION")
-//            audioManager.abandonAudioFocus(audioFocusChangeListener)
-        }
-
-        override fun onPause(player: Player) {
             player.playWhenReady = false
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                audioFocusRequest?.let {
+                    audioManager.abandonAudioFocusRequest(it)
+                }
+            } else {
+                @Suppress("DEPRECATION")
+                audioFocusChangeListener?.let {
+                    audioManager.abandonAudioFocus(it)
+                }
+            }
+            return true;
         }
     }
 
@@ -161,6 +195,9 @@ class AudioPlayerService : Service() {
         val playPauseIcon = if (playing) R.drawable.exo_controls_pause else R.drawable.exo_controls_play
         val playPauseString = if (playing) getString(R.string.pause) else getString(R.string.play)
 
+        val stopIcon = R.drawable.player_controls_stop
+        val stopText = getString(R.string.stop)
+
         return NotificationCompat.Builder(context, createNotificationChannel())
                 .setLargeIcon(novaEvaBitmap)
                 .setSmallIcon(R.drawable.notification_icon)
@@ -172,14 +209,17 @@ class AudioPlayerService : Service() {
                 .setColor(ContextCompat.getColor(context, R.color.novaEva))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .addAction(NotificationCompat.Action(playPauseIcon, playPauseString,
-                        MediaButtonReceiver.buildMediaButtonPendingIntent(context,
+                        androidx.media.session.MediaButtonReceiver.buildMediaButtonPendingIntent(context,
                                 PlaybackStateCompat.ACTION_PLAY_PAUSE)))
+                .addAction(NotificationCompat.Action(stopIcon, stopText,
+                        androidx.media.session.MediaButtonReceiver.buildMediaButtonPendingIntent(context,
+                                PlaybackStateCompat.ACTION_STOP)))
                 .setStyle(MediaStyleCompat()
                         .setMediaSession(mediaSession.sessionToken)
                         .setShowActionsInCompactView(0)
                         .setShowCancelButton(true)
                         .setCancelButtonIntent(
-                                MediaButtonReceiver.buildMediaButtonPendingIntent(context,
+                                androidx.media.session.MediaButtonReceiver.buildMediaButtonPendingIntent(context,
                                         PlaybackStateCompat.ACTION_STOP))
                 )
                 .build()

@@ -1,23 +1,28 @@
 package hr.bpervan.novaeva.fragments
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.edit
 import androidx.core.os.bundleOf
-import com.google.android.gms.analytics.HitBuilders
+import com.google.firebase.analytics.FirebaseAnalytics
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.services.novaEvaService
-import hr.bpervan.novaeva.util.NEW_CONTENT_KEY_PREFIX
-import hr.bpervan.novaeva.util.networkRequest
+import hr.bpervan.novaeva.rest.EvaDomain
+import hr.bpervan.novaeva.rest.NovaEvaService
+import hr.bpervan.novaeva.util.HAS_NEW_CONTENT_KEY_PREFIX
+import hr.bpervan.novaeva.util.dataErrorSnackbar
+import hr.bpervan.novaeva.util.plusAssign
+import hr.bpervan.novaeva.views.applyConfiguredFontSize
+import hr.bpervan.novaeva.views.applyEvaConfiguration
 import hr.bpervan.novaeva.views.loadHtmlText
-import hr.bpervan.novaeva.views.snackbar
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
+import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.collapsing_content_header.view.*
 import kotlinx.android.synthetic.main.fragment_eva_quotes.*
 
@@ -40,8 +45,8 @@ class EvaQuotesFragment : EvaBaseFragment() {
     }
 
     private var quoteTitle: String? = null
-    private var quoteData: String? = null
-    public var quoteId: Long = -1
+    var quoteData: String? = null
+    var quoteId: Long = -1L
 
     private var loadRandomQuoteDisposable: Disposable? = null
         set(value) {
@@ -57,14 +62,8 @@ class EvaQuotesFragment : EvaBaseFragment() {
             quoteData = savedInstanceState.getString(QUOTE_DATA_KEY)
         }
 
-        savedInstanceState ?: NovaEvaApp.defaultTracker
-                .send(HitBuilders.EventBuilder()
-                        .setCategory("Izreke")
-                        .setAction("OtvoreneIzreke")
-                        .build())
-
         prefs.edit {
-            remove("${NEW_CONTENT_KEY_PREFIX}1")
+            remove("$HAS_NEW_CONTENT_KEY_PREFIX.${EvaDomain.QUOTES}")
         }
     }
 
@@ -86,26 +85,23 @@ class EvaQuotesFragment : EvaBaseFragment() {
             showQuote()
         }
 
-        initUI()
-    }
+        disposables += EventPipelines.resizeText.subscribe {
+            webText?.applyConfiguredFontSize(prefs)
+        }
 
-    private fun initUI() {
-        val ctx = context ?: return
-
-        evaCollapsingBar.collapsingToolbar.title = ctx.getString(R.string.quotes)
+        webText.applyEvaConfiguration(prefs)
+        evaCollapsingBar.collapsingToolbar.title = context!!.getString(R.string.quotes)
 
         btnObnovi.setOnClickListener {
             fetchRandomQuote()
         }
+    }
 
-        //todo move to options drawer
-//        options.btnShare.setOnClickListener {
-//            shareIntent(ctx, "http://novaeva.com/node/$contentId")
-//        }
-//        options.btnMail.setOnClickListener {
-//            sendEmailIntent(ctx, quoteTitle!!, "http://novaeva.com/node/$contentId")
-//        }
+    override fun onResume() {
+        super.onResume()
 
+        FirebaseAnalytics.getInstance(requireContext())
+                .setCurrentScreen(requireActivity(), "Izreke", "Proverbs")
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -117,25 +113,21 @@ class EvaQuotesFragment : EvaBaseFragment() {
     }
 
     private fun fetchRandomQuote() {
-        loadRandomQuoteDisposable = novaEvaService.getRandomDirectoryContent(1)
-                .networkRequest({ directoryContent ->
-                    val contentMetadataList = directoryContent.contentMetadataList
-                    if (contentMetadataList.isNotEmpty()) {
-                        val quoteInfo = contentMetadataList[0]
+        loadRandomQuoteDisposable = NovaEvaService.v3.random()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(onSuccess = { content ->
+                    quoteTitle = content.title
+                    quoteData = content.html ?: content.text ?: ""
+                    quoteId = content.id
 
-                        quoteTitle = quoteInfo.title
-                        quoteData = quoteInfo.text
-                        quoteId = quoteInfo.contentId
-
-                        showQuote()
-                    }
+                    showQuote()
                 }, onError = {
-                    view?.snackbar(R.string.network_unavailable, Snackbar.LENGTH_SHORT)
+                    view?.dataErrorSnackbar()
                 })
     }
 
     private fun showQuote() {
-        view ?: return
-        webText.loadHtmlText(quoteData)
+        webText?.loadHtmlText(quoteData)
     }
 }
