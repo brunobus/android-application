@@ -1,5 +1,6 @@
 package hr.bpervan.novaeva.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.ContextThemeWrapper
@@ -7,11 +8,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.edit
+import androidx.core.net.toUri
 import com.google.firebase.analytics.FirebaseAnalytics
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.main.BuildConfig
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.OpenContentEvent
+import hr.bpervan.novaeva.model.ContentDto
 import hr.bpervan.novaeva.model.OpenDirectoryEvent
 import hr.bpervan.novaeva.model.OpenPrayerDirectoryEvent
 import hr.bpervan.novaeva.model.OpenQuotesEvent
@@ -20,11 +22,13 @@ import hr.bpervan.novaeva.rest.NovaEvaService
 import hr.bpervan.novaeva.storage.EvaContentDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
 import hr.bpervan.novaeva.util.*
+import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
 import kotlinx.android.synthetic.main.fragment_dashboard.*
+import java.util.concurrent.TimeUnit
 
 /**
  *
@@ -38,14 +42,14 @@ class EvaDashboardFragment : EvaBaseFragment() {
         }
     }
 
-    private lateinit var emergencyContentTitle: String
+    private lateinit var liveContentTitle: String
 
     private lateinit var realm: Realm
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        emergencyContentTitle = getString(R.string.default_live_title)
+        liveContentTitle = getString(R.string.default_live_title)
 
         realm = Realm.getInstance(RealmConfigProvider.evaDBConfig)
     }
@@ -130,13 +134,17 @@ class EvaDashboardFragment : EvaBaseFragment() {
         }
 
         btnLive?.setOnClickListener {
-            //hardcoded due to emergency
-            EventPipelines.openContent.onNext(OpenContentEvent(
-                    contentId = BuildConfig.V3_LIVE_ID,
-                    title = emergencyContentTitle,
-                    domain = EvaDomain.VOCATION
-            ))
+            EvaContentDbAdapter.loadEvaContent(realm, BuildConfig.V3_LIVE_ID)
+                    ?.videoURL
+                    ?.let { videoUrl ->
+                        startActivity(Intent(Intent.ACTION_VIEW, videoUrl.toUri()))
+                    }
         }
+
+        disposables += EventPipelines.connectedToNetwork
+                .throttleWithTimeout(3, TimeUnit.SECONDS)
+                .flatMapCompletable { liveContentCompletable() }
+                .subscribe()
 
         updateUI()
 
@@ -181,55 +189,33 @@ class EvaDashboardFragment : EvaBaseFragment() {
         }
     }
 
-    private fun checkLiveV2(){
-
-        disposables += NovaEvaService.v2.getContentData(BuildConfig.V2_LIVE_ID)
+    private fun liveContentCompletable(): Completable {
+        return NovaEvaService.v3.content(EvaDomain.VOCATION.domainEndpoint, BuildConfig.V3_LIVE_ID)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(
-                        onSuccess = { emergContent ->
-
-                            if (emergContent.contentId == 0L) {
-                                //content is unpublished
-                                disableLive()
-                            } else {
-                                val title = emergContent.title?.toUpperCase()
-                                        ?: getString(R.string.default_live_title)
-                                val preview = stripTrimAndEllipsizeText(25, emergContent.text) ?: ""
-                                enableLive(title, preview)
-                            }
-                        },
-                        onError = {
-                            disableLive()
-                        })
+                .doOnSuccess { onLiveContentReceived(it) }
+                .doOnError { disableLive() }
+                .ignoreElement()
+                .onErrorComplete()
     }
 
-    private fun checkLiveV3(){
-        disposables += NovaEvaService.v3.content(EvaDomain.VOCATION.domainEndpoint, BuildConfig.V3_LIVE_ID)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(
-                        onSuccess = { emergContent ->
-                            EvaContentDbAdapter.addOrUpdateEvaContentAsync(realm, emergContent) {
-                                if (!emergContent.active) {
-                                    disableLive()
-                                } else {
-                                    val title = emergContent.title?.toUpperCase()
-                                            ?: getString(R.string.default_live_title)
-                                    val preview = stripTrimAndEllipsizeText(25, emergContent.html) ?: ""
-                                    enableLive(title, preview)
-                                }
-                            }
-                        },
-                        onError = {
-                            disableLive()
-                        })
+    private fun onLiveContentReceived(liveContent: ContentDto){
+        EvaContentDbAdapter.addOrUpdateEvaContentAsync(realm, liveContent) {
+            if (!liveContent.active) {
+                disableLive()
+            } else {
+                val title = liveContent.title?.toUpperCase()
+                        ?: getString(R.string.default_live_title)
+                val preview = stripTrimAndEllipsizeText(25, liveContent.html) ?: ""
+                enableLive(title, preview)
+            }
+        }
     }
 
     fun enableLive(title: String, preview: String) {
         btnLive?.isEnabled = true
         btnLive?.text = "$title\n$preview"
-        emergencyContentTitle = title
+        liveContentTitle = title
     }
 
     fun disableLive(){
@@ -243,8 +229,7 @@ class EvaDashboardFragment : EvaBaseFragment() {
         FirebaseAnalytics.getInstance(requireContext())
                 .setCurrentScreen(requireActivity(), "Glavni izbornik", "Dashboard")
 
-//        checkLiveV2()
-        checkLiveV3()
+        disposables += liveContentCompletable().subscribe()
     }
 
     private fun updateLatestContentId(domain: EvaDomain, receivedLatestContentId: Long?) {
