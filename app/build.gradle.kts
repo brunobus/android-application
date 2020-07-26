@@ -51,9 +51,6 @@ android {
             buildConfigField("String", "V3_SERVER_URI", "\"https://api.hr.novaeva.xyz\"")
             buildConfigField("String", "V3_SERVER_AUTH", "\"Basic cmFESW8wMDE6OUtoSjk5MlZSQ0d1bU5hRzlTeWI=\"")
             buildConfigField("String", "DB_NAME", "\"NovaEvaDb_dev.realm\"")
-
-            buildConfigField("long", "V2_LIVE_ID", "202")
-            buildConfigField("long", "V3_LIVE_ID", "2724")
         }
 
         create("production") {
@@ -65,9 +62,6 @@ android {
             buildConfigField("String", "V3_SERVER_URI", "\"https://api.hr.novaeva.com\"")
             buildConfigField("String", "V3_SERVER_AUTH", "\"Basic QW5kUm9pRDAwMTpkM2JXYXdnRFpqcXFWV2dESlJLag==\"")
             buildConfigField("String", "DB_NAME", "\"NovaEvaDb_prod.realm\"")
-
-            buildConfigField("long", "V2_LIVE_ID", "202")
-            buildConfigField("long", "V3_LIVE_ID", "2724")
         }
     }
 

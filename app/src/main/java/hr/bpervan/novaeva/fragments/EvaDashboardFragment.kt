@@ -11,7 +11,6 @@ import androidx.core.content.edit
 import androidx.core.net.toUri
 import com.google.firebase.analytics.FirebaseAnalytics
 import hr.bpervan.novaeva.EventPipelines
-import hr.bpervan.novaeva.main.BuildConfig
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.ContentDto
 import hr.bpervan.novaeva.model.OpenDirectoryEvent
@@ -28,6 +27,7 @@ import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
 import kotlinx.android.synthetic.main.fragment_dashboard.*
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 /**
@@ -42,14 +42,10 @@ class EvaDashboardFragment : EvaBaseFragment() {
         }
     }
 
-    private lateinit var liveContentTitle: String
-
     private lateinit var realm: Realm
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        liveContentTitle = getString(R.string.default_live_title)
 
         realm = Realm.getInstance(RealmConfigProvider.evaDBConfig)
     }
@@ -133,14 +129,6 @@ class EvaDashboardFragment : EvaBaseFragment() {
                     theme = R.style.EvandjeljeTheme))
         }
 
-        btnLive?.setOnClickListener {
-            EvaContentDbAdapter.loadEvaContent(realm, BuildConfig.V3_LIVE_ID)
-                    ?.videoURL
-                    ?.let { videoUrl ->
-                        startActivity(Intent(Intent.ACTION_VIEW, videoUrl.toUri()))
-                    }
-        }
-
         disposables += EventPipelines.connectedToNetwork
                 .throttleWithTimeout(3, TimeUnit.SECONDS)
                 .flatMapCompletable { liveContentCompletable() }
@@ -190,37 +178,51 @@ class EvaDashboardFragment : EvaBaseFragment() {
     }
 
     private fun liveContentCompletable(): Completable {
-        return NovaEvaService.v3.content(EvaDomain.VOCATION.domainEndpoint, BuildConfig.V3_LIVE_ID)
+        return NovaEvaService.v3.categoryContent(EvaDomain.LIVE.domainEndpoint, items = 1)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSuccess { onLiveContentReceived(it) }
+                .doOnSuccess { onLiveContentReceived(it.content?.firstOrNull()) }
                 .doOnError { disableLive() }
                 .ignoreElement()
                 .onErrorComplete()
     }
 
-    private fun onLiveContentReceived(liveContent: ContentDto){
-        EvaContentDbAdapter.addOrUpdateEvaContentAsync(realm, liveContent) {
-            if (!liveContent.active) {
-                disableLive()
-            } else {
-                val title = liveContent.title?.toUpperCase()
-                        ?: getString(R.string.default_live_title)
-                val preview = stripTrimAndEllipsizeText(25, liveContent.html) ?: ""
-                enableLive(title, preview)
+    private fun onLiveContentReceived(liveContent: ContentDto?) {
+        if (liveContent == null) {
+            disableLive()
+        } else {
+            EvaContentDbAdapter.addOrUpdateEvaContentAsync(realm, liveContent) {
+                if (!liveContent.active) {
+                    disableLive()
+                } else {
+                    val title = liveContent.title?.toUpperCase(Locale.getDefault())
+                            ?: getString(R.string.default_live_title)
+                    val preview = stripTrimAndEllipsizeText(25, liveContent.html) ?: ""
+
+                    val videoUrl = liveContent.video?.firstOrNull()?.link
+
+                    if (videoUrl != null) {
+                        enableLive(title, preview, videoUrl)
+                    } else {
+                        disableLive()
+                    }
+                }
             }
         }
     }
 
-    fun enableLive(title: String, preview: String) {
+    fun enableLive(title: String, preview: String, videoUrl: String) {
+        btnLive?.setOnClickListener {
+            startActivity(Intent(Intent.ACTION_VIEW, videoUrl.toUri()))
+        }
         btnLive?.isEnabled = true
         btnLive?.text = "$title\n$preview"
-        liveContentTitle = title
     }
 
     fun disableLive(){
-        btnLive?.text = ""
         btnLive?.isEnabled = false
+        btnLive?.text = ""
+        btnLive?.setOnClickListener(null)
     }
 
     override fun onResume() {

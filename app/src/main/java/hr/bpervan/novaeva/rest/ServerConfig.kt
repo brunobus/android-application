@@ -38,7 +38,9 @@ enum class EvaDomain(@StringRes val title: Int,
     ANSWERS(R.string.answers, "answers"),
     SONGBOOK(R.string.songbook, "songbook", 355),
     RADIO(R.string.radio, "radio"),
-    PRAYERS(R.string.prayerbook, "prayers");
+    PRAYERS(R.string.prayerbook, "prayers"),
+    LIVE(R.string.live, "live")
+    ;
 
     fun isLegacy(): Boolean {
         return this == EvaDomain.GOSPEL || this == EvaDomain.SONGBOOK
