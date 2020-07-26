@@ -12,11 +12,11 @@ import javax.net.ssl.SSLContext
 import javax.net.ssl.X509TrustManager
 
 /**
- * Todo multiple regions
+ *
  */
 object Region {
     const val name: String = "Croatia"
-    const val id: Long = 0
+    const val id: Long = 1
 }
 
 enum class Server(val baseUrl: String, val auth: String?) {
@@ -36,7 +36,7 @@ enum class EvaDomain(@StringRes val title: Int,
     SERMONS(R.string.sermons, "sermons"),
     VOCATION(R.string.vocation, "vocation"),
     ANSWERS(R.string.answers, "answers"),
-    SONGBOOK(R.string.songbook, "songbook", 355),
+    SONGBOOK(R.string.songbook, "songs", 355),
     RADIO(R.string.radio, "radio"),
     PRAYERS(R.string.prayerbook, "prayers"),
     LIVE(R.string.live, "live")
@@ -44,13 +44,6 @@ enum class EvaDomain(@StringRes val title: Int,
 
     fun isLegacy(): Boolean {
         return this == EvaDomain.GOSPEL || this == EvaDomain.SONGBOOK
-    }
-}
-
-fun serverByDomain(domain: EvaDomain): Server {
-    return when (domain) {
-        VOCATION -> Server.V3
-        else -> Server.V2
     }
 }
 

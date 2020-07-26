@@ -18,7 +18,6 @@ import hr.bpervan.novaeva.model.toDbModel
 import hr.bpervan.novaeva.player.getStreamLinksFromPlaylist
 import hr.bpervan.novaeva.rest.EvaDomain
 import hr.bpervan.novaeva.rest.NovaEvaService
-import hr.bpervan.novaeva.rest.serverByDomain
 import hr.bpervan.novaeva.util.dataErrorSnackbar
 import hr.bpervan.novaeva.util.plusAssign
 import io.reactivex.Maybe
@@ -117,7 +116,7 @@ class RadioFragment : EvaBaseFragment() {
                                     radioStation.title.ifEmpty { "nepoznato" },
                                     isRadio = true,
                                     doAutoPlay = true,
-                                    auth = serverByDomain(EvaDomain.RADIO).auth)
+                                    auth = null)
                             break
                         } catch (e: Exception) {
                             /*continue*/

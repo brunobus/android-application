@@ -22,7 +22,6 @@ import hr.bpervan.novaeva.model.OpenQuotesEvent
 import hr.bpervan.novaeva.player.getStreamLinksFromPlaylist
 import hr.bpervan.novaeva.rest.EvaDomain
 import hr.bpervan.novaeva.rest.NovaEvaService
-import hr.bpervan.novaeva.rest.serverByDomain
 import hr.bpervan.novaeva.storage.RealmConfigProvider
 import hr.bpervan.novaeva.util.*
 import hr.bpervan.novaeva.util.TransitionAnimation.*
@@ -309,7 +308,7 @@ class EvaActivity : EvaBaseActivity() {
                                     radioStation.title ?: "nepoznato",
                                     isRadio = true,
                                     doAutoPlay = true,
-                                    auth = serverByDomain(EvaDomain.RADIO).auth)
+                                    auth = null)
                             break
                         } catch (e: Exception) {
                             /*continue*/

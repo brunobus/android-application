@@ -11,7 +11,7 @@ import retrofit2.http.Query
 interface NovaEvaApiV3 {
 
     @GET("/general/changes")
-    fun latest(): Single<LatestByDomainDto>
+    fun latest(@Query("regionId") regionId: Long = Region.id): Single<LatestByDomainDto>
 
 
     @GET("{domain}/categories/{categoryId}/include-subs?is_active=true")
@@ -19,7 +19,7 @@ interface NovaEvaApiV3 {
                         @Path("categoryId") categoryId: Long = 0,
                         @Query("page") page: Long = 1,
                         @Query("items") items: Long = 20,
-                        @Query("region") region: Long = Region.id): Single<CategoryDto>
+                        @Query("regionId") regionId: Long = Region.id): Single<CategoryDto>
 
     @GET("{domain}/{contentId}")
     fun content(@Path("domain") domain: String,
@@ -27,5 +27,5 @@ interface NovaEvaApiV3 {
 
     @GET("{domain}/random")
     fun random(@Path("domain") domain: String = EvaDomain.QUOTES.domainEndpoint,
-               @Query("region") region: Long = Region.id): Single<ContentDto>
+               @Query("regionId") regionId: Long = Region.id): Single<ContentDto>
 }

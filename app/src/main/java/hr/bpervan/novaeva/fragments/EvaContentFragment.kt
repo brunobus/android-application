@@ -19,7 +19,6 @@ import hr.bpervan.novaeva.model.EvaContent
 import hr.bpervan.novaeva.model.OpenContentEvent
 import hr.bpervan.novaeva.rest.EvaDomain
 import hr.bpervan.novaeva.rest.NovaEvaService
-import hr.bpervan.novaeva.rest.serverByDomain
 import hr.bpervan.novaeva.storage.EvaContentDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
 import hr.bpervan.novaeva.util.dataErrorSnackbar
@@ -115,7 +114,7 @@ class EvaContentFragment : EvaBaseFragment() {
                     evaContent.title,
                     isRadio = false,
                     doAutoPlay = false,
-                    auth = serverByDomain(domain).auth)
+                    auth = null)
 
             player_view?.apply {
                 NovaEvaApp.evaPlayer.supplyPlayerToView(this, evaContent.id.toString())
