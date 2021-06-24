@@ -139,7 +139,7 @@ class AudioPlayerService : Service() {
                                         .build())
                                 .build()
 
-                        audioManager.requestAudioFocus(audioFocusRequest)
+                        audioManager.requestAudioFocus(audioFocusRequest!!)
                     } else {
                         audioFocusChangeListener = AudioManager.OnAudioFocusChangeListener { focusChange ->
                             when (focusChange) {

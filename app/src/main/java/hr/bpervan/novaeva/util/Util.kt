@@ -49,7 +49,7 @@ fun logError(throwable: Throwable) {
 
 inline fun <reified T : Enum<T>> enumValueOrNull(name: String?): T? {
     name ?: return null
-    return T::class.java.enumConstants.firstOrNull { it.name == name }
+    return T::class.java.enumConstants?.firstOrNull { it.name == name }
 }
 
 fun isDarkColor(color: Int): Boolean {

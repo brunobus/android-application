@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.config.KotlinCompilerVersion
 
 plugins {
     id("com.android.application")
@@ -12,15 +11,15 @@ plugins {
 apply(plugin = "com.google.gms.google-services")
 
 android {
-    compileSdkVersion(28)
-    buildToolsVersion = "28.0.3"
+    compileSdkVersion(29)
+    buildToolsVersion = "29.0.2"
 
     defaultConfig {
         applicationId = "hr.bpervan.novaeva.main"
         minSdkVersion(16)
-        targetSdkVersion(28)
-        versionCode = 160030100
-        versionName = "3.1.0"
+        targetSdkVersion(29)
+        versionCode = 160030200
+        versionName = "3.2.0"
     }
 
     buildTypes {
@@ -34,6 +33,11 @@ android {
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
 
     flavorDimensions("server")
@@ -64,11 +68,6 @@ android {
             buildConfigField("String", "DB_NAME", "\"NovaEvaDb_prod.realm\"")
         }
     }
-
-    compileOptions {
-        setTargetCompatibility(JavaVersion.VERSION_1_8)
-        setSourceCompatibility(JavaVersion.VERSION_1_8)
-    }
 }
 
 dependencies {
@@ -82,7 +81,7 @@ dependencies {
     implementation("androidx.recyclerview:recyclerview:1.0.0")
     implementation("androidx.constraintlayout:constraintlayout:1.1.3")
 
-    implementation(kotlin("stdlib-jdk7", KotlinCompilerVersion.VERSION))
+    implementation(kotlin("stdlib-jdk7", "1.5.20"))
 
     implementation("io.reactivex.rxjava2:rxjava:2.2.10")
     implementation("io.reactivex.rxjava2:rxkotlin:2.4.0")
