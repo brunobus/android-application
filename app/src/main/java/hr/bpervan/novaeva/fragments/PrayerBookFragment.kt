@@ -15,6 +15,7 @@ import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaDirectory
 import hr.bpervan.novaeva.model.OpenPrayerDirectoryEvent
 import hr.bpervan.novaeva.rest.EvaDomain
+import kotlinx.android.synthetic.main.collapsing_prayerbook_header.view.*
 import kotlinx.android.synthetic.main.fragment_prayers.*
 import kotlinx.android.synthetic.main.top_prayerbook.*
 
@@ -78,6 +79,12 @@ class PrayerBookFragment : EvaAbstractDirectoryFragment() {
         recyclerView.layoutManager = linearLayoutManager
         recyclerView.itemAnimator = androidx.recyclerview.widget.DefaultItemAnimator()
         recyclerView.adapter = adapter
+
+        val coverImageView = collapsingPrayerHeader.prayerCollapsingToolbar.prayerCoverImage
+        val url = prefs.getString("hr.bpervan.novaeva.categoryheader.$domain", null)
+        if (url != null && coverImageView != null) {
+            imageLoader.displayImage(url, coverImageView)
+        }
     }
 
     override fun onResume() {

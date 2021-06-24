@@ -4,16 +4,12 @@ import android.util.Log
 import androidx.annotation.StringRes
 import hr.bpervan.novaeva.main.BuildConfig
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.rest.EvaDomain.VOCATION
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import java.security.cert.X509Certificate
 import javax.net.ssl.SSLContext
 import javax.net.ssl.X509TrustManager
 
-/**
- *
- */
 object Region {
     const val name: String = "Croatia"
     const val id: Long = 1
@@ -36,14 +32,14 @@ enum class EvaDomain(@StringRes val title: Int,
     SERMONS(R.string.sermons, "sermons"),
     VOCATION(R.string.vocation, "vocation"),
     ANSWERS(R.string.answers, "answers"),
-    SONGBOOK(R.string.songbook, "songs", 355),
+    SONGS(R.string.songbook, "songs"),
     RADIO(R.string.radio, "radio"),
     PRAYERS(R.string.prayerbook, "prayers"),
     LIVE(R.string.live, "live")
     ;
 
     fun isLegacy(): Boolean {
-        return this == EvaDomain.GOSPEL || this == EvaDomain.SONGBOOK
+        return this == EvaDomain.GOSPEL
     }
 }
 

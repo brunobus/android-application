@@ -151,7 +151,8 @@ class EvaContentFragment : EvaBaseFragment() {
                 btnPoziv.setOnClickListener {
                     sendEmailIntent(context,
                             subject = getString(R.string.thinking_of_vocation),
-                            text = "Hvaljen Isus i Marija, javljam vam se jer razmišljam o duhovnom pozivu.",
+                            text = getString(R.string.mail_preamble_praise_the_lord)
+                                    + getString(R.string.mail_intro_vocation),
                             receiver = getString(R.string.vocation_email))
                 }
             }

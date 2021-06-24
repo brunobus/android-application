@@ -82,8 +82,8 @@ class EvaDashboardFragment : EvaBaseFragment() {
         }
         btnPjesmarica.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
-                    title = getString(EvaDomain.SONGBOOK.title),
-                    domain = EvaDomain.SONGBOOK,
+                    title = getString(EvaDomain.SONGS.title),
+                    domain = EvaDomain.SONGS,
                     theme = R.style.PjesmaricaTheme))
         }
         btnAktualno.setOnClickListener {
@@ -144,7 +144,6 @@ class EvaDashboardFragment : EvaBaseFragment() {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeBy(onSuccess = { indicatorsDTO ->
                         updateLatestContentId(EvaDomain.GOSPEL, indicatorsDTO.gospel)
-                        updateLatestContentId(EvaDomain.SONGBOOK, indicatorsDTO.songbook)
 
                         updateUI()
                         prefs.edit {
@@ -165,6 +164,7 @@ class EvaDashboardFragment : EvaBaseFragment() {
                         updateLatestContentId(EvaDomain.SERMONS, latest.sermons.content)
                         updateLatestContentId(EvaDomain.ANSWERS, latest.answers.content)
                         updateLatestContentId(EvaDomain.VOCATION, latest.vocation.content)
+                        updateLatestContentId(EvaDomain.SONGS, latest.songs.content)
 
                         updateUI()
 
@@ -219,7 +219,7 @@ class EvaDashboardFragment : EvaBaseFragment() {
         btnLive?.text = "$title\n$preview"
     }
 
-    fun disableLive(){
+    fun disableLive() {
         btnLive?.isEnabled = false
         btnLive?.text = ""
         btnLive?.setOnClickListener(null)
@@ -261,7 +261,7 @@ class EvaDashboardFragment : EvaBaseFragment() {
         btnPropovijedi.indicateNews = hasNewContent(EvaDomain.SERMONS)
         btnOdgovori.indicateNews = hasNewContent(EvaDomain.ANSWERS)
         btnPoziv.indicateNews = hasNewContent(EvaDomain.VOCATION)
-        btnPjesmarica.indicateNews = hasNewContent(EvaDomain.SONGBOOK)
+        btnPjesmarica.indicateNews = hasNewContent(EvaDomain.SONGS)
     }
 
     override fun onDestroy() {

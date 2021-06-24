@@ -7,7 +7,6 @@ import android.util.Log
 import androidx.core.content.edit
 import androidx.core.os.postDelayed
 import androidx.recyclerview.widget.RecyclerView
-import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.model.EvaDirectory
 import hr.bpervan.novaeva.model.EvaDomainInfo
 import hr.bpervan.novaeva.model.EvaNode
@@ -212,6 +211,10 @@ abstract class EvaAbstractDirectoryFragment : EvaBaseFragment() {
                     if (directoryId == 0L) {
                         directoryId = categoryDto.id
                         createIfMissingAndSubscribeToEvaDirectoryUpdates()
+                    }
+
+                    if (categoryDto.domain == null) {
+                        categoryDto.domain = domain
                     }
 
                     EvaDirectoryDbAdapter.addOrUpdateEvaCategoryAsync(realm, categoryDto)
