@@ -25,7 +25,6 @@
         android:text="KATEGORIJA"
         android:textColor="#ffffff"
         android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
@@ -35,9 +34,23 @@
         android:layout_height="wrap_content"
         android:contentDescription="@string/dummyDesc"
         android:src="?attr/categoryIconSrc"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/izbornikTopNazivKategorije"
         app:layout_constraintEnd_toStartOf="@id/verticalScreenGuideline"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
+
+    <androidx.appcompat.widget.SearchView
+            app:iconifiedByDefault="false"
+            android:inputType="text"
+            app:defaultQueryHint="@string/to_search"
+            android:id="@+id/directorySearchView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/izbornikTopNazivKategorije"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:theme="@style/SearchViewStyle"
+    />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

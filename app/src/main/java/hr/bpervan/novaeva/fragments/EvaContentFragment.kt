@@ -17,6 +17,7 @@ import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.model.EvaContent
 import hr.bpervan.novaeva.model.OpenContentEvent
+import hr.bpervan.novaeva.model.toDbModel
 import hr.bpervan.novaeva.rest.EvaDomain
 import hr.bpervan.novaeva.rest.NovaEvaService
 import hr.bpervan.novaeva.storage.EvaContentDbAdapter
@@ -200,7 +201,11 @@ class EvaContentFragment : EvaBaseFragment() {
         if ((evaContent == null || savedInstanceState == null) && domain.isLegacy()) {
             fetchContentFromServer_legacy(contentId)
         } else {
-            this.evaContent = evaContent
+            if (evaContent != null) {
+                this.evaContent = evaContent
+            } else {
+                fetchContentFromServer(contentId)
+            }
         }
     }
 
@@ -218,18 +223,36 @@ class EvaContentFragment : EvaBaseFragment() {
 
     private fun fetchContentFromServer_legacy(contentId: Long) {
         disposables += NovaEvaService.v2.getContentData(contentId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onSuccess = { contentDataDTO ->
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(
+                onSuccess = { contentDataDTO ->
                     contentDataDTO.domain = domain
                     EvaContentDbAdapter.addOrUpdateEvaContentAsync_legacy(realm, contentDataDTO) {
                         evaContent = EvaContentDbAdapter.loadEvaContent(realm, contentId)
                     }
-                }, onError = {
+                },
+                onError = {
                     Log.e("fetchContentLegacy", it.message, it)
                     view?.dataErrorSnackbar()
                     //load old
                     evaContent = EvaContentDbAdapter.loadEvaContent(realm, contentId)
                 })
+    }
+
+    private fun fetchContentFromServer(contentId: Long) {
+        disposables += NovaEvaService.v3.content(domain.domainEndpoint, contentId)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(
+                onSuccess = { contentDto ->
+                    contentDto.domain = domain
+                    evaContent = contentDto.toDbModel()
+                },
+                onError = {
+                    Log.e("fetchContent", it.message, it)
+                    view?.dataErrorSnackbar()
+                }
+            )
     }
 }

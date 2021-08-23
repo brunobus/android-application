@@ -6,15 +6,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
-import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.analytics.FirebaseAnalytics
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.PrayerCategoryRecyclerAdapter
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.EvaContent
+import hr.bpervan.novaeva.model.CategoryDto
 import hr.bpervan.novaeva.model.EvaDirectory
 import hr.bpervan.novaeva.model.OpenPrayerDirectoryEvent
+import hr.bpervan.novaeva.model.toDbModel
 import hr.bpervan.novaeva.rest.EvaDomain
 import hr.bpervan.novaeva.views.onLayoutComplete
 import kotlinx.android.synthetic.main.fragment_prayers.*
@@ -91,6 +91,14 @@ class PrayerListFragment : EvaAbstractDirectoryFragment() {
 
         FirebaseAnalytics.getInstance(requireContext())
                 .setCurrentScreen(requireActivity(), "Molitve '$directoryTitle'".take(36), "PrayerList")
+    }
+
+    override fun fillElements(categoryDto: CategoryDto) {
+        elementsList.clear()
+
+        val contentSorted = categoryDto.content.orEmpty().map { it.toDbModel() }.sortedByDescending { it.position }
+
+        elementsList.addAll(contentSorted)
     }
 
     override fun fillElements(evaDirectory: EvaDirectory) {

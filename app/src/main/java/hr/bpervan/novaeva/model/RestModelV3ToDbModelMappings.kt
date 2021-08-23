@@ -17,15 +17,14 @@ fun CategoryInfoDto.toDbModel(mergeWith: EvaDirectory? = null): EvaDirectory {
 
 fun LinkDto.toDbModel(): EvaResource {
     return EvaResource(
-            id = id,
-            title = title,
-            url = link
+        id = id,
+        title = title,
+        url = link
     )
 }
 
 fun ContentDto.toDbModel(mergeWith: EvaContent? = null): EvaContent {
     val dto = this
-
     val evaContent = mergeWith ?: EvaContent(id = dto.id)
 
     return evaContent.apply {
@@ -36,14 +35,14 @@ fun ContentDto.toDbModel(mergeWith: EvaContent? = null): EvaContent {
         title = dto.title.orEmpty()
         text = dto.html ?: dto.text.orEmpty()
         attachments = documents.orEmpty()
-                .map { doc -> EvaAttachment(doc.title.orEmpty(), doc.link.orEmpty()) }
-                .map { evaContent.realm?.copyToRealm(it) ?: it }
-                .toTypedArray()
-                .toRealmList()
+            .map { doc -> EvaAttachment(doc.title.orEmpty(), doc.link.orEmpty()) }
+            .map { evaContent.realm?.copyToRealm(it) ?: it }
+            .toTypedArray()
+            .toRealmList()
         image = dto.images.orEmpty()
-                .firstOrNull()
-                ?.toDbModel()
-                ?.let { realm?.copyToRealm(it) ?: it }
+            .firstOrNull()
+            ?.toDbModel()
+            ?.let { realm?.copyToRealm(it) ?: it }
         videoURL = dto.video?.firstOrNull()?.link
         audioURL = dto.audio?.firstOrNull()?.link
         audioTitle = dto.audio?.firstOrNull()?.title
@@ -57,3 +56,15 @@ fun ContentDto.toDbModel(mergeWith: EvaContent? = null): EvaContent {
         position = dto.position
     }
 }
+
+//fun CategoryDto.toDbModel(mergeWith: EvaDirectory? = null): EvaDirectory {
+//    val dto = this
+//    val evaDirectory = mergeWith ?: EvaDirectory(id = dto.id)
+//
+//    return evaDirectory.apply {
+//        domain = dto.domain?.toString()
+//        title = dto.title.orEmpty()
+//        image = dto.images.orEmpty().firstOrNull()?.toDbModel()?.let { realm?.copyToRealm(it) ?: it }
+//        subCategories = dto.subcategories.map { it.toDbModel() }
+//    }
+//}

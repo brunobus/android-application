@@ -113,8 +113,7 @@ class EvaActivity : EvaBaseActivity() {
     }
 
     private fun updateDomainRoot(domainInfo: EvaDomainInfo) {
-        disposables += NovaEvaService.v3.categoryContent(domainInfo.endpointRoot,
-                categoryId = 0, page = 1, items = 1)
+        disposables += NovaEvaService.v3.categoryContent(domainInfo.endpointRoot, categoryId = 0, page = 1, items = 1)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(onSuccess = { categoryDto ->
@@ -183,10 +182,6 @@ class EvaActivity : EvaBaseActivity() {
 
         disposables += bus.goHome.subscribeThrottled(::openDashboardFragment)
         disposables += bus.openContent.subscribeThrottled(::openContentFragment)
-
-        disposables += bus.search.subscribeThrottled {
-            addToBackStack(mainContainerId, EvaSearchFragment, it, FADE, true)
-        }
 
         disposables += bus.openDirectory.subscribeThrottled {
             addToBackStack(mainContainerId, EvaDirectoryFragment, it, it.animation, false)

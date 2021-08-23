@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.core.content.edit
 import androidx.core.os.postDelayed
 import androidx.recyclerview.widget.RecyclerView
+import hr.bpervan.novaeva.model.CategoryDto
 import hr.bpervan.novaeva.model.EvaDirectory
 import hr.bpervan.novaeva.model.EvaDomainInfo
 import hr.bpervan.novaeva.model.EvaNode
@@ -26,7 +27,6 @@ import io.realm.kotlin.where
  *
  */
 abstract class EvaAbstractDirectoryFragment : EvaBaseFragment() {
-
 
     private val handler = Handler()
 
@@ -54,6 +54,9 @@ abstract class EvaAbstractDirectoryFragment : EvaBaseFragment() {
     protected var hasMore = true
     protected var fetchingFromServer = true
     protected var loadingFromDb = true
+
+    @Volatile
+    protected var useLocalDb: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -127,6 +130,14 @@ abstract class EvaAbstractDirectoryFragment : EvaBaseFragment() {
         }
     }
 
+    protected fun unsubscribeFromDirectoryUpdates() {
+        evaDirectoryChangesDisposable?.dispose()
+        elementsList.clear()
+        adapter.notifyDataSetChanged()
+    }
+
+    abstract fun fillElements(categoryDto: CategoryDto)
+
     abstract fun fillElements(evaDirectory: EvaDirectory)
 
     override fun onConfigurationChanged(newConfig: Configuration?) {
@@ -151,6 +162,7 @@ abstract class EvaAbstractDirectoryFragment : EvaBaseFragment() {
 
     protected var pageOn: Long = -99
 
+    @Deprecated("legacy")
     protected fun fetchEvaDirectoryDataFromServer_legacy(timestamp: Long? = null) {
         fetchingFromServer = true
         refreshLoadingCircleState()
@@ -192,7 +204,7 @@ abstract class EvaAbstractDirectoryFragment : EvaBaseFragment() {
                 })
     }
 
-    protected fun fetchEvaDirectoryDataFromServer(page: Long = 1) {
+    protected fun fetchEvaDirectoryDataFromServer(page: Long = 1, searchQuery: String? = null) {
         fetchingFromServer = true
         refreshLoadingCircleState()
 
@@ -201,12 +213,22 @@ abstract class EvaAbstractDirectoryFragment : EvaBaseFragment() {
                         domain = domain.domainEndpoint,
                         categoryId = directoryId,
                         page = page,
-                        items = fetchItems)
+                        items = fetchItems,
+                        searchQuery = searchQuery)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(onSuccess = { categoryDto ->
-                    loadingFromDb = true
+
                     fetchingFromServer = false
+
+                    if (!useLocalDb) {
+                        loadingFromDb = false
+                        fillElements(categoryDto)
+                        adapter.notifyDataSetChanged()
+                        return@subscribeBy
+                    }
+
+                    loadingFromDb = true
 
                     if (directoryId == 0L) {
                         directoryId = categoryDto.id

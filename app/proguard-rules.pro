@@ -23,3 +23,4 @@
 -keep class hr.bpervan.novaeva.** { *; }
 -keep class io.realm.** { *; }
 -ignorewarnings
+-dontobfuscate

@@ -12,8 +12,10 @@ import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.PrayerBookRecyclerAdapter
 import hr.bpervan.novaeva.main.R
+import hr.bpervan.novaeva.model.CategoryDto
 import hr.bpervan.novaeva.model.EvaDirectory
 import hr.bpervan.novaeva.model.OpenPrayerDirectoryEvent
+import hr.bpervan.novaeva.model.toDbModel
 import hr.bpervan.novaeva.rest.EvaDomain
 import kotlinx.android.synthetic.main.collapsing_prayerbook_header.view.*
 import kotlinx.android.synthetic.main.fragment_prayers.*
@@ -92,6 +94,15 @@ class PrayerBookFragment : EvaAbstractDirectoryFragment() {
 
         FirebaseAnalytics.getInstance(requireContext())
                 .setCurrentScreen(requireActivity(), "Molitvenik", "PrayerBook")
+    }
+
+    override fun fillElements(categoryDto: CategoryDto) {
+
+        elementsList.clear()
+
+        val subcategoriesSorted = categoryDto.subcategories.orEmpty().map{it.toDbModel()}.sortedByDescending { it.position }
+
+        elementsList.addAll(subcategoriesSorted)
     }
 
     override fun fillElements(evaDirectory: EvaDirectory) {

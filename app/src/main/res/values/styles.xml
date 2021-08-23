@@ -204,4 +204,9 @@
 
     <style name="BreviaryTheme" parent="VioletTheme"/>
 
+    <style name="SearchViewStyle" parent="Widget.AppCompat.SearchView.ActionBar">
+        <item name="colorAccent">@color/White</item>
+    </style>
+
+
 </resources>

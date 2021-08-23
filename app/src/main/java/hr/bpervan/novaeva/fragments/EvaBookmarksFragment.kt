@@ -1,14 +1,11 @@
 package hr.bpervan.novaeva.fragments
 
-import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import com.google.firebase.analytics.FirebaseAnalytics
-import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
@@ -18,7 +15,6 @@ import hr.bpervan.novaeva.storage.RealmConfigProvider
 import io.reactivex.disposables.Disposable
 import io.realm.Realm
 import kotlinx.android.synthetic.main.fragment_bookmarks.*
-import java.util.*
 
 /**
  *
@@ -92,22 +88,5 @@ class EvaBookmarksFragment : EvaBaseFragment() {
                     bookmarksList.add(it)
                     adapter.notifyDataSetChanged()
                 }
-    }
-
-
-    private fun showSearchPopup() {
-        activity?.let { activity ->
-            val searchBuilder = AlertDialog.Builder(activity)
-            searchBuilder.setTitle("Pretraga")
-            val et = EditText(activity)
-            searchBuilder.setView(et)
-            searchBuilder.setPositiveButton("Pretrazi") { _, _ ->
-                val searchString = et.text.toString()
-                EventPipelines.search.onNext(searchString)
-            }
-            searchBuilder.setNegativeButton("Odustani") { _, _ -> }
-
-            searchBuilder.show()
-        }
     }
 }

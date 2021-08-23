@@ -29,8 +29,6 @@ open class EvaDirectory(
         @PrimaryKey
         var id: Long = -1,
         var domain: String? = null,
-//        var created: Long = 0,
-//        var modified: Long = created,
         var title: String = "",
         var image: EvaResource? = null,
         var subCategories: RealmList<EvaDirectory> = RealmList(),
