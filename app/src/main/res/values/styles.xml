@@ -56,8 +56,10 @@
     <style name="AppTheme" parent="AppThemeBase"/>
 
     <style name="LauncherThemeBase" parent="AppTheme">
-        <item name="android:windowBackground">@drawable/splash</item>
+
+        <item name="android:windowBackground">@drawable/bitmap_splash</item>
         <item name="colorPrimaryDark">@color/Transparent</item>
+        <item name="android:scaleType">centerCrop</item>
     </style>
 
     <style name="LauncherTheme" parent="LauncherThemeBase"/>
