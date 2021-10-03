@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_pressed="true">
-        <shape xmlns:android="http://schemas.android.com/apk/res/android">
-            <stroke android:width="1px" android:color="@color/Black"/>
-            <solid android:color="@color/evaDarkBlueTrans"/>
+        <shape>
+            <solid android:color="@color/evaDarkBlue"/>
             <corners android:radius="25dp"/>
         </shape>
     </item>
     <item>
-        <shape xmlns:android="http://schemas.android.com/apk/res/android">
-            <stroke android:width="1px" android:color="@color/Black"/>
-            <solid android:color="@color/evaDarkBlue"/>
+        <shape>
+            <solid android:color="@color/evaDarkBlueTrans"/>
             <corners android:radius="25dp"/>
         </shape>
     </item>
