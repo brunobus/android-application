@@ -41,7 +41,7 @@
 
     <!-- Application theme. -->
     <style name="AppThemeBase" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:windowBackground">@drawable/background_01</item>
+        <item name="android:windowBackground">@drawable/background_02</item>
         <item name="android:windowNoTitle">true</item>
         <item name="colorPrimary">@color/novaEva</item>
         <item name="colorPrimaryDark">@color/novaEvaDark</item>

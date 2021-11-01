@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:drawable="@drawable/layer_poziv_btn_press" android:state_pressed="true"/>
+    <item android:drawable="@drawable/poziv_pressed_btn"
+          android:state_pressed="true"/>
     <item android:drawable="@drawable/poziv_btn"
           android:state_pressed="false"
           app:indicate_news="false"
         />
-    <item android:drawable="@drawable/layer_poziv_news_indicator"
+    <item android:drawable="@drawable/poziv_unread_btn"
           android:state_pressed="false"
           app:indicate_news="true"/>
 </selector>

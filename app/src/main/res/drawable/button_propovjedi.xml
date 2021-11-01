@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:drawable="@drawable/layer_propovijedi_btn_press"
+    <item android:drawable="@drawable/propovijedi_pressed_btn"
           android:state_pressed="true"/>
     <item android:drawable="@drawable/propovijedi_btn"
           android:state_pressed="false"
           app:indicate_news="false"/>
-    <item android:drawable="@drawable/layer_propovijedi_news_indicator"
+    <item android:drawable="@drawable/propovijedi_unread_btn"
           android:state_pressed="false"
           app:indicate_news="true"/>
 
