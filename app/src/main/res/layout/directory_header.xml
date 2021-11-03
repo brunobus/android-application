@@ -22,7 +22,7 @@
         android:paddingLeft="60dp"
         android:paddingRight="10dp"
         android:paddingStart="60dp"
-        android:text="KATEGORIJA"
+        android:text=""
         android:textColor="#ffffff"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"

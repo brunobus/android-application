@@ -9,12 +9,12 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
+import hr.bpervan.novaeva.main.databinding.FragmentBookmarksBinding
 import hr.bpervan.novaeva.model.EvaContent
 import hr.bpervan.novaeva.storage.EvaContentDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
 import io.reactivex.disposables.Disposable
 import io.realm.Realm
-import kotlinx.android.synthetic.main.fragment_bookmarks.*
 
 /**
  *
@@ -28,6 +28,8 @@ class EvaBookmarksFragment : EvaBaseFragment() {
         }
     }
 
+    private var _viewBinding: FragmentBookmarksBinding? = null
+    private val viewBinding get() = _viewBinding!!
 
     private var loadBookmarksFromDbDisposable: Disposable? = null
         set(value) {
@@ -48,7 +50,8 @@ class EvaBookmarksFragment : EvaBaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_bookmarks, container, false)
+        _viewBinding = FragmentBookmarksBinding.inflate(inflater, container, false)
+        return viewBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -58,7 +61,7 @@ class EvaBookmarksFragment : EvaBaseFragment() {
         EventPipelines.changeStatusbarColor.onNext(R.color.VeryDarkGray)
         EventPipelines.changeFragmentBackgroundResource.onNext(R.color.White)
 
-        val recyclerView = evaRecyclerView as androidx.recyclerview.widget.RecyclerView
+        val recyclerView = viewBinding.evaRecyclerView.root
 
         recyclerView.adapter = adapter
         recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(recyclerView.context)
@@ -79,6 +82,11 @@ class EvaBookmarksFragment : EvaBaseFragment() {
 
         FirebaseAnalytics.getInstance(requireContext())
                 .setCurrentScreen(requireActivity(), "Zabilješke", "Bookmarks")
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _viewBinding = null
     }
 
     private fun reloadBookmarksFromDb() {

@@ -13,16 +13,18 @@ import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.*
+import hr.bpervan.novaeva.main.databinding.FragmentDirectoryContentsBinding
+import hr.bpervan.novaeva.model.CategoryDto
+import hr.bpervan.novaeva.model.EvaDirectory
+import hr.bpervan.novaeva.model.OpenDirectoryEvent
+import hr.bpervan.novaeva.model.TIMESTAMP_FIELD
+import hr.bpervan.novaeva.model.toDbModel
 import hr.bpervan.novaeva.rest.EvaDomain
 import hr.bpervan.novaeva.storage.EvaDirectoryDbAdapter
 import hr.bpervan.novaeva.util.plusAssign
 import hr.bpervan.novaeva.util.sendEmailIntent
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.realm.Sort
-import kotlinx.android.synthetic.main.collapsing_directory_header.view.*
-import kotlinx.android.synthetic.main.directory_header.view.*
-import kotlinx.android.synthetic.main.fragment_directory_contents.*
 import java.util.concurrent.TimeUnit
 
 /**
@@ -42,6 +44,9 @@ class EvaDirectoryFragment : EvaAbstractDirectoryFragment() {
     }
 
     private lateinit var initializer: OpenDirectoryEvent
+
+    private var _viewBinding: FragmentDirectoryContentsBinding? = null
+    private val viewBinding get() = _viewBinding!!
 
     private var themeId: Int = -1
 
@@ -66,11 +71,10 @@ class EvaDirectoryFragment : EvaAbstractDirectoryFragment() {
         super.onSaveInstanceState(outState)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val inflaterToUse =
-            if (themeId != -1) inflater.cloneInContext(ContextThemeWrapper(activity, themeId))
-            else inflater
-        return inflaterToUse.inflate(R.layout.fragment_directory_contents, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        val newInflater = if (themeId != -1) inflater.cloneInContext(ContextThemeWrapper(activity, themeId)) else inflater
+        _viewBinding = FragmentDirectoryContentsBinding.inflate(newInflater, container, false)
+        return viewBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -80,12 +84,12 @@ class EvaDirectoryFragment : EvaAbstractDirectoryFragment() {
         EventPipelines.changeStatusbarColor.onNext(R.color.VeryDarkGray)
         EventPipelines.changeFragmentBackgroundResource.onNext(R.color.White)
 
-        evaDirectoryCollapsingBar.izbornikTop.izbornikTopNazivKategorije.apply {
+        viewBinding.evaDirectoryCollapsingBar.izbornikTop.izbornikTopNazivKategorije.apply {
             text = directoryTitle
             typeface = NovaEvaApp.openSansBold
         }
 
-        val recyclerView = evaRecyclerView as androidx.recyclerview.widget.RecyclerView
+        val recyclerView = viewBinding.evaRecyclerView.root
 
         val linearLayoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
         recyclerView.layoutManager = linearLayoutManager
@@ -95,8 +99,8 @@ class EvaDirectoryFragment : EvaAbstractDirectoryFragment() {
 
         when (domain) {
             EvaDomain.VOCATION -> {
-                btnPoziv.isVisible = true
-                btnPoziv.setOnClickListener {
+                viewBinding.btnPoziv.isVisible = true
+                viewBinding.btnPoziv.setOnClickListener {
                     sendEmailIntent(
                         context,
                         subject = getString(R.string.thinking_of_vocation),
@@ -107,8 +111,8 @@ class EvaDirectoryFragment : EvaAbstractDirectoryFragment() {
                 }
             }
             EvaDomain.ANSWERS -> {
-                btnPitanje.isVisible = true
-                btnPitanje.setOnClickListener {
+                viewBinding.btnPitanje.isVisible = true
+                viewBinding.btnPitanje.setOnClickListener {
                     sendEmailIntent(
                         context,
                         subject = getString(R.string.having_a_question),
@@ -128,7 +132,7 @@ class EvaDirectoryFragment : EvaAbstractDirectoryFragment() {
                 onSearch(searchQuery)
             }
 
-        val searchView = evaDirectoryCollapsingBar.izbornikTop.directorySearchView
+        val searchView = viewBinding.evaDirectoryCollapsingBar.izbornikTop.directorySearchView
 
         if (domain.isLegacy()) {
             searchView.visibility = View.GONE
@@ -167,6 +171,11 @@ class EvaDirectoryFragment : EvaAbstractDirectoryFragment() {
 
         FirebaseAnalytics.getInstance(requireContext())
             .setCurrentScreen(requireActivity(), "Kategorija '$directoryTitle'".take(36), "Category")
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _viewBinding = null
     }
 
     override fun fillElements(categoryDto: CategoryDto) {

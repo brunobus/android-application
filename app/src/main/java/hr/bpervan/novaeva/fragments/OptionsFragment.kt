@@ -1,8 +1,6 @@
 package hr.bpervan.novaeva.fragments
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
@@ -12,11 +10,17 @@ import androidx.core.view.isVisible
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
+import hr.bpervan.novaeva.main.databinding.FragmentOptionsBinding
 import hr.bpervan.novaeva.storage.EvaContentDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
-import hr.bpervan.novaeva.util.*
+import hr.bpervan.novaeva.util.TEXT_SIZE_KEY
+import hr.bpervan.novaeva.util.TransitionAnimation
+import hr.bpervan.novaeva.util.defaultTextSize
+import hr.bpervan.novaeva.util.maxTextSize
+import hr.bpervan.novaeva.util.minTextSize
+import hr.bpervan.novaeva.util.shareIntent
+import hr.bpervan.novaeva.util.toast
 import io.realm.Realm
-import kotlinx.android.synthetic.main.fragment_options.*
 
 /**
  *
@@ -31,14 +35,18 @@ class OptionsFragment : androidx.fragment.app.Fragment() {
 
     private lateinit var realm: Realm
 
+    private var _viewBinding: FragmentOptionsBinding? = null
+    private val viewBinding get() = _viewBinding!!
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         realm = Realm.getInstance(RealmConfigProvider.evaDBConfig)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_options, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _viewBinding = FragmentOptionsBinding.inflate(inflater, container, false)
+        return viewBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -47,10 +55,10 @@ class OptionsFragment : androidx.fragment.app.Fragment() {
         topFragmentChecker.invoke()
         activity?.supportFragmentManager?.addOnBackStackChangedListener(topFragmentChecker)
 
-        btnInfo.setOnClickListener {
+        viewBinding.btnInfo.setOnClickListener {
             EventPipelines.openInfo.onNext(TransitionAnimation.LEFTWARDS)
         }
-        btnTextSize.setOnClickListener {
+        viewBinding.btnTextSize.setOnClickListener {
             val currentTextSize = NovaEvaApp.prefs.getInt(TEXT_SIZE_KEY, defaultTextSize)
             val newShift = currentTextSize + 2 - minTextSize
             val width = maxTextSize - minTextSize
@@ -61,13 +69,13 @@ class OptionsFragment : androidx.fragment.app.Fragment() {
             }
             EventPipelines.resizeText.onNext(Unit)
         }
-        btnChurch.setOnClickListener {
+        viewBinding.btnChurch.setOnClickListener {
             context?.toast(getString(R.string.not_supported))
         }
-        btnTheme.setOnClickListener {
+        viewBinding.btnTheme.setOnClickListener {
             context?.toast(getString(R.string.not_supported))
         }
-        btnShare.setOnClickListener {
+        viewBinding.btnShare.setOnClickListener {
 
             val topFragment = getTopFragment()
 
@@ -84,7 +92,7 @@ class OptionsFragment : androidx.fragment.app.Fragment() {
             shareIntent(context, shareString)
         }
 
-        btnBookmark.setOnClickListener { _ ->
+        viewBinding.btnBookmark.setOnClickListener { _ ->
 
             val topFragment = getTopFragment()
             if (topFragment is EvaContentFragment) {
@@ -94,11 +102,11 @@ class OptionsFragment : androidx.fragment.app.Fragment() {
                         updateFunc = { it.bookmarked = !wasBookmarked },
                         onSuccess = {
                             context?.toast(if (!wasBookmarked) R.string.bookmarked else R.string.unbookmarked)
-                            btnBookmark.bookmarked = !wasBookmarked
+                            viewBinding.btnBookmark.bookmarked = !wasBookmarked
                         })
             }
         }
-        btnHome.setOnClickListener {
+        viewBinding.btnHome.setOnClickListener {
             EventPipelines.goHome.onNext(TransitionAnimation.FADE)
         }
     }
@@ -109,7 +117,7 @@ class OptionsFragment : androidx.fragment.app.Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-
+        _viewBinding = null
         activity?.supportFragmentManager?.removeOnBackStackChangedListener(topFragmentChecker)
     }
 
@@ -125,32 +133,36 @@ class OptionsFragment : androidx.fragment.app.Fragment() {
 
         if (fragment != null) {
 
-            when (fragment) {
-                is EvaContentFragment -> {
-                    showOptions(btnInfo, /*btnHelp, */btnTextSize, /*btnChurch,
-                            btnTheme, */btnHome, btnShare, btnBookmark)
+            with(viewBinding) {
+                when (fragment) {
+                    is EvaContentFragment -> {
+                        showOptions(
+                            btnInfo, /*btnHelp, */btnTextSize, /*btnChurch,
+                            btnTheme, */btnHome, btnShare, btnBookmark
+                        )
 
-                    btnBookmark.bookmarked = isContentBookmarked(fragment.contentId)
-                }
-                is EvaQuotesFragment -> {
-                    showOptions(btnInfo, /*btnHelp, */btnTextSize, /*btnChurch, btnTheme, */btnHome, btnShare)
-                    hideOptions(btnBookmark)
-                }
-                is BreviaryContentFragment -> {
-                    showOptions(btnInfo, /*btnHelp, */btnTextSize, /*btnChurch, btnTheme, */btnHome)
-                    hideOptions(btnShare, btnBookmark)
-                }
-                is EvaInfoFragment -> {
-                    showOptions(/*btnHelp, btnChurch, btnTheme, */btnHome, btnTextSize)
-                    hideOptions(btnInfo, btnShare, btnBookmark)
-                }
-                is EvaDashboardFragment -> {
-                    showOptions(btnInfo, /*btnHelp, btnChurch, btnTheme, */btnShare)
-                    hideOptions(btnHome, btnTextSize, btnBookmark)
-                }
-                else -> {
-                    showOptions(btnInfo, /*btnHelp, btnChurch, btnTheme, */btnHome)
-                    hideOptions(btnTextSize, btnShare, btnBookmark)
+                        btnBookmark.bookmarked = isContentBookmarked(fragment.contentId)
+                    }
+                    is EvaQuotesFragment -> {
+                        showOptions(btnInfo, /*btnHelp, */btnTextSize, /*btnChurch, btnTheme, */btnHome, btnShare)
+                        hideOptions(btnBookmark)
+                    }
+                    is BreviaryContentFragment -> {
+                        showOptions(btnInfo, /*btnHelp, */btnTextSize, /*btnChurch, btnTheme, */btnHome)
+                        hideOptions(btnShare, btnBookmark)
+                    }
+                    is EvaInfoFragment -> {
+                        showOptions(/*btnHelp, btnChurch, btnTheme, */btnHome, btnTextSize)
+                        hideOptions(btnInfo, btnShare, btnBookmark)
+                    }
+                    is EvaDashboardFragment -> {
+                        showOptions(btnInfo, /*btnHelp, btnChurch, btnTheme, */btnShare)
+                        hideOptions(btnHome, btnTextSize, btnBookmark)
+                    }
+                    else -> {
+                        showOptions(btnInfo, /*btnHelp, btnChurch, btnTheme, */btnHome)
+                        hideOptions(btnTextSize, btnShare, btnBookmark)
+                    }
                 }
             }
         }

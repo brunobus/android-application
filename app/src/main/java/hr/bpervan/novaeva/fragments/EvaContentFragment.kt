@@ -15,6 +15,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
+import hr.bpervan.novaeva.main.databinding.FragmentEvaContentBinding
 import hr.bpervan.novaeva.model.EvaContent
 import hr.bpervan.novaeva.model.OpenContentEvent
 import hr.bpervan.novaeva.model.toDbModel
@@ -33,8 +34,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
-import kotlinx.android.synthetic.main.collapsing_content_header.view.*
-import kotlinx.android.synthetic.main.fragment_eva_content.*
 
 /**
  * Created by vpriscan on 04.12.17..
@@ -53,6 +52,9 @@ class EvaContentFragment : EvaBaseFragment() {
     }
 
     private lateinit var realm: Realm
+
+    private var _viewBinding: FragmentEvaContentBinding? = null
+    private val viewBinding get() = _viewBinding!!
 
     private lateinit var initializer: OpenContentEvent
     private lateinit var domain: EvaDomain
@@ -90,10 +92,10 @@ class EvaContentFragment : EvaBaseFragment() {
 
         view ?: return
 
-        evaCollapsingBar.collapsingToolbar.title = evaContent.title
+        viewBinding.evaCollapsingBar.collapsingToolbar.title = evaContent.title
 
         val coverImageInfo = evaContent.image
-        val coverImageView = evaCollapsingBar.coverImage
+        val coverImageView = viewBinding.evaCollapsingBar.coverImage
 
         if (coverImageInfo != null) {
             if (coverImageView != null) {
@@ -105,10 +107,10 @@ class EvaContentFragment : EvaBaseFragment() {
                 imageLoader.displayImage(url, coverImageView)
             }
         }
-        vijestWebView.loadHtmlText(evaContent.text)
+        viewBinding.vijestWebView.loadHtmlText(evaContent.text)
 
         evaContent.audioURL?.let { audioUrl ->
-            imgMp3.setImageResource(R.drawable.vijest_ind_mp3_active)
+            viewBinding.imgMp3.setImageResource(R.drawable.vijest_ind_mp3_active)
 
             NovaEvaApp.evaPlayer.prepareAudioStream(
                     audioUrl, evaContent.id.toString(),
@@ -117,39 +119,39 @@ class EvaContentFragment : EvaBaseFragment() {
                     doAutoPlay = false,
                     auth = null)
 
-            player_view?.apply {
+            viewBinding.playerView.apply {
                 NovaEvaApp.evaPlayer.supplyPlayerToView(this, evaContent.id.toString())
                 applyEvaConfiguration()
                 requestFocus()
                 showController()
 
             }
-            imgMp3.setOnClickListener {
+            viewBinding.imgMp3.setOnClickListener {
                 startActivity(Intent(Intent.ACTION_VIEW, audioUrl.toUri()))
             }
         }
 
 
         evaContent.videoURL?.let { videoUrl ->
-            imgLink.setImageResource(R.drawable.vijest_ind_www_active)
-            imgLink.setOnClickListener {
+            viewBinding.imgLink.setImageResource(R.drawable.vijest_ind_www_active)
+            viewBinding.imgLink.setOnClickListener {
                 startActivity(Intent(Intent.ACTION_VIEW, videoUrl.toUri()))
             }
         }
         if (evaContent.attachments.isNotEmpty()) {
-            imgText.setImageResource(R.drawable.vijest_ind_txt_active)
-            imgText.setOnClickListener {
+            viewBinding.imgText.setImageResource(R.drawable.vijest_ind_txt_active)
+            viewBinding.imgText.setOnClickListener {
                 startActivity(Intent.createChooser(Intent(Intent.ACTION_VIEW,
                         evaContent.attachments[0]!!.url.toUri()), evaContent.attachments[0]!!.name))
             }
         }
 
-        loadingCircle.isGone = true
+        viewBinding.loadingCircle.isGone = true
 
         when (enumValueOrNull<EvaDomain>(evaContent.domain)) {
             EvaDomain.VOCATION -> {
-                btnPoziv.isVisible = true
-                btnPoziv.setOnClickListener {
+                viewBinding.btnPoziv.isVisible = true
+                viewBinding.btnPoziv.setOnClickListener {
                     sendEmailIntent(context,
                             subject = getString(R.string.thinking_of_vocation),
                             text = getString(R.string.mail_preamble_praise_the_lord)
@@ -158,8 +160,8 @@ class EvaContentFragment : EvaBaseFragment() {
                 }
             }
             EvaDomain.ANSWERS -> {
-                btnPitanje.isVisible = true
-                btnPitanje.setOnClickListener {
+                viewBinding.btnPitanje.isVisible = true
+                viewBinding.btnPitanje.setOnClickListener {
                     sendEmailIntent(context,
                             subject = getString(R.string.having_a_question),
                             text = getString(R.string.mail_preamble_praise_the_lord),
@@ -171,29 +173,27 @@ class EvaContentFragment : EvaBaseFragment() {
             }
         }
 
-        vijestWebView.applyEvaConfiguration(prefs)
-        vijestWebView.loadHtmlText(evaContent.text)
+        viewBinding.vijestWebView.applyEvaConfiguration(prefs)
+        viewBinding.vijestWebView.loadHtmlText(evaContent.text)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val inflaterToUse =
-                if (themeId != -1) inflater.cloneInContext(ContextThemeWrapper(activity, themeId))
-                else inflater
-
-        return inflaterToUse.inflate(R.layout.fragment_eva_content, container, false)
+        val newInflater = if (themeId != -1) inflater.cloneInContext(ContextThemeWrapper(activity, themeId)) else inflater
+        _viewBinding = FragmentEvaContentBinding.inflate(newInflater, container, false)
+        return viewBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        loadingCircle.isVisible = true
+        viewBinding.loadingCircle.isVisible = true
 
         EventPipelines.changeNavbarColor.onNext(R.color.Black)
         EventPipelines.changeStatusbarColor.onNext(R.color.VeryDarkGray)
         EventPipelines.changeFragmentBackgroundResource.onNext(R.color.White)
 
         disposables += EventPipelines.resizeText.subscribe {
-            vijestWebView?.applyConfiguredFontSize(prefs)
+            viewBinding.vijestWebView.applyConfiguredFontSize(prefs)
         }
 
         val evaContent = EvaContentDbAdapter.loadEvaContent(realm, contentId)
@@ -214,6 +214,11 @@ class EvaContentFragment : EvaBaseFragment() {
 
         FirebaseAnalytics.getInstance(requireContext())
                 .setCurrentScreen(requireActivity(), "Sadržaj '${initializer.title}'".take(36), "Content")
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _viewBinding = null
     }
 
     override fun onDestroy() {

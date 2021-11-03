@@ -34,7 +34,7 @@
         android:lines="1"
         android:maxLines="1"
         android:text="Prayer Title"
-        android:textColor="@color/VeryDarkGray"
+        android:textColor="@color/prayerbookColor"
         android:textSize="30sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/prayerTitleLine"

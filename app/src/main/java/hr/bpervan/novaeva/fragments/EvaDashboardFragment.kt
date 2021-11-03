@@ -12,6 +12,8 @@ import androidx.core.net.toUri
 import com.google.firebase.analytics.FirebaseAnalytics
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.main.R
+import hr.bpervan.novaeva.main.databinding.FragmentBookmarksBinding
+import hr.bpervan.novaeva.main.databinding.FragmentDashboardBinding
 import hr.bpervan.novaeva.model.ContentDto
 import hr.bpervan.novaeva.model.OpenDirectoryEvent
 import hr.bpervan.novaeva.model.OpenPrayerDirectoryEvent
@@ -26,7 +28,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
-import kotlinx.android.synthetic.main.fragment_dashboard.*
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -42,6 +43,9 @@ class EvaDashboardFragment : EvaBaseFragment() {
         }
     }
 
+    private var _viewBinding: FragmentDashboardBinding? = null
+    private val viewBinding get() = _viewBinding!!
+
     private lateinit var realm: Realm
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,8 +55,9 @@ class EvaDashboardFragment : EvaBaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.cloneInContext(ContextThemeWrapper(activity, R.style.AppTheme))
-                .inflate(R.layout.fragment_dashboard, container, false)
+        val newInflater = inflater.cloneInContext(ContextThemeWrapper(activity, R.style.AppTheme))
+        _viewBinding = FragmentDashboardBinding.inflate(newInflater, container, false)
+        return viewBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -66,63 +71,63 @@ class EvaDashboardFragment : EvaBaseFragment() {
             EventPipelines.changeWindowBackgroundDrawable.onNext(it)
         }
 
-        btnBrevijar.setOnClickListener {
+        viewBinding.btnBrevijar.setOnClickListener {
             EventPipelines.openBreviaryChooser.onNext(TransitionAnimation.FADE)
         }
-        btnMolitvenik.setOnClickListener {
+        viewBinding.btnMolitvenik.setOnClickListener {
             EventPipelines.openPrayerBook.onNext(OpenPrayerDirectoryEvent(
                     title = getString(EvaDomain.PRAYERS.title)
             ))
         }
-        btnBookmarks.setOnClickListener {
+        viewBinding.btnBookmarks.setOnClickListener {
             EventPipelines.openBookmarks.onNext(TransitionAnimation.FADE)
         }
-        btnIzreke.setOnClickListener {
+        viewBinding.btnIzreke.setOnClickListener {
             EventPipelines.openQuotes.onNext(OpenQuotesEvent())
         }
-        btnPjesmarica.setOnClickListener {
+        viewBinding.btnPjesmarica.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
                     title = getString(EvaDomain.SONGS.title),
                     domain = EvaDomain.SONGS,
                     theme = R.style.PjesmaricaTheme))
         }
-        btnAktualno.setOnClickListener {
+        viewBinding.btnAktualno.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
                     title = getString(EvaDomain.TRENDING.title),
                     domain = EvaDomain.TRENDING,
                     theme = R.style.AktualnoTheme))
         }
-        btnPoziv.setOnClickListener {
+        viewBinding.btnPoziv.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
                     title = getString(EvaDomain.VOCATION.title),
                     domain = EvaDomain.VOCATION,
                     theme = R.style.PozivTheme))
         }
-        btnOdgovori.setOnClickListener {
+        viewBinding.btnOdgovori.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
                     title = getString(EvaDomain.ANSWERS.title),
                     domain = EvaDomain.ANSWERS,
                     theme = R.style.OdgovoriTheme))
         }
-        btnMultimedia.setOnClickListener {
+        viewBinding.btnMultimedia.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
                     title = getString(EvaDomain.MULTIMEDIA.title),
                     domain = EvaDomain.MULTIMEDIA,
                     theme = R.style.MultimedijaTheme))
         }
-        btnPropovijedi.setOnClickListener {
+        viewBinding.btnPropovijedi.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
                     title = getString(EvaDomain.SERMONS.title),
                     domain = EvaDomain.SERMONS,
                     theme = R.style.PropovjediTheme))
         }
-        btnDuhovnost.setOnClickListener {
+        viewBinding.btnDuhovnost.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
                     title = getString(EvaDomain.SPIRITUALITY.title),
                     domain = EvaDomain.SPIRITUALITY,
                     theme = R.style.DuhovnostTheme))
         }
-        btnCalendar.setOnClickListener {
+        viewBinding.btnCalendar.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
                     title = getString(EvaDomain.GOSPEL.title),
                     domain = EvaDomain.GOSPEL,
@@ -212,17 +217,17 @@ class EvaDashboardFragment : EvaBaseFragment() {
     }
 
     fun enableLive(title: String, preview: String, videoUrl: String) {
-        btnLive?.setOnClickListener {
+        viewBinding.btnLive?.setOnClickListener {
             startActivity(Intent(Intent.ACTION_VIEW, videoUrl.toUri()))
         }
-        btnLive?.isEnabled = true
-        btnLive?.text = "$title\n$preview"
+        viewBinding.btnLive?.isEnabled = true
+        viewBinding.btnLive?.text = "$title\n$preview"
     }
 
     fun disableLive() {
-        btnLive?.isEnabled = false
-        btnLive?.text = ""
-        btnLive?.setOnClickListener(null)
+        viewBinding.btnLive?.isEnabled = false
+        viewBinding.btnLive?.text = ""
+        viewBinding.btnLive?.setOnClickListener(null)
     }
 
     override fun onResume() {
@@ -253,15 +258,20 @@ class EvaDashboardFragment : EvaBaseFragment() {
     private fun updateUI() {
         view ?: return
 
-//        btnCalendar.indicateNews = hasNewContent(EvaDomain.GOSPEL)
-        btnDuhovnost.indicateNews = hasNewContent(EvaDomain.SPIRITUALITY)
-        btnIzreke.indicateNews = hasNewContent(EvaDomain.QUOTES)
-        btnAktualno.indicateNews = hasNewContent(EvaDomain.TRENDING)
-        btnMultimedia.indicateNews = hasNewContent(EvaDomain.MULTIMEDIA)
-        btnPropovijedi.indicateNews = hasNewContent(EvaDomain.SERMONS)
-        btnOdgovori.indicateNews = hasNewContent(EvaDomain.ANSWERS)
-        btnPoziv.indicateNews = hasNewContent(EvaDomain.VOCATION)
-        btnPjesmarica.indicateNews = hasNewContent(EvaDomain.SONGS)
+//        viewBinding.btnCalendar.indicateNews = hasNewContent(EvaDomain.GOSPEL)
+        viewBinding.btnDuhovnost.indicateNews = hasNewContent(EvaDomain.SPIRITUALITY)
+        viewBinding.btnIzreke.indicateNews = hasNewContent(EvaDomain.QUOTES)
+        viewBinding.btnAktualno.indicateNews = hasNewContent(EvaDomain.TRENDING)
+        viewBinding.btnMultimedia.indicateNews = hasNewContent(EvaDomain.MULTIMEDIA)
+        viewBinding.btnPropovijedi.indicateNews = hasNewContent(EvaDomain.SERMONS)
+        viewBinding.btnOdgovori.indicateNews = hasNewContent(EvaDomain.ANSWERS)
+        viewBinding.btnPoziv.indicateNews = hasNewContent(EvaDomain.VOCATION)
+        viewBinding.btnPjesmarica.indicateNews = hasNewContent(EvaDomain.SONGS)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _viewBinding = null
     }
 
     override fun onDestroy() {

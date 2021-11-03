@@ -10,11 +10,10 @@ import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.BuildConfig
 import hr.bpervan.novaeva.main.R
+import hr.bpervan.novaeva.main.databinding.FragmentSimpleContentBinding
 import hr.bpervan.novaeva.util.plusAssign
 import hr.bpervan.novaeva.views.applyConfiguredFontSize
 import hr.bpervan.novaeva.views.applyEvaConfiguration
-import kotlinx.android.synthetic.main.collapsing_content_header.view.*
-import kotlinx.android.synthetic.main.fragment_simple_content.*
 
 /**
  *
@@ -27,9 +26,13 @@ class EvaInfoFragment : EvaBaseFragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.cloneInContext(ContextThemeWrapper(activity, R.style.AppTheme))
-                .inflate(R.layout.fragment_simple_content, container, false)
+    private var _viewBinding: FragmentSimpleContentBinding? = null
+    private val viewBinding get() = _viewBinding!!
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        val newInflater = inflater.cloneInContext(ContextThemeWrapper(activity, R.style.AppTheme));
+        _viewBinding = FragmentSimpleContentBinding.inflate(newInflater, container, false);
+        return viewBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -40,17 +43,22 @@ class EvaInfoFragment : EvaBaseFragment() {
         EventPipelines.changeFragmentBackgroundResource.onNext(R.color.White)
 
         disposables += EventPipelines.resizeText.subscribe {
-            webView?.applyConfiguredFontSize(prefs)
+            viewBinding.webView.applyConfiguredFontSize(prefs)
         }
 
-        webView.applyEvaConfiguration(prefs)
+        viewBinding.webView.applyEvaConfiguration(prefs)
 
-        webView.loadUrl("file:///android_asset/info.html")
+        viewBinding.webView.loadUrl("file:///android_asset/info.html")
 
         val titleText = "${getString(R.string.app_name)} - v${BuildConfig.VERSION_NAME}" +
                 if (BuildConfig.DEBUG) " (debug)" else ""
 
-        evaCollapsingBar.collapsingToolbar.title = titleText
+        viewBinding.evaCollapsingBar.collapsingToolbar.title = titleText
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _viewBinding = null
     }
 
     override fun onResume() {

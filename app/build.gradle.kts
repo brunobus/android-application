@@ -2,7 +2,6 @@
 plugins {
     id("com.android.application")
     id("kotlin-android")
-    id("kotlin-android-extensions")
     id("kotlin-kapt")
     id("realm-android")
     id("com.getkeepsafe.dexcount")
@@ -67,6 +66,10 @@ android {
             buildConfigField("String", "V3_SERVER_AUTH", "\"Basic QW5kUm9pRDAwMTpkM2JXYXdnRFpqcXFWV2dESlJLag==\"")
             buildConfigField("String", "DB_NAME", "\"NovaEvaDb_prod.realm\"")
         }
+    }
+
+    buildFeatures {
+        viewBinding = true
     }
 }
 

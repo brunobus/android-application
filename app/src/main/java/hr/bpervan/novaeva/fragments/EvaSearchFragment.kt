@@ -11,9 +11,9 @@ import android.widget.EditText
 import androidx.core.os.bundleOf
 import com.google.firebase.analytics.FirebaseAnalytics
 import hr.bpervan.novaeva.EventPipelines
-import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
+import hr.bpervan.novaeva.main.databinding.FragmentSearchBinding
 import hr.bpervan.novaeva.model.EvaContent
 import hr.bpervan.novaeva.model.toDbModel
 import hr.bpervan.novaeva.rest.NovaEvaService
@@ -22,9 +22,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.eva_recycler_view.view.*
-import kotlinx.android.synthetic.main.fragment_search.*
-import java.util.*
 
 /**
  *
@@ -40,6 +37,9 @@ class EvaSearchFragment : EvaBaseFragment() {
             }
         }
     }
+
+    private var _viewBinding: FragmentSearchBinding? = null
+    private val viewBinding get() = _viewBinding!!
 
 
     private var searchForContentDisposable: Disposable? = null
@@ -68,8 +68,9 @@ class EvaSearchFragment : EvaBaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.cloneInContext(ContextThemeWrapper(activity, R.style.AppTheme))
-                .inflate(R.layout.fragment_search, container, false)
+        val newInflater = inflater.cloneInContext(ContextThemeWrapper(activity, R.style.AppTheme))
+        _viewBinding = FragmentSearchBinding.inflate(newInflater, container, false)
+        return viewBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -81,9 +82,9 @@ class EvaSearchFragment : EvaBaseFragment() {
 
 //        btnSearch.setOnClickListener(this)
 
-        val recyclerView = evaRecyclerView as androidx.recyclerview.widget.RecyclerView
+        val recyclerView = viewBinding.evaRecyclerView.root
         recyclerView.adapter = adapter
-        recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(evaRecyclerView.evaRecyclerView.context)
+        recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(viewBinding.evaRecyclerView.evaRecyclerView.context)
         recyclerView.itemAnimator = androidx.recyclerview.widget.DefaultItemAnimator()
     }
 
@@ -92,6 +93,11 @@ class EvaSearchFragment : EvaBaseFragment() {
 
         FirebaseAnalytics.getInstance(requireContext())
                 .setCurrentScreen(requireActivity(), "Pretraga '$searchString'".take(36), "Search")
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _viewBinding = null
     }
 
     private fun showSearchPopup() {

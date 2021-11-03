@@ -13,6 +13,7 @@ import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.RadioStationsAdapter
 import hr.bpervan.novaeva.main.R
+import hr.bpervan.novaeva.main.databinding.FragmentRadioBinding
 import hr.bpervan.novaeva.model.EvaContent
 import hr.bpervan.novaeva.model.toDbModel
 import hr.bpervan.novaeva.player.getStreamLinksFromPlaylist
@@ -25,8 +26,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.collapsing_content_header.view.*
-import kotlinx.android.synthetic.main.fragment_radio.*
 import java.util.concurrent.TimeUnit
 
 
@@ -40,6 +39,9 @@ class RadioFragment : EvaBaseFragment() {
             return RadioFragment()
         }
     }
+
+    private var _viewBinding: FragmentRadioBinding? = null
+    private val viewBinding get() = _viewBinding!!
 
     private var fetchFromServerDisposable: Disposable? = null
         set(value) {
@@ -59,8 +61,9 @@ class RadioFragment : EvaBaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.cloneInContext(ContextThemeWrapper(activity, R.style.RadioTheme))
-                .inflate(R.layout.fragment_radio, container, false)
+        val newInflater = inflater.cloneInContext(ContextThemeWrapper(activity, R.style.RadioTheme))
+        _viewBinding = FragmentRadioBinding.inflate(newInflater, container, false)
+        return viewBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -70,9 +73,9 @@ class RadioFragment : EvaBaseFragment() {
         EventPipelines.changeStatusbarColor.onNext(R.color.VeryDarkGray)
         EventPipelines.changeFragmentBackgroundResource.onNext(R.color.Transparent)
 
-        collapsingRadioHeader.collapsingToolbar.title = getString(R.string.radio_stations)
+        viewBinding.collapsingRadioHeader.collapsingToolbar.title = getString(R.string.radio_stations)
 
-        val recyclerView = evaRecyclerView as androidx.recyclerview.widget.RecyclerView
+        val recyclerView = viewBinding.evaRecyclerView.root as androidx.recyclerview.widget.RecyclerView
         val linearLayoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
         recyclerView.layoutManager = linearLayoutManager
         recyclerView.itemAnimator = androidx.recyclerview.widget.DefaultItemAnimator()
@@ -145,9 +148,14 @@ class RadioFragment : EvaBaseFragment() {
                 .setCurrentScreen(requireActivity(), "Radio", "Radio")
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _viewBinding = null
+    }
+
     private fun updateUI(radioStationDetails: EvaContent) {
         val coverImageInfo = radioStationDetails.image
-        val coverImageView = collapsingRadioHeader.coverImage
+        val coverImageView = viewBinding.collapsingRadioHeader.coverImage
 
         if (coverImageInfo != null && coverImageView != null) {
             imageLoader.displayImage(coverImageInfo.url, coverImageView)

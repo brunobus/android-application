@@ -12,14 +12,12 @@ import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.PrayerBookRecyclerAdapter
 import hr.bpervan.novaeva.main.R
+import hr.bpervan.novaeva.main.databinding.FragmentPrayersBinding
 import hr.bpervan.novaeva.model.CategoryDto
 import hr.bpervan.novaeva.model.EvaDirectory
 import hr.bpervan.novaeva.model.OpenPrayerDirectoryEvent
 import hr.bpervan.novaeva.model.toDbModel
 import hr.bpervan.novaeva.rest.EvaDomain
-import kotlinx.android.synthetic.main.collapsing_prayerbook_header.view.*
-import kotlinx.android.synthetic.main.fragment_prayers.*
-import kotlinx.android.synthetic.main.top_prayerbook.*
 
 /**
  * Created by vpriscan on 11.12.17..
@@ -33,6 +31,9 @@ class PrayerBookFragment : EvaAbstractDirectoryFragment() {
             }
         }
     }
+
+    private var _viewBinding: FragmentPrayersBinding? = null
+    private val viewBinding get() = _viewBinding!!
 
     private lateinit var initializer: OpenPrayerDirectoryEvent
 
@@ -58,9 +59,10 @@ class PrayerBookFragment : EvaAbstractDirectoryFragment() {
         super.onSaveInstanceState(outState)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.cloneInContext(ContextThemeWrapper(activity, R.style.PrayersTheme))
-                .inflate(R.layout.fragment_prayers, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        val newInflater = inflater.cloneInContext(ContextThemeWrapper(activity, R.style.PrayersTheme))
+        _viewBinding = FragmentPrayersBinding.inflate(newInflater, container, false)
+        return viewBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -70,21 +72,21 @@ class PrayerBookFragment : EvaAbstractDirectoryFragment() {
         EventPipelines.changeStatusbarColor.onNext(R.color.VeryDarkGray)
         EventPipelines.changeFragmentBackgroundResource.onNext(R.color.White)
 
-        prayerArrow.isInvisible = true
-        prayerTitleTextView.apply {
+        viewBinding.collapsingPrayerHeader.prayerTop.prayerArrow.isInvisible = true
+        viewBinding.collapsingPrayerHeader.prayerTop.prayerTitleTextView.apply {
             text = directoryTitle
             typeface = NovaEvaApp.openSansBold
         }
 
-        val recyclerView = evaRecyclerView as androidx.recyclerview.widget.RecyclerView
+        val recyclerView = viewBinding.evaRecyclerView.root
         val linearLayoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
         recyclerView.layoutManager = linearLayoutManager
         recyclerView.itemAnimator = androidx.recyclerview.widget.DefaultItemAnimator()
         recyclerView.adapter = adapter
 
-        val coverImageView = collapsingPrayerHeader.prayerCollapsingToolbar.prayerCoverImage
+        val coverImageView = viewBinding.collapsingPrayerHeader.prayerCoverImage
         val url = prefs.getString("hr.bpervan.novaeva.categoryheader.$domain", null)
-        if (url != null && coverImageView != null) {
+        if (url != null) {
             imageLoader.displayImage(url, coverImageView)
         }
     }
@@ -94,6 +96,11 @@ class PrayerBookFragment : EvaAbstractDirectoryFragment() {
 
         FirebaseAnalytics.getInstance(requireContext())
                 .setCurrentScreen(requireActivity(), "Molitvenik", "PrayerBook")
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _viewBinding = null
     }
 
     override fun fillElements(categoryDto: CategoryDto) {

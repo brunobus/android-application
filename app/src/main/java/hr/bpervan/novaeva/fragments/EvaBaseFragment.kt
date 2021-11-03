@@ -3,17 +3,18 @@ package hr.bpervan.novaeva.fragments
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageButton
 import com.google.android.exoplayer2.Player
 import com.nostra13.universalimageloader.core.ImageLoader
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
+import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.util.minusAssign
 import hr.bpervan.novaeva.util.plusAssign
 import hr.bpervan.novaeva.views.EvaRadioBtn
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
-import kotlinx.android.synthetic.main.fragment_prayers.*
 
 /**
  * Created by vpriscan on 26.11.17..
@@ -46,7 +47,7 @@ abstract class EvaBaseFragment : androidx.fragment.app.Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val evaRadioBtn = (radioBtn as? EvaRadioBtn)
+        val evaRadioBtn = view.findViewById<EvaRadioBtn>(R.id.radioBtn)
 
         disposables += EventPipelines.changeFragmentBackgroundResource
                 .distinctUntilChanged()
@@ -75,7 +76,8 @@ abstract class EvaBaseFragment : androidx.fragment.app.Fragment() {
                     }
         }
 
-        optionsBtn?.setOnClickListener {
+        val evaOptionsBtn = view.findViewById<ImageButton>(R.id.optionsBtn)
+        evaOptionsBtn?.setOnClickListener {
             EventPipelines.toggleOptionsDrawer.onNext(Unit)
         }
 
