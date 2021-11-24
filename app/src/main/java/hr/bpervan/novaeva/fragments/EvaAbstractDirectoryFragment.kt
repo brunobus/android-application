@@ -4,9 +4,12 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
+import android.view.View
+import androidx.appcompat.widget.SearchView
 import androidx.core.content.edit
 import androidx.core.os.postDelayed
 import androidx.recyclerview.widget.RecyclerView
+import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.model.CategoryDto
 import hr.bpervan.novaeva.model.EvaDirectory
 import hr.bpervan.novaeva.model.EvaDomainInfo
@@ -15,13 +18,19 @@ import hr.bpervan.novaeva.rest.EvaDomain
 import hr.bpervan.novaeva.rest.NovaEvaService
 import hr.bpervan.novaeva.storage.EvaDirectoryDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
-import hr.bpervan.novaeva.util.*
+import hr.bpervan.novaeva.util.HAS_NEW_CONTENT_KEY_PREFIX
+import hr.bpervan.novaeva.util.LAST_EVICTION_TIME_MILLIS_KEY_PREFIX
+import hr.bpervan.novaeva.util.dataErrorSnackbar
+import hr.bpervan.novaeva.util.evictionIntervalMillis
+import hr.bpervan.novaeva.util.networkConnectionExists
+import hr.bpervan.novaeva.util.plusAssign
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
 import io.realm.kotlin.where
+import java.util.concurrent.TimeUnit
 
 /**
  *
@@ -44,6 +53,7 @@ abstract class EvaAbstractDirectoryFragment : EvaBaseFragment() {
     protected var directoryTitle: String = ""
 
     protected var fetchItems: Long = 20
+    protected var searchFetchItems: Long = 20
 
     protected lateinit var adapter: RecyclerView.Adapter<*>
 
@@ -204,20 +214,62 @@ abstract class EvaAbstractDirectoryFragment : EvaBaseFragment() {
                 })
     }
 
+    protected fun initSearch(searchView: SearchView) {
+
+        disposables += EventPipelines.search
+            .debounce(500, TimeUnit.MILLISECONDS)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { searchQuery ->
+                onSearch(searchQuery)
+            }
+
+        if (domain.isLegacy()) {
+            searchView.visibility = View.GONE
+        } else {
+            searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+
+                override fun onQueryTextSubmit(query: String): Boolean {
+                    onSearch(query.trim())
+                    return true
+                }
+
+                override fun onQueryTextChange(newText: String): Boolean {
+                    EventPipelines.search.onNext(newText.trim())
+                    return true
+                }
+            })
+        }
+    }
+
+    protected fun onSearch(searchQuery: String) {
+        if (useLocalDb && searchQuery.length >= 3) {
+            useLocalDb = false
+            unsubscribeFromDirectoryUpdates() // will clear elements
+        } else if (!useLocalDb && searchQuery.length < 3) {
+            useLocalDb = true
+            subscribeToDirectoryUpdates() // will fill elements
+        }
+
+        if (!useLocalDb) {
+            fetchEvaDirectoryDataFromServer(searchQuery = searchQuery)
+        }
+    }
+
     protected fun fetchEvaDirectoryDataFromServer(page: Long = 1, searchQuery: String? = null) {
         fetchingFromServer = true
         refreshLoadingCircleState()
 
         fetchFromServerDisposable = NovaEvaService.v3
-                .categoryContent(
+                    .categoryContent(
                         domain = domain.domainEndpoint,
                         categoryId = directoryId,
                         page = page,
-                        items = fetchItems,
-                        searchQuery = searchQuery)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onSuccess = { categoryDto ->
+                        items = if (searchQuery == null) fetchItems else searchFetchItems,
+                        searchQuery = searchQuery
+                    )
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeBy(onSuccess = { categoryDto ->
 
                     fetchingFromServer = false
 

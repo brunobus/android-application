@@ -125,45 +125,8 @@ class EvaDirectoryFragment : EvaAbstractDirectoryFragment() {
             }
         }
 
-        disposables += EventPipelines.search
-            .debounce(500, TimeUnit.MILLISECONDS)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { searchQuery ->
-                onSearch(searchQuery)
-            }
-
         val searchView = viewBinding.evaDirectoryCollapsingBar.izbornikTop.directorySearchView
-
-        if (domain.isLegacy()) {
-            searchView.visibility = View.GONE
-        } else {
-            searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-
-                override fun onQueryTextSubmit(query: String): Boolean {
-                    onSearch(query.trim())
-                    return true
-                }
-
-                override fun onQueryTextChange(newText: String): Boolean {
-                    EventPipelines.search.onNext(newText.trim())
-                    return true
-                }
-            })
-        }
-    }
-
-    private fun onSearch(searchQuery: String) {
-        if (useLocalDb && searchQuery.length >= 3) {
-            useLocalDb = false
-            unsubscribeFromDirectoryUpdates() // will clear elements
-        } else if (!useLocalDb && searchQuery.length < 3) {
-            useLocalDb = true
-            subscribeToDirectoryUpdates() // will fill elements
-        }
-
-        if (!useLocalDb) {
-            fetchEvaDirectoryDataFromServer(searchQuery = searchQuery)
-        }
+        initSearch(searchView)
     }
 
     override fun onResume() {

@@ -46,7 +46,8 @@ class PrayerListFragment : EvaAbstractDirectoryFragment() {
         directoryId = initializer.directoryId
         directoryTitle = initializer.title
 
-        fetchItems = 1000
+        fetchItems = 500
+        searchFetchItems = 20
 
         adapter = PrayerCategoryRecyclerAdapter(elementsList)
 
@@ -87,6 +88,9 @@ class PrayerListFragment : EvaAbstractDirectoryFragment() {
                 }
             }
         }
+
+        val searchView = viewBinding.collapsingPrayerHeader.prayerTop.prayerbookSearchView
+        initSearch(searchView)
     }
 
     override fun onResume() {
