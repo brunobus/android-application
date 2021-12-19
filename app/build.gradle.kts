@@ -10,13 +10,12 @@ plugins {
 apply(plugin = "com.google.gms.google-services")
 
 android {
-    compileSdkVersion(29)
-    buildToolsVersion = "29.0.2"
+    compileSdkVersion(30)
 
     defaultConfig {
         applicationId = "hr.bpervan.novaeva.main"
         minSdkVersion(16)
-        targetSdkVersion(29)
+        targetSdkVersion(30)
         versionCode = 160030200
         versionName = "3.2.0"
     }

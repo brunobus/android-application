@@ -150,7 +150,7 @@ abstract class EvaAbstractDirectoryFragment : EvaBaseFragment() {
 
     abstract fun fillElements(evaDirectory: EvaDirectory)
 
-    override fun onConfigurationChanged(newConfig: Configuration?) {
+    override fun onConfigurationChanged(newConfig: Configuration) {
         //A HACK TO DISPLAY CORRECT FRAGMENT VIEWS WHEN SWITCHING BETWEEN PORTRAIT AND LANDSCAPE
         activity?.supportFragmentManager?.beginTransaction()?.detach(this)?.commitAllowingStateLoss()
         super.onConfigurationChanged(newConfig)

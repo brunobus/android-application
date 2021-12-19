@@ -29,7 +29,7 @@ class LifecycleLogger : Application.ActivityLifecycleCallbacks {
         Log.d("activityLifecycle", "Activity stopped:$activity")
     }
 
-    override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle?) {
+    override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
         Log.d("activityLifecycle", "Activity saved instance state:$activity")
     }
 

@@ -4,7 +4,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:4.1.0")
+        classpath("com.android.tools.build:gradle:4.1.1")
         classpath(kotlin("gradle-plugin", version = "1.5.20"))
         classpath("io.realm:realm-gradle-plugin:6.0.2")
         classpath("com.google.gms:google-services:4.3.3")
