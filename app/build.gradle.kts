@@ -10,13 +10,13 @@ plugins {
 apply(plugin = "com.google.gms.google-services")
 
 android {
-    compileSdkVersion(30)
+    compileSdkVersion(31)
 
     defaultConfig {
         applicationId = "hr.bpervan.novaeva.main"
-        minSdkVersion(16)
-        targetSdkVersion(30)
-        versionCode = 160030200
+        minSdkVersion(21)
+        targetSdkVersion(31)
+        versionCode = 210030200
         versionName = "3.2.0"
     }
 
@@ -74,22 +74,21 @@ android {
 
 dependencies {
     testImplementation("junit:junit:4.12")
-    testImplementation("com.google.code.gson:gson:2.8.5")
+    testImplementation("com.google.code.gson:gson:2.8.6")
 
-    implementation("androidx.core:core:1.0.1")
-    implementation("androidx.core:core-ktx:1.0.1")
-    implementation("androidx.media:media:1.0.0")
-    implementation("androidx.appcompat:appcompat:1.0.2")
-    implementation("androidx.recyclerview:recyclerview:1.0.0")
-    implementation("androidx.constraintlayout:constraintlayout:1.1.3")
+    implementation("androidx.core:core-ktx:1.7.0")
+    implementation("androidx.media:media:1.5.0")
+    implementation("androidx.appcompat:appcompat:1.4.1")
+    implementation("androidx.recyclerview:recyclerview:1.2.1")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.3")
 
     implementation(kotlin("stdlib-jdk7", "1.5.20"))
 
-    implementation("io.reactivex.rxjava2:rxjava:2.2.10")
+    implementation("io.reactivex.rxjava2:rxjava:2.2.18")
     implementation("io.reactivex.rxjava2:rxkotlin:2.4.0")
     implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
 
-    implementation("com.google.android.material:material:1.0.0")
+    implementation("com.google.android.material:material:1.5.0")
 
     implementation("com.google.firebase:firebase-analytics:17.2.2")
 //    implementation("com.google.android.gms:play-services-tagmanager:17.0.0")
@@ -98,9 +97,9 @@ dependencies {
     implementation("com.google.android.exoplayer:exoplayer:2.11.1")
     implementation("com.google.android.exoplayer:extension-mediasession:2.11.1")
 
-    implementation("com.squareup.retrofit2:retrofit:2.4.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.4.0")
-    implementation("com.squareup.retrofit2:adapter-rxjava2:2.4.0")
+    implementation("com.squareup.retrofit2:retrofit:2.5.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.5.0")
+    implementation("com.squareup.retrofit2:adapter-rxjava2:2.5.0")
     implementation("com.squareup.okhttp3:logging-interceptor:3.12.5")
 
     implementation("net.cachapa.expandablelayout:expandablelayout:2.9.2")

@@ -19,7 +19,7 @@ import hr.bpervan.novaeva.views.EvaRadioBtn.RadioBtnState.PLAYING
 /**
  *
  */
-class EvaRadioBtn(context: Context?, attrs: AttributeSet?) : ConstraintLayout(context, attrs) {
+class EvaRadioBtn(context: Context, attrs: AttributeSet?) : ConstraintLayout(context, attrs) {
 
 //    private val viewBinding: RadioButtonBinding = RadioButtonBinding.inflate(LayoutInflater.from(context), this, true)
 

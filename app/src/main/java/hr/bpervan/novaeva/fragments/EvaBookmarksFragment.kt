@@ -68,7 +68,7 @@ class EvaBookmarksFragment : EvaBaseFragment() {
         recyclerView.itemAnimator = androidx.recyclerview.widget.DefaultItemAnimator()
     }
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
 
         activity?.title = "Bookmarks"

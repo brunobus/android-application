@@ -24,7 +24,9 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version"/>
 
-        <receiver android:name="hr.bpervan.novaeva.services.AudioPlayerService$EvaMediaReceiver">
+        <receiver
+                android:name="hr.bpervan.novaeva.services.AudioPlayerService$EvaMediaReceiver"
+                android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON"/>
             </intent-filter>
@@ -33,7 +35,8 @@
         <activity
             android:name="hr.bpervan.novaeva.activities.EvaActivity"
             android:label="@string/app_name"
-            android:theme="@style/LauncherTheme">
+            android:theme="@style/LauncherTheme"
+            android:exported="true">
 
             <intent-filter android:label="@string/app_name">
                 <action android:name="android.intent.action.MAIN"/>
@@ -50,7 +53,6 @@
                     android:host="novaeva.com"
                     android:pathPrefix="/node"
                     android:scheme="http"/>
-                <!-- note that the leading "/" is required for pathPrefix-->
             </intent-filter>
         </activity>
 
