@@ -90,9 +90,19 @@ class EvaActivity : EvaBaseActivity() {
 
         gestureDetector = GestureDetectorCompat(this, SwipeLeftToRightGestureListener(displayMetrics))
 
-        supportFragmentManager?.addOnBackStackChangedListener {
+        supportFragmentManager.addOnBackStackChangedListener {
             if (viewBinding.root.isDrawerOpen(GravityCompat.END)) {
                 viewBinding.root.closeDrawer(GravityCompat.END)
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        supportFragmentManager.let {
+            if (it.backStackEntryCount == 0) {
+                openDashboardFragment()
             }
         }
     }
@@ -360,7 +370,7 @@ class EvaActivity : EvaBaseActivity() {
         if (viewBinding.root.isDrawerOpen(GravityCompat.END)) {
             viewBinding.root.closeDrawer(GravityCompat.END)
         } else {
-            supportFragmentManager?.let {
+            supportFragmentManager.let {
                 if (it.backStackEntryCount == 1) {
                     it.popBackStack()
                 }
