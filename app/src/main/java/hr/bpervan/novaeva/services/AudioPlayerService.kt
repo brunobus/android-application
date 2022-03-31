@@ -17,7 +17,6 @@ import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
-import androidx.media.session.MediaButtonReceiver
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import com.google.android.exoplayer2.Player
@@ -51,7 +50,7 @@ class AudioPlayerService : Service() {
     override fun onCreate() {
         super.onCreate()
 
-        novaEvaBitmap = BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher_round)
+        novaEvaBitmap = BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher)
 
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
 

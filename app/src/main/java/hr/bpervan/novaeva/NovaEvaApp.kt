@@ -81,7 +81,7 @@ class NovaEvaApp : Application() {
         }
 
         val defaultDashboardBackground: Drawable by lazy {
-            ContextCompat.getDrawable(NovaEvaApp.instance!!, R.drawable.background_02)!!
+            ContextCompat.getDrawable(NovaEvaApp.instance!!, R.drawable.background_01)!!
         }
 
         val defaultBreviaryBackground: Drawable by lazy {
