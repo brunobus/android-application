@@ -1,6 +1,10 @@
 package hr.bpervan.novaeva.fragments
 
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.Network
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.ContextThemeWrapper
@@ -12,7 +16,6 @@ import androidx.core.net.toUri
 import com.google.firebase.analytics.FirebaseAnalytics
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.main.databinding.FragmentBookmarksBinding
 import hr.bpervan.novaeva.main.databinding.FragmentDashboardBinding
 import hr.bpervan.novaeva.model.ContentDto
 import hr.bpervan.novaeva.model.OpenDirectoryEvent
@@ -22,14 +25,19 @@ import hr.bpervan.novaeva.rest.EvaDomain
 import hr.bpervan.novaeva.rest.NovaEvaService
 import hr.bpervan.novaeva.storage.EvaContentDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
-import hr.bpervan.novaeva.util.*
+import hr.bpervan.novaeva.util.HAS_NEW_CONTENT_KEY_PREFIX
+import hr.bpervan.novaeva.util.LAST_SYNC_TIME_MILLIS_KEY
+import hr.bpervan.novaeva.util.LATEST_CONTENT_ID_KEY_PREFIX
+import hr.bpervan.novaeva.util.TransitionAnimation
+import hr.bpervan.novaeva.util.plusAssign
+import hr.bpervan.novaeva.util.stripTrimAndEllipsizeText
+import hr.bpervan.novaeva.util.syncIntervalMillis
 import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 /**
  *
@@ -47,6 +55,8 @@ class EvaDashboardFragment : EvaBaseFragment() {
     private val viewBinding get() = _viewBinding!!
 
     private lateinit var realm: Realm
+
+    private var networkCallback: ConnectivityManager.NetworkCallback? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -134,10 +144,21 @@ class EvaDashboardFragment : EvaBaseFragment() {
                     theme = R.style.EvandjeljeTheme))
         }
 
-        disposables += EventPipelines.connectedToNetwork
-                .throttleWithTimeout(3, TimeUnit.SECONDS)
-                .flatMapCompletable { liveContentCompletable() }
-                .subscribe()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            networkCallback = object : ConnectivityManager.NetworkCallback() {
+                override fun onAvailable(network: Network) {
+                    super.onAvailable(network)
+                    disposables += liveContentCompletable().subscribe()
+                }
+            }
+
+            val connMan = requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            networkCallback?.let {
+                connMan.registerDefaultNetworkCallback(it)
+            }
+        } else {
+            disposables += liveContentCompletable().subscribe()
+        }
 
         updateUI()
 
@@ -197,6 +218,8 @@ class EvaDashboardFragment : EvaBaseFragment() {
             disableLive()
         } else {
             EvaContentDbAdapter.addOrUpdateEvaContentAsync(realm, liveContent) {
+                view ?: return@addOrUpdateEvaContentAsync
+
                 if (!liveContent.active) {
                     disableLive()
                 } else {
@@ -272,6 +295,12 @@ class EvaDashboardFragment : EvaBaseFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _viewBinding = null
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            val connMan = requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            networkCallback?.let {
+                connMan.unregisterNetworkCallback(it)
+            }
+        }
     }
 
     override fun onDestroy() {

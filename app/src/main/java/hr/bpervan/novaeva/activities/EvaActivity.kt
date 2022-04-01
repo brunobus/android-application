@@ -1,6 +1,10 @@
 package hr.bpervan.novaeva.activities
 
+import android.content.Context
 import android.graphics.Rect
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
 import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
@@ -14,7 +18,19 @@ import androidx.core.view.GravityCompat
 import androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
-import hr.bpervan.novaeva.fragments.*
+import hr.bpervan.novaeva.fragments.BreviaryChooserFragment
+import hr.bpervan.novaeva.fragments.BreviaryContentFragment
+import hr.bpervan.novaeva.fragments.EvaBaseFragment
+import hr.bpervan.novaeva.fragments.EvaBookmarksFragment
+import hr.bpervan.novaeva.fragments.EvaCalendarFragment
+import hr.bpervan.novaeva.fragments.EvaContentFragment
+import hr.bpervan.novaeva.fragments.EvaDashboardFragment
+import hr.bpervan.novaeva.fragments.EvaDirectoryFragment
+import hr.bpervan.novaeva.fragments.EvaInfoFragment
+import hr.bpervan.novaeva.fragments.EvaQuotesFragment
+import hr.bpervan.novaeva.fragments.PrayerBookFragment
+import hr.bpervan.novaeva.fragments.PrayerListFragment
+import hr.bpervan.novaeva.fragments.RadioFragment
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.main.databinding.ActivityEvaMainBinding
 import hr.bpervan.novaeva.model.EvaDomainInfo
@@ -24,9 +40,20 @@ import hr.bpervan.novaeva.player.getStreamLinksFromPlaylist
 import hr.bpervan.novaeva.rest.EvaDomain
 import hr.bpervan.novaeva.rest.NovaEvaService
 import hr.bpervan.novaeva.storage.RealmConfigProvider
-import hr.bpervan.novaeva.util.*
-import hr.bpervan.novaeva.util.TransitionAnimation.*
+import hr.bpervan.novaeva.util.BREVIARY_IMAGE_KEY
+import hr.bpervan.novaeva.util.SwipeGestureListener
+import hr.bpervan.novaeva.util.TransitionAnimation
+import hr.bpervan.novaeva.util.TransitionAnimation.DOWNWARDS
+import hr.bpervan.novaeva.util.TransitionAnimation.FADE
+import hr.bpervan.novaeva.util.TransitionAnimation.LEFTWARDS
+import hr.bpervan.novaeva.util.TransitionAnimation.NONE
+import hr.bpervan.novaeva.util.TransitionAnimation.RIGHTWARDS
+import hr.bpervan.novaeva.util.TransitionAnimation.UPWARDS
+import hr.bpervan.novaeva.util.dataErrorSnackbar
+import hr.bpervan.novaeva.util.plusAssign
+import hr.bpervan.novaeva.util.subscribeThrottled
 import hr.bpervan.novaeva.views.snackbar
+import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
@@ -54,6 +81,8 @@ class EvaActivity : EvaBaseActivity() {
     private lateinit var realm: Realm
 
     private lateinit var viewBinding: ActivityEvaMainBinding
+
+    private var networkCallback: ConnectivityManager.NetworkCallback? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -262,30 +291,59 @@ class EvaActivity : EvaBaseActivity() {
                     }
         }
 
-        disposables += bus.connectedToNetwork
-                .throttleWithTimeout(10, TimeUnit.SECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext {
-
-                    if (!NovaEvaApp.evaPlayer.isStopped()) {
-                        Log.w("networkChange", "Network change detected - stopping audio player")
-                        NovaEvaApp.evaPlayer.stop() //roaming safeguard
-                        viewBinding.root.snackbar(R.string.network_changed_player_stopped)
-                    }
-
-                    updateMissingDomainRoots()
-                }
-                .subscribe {
-                    fetchBreviaryCoverUrl()
-                    fetchDashboardBackgroundUrl()
-                }
-
         disposables += bus.playAnyRadioStation
                 .throttleFirst(1, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     playFirstRadioStation()
                 }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+
+            networkCallback = object : ConnectivityManager.NetworkCallback() {
+
+                private var wasRoaming: Boolean = false;
+
+                override fun onAvailable(network: Network) {
+                    super.onAvailable(network)
+
+                    Completable
+                        .fromAction {
+                            updateMissingDomainRoots()
+                        }
+                        .subscribeOn(AndroidSchedulers.mainThread())
+                        .subscribe()
+
+                }
+
+                // TODO try to move to AudioPlayerService
+                override fun onCapabilitiesChanged(network: Network, networkCapabilities: NetworkCapabilities) {
+                    super.onCapabilitiesChanged(network, networkCapabilities)
+
+                    val isRoaming = !networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_ROAMING)
+                    if (isRoaming && !wasRoaming) {
+                        Completable
+                            .fromAction {
+                                if (!NovaEvaApp.evaPlayer.isStopped()) {
+                                    Log.w("roamingDetected", "Roaming detected - stopping audio player")
+                                    NovaEvaApp.evaPlayer.stop()
+                                    viewBinding.root.snackbar(R.string.network_changed_player_stopped)
+                                }
+                            }
+                            .subscribeOn(AndroidSchedulers.mainThread())
+                            .subscribe()
+                        wasRoaming = true
+                    } else if (!isRoaming) {
+                        wasRoaming = false
+                    }
+                }
+            }
+
+            val connMan = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            networkCallback?.let {
+                connMan.registerDefaultNetworkCallback(it)
+            }
+        }
 
         fetchBreviaryCoverUrl()
         fetchDashboardBackgroundUrl()
@@ -381,6 +439,12 @@ class EvaActivity : EvaBaseActivity() {
 
     override fun onStop() {
         disposables.clear()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            val connMan = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            networkCallback?.let {
+                connMan.unregisterNetworkCallback(it)
+            }
+        }
         super.onStop()
     }
 

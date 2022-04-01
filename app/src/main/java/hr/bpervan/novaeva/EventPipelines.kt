@@ -1,7 +1,12 @@
 package hr.bpervan.novaeva
 
 import android.graphics.drawable.Drawable
-import hr.bpervan.novaeva.model.*
+import hr.bpervan.novaeva.model.EvaContent
+import hr.bpervan.novaeva.model.OpenBreviaryContentEvent
+import hr.bpervan.novaeva.model.OpenContentEvent
+import hr.bpervan.novaeva.model.OpenDirectoryEvent
+import hr.bpervan.novaeva.model.OpenPrayerDirectoryEvent
+import hr.bpervan.novaeva.model.OpenQuotesEvent
 import hr.bpervan.novaeva.player.EvaPlayer
 import hr.bpervan.novaeva.util.TransitionAnimation
 import io.reactivex.subjects.BehaviorSubject
@@ -46,8 +51,5 @@ object EventPipelines {
 
     //event
     val playbackStartStopPause = BehaviorSubject.create<EvaPlayer.PlaybackChange>()
-
-    //network
-    val connectedToNetwork = PublishSubject.create<Unit>()
 }
 

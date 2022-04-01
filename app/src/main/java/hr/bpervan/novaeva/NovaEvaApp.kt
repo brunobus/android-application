@@ -2,7 +2,6 @@ package hr.bpervan.novaeva
 
 import android.app.Application
 import android.content.Context
-import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
@@ -12,7 +11,6 @@ import com.nostra13.universalimageloader.core.ImageLoader
 import hr.bpervan.novaeva.main.BuildConfig
 import hr.bpervan.novaeva.main.R
 import hr.bpervan.novaeva.player.EvaPlayer
-import hr.bpervan.novaeva.receivers.ConnectionDetector
 import hr.bpervan.novaeva.util.ImageLoaderConfigurator
 import hr.bpervan.novaeva.util.LifecycleLogger
 import hr.bpervan.novaeva.util.NOVA_EVA_PREFS
@@ -29,12 +27,6 @@ class NovaEvaApp : Application() {
         instance = this
 
         Realm.init(this)
-
-        val filter = IntentFilter()
-        filter.addAction("android.net.wifi.supplicant.CONNECTION_CHANGE")
-        filter.addAction("android.net.wifi.STATE_CHANGE")
-        filter.addAction("android.net.conn.CONNECTIVITY_CHANGE")
-        registerReceiver(ConnectionDetector(), filter)
 
         if (BuildConfig.DEBUG) {
             registerActivityLifecycleCallbacks(LifecycleLogger())
