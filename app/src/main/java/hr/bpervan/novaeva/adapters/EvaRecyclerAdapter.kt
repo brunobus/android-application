@@ -11,11 +11,17 @@ import androidx.core.view.isVisible
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.*
+import hr.bpervan.novaeva.main.databinding.RecyclerItemEvaContentBinding
+import hr.bpervan.novaeva.main.databinding.RecyclerItemFolderBinding
+import hr.bpervan.novaeva.main.databinding.RecyclerItemProgressBinding
+import hr.bpervan.novaeva.model.AttachmentIndicatorHelper
+import hr.bpervan.novaeva.model.EvaContent
+import hr.bpervan.novaeva.model.EvaDirectory
+import hr.bpervan.novaeva.model.EvaNode
+import hr.bpervan.novaeva.model.OpenContentEvent
+import hr.bpervan.novaeva.model.OpenDirectoryEvent
 import hr.bpervan.novaeva.util.EvaTouchFeedback
 import hr.bpervan.novaeva.util.TransitionAnimation
-import kotlinx.android.synthetic.main.recycler_item_eva_content.view.*
-import kotlinx.android.synthetic.main.recycler_item_folder.view.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -31,9 +37,9 @@ class EvaRecyclerAdapter(private val data: List<EvaNode>,
         val dayMonthFormat = SimpleDateFormat("d.M.", Locale.US)
         val yearHourMinuteFormat = SimpleDateFormat("yyyy, HH:mm", Locale.US)
 
-        val CONTENT_VIEW_TYPE = 1
-        val SUBDIRECTORY_VIEW_TYPE = 2
-        val PROGRESS_VIEW_TYPE = 3
+        const val CONTENT_VIEW_TYPE = 1
+        const val SUBDIRECTORY_VIEW_TYPE = 2
+        const val PROGRESS_VIEW_TYPE = 3
     }
 
     private var themeColor: Int = 0
@@ -61,18 +67,18 @@ class EvaRecyclerAdapter(private val data: List<EvaNode>,
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BindableViewHolder {
         return when (viewType) {
             CONTENT_VIEW_TYPE -> {
-                val view = LayoutInflater.from(parent.context).inflate(R.layout.recycler_item_eva_content, parent, false)
-                view.background.mutate()
-                ContentInfoViewHolder(view)
+                val viewBinding = RecyclerItemEvaContentBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                viewBinding.root.background.mutate()
+                ContentInfoViewHolder(viewBinding)
             }
             SUBDIRECTORY_VIEW_TYPE -> {
-                val view = LayoutInflater.from(parent.context).inflate(R.layout.recycler_item_folder, parent, false)
-                view.background.mutate()
-                DirectoryInfoViewHolder(view)
+                val viewBinding = RecyclerItemFolderBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                viewBinding.root.background.mutate()
+                DirectoryInfoViewHolder(viewBinding)
             }
             else -> {
-                val view = LayoutInflater.from(parent.context).inflate(R.layout.recycler_item_progress, parent, false)
-                ProgressBarViewHolder(view)
+                val viewBinding = RecyclerItemProgressBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                ProgressBarViewHolder(viewBinding)
             }
         }
     }
@@ -90,8 +96,8 @@ class EvaRecyclerAdapter(private val data: List<EvaNode>,
         abstract fun bindTo(t: Any)
     }
 
-    private inner class DirectoryInfoViewHolder(view: View) : BindableViewHolder(view) {
-        val tvMapaNaslov: TextView = view.tvMapaNaslov
+    private inner class DirectoryInfoViewHolder(viewBinding: RecyclerItemFolderBinding) : BindableViewHolder(viewBinding.root) {
+        val tvMapaNaslov: TextView = viewBinding.tvMapaNaslov
 
         init {
             tvMapaNaslov.typeface = NovaEvaApp.openSansBold
@@ -115,17 +121,17 @@ class EvaRecyclerAdapter(private val data: List<EvaNode>,
 
     }
 
-    private inner class ContentInfoViewHolder(view: View) : BindableViewHolder(view) {
-        val tvNaslov: TextView = view.tvNaslov
-        val tvUvod: TextView = view.tvUvod
-        val tvDatum: TextView = view.tvDatum
-        val tvGodinaSatMinuta: TextView = view.tvGodinaSatMinuta
+    private inner class ContentInfoViewHolder(viewBinding: RecyclerItemEvaContentBinding) : BindableViewHolder(viewBinding.root) {
+        val tvNaslov: TextView = viewBinding.tvNaslov
+        val tvUvod: TextView = viewBinding.tvUvod
+        val tvDatum: TextView = viewBinding.tvDatum
+        val tvGodinaSatMinuta: TextView = viewBinding.tvGodinaSatMinuta
 
-        val imgHasLink: ImageView = view.imgViewLink
-        val imgHasTxt: ImageView = view.imgViewTxt
-        val imgHasAudio: ImageView = view.imgViewMp3
+        val imgHasLink: ImageView = viewBinding.imgViewLink
+        val imgHasTxt: ImageView = viewBinding.imgViewTxt
+        val imgHasAudio: ImageView = viewBinding.imgViewMp3
 
-        val tvUvodNatpis: TextView = view.tvUvodNatpis
+        val tvUvodNatpis: TextView = viewBinding.tvUvodNatpis
 
         init {
             NovaEvaApp.openSansBold?.let {
@@ -181,7 +187,7 @@ class EvaRecyclerAdapter(private val data: List<EvaNode>,
         }
     }
 
-    private inner class ProgressBarViewHolder(view: View) : BindableViewHolder(view) {
+    private inner class ProgressBarViewHolder(viewBinding: RecyclerItemProgressBinding) : BindableViewHolder(viewBinding.root) {
 
         override fun bindTo(t: Any) {
             view.visibility = if (isLoadingSupplier()) View.VISIBLE else View.GONE

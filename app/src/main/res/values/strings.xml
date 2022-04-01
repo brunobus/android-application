@@ -11,9 +11,10 @@
     <string name="vocation">Poziv</string>
     <string name="spirituality">Duhovnost</string>
     <string name="answers">Odgovori</string>
+    <string name="live">Uživo</string>
     <string name="title_default">Naslov</string>
     <string name="the_search">Pretraga</string>
-    <string name="to_search">Pretraži</string>
+    <string name="to_search">Pretraži…</string>
     <string name="title_share_mail">E-pošta</string>
     <string name="title_share">Dijeli</string>
     <string name="recommendation">Aplikacija Nova Eva je hit! Preporučam:</string>
@@ -32,7 +33,7 @@
     <string name="introduction_identifier">Uvod:</string>
     <string name="error_fetching_data">Dohvaćanje podataka nije uspjelo</string>
     <string name="network_unavailable">Internetska veza nije dostupna</string>
-    <string name="network_changed_player_stopped">Detektirana je promjena mreže - reprodukcija zvuka zaustavljena</string>
+    <string name="network_changed_player_stopped">Detektiran je roaming - reprodukcija zaustavljena</string>
     <string name="try_again">Pokušaj ponovno</string>
     <string name="go_back">Povratak</string>
     <string name="error">Greška</string>

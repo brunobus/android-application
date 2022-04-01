@@ -9,11 +9,10 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
+import hr.bpervan.novaeva.main.databinding.FragmentBreviaryChooserBinding
 import hr.bpervan.novaeva.model.OpenBreviaryContentEvent
 import hr.bpervan.novaeva.util.BREVIARY_IMAGE_KEY
 import hr.bpervan.novaeva.util.TransitionAnimation
-import kotlinx.android.synthetic.main.fragment_breviary_chooser.*
-import kotlinx.android.synthetic.main.collapsing_breviary_header.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -22,15 +21,19 @@ import java.util.*
  */
 class BreviaryChooserFragment : EvaBaseFragment() {
 
+    private var _viewBinding: FragmentBreviaryChooserBinding? = null
+    private val viewBinding get() = _viewBinding!!
+
     companion object : EvaFragmentFactory<BreviaryChooserFragment, Unit> {
         override fun newInstance(initializer: Unit): BreviaryChooserFragment {
             return BreviaryChooserFragment()
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.cloneInContext(ContextThemeWrapper(activity, R.style.BreviaryTheme))
-                .inflate(R.layout.fragment_breviary_chooser, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        val newInflater = inflater.cloneInContext(ContextThemeWrapper(activity, R.style.BreviaryTheme))
+        _viewBinding = FragmentBreviaryChooserBinding.inflate(newInflater, container, false)
+        return viewBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -43,30 +46,30 @@ class BreviaryChooserFragment : EvaBaseFragment() {
 
         val openSansRegular = NovaEvaApp.openSansRegular
         if (openSansRegular != null) {
-            txtKs.typeface = openSansRegular
-            txtLaudato.typeface = openSansRegular
+            viewBinding.txtKs.typeface = openSansRegular
+            viewBinding.txtLaudato.typeface = openSansRegular
         }
 
         val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale("hr", "HR"))
-        imgDanas.text = dateFormat.format(Date())
+        viewBinding.imgDanas.text = dateFormat.format(Date())
 
         val headerUrl = prefs.getString(BREVIARY_IMAGE_KEY, null)
 
-        if (headerUrl != null && breviaryCoverImage != null) {
-            imageLoader.displayImage(headerUrl, breviaryCoverImage)
+        if (headerUrl != null) {
+            imageLoader.displayImage(headerUrl, viewBinding.collapsingBreviaryHeader.breviaryCoverImage)
         }
 
-        btnJucerJutarnja.setOnClickListener(BreviaryClickListener(1))
-        btnJucerVecernja.setOnClickListener(BreviaryClickListener(2))
-        btnJucerPovecerje.setOnClickListener(BreviaryClickListener(3))
+        viewBinding.btnJucerJutarnja.setOnClickListener(BreviaryClickListener(1))
+        viewBinding.btnJucerVecernja.setOnClickListener(BreviaryClickListener(2))
+        viewBinding.btnJucerPovecerje.setOnClickListener(BreviaryClickListener(3))
 
-        btnDanasJutarnja.setOnClickListener(BreviaryClickListener(4))
-        btnDanasVecernja.setOnClickListener(BreviaryClickListener(5))
-        btnDanasPovecerje.setOnClickListener(BreviaryClickListener(6))
+        viewBinding.btnDanasJutarnja.setOnClickListener(BreviaryClickListener(4))
+        viewBinding.btnDanasVecernja.setOnClickListener(BreviaryClickListener(5))
+        viewBinding.btnDanasPovecerje.setOnClickListener(BreviaryClickListener(6))
 
-        btnSutraJutarnja.setOnClickListener(BreviaryClickListener(7))
-        btnSutraVecernja.setOnClickListener(BreviaryClickListener(8))
-        btnSutraPovecerje.setOnClickListener(BreviaryClickListener(9))
+        viewBinding.btnSutraJutarnja.setOnClickListener(BreviaryClickListener(7))
+        viewBinding.btnSutraVecernja.setOnClickListener(BreviaryClickListener(8))
+        viewBinding.btnSutraPovecerje.setOnClickListener(BreviaryClickListener(9))
     }
 
     override fun onResume() {
@@ -76,10 +79,15 @@ class BreviaryChooserFragment : EvaBaseFragment() {
                 .setCurrentScreen(requireActivity(), "Brevijar izbornik", "BreviaryChooser")
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _viewBinding = null
+    }
+
     inner class BreviaryClickListener(private val breviaryId: Int) : View.OnClickListener {
 
         override fun onClick(v: View?) {
-            EventPipelines.openBreviaryContent.onNext(OpenBreviaryContentEvent(breviaryId, TransitionAnimation.FADE))
+            EventPipelines.openBreviaryContent.onNext(OpenBreviaryContentEvent(breviaryId, TransitionAnimation.NONE))
         }
     }
 }

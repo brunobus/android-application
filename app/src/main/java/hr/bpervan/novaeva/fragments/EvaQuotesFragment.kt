@@ -9,8 +9,8 @@ import androidx.core.content.edit
 import androidx.core.os.bundleOf
 import com.google.firebase.analytics.FirebaseAnalytics
 import hr.bpervan.novaeva.EventPipelines
-import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
+import hr.bpervan.novaeva.main.databinding.FragmentEvaQuotesBinding
 import hr.bpervan.novaeva.rest.EvaDomain
 import hr.bpervan.novaeva.rest.NovaEvaService
 import hr.bpervan.novaeva.util.HAS_NEW_CONTENT_KEY_PREFIX
@@ -23,8 +23,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.collapsing_content_header.view.*
-import kotlinx.android.synthetic.main.fragment_eva_quotes.*
 
 /**
  * Created by vpriscan on 04.12.17..
@@ -43,6 +41,9 @@ class EvaQuotesFragment : EvaBaseFragment() {
             }
         }
     }
+
+    private var _viewBinding: FragmentEvaQuotesBinding? = null
+    private val viewBinding get() = _viewBinding!!
 
     private var quoteTitle: String? = null
     var quoteData: String? = null
@@ -67,9 +68,10 @@ class EvaQuotesFragment : EvaBaseFragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.cloneInContext(ContextThemeWrapper(activity, R.style.IzrekeTheme))
-                .inflate(R.layout.fragment_eva_quotes, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        val newInflater = inflater.cloneInContext(ContextThemeWrapper(activity, R.style.IzrekeTheme))
+        _viewBinding = FragmentEvaQuotesBinding.inflate(newInflater, container, false)
+        return viewBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -86,13 +88,13 @@ class EvaQuotesFragment : EvaBaseFragment() {
         }
 
         disposables += EventPipelines.resizeText.subscribe {
-            webText?.applyConfiguredFontSize(prefs)
+            viewBinding.webText.applyConfiguredFontSize(prefs)
         }
 
-        webText.applyEvaConfiguration(prefs)
-        evaCollapsingBar.collapsingToolbar.title = context!!.getString(R.string.quotes)
+        viewBinding.webText.applyEvaConfiguration(prefs)
+        viewBinding.evaCollapsingBar.collapsingToolbar.title = context!!.getString(R.string.quotes)
 
-        btnObnovi.setOnClickListener {
+        viewBinding.btnObnovi.setOnClickListener {
             fetchRandomQuote()
         }
     }
@@ -102,6 +104,11 @@ class EvaQuotesFragment : EvaBaseFragment() {
 
         FirebaseAnalytics.getInstance(requireContext())
                 .setCurrentScreen(requireActivity(), "Izreke", "Proverbs")
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _viewBinding = null
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -128,6 +135,6 @@ class EvaQuotesFragment : EvaBaseFragment() {
     }
 
     private fun showQuote() {
-        webText?.loadHtmlText(quoteData)
+        viewBinding.webText.loadHtmlText(quoteData)
     }
 }

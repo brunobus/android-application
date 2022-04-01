@@ -3,19 +3,18 @@ package hr.bpervan.novaeva.adapters
 import android.graphics.Color
 import android.util.TypedValue
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.PrayerBookRecyclerAdapter.PrayerCategoryViewHolder
 import hr.bpervan.novaeva.main.R
+import hr.bpervan.novaeva.main.databinding.RecyclerItemPrayerCategoryBinding
 import hr.bpervan.novaeva.model.EvaDirectory
 import hr.bpervan.novaeva.model.EvaNode
 import hr.bpervan.novaeva.model.OpenPrayerDirectoryEvent
 import hr.bpervan.novaeva.util.EvaTouchFeedback
 import hr.bpervan.novaeva.util.TransitionAnimation
-import kotlinx.android.synthetic.main.recycler_item_prayer_category.view.*
 
 class PrayerBookRecyclerAdapter(private val prayerCategoryList: List<EvaNode>) :
         androidx.recyclerview.widget.RecyclerView.Adapter<PrayerCategoryViewHolder>() {
@@ -34,17 +33,17 @@ class PrayerBookRecyclerAdapter(private val prayerCategoryList: List<EvaNode>) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PrayerCategoryViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.recycler_item_prayer_category, parent, false)
-        view.background.mutate()
-        return PrayerCategoryViewHolder(view)
+        val viewBinding = RecyclerItemPrayerCategoryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        viewBinding.root.background.mutate()
+        return PrayerCategoryViewHolder(viewBinding)
     }
 
     override fun onBindViewHolder(holder: PrayerCategoryViewHolder, position: Int) {
         holder.bindTo(prayerCategoryList[position])
     }
 
-    inner class PrayerCategoryViewHolder(val view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
-        private val prayerCategoryTitle: TextView = view.prayerCategoryTitleTextView
+    inner class PrayerCategoryViewHolder(val viewBinding: RecyclerItemPrayerCategoryBinding) : androidx.recyclerview.widget.RecyclerView.ViewHolder(viewBinding.root) {
+        private val prayerCategoryTitle: TextView = viewBinding.prayerCategoryTitleTextView
 
         init {
             prayerCategoryTitle.typeface = NovaEvaApp.openSansRegular
@@ -55,8 +54,8 @@ class PrayerBookRecyclerAdapter(private val prayerCategoryList: List<EvaNode>) :
 
             prayerCategoryTitle.text = prayerCategory.title
 
-            view.setOnTouchListener(EvaTouchFeedback(view, themeColorTrans))
-            view.setOnClickListener {
+            viewBinding.root.setOnTouchListener(EvaTouchFeedback(viewBinding.root, themeColorTrans))
+            viewBinding.root.setOnClickListener {
                 EventPipelines.openPrayerCategory.onNext(OpenPrayerDirectoryEvent(
                         directoryId = prayerCategory.id,
                         title = prayerCategory.title,

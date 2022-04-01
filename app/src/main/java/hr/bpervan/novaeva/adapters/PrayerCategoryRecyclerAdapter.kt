@@ -12,11 +12,11 @@ import androidx.recyclerview.widget.RecyclerView
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.PrayerCategoryRecyclerAdapter.PrayerViewHolder
 import hr.bpervan.novaeva.main.R
+import hr.bpervan.novaeva.main.databinding.RecyclerItemPrayerBinding
 import hr.bpervan.novaeva.model.EvaContent
 import hr.bpervan.novaeva.model.EvaNode
 import hr.bpervan.novaeva.util.EvaTouchFeedback
 import hr.bpervan.novaeva.views.loadHtmlText
-import kotlinx.android.synthetic.main.recycler_item_prayer.view.*
 import net.cachapa.expandablelayout.ExpandableLayout
 
 
@@ -53,19 +53,19 @@ class PrayerCategoryRecyclerAdapter(private val prayerCategory: List<EvaNode>) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PrayerViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.recycler_item_prayer, parent, false)
-        view.prayerTitleConstraintLayout.background.mutate()
-        return PrayerViewHolder(view)
+        val viewBinding = RecyclerItemPrayerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        viewBinding.prayerTitleConstraintLayout.background.mutate()
+        return PrayerViewHolder(viewBinding)
     }
 
     override fun onBindViewHolder(holder: PrayerViewHolder, position: Int) {
         holder.bindTo(prayerCategory[position])
     }
 
-    inner class PrayerViewHolder(val view: View) : RecyclerView.ViewHolder(view), View.OnClickListener {
-        val expandableLayout: ExpandableLayout = view.expandableLayout
-        private val prayerTitle: TextView = view.prayerTitleTextView
-        private val prayerContent: WebView = view.prayerContentView
+    inner class PrayerViewHolder(val viewBinding: RecyclerItemPrayerBinding) : RecyclerView.ViewHolder(viewBinding.root), View.OnClickListener {
+        val expandableLayout: ExpandableLayout = viewBinding.expandableLayout
+        private val prayerTitle: TextView = viewBinding.prayerTitleTextView
+        private val prayerContent: WebView = viewBinding.prayerContentView
 
         init {
             expandableLayout.setInterpolator(DecelerateInterpolator())
@@ -81,7 +81,7 @@ class PrayerCategoryRecyclerAdapter(private val prayerCategory: List<EvaNode>) :
 
             expandableLayout.setExpanded(adapterPosition == expandedItemPos, false)
 
-            view.prayerTitleConstraintLayout.let {
+            viewBinding.prayerTitleConstraintLayout.let {
                 it.setOnTouchListener(EvaTouchFeedback(it, themeColorTrans))
                 it.setOnClickListener(this@PrayerViewHolder)
             }

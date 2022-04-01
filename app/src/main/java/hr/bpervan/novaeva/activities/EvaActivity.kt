@@ -1,6 +1,10 @@
 package hr.bpervan.novaeva.activities
 
+import android.content.Context
 import android.graphics.Rect
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
 import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
@@ -14,26 +18,48 @@ import androidx.core.view.GravityCompat
 import androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
-import hr.bpervan.novaeva.fragments.*
+import hr.bpervan.novaeva.fragments.BreviaryChooserFragment
+import hr.bpervan.novaeva.fragments.BreviaryContentFragment
+import hr.bpervan.novaeva.fragments.EvaBaseFragment
+import hr.bpervan.novaeva.fragments.EvaBookmarksFragment
+import hr.bpervan.novaeva.fragments.EvaCalendarFragment
+import hr.bpervan.novaeva.fragments.EvaContentFragment
+import hr.bpervan.novaeva.fragments.EvaDashboardFragment
+import hr.bpervan.novaeva.fragments.EvaDirectoryFragment
+import hr.bpervan.novaeva.fragments.EvaInfoFragment
+import hr.bpervan.novaeva.fragments.EvaQuotesFragment
+import hr.bpervan.novaeva.fragments.PrayerBookFragment
+import hr.bpervan.novaeva.fragments.PrayerListFragment
+import hr.bpervan.novaeva.fragments.RadioFragment
 import hr.bpervan.novaeva.main.R
+import hr.bpervan.novaeva.main.databinding.ActivityEvaMainBinding
 import hr.bpervan.novaeva.model.EvaDomainInfo
 import hr.bpervan.novaeva.model.OpenContentEvent
 import hr.bpervan.novaeva.model.OpenQuotesEvent
 import hr.bpervan.novaeva.player.getStreamLinksFromPlaylist
 import hr.bpervan.novaeva.rest.EvaDomain
 import hr.bpervan.novaeva.rest.NovaEvaService
-import hr.bpervan.novaeva.rest.serverByDomain
 import hr.bpervan.novaeva.storage.RealmConfigProvider
-import hr.bpervan.novaeva.util.*
-import hr.bpervan.novaeva.util.TransitionAnimation.*
+import hr.bpervan.novaeva.util.BREVIARY_IMAGE_KEY
+import hr.bpervan.novaeva.util.SwipeGestureListener
+import hr.bpervan.novaeva.util.TransitionAnimation
+import hr.bpervan.novaeva.util.TransitionAnimation.DOWNWARDS
+import hr.bpervan.novaeva.util.TransitionAnimation.FADE
+import hr.bpervan.novaeva.util.TransitionAnimation.LEFTWARDS
+import hr.bpervan.novaeva.util.TransitionAnimation.NONE
+import hr.bpervan.novaeva.util.TransitionAnimation.RIGHTWARDS
+import hr.bpervan.novaeva.util.TransitionAnimation.UPWARDS
+import hr.bpervan.novaeva.util.dataErrorSnackbar
+import hr.bpervan.novaeva.util.plusAssign
+import hr.bpervan.novaeva.util.subscribeThrottled
 import hr.bpervan.novaeva.views.snackbar
+import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
 import io.realm.kotlin.where
-import kotlinx.android.synthetic.main.activity_eva_main.*
 import java.util.concurrent.TimeUnit
 
 /**
@@ -54,10 +80,15 @@ class EvaActivity : EvaBaseActivity() {
 
     private lateinit var realm: Realm
 
+    private lateinit var viewBinding: ActivityEvaMainBinding
+
+    private var networkCallback: ConnectivityManager.NetworkCallback? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        setContentView(R.layout.activity_eva_main)
+        
+        viewBinding = ActivityEvaMainBinding.inflate(layoutInflater)
+        setContentView(viewBinding.root)
 
         realm = Realm.getInstance(RealmConfigProvider.evaDBConfig)
 
@@ -88,9 +119,19 @@ class EvaActivity : EvaBaseActivity() {
 
         gestureDetector = GestureDetectorCompat(this, SwipeLeftToRightGestureListener(displayMetrics))
 
-        supportFragmentManager?.addOnBackStackChangedListener {
-            if (evaRoot.isDrawerOpen(GravityCompat.END)) {
-                evaRoot.closeDrawer(GravityCompat.END)
+        supportFragmentManager.addOnBackStackChangedListener {
+            if (viewBinding.root.isDrawerOpen(GravityCompat.END)) {
+                viewBinding.root.closeDrawer(GravityCompat.END)
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        supportFragmentManager.let {
+            if (it.backStackEntryCount == 0) {
+                openDashboardFragment()
             }
         }
     }
@@ -114,8 +155,7 @@ class EvaActivity : EvaBaseActivity() {
     }
 
     private fun updateDomainRoot(domainInfo: EvaDomainInfo) {
-        disposables += NovaEvaService.v3.categoryContent(domainInfo.endpointRoot,
-                categoryId = 0, page = 1, items = 1)
+        disposables += NovaEvaService.v3.categoryContent(domainInfo.endpointRoot, categoryId = 0, page = 1, items = 1)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(onSuccess = { categoryDto ->
@@ -138,10 +178,10 @@ class EvaActivity : EvaBaseActivity() {
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
         if (gestureDetector.onTouchEvent(ev)) return true
 
-        if (evaRoot.isDrawerOpen(GravityCompat.END)) {
+        if (viewBinding.root.isDrawerOpen(GravityCompat.END)) {
 
             val viewRect = Rect()
-            evaOptionsFragmentFrame.getGlobalVisibleRect(viewRect)
+            viewBinding.evaOptionsFragmentFrame.getGlobalVisibleRect(viewRect)
             if (!viewRect.contains(ev.rawX.toInt(), ev.rawY.toInt())) {
 
                 when (ev.action) {
@@ -150,7 +190,7 @@ class EvaActivity : EvaBaseActivity() {
                     }
                     MotionEvent.ACTION_UP -> {
                         if (System.currentTimeMillis() - lastDownPress <= drawerCloseWait) {
-                            evaRoot.closeDrawer(GravityCompat.END)
+                            viewBinding.root.closeDrawer(GravityCompat.END)
                         }
                         return true
                     }
@@ -164,7 +204,7 @@ class EvaActivity : EvaBaseActivity() {
     inner class SwipeLeftToRightGestureListener(displayMetrics: DisplayMetrics) : SwipeGestureListener(displayMetrics) {
         override fun onSwipeRight(): Boolean {
             return when {
-                evaRoot.isDrawerOpen(GravityCompat.END) -> false /*drawer already listens for swipe right gesture, don't consume the event here*/
+                viewBinding.root.isDrawerOpen(GravityCompat.END) -> false /*drawer already listens for swipe right gesture, don't consume the event here*/
                 supportFragmentManager.backStackEntryCount > 1 -> {
                     onBackPressed()
                     true
@@ -185,10 +225,6 @@ class EvaActivity : EvaBaseActivity() {
         disposables += bus.goHome.subscribeThrottled(::openDashboardFragment)
         disposables += bus.openContent.subscribeThrottled(::openContentFragment)
 
-        disposables += bus.search.subscribeThrottled {
-            addToBackStack(mainContainerId, EvaSearchFragment, it, FADE, true)
-        }
-
         disposables += bus.openDirectory.subscribeThrottled {
             addToBackStack(mainContainerId, EvaDirectoryFragment, it, it.animation, false)
         }
@@ -208,10 +244,10 @@ class EvaActivity : EvaBaseActivity() {
         }
 
         disposables += bus.toggleOptionsDrawer.subscribeThrottled {
-            if (evaRoot.isDrawerOpen(GravityCompat.END)) {
-                evaRoot.closeDrawer(GravityCompat.END)
+            if (viewBinding.root.isDrawerOpen(GravityCompat.END)) {
+                viewBinding.root.closeDrawer(GravityCompat.END)
             } else {
-                evaRoot.openDrawer(GravityCompat.END)
+                viewBinding.root.openDrawer(GravityCompat.END)
             }
         }
 
@@ -255,30 +291,59 @@ class EvaActivity : EvaBaseActivity() {
                     }
         }
 
-        disposables += bus.connectedToNetwork
-                .throttleWithTimeout(10, TimeUnit.SECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext {
-
-                    if (!NovaEvaApp.evaPlayer.isStopped()) {
-                        Log.w("networkChange", "Network change detected - stopping audio player")
-                        NovaEvaApp.evaPlayer.stop() //roaming safeguard
-                        evaRoot?.snackbar(R.string.network_changed_player_stopped)
-                    }
-
-                    updateMissingDomainRoots()
-                }
-                .subscribe {
-                    fetchBreviaryCoverUrl()
-                    fetchDashboardBackgroundUrl()
-                }
-
         disposables += bus.playAnyRadioStation
                 .throttleFirst(1, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     playFirstRadioStation()
                 }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+
+            networkCallback = object : ConnectivityManager.NetworkCallback() {
+
+                private var wasRoaming: Boolean = false;
+
+                override fun onAvailable(network: Network) {
+                    super.onAvailable(network)
+
+                    Completable
+                        .fromAction {
+                            updateMissingDomainRoots()
+                        }
+                        .subscribeOn(AndroidSchedulers.mainThread())
+                        .subscribe()
+
+                }
+
+                // TODO try to move to AudioPlayerService
+                override fun onCapabilitiesChanged(network: Network, networkCapabilities: NetworkCapabilities) {
+                    super.onCapabilitiesChanged(network, networkCapabilities)
+
+                    val isRoaming = !networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_ROAMING)
+                    if (isRoaming && !wasRoaming) {
+                        Completable
+                            .fromAction {
+                                if (!NovaEvaApp.evaPlayer.isStopped()) {
+                                    Log.w("roamingDetected", "Roaming detected - stopping audio player")
+                                    NovaEvaApp.evaPlayer.stop()
+                                    viewBinding.root.snackbar(R.string.network_changed_player_stopped)
+                                }
+                            }
+                            .subscribeOn(AndroidSchedulers.mainThread())
+                            .subscribe()
+                        wasRoaming = true
+                    } else if (!isRoaming) {
+                        wasRoaming = false
+                    }
+                }
+            }
+
+            val connMan = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            networkCallback?.let {
+                connMan.registerDefaultNetworkCallback(it)
+            }
+        }
 
         fetchBreviaryCoverUrl()
         fetchDashboardBackgroundUrl()
@@ -309,18 +374,18 @@ class EvaActivity : EvaBaseActivity() {
                                     radioStation.title ?: "nepoznato",
                                     isRadio = true,
                                     doAutoPlay = true,
-                                    auth = serverByDomain(EvaDomain.RADIO).auth)
+                                    auth = null)
                             break
                         } catch (e: Exception) {
                             /*continue*/
                         }
                     }
                 }) {
-                    evaRoot?.dataErrorSnackbar()
+                    viewBinding.root.dataErrorSnackbar()
                 }
     }
 
-    private fun openDashboardFragment(animation: TransitionAnimation = FADE) {
+    private fun openDashboardFragment(animation: TransitionAnimation = NONE) {
         addToBackStack(mainContainerId, EvaDashboardFragment, animation, true)
     }
 
@@ -360,10 +425,10 @@ class EvaActivity : EvaBaseActivity() {
     }
 
     override fun onBackPressed() {
-        if (evaRoot.isDrawerOpen(GravityCompat.END)) {
-            evaRoot.closeDrawer(GravityCompat.END)
+        if (viewBinding.root.isDrawerOpen(GravityCompat.END)) {
+            viewBinding.root.closeDrawer(GravityCompat.END)
         } else {
-            supportFragmentManager?.let {
+            supportFragmentManager.let {
                 if (it.backStackEntryCount == 1) {
                     it.popBackStack()
                 }
@@ -374,6 +439,12 @@ class EvaActivity : EvaBaseActivity() {
 
     override fun onStop() {
         disposables.clear()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            val connMan = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            networkCallback?.let {
+                connMan.unregisterNetworkCallback(it)
+            }
+        }
         super.onStop()
     }
 

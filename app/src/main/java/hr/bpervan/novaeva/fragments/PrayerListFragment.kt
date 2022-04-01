@@ -6,19 +6,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
-import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.analytics.FirebaseAnalytics
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.PrayerCategoryRecyclerAdapter
 import hr.bpervan.novaeva.main.R
-import hr.bpervan.novaeva.model.EvaContent
+import hr.bpervan.novaeva.main.databinding.FragmentPrayersBinding
+import hr.bpervan.novaeva.model.CategoryDto
 import hr.bpervan.novaeva.model.EvaDirectory
 import hr.bpervan.novaeva.model.OpenPrayerDirectoryEvent
+import hr.bpervan.novaeva.model.toDbModel
 import hr.bpervan.novaeva.rest.EvaDomain
 import hr.bpervan.novaeva.views.onLayoutComplete
-import kotlinx.android.synthetic.main.fragment_prayers.*
-import kotlinx.android.synthetic.main.top_prayerbook.*
 
 class PrayerListFragment : EvaAbstractDirectoryFragment() {
 
@@ -33,6 +32,9 @@ class PrayerListFragment : EvaAbstractDirectoryFragment() {
         }
     }
 
+    private var _viewBinding: FragmentPrayersBinding? = null
+    private val viewBinding get() = _viewBinding!!
+
     private lateinit var initializer: OpenPrayerDirectoryEvent
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,7 +46,8 @@ class PrayerListFragment : EvaAbstractDirectoryFragment() {
         directoryId = initializer.directoryId
         directoryTitle = initializer.title
 
-        fetchItems = 1000
+        fetchItems = 500
+        searchFetchItems = 20
 
         adapter = PrayerCategoryRecyclerAdapter(elementsList)
 
@@ -57,9 +60,10 @@ class PrayerListFragment : EvaAbstractDirectoryFragment() {
         super.onSaveInstanceState(outState)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.cloneInContext(ContextThemeWrapper(activity, R.style.PrayersTheme))
-                .inflate(R.layout.fragment_prayers, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        val newInflater = inflater.cloneInContext(ContextThemeWrapper(activity, R.style.PrayersTheme))
+        _viewBinding = FragmentPrayersBinding.inflate(newInflater, container, false)
+        return viewBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -69,12 +73,12 @@ class PrayerListFragment : EvaAbstractDirectoryFragment() {
         EventPipelines.changeStatusbarColor.onNext(R.color.VeryDarkGray)
         EventPipelines.changeFragmentBackgroundResource.onNext(R.color.White)
 
-        val recyclerView = evaRecyclerView as androidx.recyclerview.widget.RecyclerView
+        val recyclerView = viewBinding.evaRecyclerView.root
         recyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
         recyclerView.adapter = adapter
 
-        prayerTitleTextView.text = directoryTitle
-        prayerTitleTextView.typeface = NovaEvaApp.openSansBold
+        viewBinding.collapsingPrayerHeader.prayerTop.prayerTitleTextView.text = directoryTitle
+        viewBinding.collapsingPrayerHeader.prayerTop.prayerTitleTextView.typeface = NovaEvaApp.openSansBold
 
         if (savedInstanceState != null) {
             val savedExpandedItemPos = savedInstanceState.getInt(expandedItemKey, androidx.recyclerview.widget.RecyclerView.NO_POSITION)
@@ -84,6 +88,9 @@ class PrayerListFragment : EvaAbstractDirectoryFragment() {
                 }
             }
         }
+
+        val searchView = viewBinding.collapsingPrayerHeader.prayerTop.prayerbookSearchView
+        initSearch(searchView)
     }
 
     override fun onResume() {
@@ -91,6 +98,19 @@ class PrayerListFragment : EvaAbstractDirectoryFragment() {
 
         FirebaseAnalytics.getInstance(requireContext())
                 .setCurrentScreen(requireActivity(), "Molitve '$directoryTitle'".take(36), "PrayerList")
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _viewBinding = null
+    }
+
+    override fun fillElements(categoryDto: CategoryDto) {
+        elementsList.clear()
+
+        val contentSorted = categoryDto.content.orEmpty().map { it.toDbModel() }.sortedByDescending { it.position }
+
+        elementsList.addAll(contentSorted)
     }
 
     override fun fillElements(evaDirectory: EvaDirectory) {

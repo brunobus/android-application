@@ -79,7 +79,6 @@ fun WebView.afterLoadAndLayoutComplete(action: () -> Unit) {
             onLayoutComplete {
                 action()
             }
-            webViewClient = null
         }
     }
 }

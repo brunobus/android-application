@@ -1,6 +1,10 @@
 package hr.bpervan.novaeva.fragments
 
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.Network
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.ContextThemeWrapper
@@ -11,8 +15,8 @@ import androidx.core.content.edit
 import androidx.core.net.toUri
 import com.google.firebase.analytics.FirebaseAnalytics
 import hr.bpervan.novaeva.EventPipelines
-import hr.bpervan.novaeva.main.BuildConfig
 import hr.bpervan.novaeva.main.R
+import hr.bpervan.novaeva.main.databinding.FragmentDashboardBinding
 import hr.bpervan.novaeva.model.ContentDto
 import hr.bpervan.novaeva.model.OpenDirectoryEvent
 import hr.bpervan.novaeva.model.OpenPrayerDirectoryEvent
@@ -21,14 +25,19 @@ import hr.bpervan.novaeva.rest.EvaDomain
 import hr.bpervan.novaeva.rest.NovaEvaService
 import hr.bpervan.novaeva.storage.EvaContentDbAdapter
 import hr.bpervan.novaeva.storage.RealmConfigProvider
-import hr.bpervan.novaeva.util.*
+import hr.bpervan.novaeva.util.HAS_NEW_CONTENT_KEY_PREFIX
+import hr.bpervan.novaeva.util.LAST_SYNC_TIME_MILLIS_KEY
+import hr.bpervan.novaeva.util.LATEST_CONTENT_ID_KEY_PREFIX
+import hr.bpervan.novaeva.util.TransitionAnimation
+import hr.bpervan.novaeva.util.plusAssign
+import hr.bpervan.novaeva.util.stripTrimAndEllipsizeText
+import hr.bpervan.novaeva.util.syncIntervalMillis
 import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
-import kotlinx.android.synthetic.main.fragment_dashboard.*
-import java.util.concurrent.TimeUnit
+import java.util.*
 
 /**
  *
@@ -42,21 +51,23 @@ class EvaDashboardFragment : EvaBaseFragment() {
         }
     }
 
-    private lateinit var liveContentTitle: String
+    private var _viewBinding: FragmentDashboardBinding? = null
+    private val viewBinding get() = _viewBinding!!
 
     private lateinit var realm: Realm
 
+    private var networkCallback: ConnectivityManager.NetworkCallback? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        liveContentTitle = getString(R.string.default_live_title)
 
         realm = Realm.getInstance(RealmConfigProvider.evaDBConfig)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.cloneInContext(ContextThemeWrapper(activity, R.style.AppTheme))
-                .inflate(R.layout.fragment_dashboard, container, false)
+        val newInflater = inflater.cloneInContext(ContextThemeWrapper(activity, R.style.AppTheme))
+        _viewBinding = FragmentDashboardBinding.inflate(newInflater, container, false)
+        return viewBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -70,81 +81,84 @@ class EvaDashboardFragment : EvaBaseFragment() {
             EventPipelines.changeWindowBackgroundDrawable.onNext(it)
         }
 
-        btnBrevijar.setOnClickListener {
-            EventPipelines.openBreviaryChooser.onNext(TransitionAnimation.FADE)
+        viewBinding.btnBrevijar.setOnClickListener {
+            EventPipelines.openBreviaryChooser.onNext(TransitionAnimation.NONE)
         }
-        btnMolitvenik.setOnClickListener {
+        viewBinding.btnMolitvenik.setOnClickListener {
             EventPipelines.openPrayerBook.onNext(OpenPrayerDirectoryEvent(
                     title = getString(EvaDomain.PRAYERS.title)
             ))
         }
-        btnBookmarks.setOnClickListener {
-            EventPipelines.openBookmarks.onNext(TransitionAnimation.FADE)
+        viewBinding.btnBookmarks.setOnClickListener {
+            EventPipelines.openBookmarks.onNext(TransitionAnimation.NONE)
         }
-        btnIzreke.setOnClickListener {
+        viewBinding.btnIzreke.setOnClickListener {
             EventPipelines.openQuotes.onNext(OpenQuotesEvent())
         }
-        btnPjesmarica.setOnClickListener {
+        viewBinding.btnPjesmarica.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
-                    title = getString(EvaDomain.SONGBOOK.title),
-                    domain = EvaDomain.SONGBOOK,
+                    title = getString(EvaDomain.SONGS.title),
+                    domain = EvaDomain.SONGS,
                     theme = R.style.PjesmaricaTheme))
         }
-        btnAktualno.setOnClickListener {
+        viewBinding.btnAktualno.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
                     title = getString(EvaDomain.TRENDING.title),
                     domain = EvaDomain.TRENDING,
                     theme = R.style.AktualnoTheme))
         }
-        btnPoziv.setOnClickListener {
+        viewBinding.btnPoziv.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
                     title = getString(EvaDomain.VOCATION.title),
                     domain = EvaDomain.VOCATION,
                     theme = R.style.PozivTheme))
         }
-        btnOdgovori.setOnClickListener {
+        viewBinding.btnOdgovori.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
                     title = getString(EvaDomain.ANSWERS.title),
                     domain = EvaDomain.ANSWERS,
                     theme = R.style.OdgovoriTheme))
         }
-        btnMultimedia.setOnClickListener {
+        viewBinding.btnMultimedia.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
                     title = getString(EvaDomain.MULTIMEDIA.title),
                     domain = EvaDomain.MULTIMEDIA,
                     theme = R.style.MultimedijaTheme))
         }
-        btnPropovijedi.setOnClickListener {
+        viewBinding.btnPropovijedi.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
                     title = getString(EvaDomain.SERMONS.title),
                     domain = EvaDomain.SERMONS,
                     theme = R.style.PropovjediTheme))
         }
-        btnDuhovnost.setOnClickListener {
+        viewBinding.btnDuhovnost.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
                     title = getString(EvaDomain.SPIRITUALITY.title),
                     domain = EvaDomain.SPIRITUALITY,
                     theme = R.style.DuhovnostTheme))
         }
-        btnCalendar.setOnClickListener {
+        viewBinding.btnCalendar.setOnClickListener {
             EventPipelines.openDirectory.onNext(OpenDirectoryEvent(
                     title = getString(EvaDomain.GOSPEL.title),
                     domain = EvaDomain.GOSPEL,
                     theme = R.style.EvandjeljeTheme))
         }
 
-        btnLive?.setOnClickListener {
-            EvaContentDbAdapter.loadEvaContent(realm, BuildConfig.V3_LIVE_ID)
-                    ?.videoURL
-                    ?.let { videoUrl ->
-                        startActivity(Intent(Intent.ACTION_VIEW, videoUrl.toUri()))
-                    }
-        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            networkCallback = object : ConnectivityManager.NetworkCallback() {
+                override fun onAvailable(network: Network) {
+                    super.onAvailable(network)
+                    disposables += liveContentCompletable().subscribe()
+                }
+            }
 
-        disposables += EventPipelines.connectedToNetwork
-                .throttleWithTimeout(3, TimeUnit.SECONDS)
-                .flatMapCompletable { liveContentCompletable() }
-                .subscribe()
+            val connMan = requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            networkCallback?.let {
+                connMan.registerDefaultNetworkCallback(it)
+            }
+        } else {
+            disposables += liveContentCompletable().subscribe()
+        }
 
         updateUI()
 
@@ -156,7 +170,6 @@ class EvaDashboardFragment : EvaBaseFragment() {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeBy(onSuccess = { indicatorsDTO ->
                         updateLatestContentId(EvaDomain.GOSPEL, indicatorsDTO.gospel)
-                        updateLatestContentId(EvaDomain.SONGBOOK, indicatorsDTO.songbook)
 
                         updateUI()
                         prefs.edit {
@@ -177,6 +190,7 @@ class EvaDashboardFragment : EvaBaseFragment() {
                         updateLatestContentId(EvaDomain.SERMONS, latest.sermons.content)
                         updateLatestContentId(EvaDomain.ANSWERS, latest.answers.content)
                         updateLatestContentId(EvaDomain.VOCATION, latest.vocation.content)
+                        updateLatestContentId(EvaDomain.SONGS, latest.songs.content)
 
                         updateUI()
 
@@ -190,37 +204,53 @@ class EvaDashboardFragment : EvaBaseFragment() {
     }
 
     private fun liveContentCompletable(): Completable {
-        return NovaEvaService.v3.content(EvaDomain.VOCATION.domainEndpoint, BuildConfig.V3_LIVE_ID)
+        return NovaEvaService.v3.categoryContent(EvaDomain.LIVE.domainEndpoint, items = 1)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSuccess { onLiveContentReceived(it) }
+                .doOnSuccess { onLiveContentReceived(it.content?.firstOrNull()) }
                 .doOnError { disableLive() }
                 .ignoreElement()
                 .onErrorComplete()
     }
 
-    private fun onLiveContentReceived(liveContent: ContentDto){
-        EvaContentDbAdapter.addOrUpdateEvaContentAsync(realm, liveContent) {
-            if (!liveContent.active) {
-                disableLive()
-            } else {
-                val title = liveContent.title?.toUpperCase()
-                        ?: getString(R.string.default_live_title)
-                val preview = stripTrimAndEllipsizeText(25, liveContent.html) ?: ""
-                enableLive(title, preview)
+    private fun onLiveContentReceived(liveContent: ContentDto?) {
+        if (liveContent == null) {
+            disableLive()
+        } else {
+            EvaContentDbAdapter.addOrUpdateEvaContentAsync(realm, liveContent) {
+                view ?: return@addOrUpdateEvaContentAsync
+
+                if (!liveContent.active) {
+                    disableLive()
+                } else {
+                    val title = liveContent.title?.toUpperCase(Locale.getDefault())
+                            ?: getString(R.string.default_live_title)
+                    val preview = stripTrimAndEllipsizeText(25, liveContent.html) ?: ""
+
+                    val videoUrl = liveContent.video?.firstOrNull()?.link
+
+                    if (videoUrl != null) {
+                        enableLive(title, preview, videoUrl)
+                    } else {
+                        disableLive()
+                    }
+                }
             }
         }
     }
 
-    fun enableLive(title: String, preview: String) {
-        btnLive?.isEnabled = true
-        btnLive?.text = "$title\n$preview"
-        liveContentTitle = title
+    fun enableLive(title: String, preview: String, videoUrl: String) {
+        viewBinding.btnLive?.setOnClickListener {
+            startActivity(Intent(Intent.ACTION_VIEW, videoUrl.toUri()))
+        }
+        viewBinding.btnLive?.isEnabled = true
+        viewBinding.btnLive?.text = "$title\n$preview"
     }
 
-    fun disableLive(){
-        btnLive?.text = ""
-        btnLive?.isEnabled = false
+    fun disableLive() {
+        viewBinding.btnLive?.isEnabled = false
+        viewBinding.btnLive?.text = ""
+        viewBinding.btnLive?.setOnClickListener(null)
     }
 
     override fun onResume() {
@@ -251,15 +281,26 @@ class EvaDashboardFragment : EvaBaseFragment() {
     private fun updateUI() {
         view ?: return
 
-//        btnCalendar.indicateNews = hasNewContent(EvaDomain.GOSPEL)
-        btnDuhovnost.indicateNews = hasNewContent(EvaDomain.SPIRITUALITY)
-        btnIzreke.indicateNews = hasNewContent(EvaDomain.QUOTES)
-        btnAktualno.indicateNews = hasNewContent(EvaDomain.TRENDING)
-        btnMultimedia.indicateNews = hasNewContent(EvaDomain.MULTIMEDIA)
-        btnPropovijedi.indicateNews = hasNewContent(EvaDomain.SERMONS)
-        btnOdgovori.indicateNews = hasNewContent(EvaDomain.ANSWERS)
-        btnPoziv.indicateNews = hasNewContent(EvaDomain.VOCATION)
-        btnPjesmarica.indicateNews = hasNewContent(EvaDomain.SONGBOOK)
+//        viewBinding.btnCalendar.indicateNews = hasNewContent(EvaDomain.GOSPEL)
+        viewBinding.btnDuhovnost.indicateNews = hasNewContent(EvaDomain.SPIRITUALITY)
+        viewBinding.btnIzreke.indicateNews = hasNewContent(EvaDomain.QUOTES)
+        viewBinding.btnAktualno.indicateNews = hasNewContent(EvaDomain.TRENDING)
+        viewBinding.btnMultimedia.indicateNews = hasNewContent(EvaDomain.MULTIMEDIA)
+        viewBinding.btnPropovijedi.indicateNews = hasNewContent(EvaDomain.SERMONS)
+        viewBinding.btnOdgovori.indicateNews = hasNewContent(EvaDomain.ANSWERS)
+        viewBinding.btnPoziv.indicateNews = hasNewContent(EvaDomain.VOCATION)
+        viewBinding.btnPjesmarica.indicateNews = hasNewContent(EvaDomain.SONGS)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _viewBinding = null
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            val connMan = requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            networkCallback?.let {
+                connMan.unregisterNetworkCallback(it)
+            }
+        }
     }
 
     override fun onDestroy() {

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "392077633586",
+    "firebase_url": "https://nova-deva.firebaseio.com",
+    "project_id": "nova-deva",
+    "storage_bucket": "nova-deva.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:392077633586:android:4157656170f7dc7713742b",
+        "android_client_info": {
+          "package_name": "hr.bpervan.novaeva.main.dev"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "392077633586-3pbgg8v4qirgdpe86kin6e8eg56cldv3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBQZetWRTmU395d2kuF_ccm6KQW46oVauA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "392077633586-3pbgg8v4qirgdpe86kin6e8eg56cldv3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

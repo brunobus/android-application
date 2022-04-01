@@ -11,6 +11,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.main.R
+import hr.bpervan.novaeva.main.databinding.FragmentSimpleContentBinding
 import hr.bpervan.novaeva.rest.NovaEvaService
 import hr.bpervan.novaeva.util.BREVIARY_IMAGE_KEY
 import hr.bpervan.novaeva.util.dataErrorSnackbar
@@ -21,8 +22,6 @@ import hr.bpervan.novaeva.views.loadHtmlText
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.collapsing_content_header.view.*
-import kotlinx.android.synthetic.main.fragment_simple_content.*
 
 /**
  * Created by vpriscan on 26.11.17..
@@ -40,6 +39,9 @@ class BreviaryContentFragment : EvaBaseFragment() {
 
         private var savedBreviaryText: String? = null
     }
+
+    private var _viewBinding: FragmentSimpleContentBinding? = null
+    private val viewBinding get() = _viewBinding!!
 
     private var breviaryId: Int = -1
     private lateinit var breviaryName: String
@@ -70,8 +72,9 @@ class BreviaryContentFragment : EvaBaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.cloneInContext(ContextThemeWrapper(activity, R.style.BreviaryTheme))
-                .inflate(R.layout.fragment_simple_content, container, false)
+        val newInflater = inflater.cloneInContext(ContextThemeWrapper(activity, R.style.BreviaryTheme))
+        _viewBinding = FragmentSimpleContentBinding.inflate(newInflater, container, false)
+        return viewBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -90,14 +93,14 @@ class BreviaryContentFragment : EvaBaseFragment() {
         }
 
         disposables += EventPipelines.resizeText.subscribe {
-            webView?.applyConfiguredFontSize(prefs)
+            viewBinding.webView.applyConfiguredFontSize(prefs)
         }
 
-        webView.applyEvaConfiguration(prefs)
+        viewBinding.webView.applyEvaConfiguration(prefs)
 
-        evaCollapsingBar.collapsingToolbar.title = breviaryName
+        viewBinding.evaCollapsingBar.collapsingToolbar.title = breviaryName
 
-        val coverImageView = evaCollapsingBar.coverImage
+        val coverImageView = viewBinding.evaCollapsingBar.coverImage
 
         if (coverImageUrl != null && coverImageView != null) {
             imageLoader.displayImage(coverImageUrl, coverImageView)
@@ -109,6 +112,11 @@ class BreviaryContentFragment : EvaBaseFragment() {
 
         FirebaseAnalytics.getInstance(requireContext())
                 .setCurrentScreen(requireActivity(), breviaryName.take(36), "BreviaryContent")
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _viewBinding = null
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -134,6 +142,6 @@ class BreviaryContentFragment : EvaBaseFragment() {
     }
 
     private fun showBreviary() {
-        webView.loadHtmlText(breviaryText)
+        viewBinding.webView.loadHtmlText(breviaryText)
     }
 }

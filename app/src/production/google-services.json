@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "75640365618",
+    "firebase_url": "https://nova-eva.firebaseio.com",
+    "project_id": "nova-eva",
+    "storage_bucket": "nova-eva.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:75640365618:android:4717644e743d6e8520522b",
+        "android_client_info": {
+          "package_name": "hr.bpervan.novaeva.main"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "75640365618-h6v2k7laouof3i4r9hb6uqqg1tvbf40g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC47CXoDW1o-c78V0eB-T2uZ_acy3Mo_i0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "75640365618-h6v2k7laouof3i4r9hb6uqqg1tvbf40g.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

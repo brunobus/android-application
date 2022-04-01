@@ -65,10 +65,13 @@ object EvaDirectoryDbAdapter {
             } else {
                 EvaDirectory(
                         id = directoryId,
-                        domain = evaCategoryDto.domain?.toString(),
-                        title = evaCategoryDto.title ?: "",
-                        image = evaCategoryDto.images?.firstOrNull()?.toDbModel(),
-                        position = evaCategoryDto.position)
+                        image = evaCategoryDto.images?.firstOrNull()?.toDbModel())
+            }
+
+            evaDirectory.apply {
+                domain = evaCategoryDto.domain?.toString()
+                title = evaCategoryDto.title ?: ""
+                position = evaCategoryDto.position
             }
 
             evaCategoryDto.content.orEmpty()
@@ -76,6 +79,10 @@ object EvaDirectoryDbAdapter {
                         it.toDbModel(EvaContentDbAdapter.loadEvaContent(realmInTrans, contentId = it.id))
                     }
                     .forEach { candidate ->
+
+                        if (candidate.domain == null) {
+                            candidate.domain = evaDirectory.domain
+                        }
 
                         realmInTrans.copyToRealmOrUpdate(candidate)
 
@@ -89,6 +96,10 @@ object EvaDirectoryDbAdapter {
                         it.toDbModel(EvaDirectoryDbAdapter.loadEvaDirectory(realmInTrans, directoryId = it.id))
                     }
                     .forEach { candidate ->
+
+                        if (candidate.domain == null) {
+                            candidate.domain = evaDirectory.domain
+                        }
 
                         realmInTrans.copyToRealmOrUpdate(candidate)
 

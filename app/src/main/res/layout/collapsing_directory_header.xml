@@ -26,7 +26,7 @@
             android:layout_gravity="bottom"
             app:layout_collapseParallaxMultiplier="0.0"
             app:layout_collapseMode="parallax"
-            layout="@layout/top_izbornik"/>
+            layout="@layout/directory_header"/>
 
     </com.google.android.material.appbar.CollapsingToolbarLayout>
 </com.google.android.material.appbar.AppBarLayout>

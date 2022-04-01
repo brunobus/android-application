@@ -56,8 +56,10 @@
     <style name="AppTheme" parent="AppThemeBase"/>
 
     <style name="LauncherThemeBase" parent="AppTheme">
-        <item name="android:windowBackground">@drawable/splash</item>
+
+        <item name="android:windowBackground">@drawable/bitmap_splash</item>
         <item name="colorPrimaryDark">@color/Transparent</item>
+        <item name="android:scaleType">centerCrop</item>
     </style>
 
     <style name="LauncherTheme" parent="LauncherThemeBase"/>
@@ -203,5 +205,17 @@
     </style>
 
     <style name="BreviaryTheme" parent="VioletTheme"/>
+
+    <style name="SearchViewStyle" parent="Widget.AppCompat.SearchView.ActionBar">
+        <item name="colorAccent">@color/White</item>
+    </style>
+
+    <style name="PrayersSearchViewStyle" parent="Widget.AppCompat.SearchView.ActionBar">
+        <item name="colorAccent">@color/prayerbookColor</item>
+        <item name="android:textColorPrimary">@color/prayerbookColor</item>
+        <item name="android:textColorSecondary">@color/prayerbookColor</item>
+        <item name="android:textColorHint">@color/prayerbookColor</item>
+    </style>
+
 
 </resources>

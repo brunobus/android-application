@@ -14,7 +14,7 @@ data class OpenContentEvent(val contentId: Long,
                             val title: String,
                             val domain: EvaDomain,
                             @StyleRes val theme: Int = -1,
-                            val animation: TransitionAnimation = TransitionAnimation.FADE) : Parcelable {
+                            val animation: TransitionAnimation = TransitionAnimation.NONE) : Parcelable {
 
     constructor(parcel: Parcel) : this(
             parcel.readLong(),
@@ -43,7 +43,7 @@ data class OpenDirectoryEvent(val directoryId: Long = -1,
                               val domain: EvaDomain,
                               val title: String,
                               @StyleRes val theme: Int = -1,
-                              val animation: TransitionAnimation = TransitionAnimation.FADE) : Parcelable {
+                              val animation: TransitionAnimation = TransitionAnimation.NONE) : Parcelable {
     constructor(parcel: Parcel) : this(
             parcel.readLong(),
             parcel.readSerializable() as EvaDomain,
@@ -70,7 +70,7 @@ data class OpenDirectoryEvent(val directoryId: Long = -1,
 
 data class OpenPrayerDirectoryEvent(val directoryId: Long = -1,
                                     val title: String = "",
-                                    val animation: TransitionAnimation = TransitionAnimation.FADE) : Parcelable {
+                                    val animation: TransitionAnimation = TransitionAnimation.NONE) : Parcelable {
     constructor(parcel: Parcel) : this(
             parcel.readLong(),
             parcel.readString()!!,
@@ -92,8 +92,8 @@ data class OpenPrayerDirectoryEvent(val directoryId: Long = -1,
 }
 
 data class OpenQuotesEvent(val quoteId: Long = -1,
-                           val animation: TransitionAnimation = TransitionAnimation.FADE)
+                           val animation: TransitionAnimation = TransitionAnimation.NONE)
 
 data class OpenBreviaryContentEvent(val breviaryId: Int,
-                                    val animation: TransitionAnimation = TransitionAnimation.FADE)
+                                    val animation: TransitionAnimation = TransitionAnimation.NONE)
 

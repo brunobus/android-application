@@ -5,6 +5,7 @@ import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -12,17 +13,19 @@ import hr.bpervan.novaeva.EventPipelines
 import hr.bpervan.novaeva.NovaEvaApp
 import hr.bpervan.novaeva.adapters.EvaRecyclerAdapter
 import hr.bpervan.novaeva.main.R
+import hr.bpervan.novaeva.main.databinding.FragmentDirectoryContentsBinding
+import hr.bpervan.novaeva.model.CategoryDto
 import hr.bpervan.novaeva.model.EvaDirectory
 import hr.bpervan.novaeva.model.OpenDirectoryEvent
 import hr.bpervan.novaeva.model.TIMESTAMP_FIELD
+import hr.bpervan.novaeva.model.toDbModel
 import hr.bpervan.novaeva.rest.EvaDomain
 import hr.bpervan.novaeva.storage.EvaDirectoryDbAdapter
 import hr.bpervan.novaeva.util.plusAssign
 import hr.bpervan.novaeva.util.sendEmailIntent
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.realm.Sort
-import kotlinx.android.synthetic.main.collapsing_directory_header.view.*
-import kotlinx.android.synthetic.main.fragment_directory_contents.*
-import kotlinx.android.synthetic.main.top_izbornik.view.*
+import java.util.concurrent.TimeUnit
 
 /**
  * Created by vpriscan on 08.10.17..
@@ -34,13 +37,16 @@ class EvaDirectoryFragment : EvaAbstractDirectoryFragment() {
         override fun newInstance(initializer: OpenDirectoryEvent): EvaDirectoryFragment {
             return EvaDirectoryFragment().apply {
                 arguments = bundleOf(
-                        EvaFragmentFactory.INITIALIZER to initializer
+                    EvaFragmentFactory.INITIALIZER to initializer
                 )
             }
         }
     }
 
     private lateinit var initializer: OpenDirectoryEvent
+
+    private var _viewBinding: FragmentDirectoryContentsBinding? = null
+    private val viewBinding get() = _viewBinding!!
 
     private var themeId: Int = -1
 
@@ -65,11 +71,10 @@ class EvaDirectoryFragment : EvaAbstractDirectoryFragment() {
         super.onSaveInstanceState(outState)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val inflaterToUse =
-                if (themeId != -1) inflater.cloneInContext(ContextThemeWrapper(activity, themeId))
-                else inflater
-        return inflaterToUse.inflate(R.layout.fragment_directory_contents, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        val newInflater = if (themeId != -1) inflater.cloneInContext(ContextThemeWrapper(activity, themeId)) else inflater
+        _viewBinding = FragmentDirectoryContentsBinding.inflate(newInflater, container, false)
+        return viewBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -79,12 +84,12 @@ class EvaDirectoryFragment : EvaAbstractDirectoryFragment() {
         EventPipelines.changeStatusbarColor.onNext(R.color.VeryDarkGray)
         EventPipelines.changeFragmentBackgroundResource.onNext(R.color.White)
 
-        evaDirectoryCollapsingBar.izbornikTop.izbornikTopNazivKategorije.apply {
+        viewBinding.evaDirectoryCollapsingBar.izbornikTop.izbornikTopNazivKategorije.apply {
             text = directoryTitle
             typeface = NovaEvaApp.openSansBold
         }
 
-        val recyclerView = evaRecyclerView as androidx.recyclerview.widget.RecyclerView
+        val recyclerView = viewBinding.evaRecyclerView.root
 
         val linearLayoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
         recyclerView.layoutManager = linearLayoutManager
@@ -94,42 +99,56 @@ class EvaDirectoryFragment : EvaAbstractDirectoryFragment() {
 
         when (domain) {
             EvaDomain.VOCATION -> {
-                btnPoziv.isVisible = true
-                btnPoziv.setOnClickListener {
-                    sendEmailIntent(context,
-                            subject = getString(R.string.thinking_of_vocation),
-                            text = getString(R.string.mail_preamble_praise_the_lord)
-                                    + getString(R.string.mail_intro_vocation),
-                            receiver = getString(R.string.vocation_email))
+                viewBinding.btnPoziv.isVisible = true
+                viewBinding.btnPoziv.setOnClickListener {
+                    sendEmailIntent(
+                        context,
+                        subject = getString(R.string.thinking_of_vocation),
+                        text = getString(R.string.mail_preamble_praise_the_lord)
+                                + getString(R.string.mail_intro_vocation),
+                        receiver = getString(R.string.vocation_email)
+                    )
                 }
             }
             EvaDomain.ANSWERS -> {
-                btnPitanje.isVisible = true
-                btnPitanje.setOnClickListener {
-                    sendEmailIntent(context,
-                            subject = getString(R.string.having_a_question),
-                            text = getString(R.string.mail_preamble_praise_the_lord),
-                            receiver = getString(R.string.answers_email))
+                viewBinding.btnPitanje.isVisible = true
+                viewBinding.btnPitanje.setOnClickListener {
+                    sendEmailIntent(
+                        context,
+                        subject = getString(R.string.having_a_question),
+                        text = getString(R.string.mail_preamble_praise_the_lord),
+                        receiver = getString(R.string.answers_email)
+                    )
                 }
             }
             else -> {/*nothing*/
             }
         }
+
+        val searchView = viewBinding.evaDirectoryCollapsingBar.izbornikTop.directorySearchView
+        initSearch(searchView)
     }
 
     override fun onResume() {
         super.onResume()
 
         FirebaseAnalytics.getInstance(requireContext())
-                .setCurrentScreen(requireActivity(), "Kategorija '$directoryTitle'".take(36), "Category")
+            .setCurrentScreen(requireActivity(), "Kategorija '$directoryTitle'".take(36), "Category")
     }
 
-    override fun fillElements(evaDirectory: EvaDirectory) {
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _viewBinding = null
+    }
+
+    override fun fillElements(categoryDto: CategoryDto) {
+
         elementsList.clear()
+        val contentSorted =
+            categoryDto.content.orEmpty().map { it.toDbModel() }.sortedByDescending { it.created }
 
-        val contentSorted = evaDirectory.contents.sortedByDescending { it.created }
-
-        val subdirectoriesSorted = evaDirectory.subCategories//.sortedByDescending { todo ON SERVER }
+        val subdirectoriesSorted =
+            categoryDto.subcategories.orEmpty().map { it.toDbModel() }.sortedByDescending { it.position }
 
         if (contentSorted.size > 10) {
             elementsList.addAll(contentSorted.take(10))
@@ -141,10 +160,34 @@ class EvaDirectoryFragment : EvaAbstractDirectoryFragment() {
         }
     }
 
-    inner class EndlessScrollListener(private val linearLayoutManager: androidx.recyclerview.widget.LinearLayoutManager) : androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
+    override fun fillElements(evaDirectory: EvaDirectory) {
+        elementsList.clear()
+
+        val contentSorted = evaDirectory.contents.sortedByDescending { it.created }
+
+        val subdirectoriesSorted = evaDirectory.subCategories.sortedByDescending { it.position }
+
+        if (contentSorted.size > 10) {
+            elementsList.addAll(contentSorted.take(10))
+            elementsList.addAll(subdirectoriesSorted)
+            elementsList.addAll(contentSorted.drop(10))
+        } else {
+            elementsList.addAll(contentSorted)
+            elementsList.addAll(subdirectoriesSorted)
+        }
+    }
+
+    inner class EndlessScrollListener(private val linearLayoutManager: androidx.recyclerview.widget.LinearLayoutManager) :
+        androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
         private val visibleThreshold = 2
 
         override fun onScrolled(recyclerView: androidx.recyclerview.widget.RecyclerView, dx: Int, dy: Int) {
+
+            if (!useLocalDb) {
+                // todo support scrolling while searching directly on server
+                return
+            }
+
             val visibleItemCount = recyclerView.childCount
             val totalItemCount = linearLayoutManager.itemCount
             val firstVisibleItem = linearLayoutManager.findFirstVisibleItemPosition()
@@ -159,7 +202,7 @@ class EvaDirectoryFragment : EvaAbstractDirectoryFragment() {
                         disposables += EvaDirectoryDbAdapter.loadEvaDirectoryAsync(realm, directoryId) { evaDirectory ->
                             if (evaDirectory != null) {
                                 val oldestTimestamp = evaDirectory.contents.sort(TIMESTAMP_FIELD, Sort.DESCENDING)
-                                        .lastOrNull()?.created?.let { it / 1000 }
+                                    .lastOrNull()?.created?.let { it / 1000 }
                                 fetchEvaDirectoryDataFromServer_legacy(oldestTimestamp)
                             }
                         }
