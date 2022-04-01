@@ -87,7 +87,7 @@ class BreviaryChooserFragment : EvaBaseFragment() {
     inner class BreviaryClickListener(private val breviaryId: Int) : View.OnClickListener {
 
         override fun onClick(v: View?) {
-            EventPipelines.openBreviaryContent.onNext(OpenBreviaryContentEvent(breviaryId, TransitionAnimation.FADE))
+            EventPipelines.openBreviaryContent.onNext(OpenBreviaryContentEvent(breviaryId, TransitionAnimation.NONE))
         }
     }
 }

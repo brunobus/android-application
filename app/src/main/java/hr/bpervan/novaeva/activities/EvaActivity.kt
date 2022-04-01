@@ -385,7 +385,7 @@ class EvaActivity : EvaBaseActivity() {
                 }
     }
 
-    private fun openDashboardFragment(animation: TransitionAnimation = FADE) {
+    private fun openDashboardFragment(animation: TransitionAnimation = NONE) {
         addToBackStack(mainContainerId, EvaDashboardFragment, animation, true)
     }
 

@@ -82,7 +82,7 @@ class EvaDashboardFragment : EvaBaseFragment() {
         }
 
         viewBinding.btnBrevijar.setOnClickListener {
-            EventPipelines.openBreviaryChooser.onNext(TransitionAnimation.FADE)
+            EventPipelines.openBreviaryChooser.onNext(TransitionAnimation.NONE)
         }
         viewBinding.btnMolitvenik.setOnClickListener {
             EventPipelines.openPrayerBook.onNext(OpenPrayerDirectoryEvent(
@@ -90,7 +90,7 @@ class EvaDashboardFragment : EvaBaseFragment() {
             ))
         }
         viewBinding.btnBookmarks.setOnClickListener {
-            EventPipelines.openBookmarks.onNext(TransitionAnimation.FADE)
+            EventPipelines.openBookmarks.onNext(TransitionAnimation.NONE)
         }
         viewBinding.btnIzreke.setOnClickListener {
             EventPipelines.openQuotes.onNext(OpenQuotesEvent())

@@ -107,7 +107,7 @@ class OptionsFragment : androidx.fragment.app.Fragment() {
             }
         }
         viewBinding.btnHome.setOnClickListener {
-            EventPipelines.goHome.onNext(TransitionAnimation.FADE)
+            EventPipelines.goHome.onNext(TransitionAnimation.NONE)
         }
     }
 

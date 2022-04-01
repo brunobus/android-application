@@ -39,7 +39,7 @@ class PrayerBookFragment : EvaAbstractDirectoryFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
-        val inState: Bundle = savedInstanceState ?: arguments!!
+        val inState: Bundle = savedInstanceState ?: requireArguments()
 
         initializer = inState.getParcelable(EvaFragmentFactory.INITIALIZER)!!
 
